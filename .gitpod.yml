@@ -2,8 +2,8 @@ image: gitpod/workspace-mongodb
 
 tasks:
   - init: 'mkdir -p /workspace/data && mongod --dbpath /workspace/data'
-  - init: 'cd packages/syngrisi/ && npm run install && npm run build'
-    command: 'npm start'
+  - init: 'cd packages/syngrisi/ && yarn install && yarn build'
+    command: 'yarn start'
 #  - init: 'echo "Starting MongoDB" && mongod --fork --logpath /tmp/mongod.log'
 ports:
   - port: 3000

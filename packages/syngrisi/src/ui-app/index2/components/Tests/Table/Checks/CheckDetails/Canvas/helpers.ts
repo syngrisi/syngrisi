@@ -25,6 +25,16 @@ function imageFromUrl(url: string) {
     );
 }
 
+/**
+ * Create fabric.Image from an already-loaded HTMLImageElement
+ * This avoids making another network request
+ */
+function imageFromElement(imgElement: HTMLImageElement): fabric.Image {
+    const fabricImg = new fabric.Image(imgElement);
+    fabricImg.objectCaching = false;
+    return fabricImg;
+}
+
 function lockImage(image: fabric.Image) {
     image.set({
         lockScalingX: true,
@@ -41,6 +51,7 @@ function lockImage(image: fabric.Image) {
 export {
     lockImage,
     imageFromUrl,
+    imageFromElement,
 };
 
 function onImageErrorHandler(...e: any) {

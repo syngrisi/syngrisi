@@ -1,20 +1,32 @@
 /* eslint-disable */
 import * as React from 'react';
 import { useMemo } from 'react';
-import { Badge, Loader, Tooltip, Group, Text, createStyles } from '@mantine/core';
+import { Badge, Loader, Tooltip, Group, Text, createStyles, ActionIcon } from '@mantine/core';
+import { IconRuler2, IconCalendar, IconPercentage } from '@tabler/icons-react';
 import * as dateFns from 'date-fns';
 
 const useStyles = createStyles((theme) => ({
     infoBadges: {
-        marginLeft: 8,
+        marginLeft: 4,
         paddingLeft: 4,
         paddingRight: 4,
     },
-    labels: {
-        '@media (max-width: 1070px)': {
+    detailsGroup: {
+        '@media (max-width: 700px)': {
             display: 'none',
         },
-    }
+    },
+    iconLabel: {
+        color: theme.colorScheme === 'dark' ? theme.colors.gray[5] : theme.colors.gray[6],
+        flexShrink: 0,
+    },
+    labelText: {
+        fontSize: theme.fontSizes.sm,
+        whiteSpace: 'nowrap',
+        '@media (max-width: 1400px)': {
+            display: 'none',
+        },
+    },
 }));
 
 interface Props {
@@ -65,73 +77,63 @@ export function ScreenshotDetails({ mainView, view, check = {} }: Props) {
         );
     }, [mainView, view]);
 
-    const actualDate = check?.actualSnapshotId?.createdDate
+    const actualDateFull = check?.actualSnapshotId?.createdDate
         ? dateFns.format(dateFns.parseISO(check?.actualSnapshotId?.createdDate), 'yyyy-MM-dd HH:mm:ss')
-        : ''
-    const baselineDate = check?.baselineId?.createdDate
+        : '';
+    const baselineDateFull = check?.baselineId?.createdDate
         ? dateFns.format(dateFns.parseISO(check?.baselineId?.createdDate), 'yyyy-MM-dd HH:mm:ss')
         : '';
+    const actualDateShort = check?.actualSnapshotId?.createdDate
+        ? dateFns.format(dateFns.parseISO(check?.actualSnapshotId?.createdDate), 'HH:mm:ss')
+        : '';
+    const baselineDateShort = check?.baselineId?.createdDate
+        ? dateFns.format(dateFns.parseISO(check?.baselineId?.createdDate), 'HH:mm:ss')
+        : '';
 
-    const createdDate = view === 'actual' ? actualDate : baselineDate
+    const createdDateFull = view === 'actual' ? actualDateFull : baselineDateFull;
+    const createdDateShort = view === 'actual' ? actualDateShort : baselineDateShort;
 
     return (
-        <Group spacing="sm" noWrap>
-            {
-                view !== 'slider'
-                    ? (
-                        <>
-                            <Group spacing={0} noWrap>
-                                <Text size="sm" lineClamp={1} className={classes.labels} title="Image size">
-                                    Image Size:
-                                </Text>
-                                <Text size="sm">
-                                    {imageSize}
-                                </Text>
+        <Group spacing="xs" noWrap className={classes.detailsGroup}>
+            {view !== 'slider' && (
+                <>
+                    <Tooltip label={`Image size`} withinPortal>
+                        <Group spacing={2} noWrap>
+                            <IconRuler2 size={16} className={classes.iconLabel} />
+                            <Text className={classes.labelText}>Size:</Text>
+                            {imageSize}
+                        </Group>
+                    </Tooltip>
+
+                    <Tooltip label={`Image Date: ${createdDateFull}`} withinPortal>
+                        <Group spacing={2} noWrap>
+                            <IconCalendar size={16} className={classes.iconLabel} />
+                            <Text className={classes.labelText}>Date:</Text>
+                            <Badge color="blue" radius="sm" className={classes.infoBadges} data-check="image-date">
+                                {createdDateShort}
+                            </Badge>
+                        </Group>
+                    </Tooltip>
+
+                    {view === 'diff' && (
+                        <Tooltip label={`Images difference: ${diffPercent}%`} withinPortal>
+                            <Group spacing={2} noWrap>
+                                <IconPercentage size={16} className={classes.iconLabel} />
+                                <Text className={classes.labelText}>Diff:</Text>
+                                <Badge
+                                    color="blue"
+                                    radius="sm"
+                                    sx={{ maxWidth: 80 }}
+                                    data-check="diff-percent"
+                                    className={classes.infoBadges}
+                                >
+                                    {diffPercent}%
+                                </Badge>
                             </Group>
-
-                            <Group spacing={0} noWrap>
-                                <Text lineClamp={1} className={classes.labels} size="sm">
-                                    Date:
-                                </Text>
-                                <Tooltip label={`Image Date: ${createdDate}`} withinPortal>
-
-                                    <Badge color="blue" radius={'sm'} className={classes.infoBadges}
-                                           data-check="image-date">
-                                        {
-                                            createdDate
-                                        }
-                                    </Badge>
-                                </Tooltip>
-                            </Group>
-                            {
-                                view === 'diff' && (
-                                    <>
-                                        <Group spacing={0} noWrap>
-                                            <Text lineClamp={1} size="sm" className={classes.labels}>
-                                                Difference:
-                                            </Text>
-                                            <Tooltip label={`Images difference: ${diffPercent} %`} withinPortal>
-                                                <Badge
-                                                    color="blue"
-                                                    radius={'sm'}
-                                                    sx={{ maxWidth: 100 }}
-                                                    data-check="diff-percent"
-                                                    className={classes.infoBadges}>
-                                                    {diffPercent}%
-                                                </Badge>
-                                            </Tooltip>
-                                        </Group>
-                                    </>
-                                )
-                            }
-                        </>
-                    )
-                    : (
-                        <>
-                        </>
-                    )
-            }
-
+                        </Tooltip>
+                    )}
+                </>
+            )}
         </Group>
     );
 }

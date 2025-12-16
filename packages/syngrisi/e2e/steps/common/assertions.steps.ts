@@ -649,11 +649,19 @@ async function checkElementContainsText(
       attempt++;
     }
   }
-  // Handle placeholders like <YYYY-MM-DD> - replace with regex pattern for date matching
+  // Handle placeholders like <YYYY-MM-DD> or <HH:mm:ss> - replace with regex pattern for date/time matching
   let expectedPattern = renderedExpected;
   if (renderedExpected.includes('<YYYY-MM-DD>')) {
-    // Replace <YYYY-MM-DD> with regex pattern that matches date format YYYY-MM-DD or YYYY-MM-DD HH:mm:ss
     expectedPattern = renderedExpected.replace('<YYYY-MM-DD>', '\\d{4}-\\d{2}-\\d{2}(?: \\d{2}:\\d{2}:\\d{2})?');
+    const actualText = await locator.first().textContent();
+    const regex = new RegExp(expectedPattern);
+    if (!regex.test(actualText || '')) {
+      throw new Error(`Expected text to match pattern "${expectedPattern}", but got "${actualText}"`);
+    }
+    return;
+  }
+  if (renderedExpected.includes('<HH:mm:ss>')) {
+    expectedPattern = renderedExpected.replace('<HH:mm:ss>', '\\d{2}:\\d{2}:\\d{2}');
     const actualText = await locator.first().textContent();
     const regex = new RegExp(expectedPattern);
     if (!regex.test(actualText || '')) {
@@ -745,9 +753,43 @@ Then(
 When(
   'I wait on element {string} to not be displayed',
   async ({ page }, selector: string) => {
-    const locator = getLocatorQuery(page, selector);
-    // Reduced from 30s to 15s - elements typically disappear quickly
-    await locator.first().waitFor({ state: 'hidden', timeout: 15000 });
+    await page.waitForFunction(
+      (sel) => {
+        const getNodes = () => {
+          try {
+            return Array.from(document.querySelectorAll(sel));
+          } catch {
+            const iterator = document.evaluate(
+              sel,
+              document,
+              null,
+              XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+              null
+            );
+            const xpathNodes: Array<Node> = [];
+            for (let i = 0; i < iterator.snapshotLength; i += 1) {
+              const node = iterator.snapshotItem(i);
+              if (node) xpathNodes.push(node);
+            }
+            return xpathNodes;
+          }
+        };
+        const nodes = getNodes();
+        return nodes.every((node) => {
+          if (!(node instanceof HTMLElement)) return true;
+          const style = window.getComputedStyle(node);
+          return (
+            style.display === 'none'
+            || style.visibility === 'hidden'
+            || node.offsetParent === null
+            || node.clientWidth === 0
+            || node.clientHeight === 0
+          );
+        });
+      },
+      selector,
+      { timeout: 15000 }
+    );
   }
 );
 

@@ -1,4 +1,4 @@
-@fast-server
+@fast-server @smoke
 Feature: Test Isolation by Run
 
   Background:
@@ -90,17 +90,22 @@ Feature: Test Isolation by Run
       """
 
     When I refresh page
-    # all tests
+    # Verify both tests are visible initially
     When I wait 10 seconds for the element with locator "//div[contains(text(), 'TestRun')]" to be visible
     Then the element "//div[contains(text(), 'TestRun')]" does appear exactly "2" times
 
-    # second run
-    When I click element with locator "(//*[@data-item-name='Run-1'])[1]"
-    When I wait 10 seconds for the element with locator "//div[contains(text(), 'TestRun-2')]" to be visible
+    # Verify there are exactly 2 Run-1 navbar items (same name, different idents)
+    Then the element "//*[@data-item-name='Run-1']" does appear exactly "2" times
 
-    # first run
+    # Click first Run-1 item and verify it shows exactly one test (either TestRun-1 or TestRun-2)
+    When I click element with locator "(//*[@data-item-name='Run-1'])[1]"
+    When I wait 10 seconds for the element with locator "//div[contains(text(), 'TestRun')]" to be visible
+    Then the element "//div[contains(text(), 'TestRun')]" does appear exactly "1" times
+
+    # Click second Run-1 item and verify it shows the other test
     When I click element with locator "(//*[@data-item-name='Run-1'])[2]"
-    When I wait 10 seconds for the element with locator "//div[contains(text(), 'TestRun-1')]" to be visible
+    When I wait 10 seconds for the element with locator "//div[contains(text(), 'TestRun')]" to be visible
+    Then the element "//div[contains(text(), 'TestRun')]" does appear exactly "1" times
 
   Scenario: Checks Isolation by Run - same name same ident
     Given I create "1" tests with:

@@ -64,7 +64,20 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy({}, User.authenticate()));
+// passport-local-mongoose v9 returns async authenticate() - wrap it for passport-local callback API
+const asyncAuthenticate = User.authenticate();
+passport.use(new LocalStrategy({}, async (username, password, done) => {
+    try {
+        const result = await asyncAuthenticate(username, password);
+        if (result.user) {
+            done(null, result.user);
+        } else {
+            done(null, false, { message: result.error?.message || 'Authentication failed' });
+        }
+    } catch (err) {
+        done(err);
+    }
+}));
 initSSOStrategies(passport);
 
 passport.serializeUser(User.serializeUser() as ((user: Express.User, done: (err: unknown) => void) => void));

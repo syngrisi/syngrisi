@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
+import * as fsSync from 'fs';
 import { spawn, type ChildProcess } from 'node:child_process';
 import { When, Then } from '@fixtures';
 import type { TestEngineFixture } from '@fixtures';
@@ -8,8 +9,16 @@ import { expect } from '@playwright/test';
 import { createLogger } from '@lib/logger';
 import type { BddContext } from 'playwright-bdd/dist/runtime/bddContext';
 import type { Page } from '@playwright/test';
+import type { AppServerFixture, TestStore } from '@fixtures';
+import { got } from 'got-cjs';
+import FormData from 'form-data';
+import * as crypto from 'crypto';
+import { requestWithSession } from '@utils/http-client';
 
 const logger = createLogger('DebugSteps');
+
+// Check if demo should be skipped
+const SKIP_DEMO = process.env.SKIP_DEMO_TESTS === 'true';
 
 /**
  * Step definition: `When I PAUSE`
@@ -283,7 +292,8 @@ When('I pause with phrase: {string}', async ({ page, testEngine }, phrase: strin
     return;
   }
   const { exec } = await import('node:child_process');
-  exec(`say -v Milena "${phrase}"`);
+  const voice = process.env.E2E_SAY_VOICE || 'Alex';
+  exec(`say -v ${voice} "${phrase}"`);
 
   logMcpStatus(testEngine);
   await page.pause();
@@ -300,6 +310,10 @@ When('I pause with phrase: {string}', async ({ page, testEngine }, phrase: strin
  * ```
  */
 When('I pause for {int} ms', async ({ page }, ms: number) => {
+  if (SKIP_DEMO) {
+    logger.info(`Skipping pause for ${ms}ms (SKIP_DEMO_TESTS=true)`);
+    return;
+  }
   logger.info(`Pausing for ${ms}ms`);
   await page.waitForTimeout(ms);
 });
@@ -342,4 +356,156 @@ When('I start the MCP test engine with "codex":', async ({ testEngine, page, $bd
   startCodexInteractiveSession(prompt);
   logMcpStatus(testEngine);
   await page.pause();
+});
+
+function hashApiKey(apiKey: string): string {
+  return crypto.createHash('sha512').update(apiKey).digest('hex');
+}
+
+async function createCheck(
+  appServer: AppServerFixture,
+  testId: string,
+  checkName: string,
+  imagePath: string,
+  apiKey: string
+) {
+  const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
+  const fullPath = path.join(repoRoot, 'syngrisi', 'tests', imagePath);
+
+  // Verify file exists using sync fs
+  if (!fsSync.existsSync(fullPath)) {
+    logger.warn(`Image file not found at ${fullPath}`);
+    // Try to list directory to see what's there
+    try {
+      const dir = path.dirname(fullPath);
+      if (fsSync.existsSync(dir)) {
+        logger.info(`Contents of ${dir}:`, fsSync.readdirSync(dir));
+      } else {
+        logger.warn(`Directory ${dir} does not exist`);
+      }
+    } catch (e) {
+      logger.error('Error checking directory', e);
+    }
+    throw new Error(`Image file not found: ${fullPath}`);
+  }
+
+  const imageBuffer = fsSync.readFileSync(fullPath);
+  const form = new FormData();
+  form.append('testid', testId);
+  form.append('name', checkName);
+  form.append('appName', 'Seed App');
+  form.append('branch', 'master');
+  form.append('suitename', 'Seed Suite');
+  form.append('viewport', '1366x768');
+  form.append('browserName', 'chrome');
+  form.append('browserVersion', '11');
+  form.append('browserFullVersion', '11.0.0.0');
+  form.append('os', 'macOS');
+
+  const hashcode = crypto.createHash('sha512').update(imageBuffer).digest('hex');
+  form.append('hashcode', hashcode);
+  form.append('file', imageBuffer, path.basename(fullPath));
+
+  const headers: Record<string, string> = {
+    apikey: hashApiKey(apiKey),
+  };
+
+  const response = await got.post(`${appServer.baseURL}/v1/client/createCheck`, {
+    body: form,
+    headers,
+  });
+
+  return JSON.parse(response.body);
+}
+
+/**
+ * Step definition: `When I seed test environment with example data`
+ *
+ * Seeds the test environment with a demo test session containing:
+ * - A "New Check" (no baseline)
+ * - A "Passed Check" (matching baseline)
+ * - A "Failed Check" (differs from baseline)
+ *
+ * @example
+ * ```gherkin
+ * When I seed test environment with example data
+ * ```
+ */
+When('I seed test environment with example data', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
+  const apiKey = process.env.SYNGRISI_API_KEY || '123';
+
+  // 1. Start a test session
+  const runIdent = `seed-${Date.now()}`;
+
+  const startSessionBody = {
+    app: 'Seed App',
+    name: 'Seed Test Data',
+    run: 'Seed Run',
+    runident: `seed-${Date.now()}`,
+    branch: 'master',
+    suite: 'Seed Suite',
+    tags: JSON.stringify(['seed']),
+    os: 'macOS',
+    browser: 'chrome',
+    browserVersion: '11',
+    browserFullVersion: '11.0.0.0',
+    viewport: '1366x768',
+  };
+
+  const headers = {
+    apikey: hashApiKey(apiKey),
+  };
+
+  logger.info('Starting seed test session...');
+  const sessionResponse = await got.post(`${appServer.baseURL}/v1/client/startSession`, {
+    json: startSessionBody,
+    headers,
+  });
+  const sessionData = JSON.parse(sessionResponse.body);
+  const testId = sessionData.id || sessionData._id;
+  logger.info(`Seed test session started: ${testId}`);
+
+  // 2. Create Checks
+
+  // 2.1 New Check
+  logger.info('Creating "New Check"...');
+  await createCheck(appServer, testId, 'New Check', 'files/A.png', apiKey);
+
+  // 2.2 Passed Check
+  logger.info('Creating "Passed Check" (baseline)...');
+  const passedCheck1 = await createCheck(appServer, testId, 'Passed Check', 'files/A.png', apiKey);
+
+  // Accept it
+  logger.info('Accepting "Passed Check"...');
+  await requestWithSession(`${appServer.baseURL}/v1/checks/${passedCheck1._id}/accept`, testData, appServer, {
+    method: 'PUT',
+    json: { baselineId: passedCheck1.actualSnapshotId },
+    headers: { apikey: hashApiKey(apiKey) }
+  });
+
+  logger.info('Creating "Passed Check" (match)...');
+  await createCheck(appServer, testId, 'Passed Check', 'files/A.png', apiKey);
+
+  // 2.3 Failed Check
+  logger.info('Creating "Failed Check" (baseline)...');
+  const failedCheck1 = await createCheck(appServer, testId, 'Failed Check', 'files/A.png', apiKey);
+
+  // Accept it
+  logger.info('Accepting "Failed Check"...');
+  await requestWithSession(`${appServer.baseURL}/v1/checks/${failedCheck1._id}/accept`, testData, appServer, {
+    method: 'PUT',
+    json: { baselineId: failedCheck1.actualSnapshotId },
+    headers: { apikey: hashApiKey(apiKey) }
+  });
+
+  logger.info('Creating "Failed Check" (diff)...');
+  await createCheck(appServer, testId, 'Failed Check', 'files/B.png', apiKey);
+
+  // Stop session
+  logger.info('Stopping seed test session...');
+  await got.post(`${appServer.baseURL}/v1/client/stopSession/${testId}`, {
+    headers,
+  });
+
+  logger.info('Seeding complete.');
 });

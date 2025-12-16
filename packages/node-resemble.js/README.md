@@ -1,18 +1,25 @@
-node-resemble.js
-================
+# @syngrisi/node-resemble.js
 
 <p align="center">
-<a href="https://nodejs.org/docs/latest-v12.x/api/index.html"><img src="https://img.shields.io/badge/node-12+-brightgreen.svg"></a>
-<a href="https://www.npmjs.com/package/nodejs-resemble"><img src="https://img.shields.io/npm/v/nodejs-resemble.svg"></a>
+<a href="https://nodejs.org/docs/latest-v22.x/api/index.html"><img src="https://img.shields.io/badge/node-22+-brightgreen.svg"></a>
+<a href="https://www.npmjs.com/package/@syngrisi/node-resemble.js"><img src="https://img.shields.io/npm/v/@syngrisi/node-resemble.js.svg"></a>
 </p>
-Supported fork of [node-resemble.js](https://github.com/burnpiro/node-resemble.js)
-Analyse and compare images with Javascript. This project does not need canvas or any other binary dependencies.
-It is a modification of [Resemble.js](https://github.com/Huddle/Resemble.js)
 
+Image analysis and comparison library for Node.js. This is a supported fork of [node-resemble.js](https://github.com/burnpiro/node-resemble.js), which is a modification of [Resemble.js](https://github.com/Huddle/Resemble.js).
 
-### Get it
+This project does not need canvas or any other binary dependencies (uses [sharp](https://github.com/lovell/sharp) for image processing).
 
-`npm install nodejs-resemble`
+## Installation
+
+```bash
+npm install @syngrisi/node-resemble.js
+```
+
+or
+
+```bash
+yarn add @syngrisi/node-resemble.js
+```
 
 ### Example
 

@@ -2,7 +2,7 @@
 import * as mCore from '@mantine/core';
 import { Title, Text, Group, Stack, Button, Paper, Checkbox, useMantineTheme, Badge, Alert } from '@mantine/core';
 import * as React from 'react';
-import queryString from 'query-string';
+import { stringify } from '@shared/utils/queryParams';
 import { useForm } from '@mantine/form';
 import { useRef, useState, useEffect } from 'react';
 
@@ -40,7 +40,7 @@ export default function Task({ item }: { item: ITask }) {
     }
 
     async function handleTask(name: string, opts: IOptions) {
-        const queryParams = queryString.stringify(opts);
+        const queryParams = stringify(opts);
         const ctrl = new AbortController();
         abortControllerRef.current = ctrl;
 

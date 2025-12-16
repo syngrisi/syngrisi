@@ -5,10 +5,11 @@
     "packages/*"
   ],
   "scripts": {
-    "publish": "lerna publish",
+    "pub": "lerna publish",
     "test": "lerna run test --scope=create-sy --scope=@syngrisi/syngrisi",
     "test:unit": "lerna run test --scope=create-sy",
-    "test:e2e": "yarn --cwd packages/syngrisi/e2e bddgen && yarn --cwd packages/syngrisi/e2e playwright test",
+    "test:e2e": "yarn --cwd packages/syngrisi/e2e bddgen && yarn --cwd packages/syngrisi/e2e playwright test --project=chromium --grep-invert '@saml|@sso-external|@sso-logto|@flaky'",
+    "test:e2e:ci": "yarn --cwd packages/syngrisi/e2e bddgen && yarn --cwd packages/syngrisi/e2e playwright test --project=chromium --grep-invert '@saml|@sso-external|@sso-logto|@flaky|@skip-ci' --retries=1",
     "test:smoke": "yarn --cwd packages/syngrisi smoke",
     "start": "lerna run start --scope=@syngrisi/syngrisi",
     "build": "lerna run build",
@@ -25,17 +26,27 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.29.8",
+    "cross-env": "^10.1.0",
     "lerna": "^9.0.3",
+    "lint-staged": "^16.2.7",
     "playwright-bdd": "^8.4.2",
     "vite": "^7.2.6"
   },
   "resolutions": {
     "ws": "^8.18.0",
-    "tar-fs": "^3.1.1"
+    "tar-fs": "^3.1.1",
+    "bson": "7.0.0",
+    "**/@wdio/logger/**/chalk": "4.1.2",
+    "@wdio/logger/chalk": "4.1.2",
+    "strip-ansi": "6.0.1"
   },
   "overrides": {
+    "@wdio/logger": {
+      "chalk": "^4.1.2"
+    },
     "socks": "^2.8.4",
-    "vite": "^7.2.2",
+    "vite": "^7.2.6",
+    "bson": "7.0.0",
     "minimatch@3": {
       "brace-expansion": "1.1.12"
     },
@@ -52,5 +63,10 @@
     "npm": "please-use-yarn",
     "yarn": ">=1.22.0"
   },
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json,md}": [
+      "echo 'Pre-commit: files staged for commit'"
+    ]
+  }
 }

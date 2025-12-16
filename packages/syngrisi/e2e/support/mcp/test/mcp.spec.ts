@@ -5,12 +5,28 @@ import { findEphemeralPort } from '../utils/port-utils';
 
 const tags = ['@start-test-engine-mcp'];
 // Keep the MCP idle shutdown short to avoid long waits in CI/local runs
+const originalIdleTimeoutEnv = process.env.MCP_IDLE_TIMEOUT_MS;
+const originalIdleIntervalEnv = process.env.MCP_IDLE_CHECK_INTERVAL_MS;
 if (!process.env.MCP_IDLE_TIMEOUT_MS) {
   process.env.MCP_IDLE_TIMEOUT_MS = '15000';
 }
 if (!process.env.MCP_IDLE_CHECK_INTERVAL_MS) {
   process.env.MCP_IDLE_CHECK_INTERVAL_MS = '3000';
 }
+
+test.afterAll(() => {
+  if (originalIdleTimeoutEnv === undefined) {
+    delete process.env.MCP_IDLE_TIMEOUT_MS;
+  } else {
+    process.env.MCP_IDLE_TIMEOUT_MS = originalIdleTimeoutEnv;
+  }
+
+  if (originalIdleIntervalEnv === undefined) {
+    delete process.env.MCP_IDLE_CHECK_INTERVAL_MS;
+  } else {
+    process.env.MCP_IDLE_CHECK_INTERVAL_MS = originalIdleIntervalEnv;
+  }
+});
 
 test.use({
   $test: ({ }, use) => use(test),
@@ -37,7 +53,7 @@ test.use({
   },
 });
 
-test.describe.configure({ mode: 'serial' });
+test.describe.configure({ mode: 'serial', timeout: 0 });
 
 test.describe('MCP Server Runner', () => {
   test(

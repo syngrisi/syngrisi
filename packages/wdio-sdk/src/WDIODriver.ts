@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import { LogLevelDesc } from 'loglevel'
 
-import { default as logger } from '@wdio/logger'
+import logger from './lib/logger'
 import { getDomDump } from './lib/getDomDump'
 
 import {
@@ -40,14 +40,16 @@ export { getDomDump }
 export class WDIODriver {
     api: SyngrisiApi
     params: DriverParams
+    private autoAccept: boolean
 
     /**
      * Creates an instance of the WDIODriver.
      * @param {Config} cfg - Configuration object for the Syngrisi API.
      * @example
      * const driver = new WDIODriver({
-     *   host: '<your-syngrisi-url>',
-     *   apiKey: 'your-api-key'
+     *   url: '<your-syngrisi-url>',
+     *   apiKey: 'your-api-key',
+     *   autoAccept: true // Automatically accept new baselines
      * });
      */
     constructor(cfg: Config) {
@@ -56,6 +58,7 @@ export class WDIODriver {
             // @ts-ignore
             test: {}
         }
+        this.autoAccept = cfg.autoAccept || false
     }
 
     /**
@@ -232,7 +235,8 @@ export class WDIODriver {
      *     browserName: 'chrome',
      *     os: 'Windows',
      *     app: 'MyApp',
-     *     branch: 'develop'
+     *     branch: 'develop',
+     *     autoAccept: true // Auto-accept if no baseline exists
      *   },
      *   suppressErrors: false
      * });
@@ -272,15 +276,43 @@ export class WDIODriver {
             }
             paramsGuard(opts, 'check, opts', CheckOptsSchema)
 
+            // Remove autoAccept from params before sending to API (it's SDK-only)
+            const { autoAccept: checkAutoAccept, ...apiParams } = params || {}
             Object.assign(
                 opts,
-                params,
+                apiParams,
             )
             const result = await this.api.coreCheck(imageBuffer, opts)
 
             if ((result as ErrorObject).error && !suppressErrors) {
                 throw `❌ Create Check error: ${JSON.stringify(result, null, '  ')}`
             }
+
+            // Auto-accept new checks if enabled (check-level or driver-level)
+            const shouldAutoAccept = checkAutoAccept ?? this.autoAccept
+            if (shouldAutoAccept && !(result as ErrorObject).error) {
+                const checkResult = result as CheckResponse
+                const status = Array.isArray(checkResult.status)
+                    ? checkResult.status[0]
+                    : checkResult.status
+
+                if (status === 'new') {
+                    log.info(`Auto-accepting new check: '${checkName}' (id: ${checkResult._id})`)
+                    const acceptResult = await this.acceptCheck({
+                        checkId: checkResult._id,
+                        baselineId: checkResult.actualSnapshotId,
+                        suppressErrors
+                    })
+
+                    if ((acceptResult as ErrorObject).error && !suppressErrors) {
+                        log.warn(`Failed to auto-accept check '${checkName}': ${JSON.stringify(acceptResult)}`)
+                    } else {
+                        log.debug(`Successfully auto-accepted check '${checkName}'`)
+                        return acceptResult
+                    }
+                }
+            }
+
             return result
         } catch (e: any) {
             log.error(`cannot create check, params: '${JSON.stringify(params)}' opts: '${JSON.stringify(opts)}, error: '${e.stack || e.toString()}'`)
@@ -315,6 +347,87 @@ export class WDIODriver {
             return result
         } catch (e: any) {
             const eMsg = `Cannot accept check, checkId: '${checkId}', baselineId: '${baselineId}', error: '${e.stack || e.toString()}'`
+            log.error(eMsg)
+            throw e
+        }
+    }
+
+    /**
+     * Region to ignore during visual comparison.
+     * Coordinates are in pixels relative to the image.
+     */
+    static Region = class {
+        left: number
+        top: number
+        right: number
+        bottom: number
+
+        constructor(left: number, top: number, right: number, bottom: number) {
+            this.left = left
+            this.top = top
+            this.right = right
+            this.bottom = bottom
+        }
+    }
+
+    /**
+     * Sets ignore regions on a baseline. These regions will be excluded from visual comparison.
+     * @param {string} baselineId - The unique identifier of the baseline.
+     * @param {Array<{left: number, top: number, right: number, bottom: number}>} regions - Array of region objects.
+     * @param {boolean} [suppressErrors=false] - Flag to suppress thrown errors.
+     * @returns {Promise<any | ErrorObject>} The update result or an error object.
+     * @example
+     * // Set ignore regions on a baseline
+     * await driver.setIgnoreRegions({
+     *   baselineId: 'baseline-id-123',
+     *   regions: [
+     *     { left: 0, top: 0, right: 100, bottom: 50 },     // Top banner
+     *     { left: 200, top: 300, right: 400, bottom: 350 } // Dynamic content area
+     *   ]
+     * });
+     *
+     * // Using Region helper class
+     * await driver.setIgnoreRegions({
+     *   baselineId: 'baseline-id-123',
+     *   regions: [
+     *     new WDIODriver.Region(0, 0, 100, 50)
+     *   ]
+     * });
+     */
+    async setIgnoreRegions({ baselineId, regions, suppressErrors = false }: {
+        baselineId: string,
+        regions: Array<{ left: number, top: number, right: number, bottom: number }>,
+        suppressErrors?: boolean
+    }): Promise<any | ErrorObject> {
+        try {
+            if (!baselineId) {
+                throw new Error('baselineId is required')
+            }
+            if (!Array.isArray(regions)) {
+                throw new Error('regions must be an array')
+            }
+
+            // Validate region format
+            for (const region of regions) {
+                if (typeof region.left !== 'number' ||
+                    typeof region.top !== 'number' ||
+                    typeof region.right !== 'number' ||
+                    typeof region.bottom !== 'number') {
+                    throw new Error(`Invalid region format: ${JSON.stringify(region)}. Expected {left, top, right, bottom} as numbers.`)
+                }
+            }
+
+            const ignoreRegions = JSON.stringify(regions)
+            log.debug(`Setting ignore regions on baseline '${baselineId}': ${ignoreRegions}`)
+
+            const result = await this.api.updateBaseline(baselineId, { ignoreRegions })
+
+            if ((result as ErrorObject).error && !suppressErrors) {
+                throw `❌ Set Ignore Regions error: ${JSON.stringify(result, null, '  ')}`
+            }
+            return result
+        } catch (e: any) {
+            const eMsg = `Cannot set ignore regions, baselineId: '${baselineId}', error: '${e.stack || e.toString()}'`
             log.error(eMsg)
             throw e
         }

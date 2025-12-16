@@ -1,9 +1,19 @@
 name: Release
 
 on:
-  push:
+  # Trigger after CI workflow completes on main
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
+  # Manual trigger with bypass option
   workflow_dispatch:
+    inputs:
+      skip_ci_check:
+        description: 'Skip CI check (use with caution!)'
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -13,11 +23,42 @@ permissions:
   contents: write
   pull-requests: write
   id-token: write  # Required for OIDC trusted publishing
+  actions: read    # Required for checking CI workflow status
 
 jobs:
+  # Check CI status for manual triggers
+  check-ci:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.skip_ci_check != 'true'
+    outputs:
+      ci_passed: ${{ steps.check.outputs.ci_passed }}
+    steps:
+      - name: Check latest CI status
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Get the latest CI workflow run conclusion
+          CONCLUSION=$(gh run list --workflow=ci.yml --branch=main --limit=1 --json conclusion -q '.[0].conclusion')
+          echo "Latest CI conclusion: $CONCLUSION"
+          if [ "$CONCLUSION" = "success" ]; then
+            echo "ci_passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "ci_passed=false" >> $GITHUB_OUTPUT
+            echo "::error::Latest CI run did not succeed (status: $CONCLUSION). Use 'Skip CI check' option for emergency release."
+            exit 1
+          fi
+
   release:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    needs: [check-ci]
+    # Run if: (CI workflow completed successfully) OR (manual with bypass) OR (manual and check-ci passed)
+    if: |
+      always() && (
+        (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+        (github.event_name == 'workflow_dispatch' && github.event.inputs.skip_ci_check == 'true') ||
+        (github.event_name == 'workflow_dispatch' && needs.check-ci.outputs.ci_passed == 'true')
+      )
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,17 +75,20 @@ jobs:
 
       - name: Install UI dependencies
         working-directory: packages/syngrisi/src/ui-app
-        run: yarn install --ignore-engines
+        run: yarn install --frozen-lockfile --ignore-engines || yarn install --ignore-engines
 
       - name: Build
         run: yarn build
+
+      - name: Reset working tree
+        run: git checkout -- .
 
       # Step 1: Check if there are changesets to process
       - name: Check for changesets
         id: changesets
         uses: changesets/action@v1
         with:
-          version: yarn version
+          version: yarn changeset version
           createGithubReleases: false
           publish: echo "skip-publish"  # Don't publish via changesets
           commit: "chore(release): version packages"

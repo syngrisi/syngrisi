@@ -157,9 +157,10 @@ When('I announce: {string}', async ({ page }: { page: Page }, message: string) =
   const { promisify } = await import('node:util');
   const { exec } = await import('node:child_process');
   const execAsync = promisify(exec);
+  const voice = process.env.E2E_SAY_VOICE || 'Alex';
 
   await showDemoBanner(page, message);
-  await execAsync(`say -v Milena -r 200 "${message}"`);
+  await execAsync(`say -v "${voice}" -r 200 "${message}"`);
   await new Promise((resolve) => setTimeout(resolve, 300));
   await hideDemoBanner(page);
 });
@@ -171,7 +172,8 @@ When('I announce: {string} and PAUSE', async ({ page }: { page: Page }, message:
   if (SKIP_DEMO) return;
 
   const { exec } = await import('node:child_process');
-  exec(`say -v Milena -r 200 "${message}"`);
+  const voice = process.env.E2E_SAY_VOICE || 'Alex';
+  exec(`say -v "${voice}" -r 200 "${message}"`);
 
   await showDemoBanner(page, message);
   await page.pause();

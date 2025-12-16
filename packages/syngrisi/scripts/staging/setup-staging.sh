@@ -141,12 +141,15 @@ check_prerequisites() {
 create_worktree() {
     log_info "Creating git worktree at ${STAGING_WORKTREE_PATH}..."
 
-    # Get current commit hash to create worktree from same commit
-    local CURRENT_COMMIT=$(git rev-parse HEAD)
-    log_info "Using commit: ${CURRENT_COMMIT}"
+    # Fetch latest from origin and use origin/main
+    log_info "Fetching latest from origin..."
+    git fetch origin main
 
-    if git worktree add --detach "${STAGING_WORKTREE_PATH}" "${CURRENT_COMMIT}"; then
-        log_info "✓ Git worktree created successfully (detached HEAD)"
+    local MAIN_COMMIT=$(git rev-parse origin/main)
+    log_info "Using origin/main commit: ${MAIN_COMMIT}"
+
+    if git worktree add --detach "${STAGING_WORKTREE_PATH}" origin/main; then
+        log_info "✓ Git worktree created successfully (detached at origin/main)"
     else
         log_error "Failed to create git worktree"
         exit 1

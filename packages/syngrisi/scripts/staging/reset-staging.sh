@@ -161,6 +161,54 @@ reset_baseline_images() {
     log_info "Current commit: ${COMMIT}"
 }
 
+update_staging_code() {
+    log_info "Updating staging worktree to latest origin/main..."
+
+    cd "${STAGING_WORKTREE_PATH}"
+
+    # Fetch latest from origin
+    log_info "Fetching latest from origin..."
+    git fetch origin main
+
+    local CURRENT_COMMIT=$(git rev-parse HEAD)
+    local MAIN_COMMIT=$(git rev-parse origin/main)
+
+    if [ "${CURRENT_COMMIT}" = "${MAIN_COMMIT}" ]; then
+        log_info "✓ Staging already at latest origin/main (${MAIN_COMMIT:0:8})"
+        return 0
+    fi
+
+    log_info "Current: ${CURRENT_COMMIT:0:8}, Target: ${MAIN_COMMIT:0:8}"
+
+    # Checkout to origin/main (detached)
+    if git checkout origin/main; then
+        log_info "✓ Updated to origin/main (${MAIN_COMMIT:0:8})"
+    else
+        log_error "Failed to checkout origin/main"
+        exit 1
+    fi
+
+    # Rebuild if code changed
+    log_info "Rebuilding application after code update..."
+    cd "${STAGING_WORKTREE_PATH}/packages/syngrisi"
+
+    log_info "Installing dependencies..."
+    if npm run install:all; then
+        log_info "✓ Dependencies installed"
+    else
+        log_error "Failed to install dependencies"
+        exit 1
+    fi
+
+    log_info "Building application..."
+    if npm run build; then
+        log_info "✓ Application built successfully"
+    else
+        log_error "Failed to build application"
+        exit 1
+    fi
+}
+
 clean_temp_files() {
     log_info "Cleaning staging temporary files..."
 
@@ -212,6 +260,7 @@ main() {
     fi
 
     stop_staging_server
+    update_staging_code
     reset_database
     reset_baseline_images
     clean_temp_files

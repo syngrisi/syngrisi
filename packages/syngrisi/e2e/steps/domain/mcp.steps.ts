@@ -25,24 +25,40 @@ Given(
 When(
   'I find test {string} in the table, expand it, and open the first check {string}',
   async ({ page }: { page: any }, testName: string, checkName: string) => {
-    // Find the test in the table
-    const testRow = page.locator(`[aria-label="Test row for ${testName}"]`);
-    await expect(testRow).toBeVisible();
+    const tableRowLocator = page.locator('tr[data-row-name]');
+    await expect(tableRowLocator.first()).toBeVisible({ timeout: 30_000 });
+    const availableRowNames = await tableRowLocator.evaluateAll((rows) =>
+      rows.map((row) => row.getAttribute('data-row-name') ?? '').slice(0, 10)
+    );
+    logger.info(`Available test rows: ${availableRowNames.join(', ')}`);
 
-    // Expand the test row
-    const expandButton = testRow.locator('[aria-label="Expand test row"]');
-    await expandButton.click();
+    const rowLocator = tableRowLocator.filter({ hasText: testName }).first();
+    await expect(rowLocator).toBeVisible({ timeout: 30_000 });
+    await rowLocator.scrollIntoViewIfNeeded();
+    const rowCount = await rowLocator.count();
+    logger.info(`Found ${rowCount} row(s) for test ${testName}`);
+    await rowLocator.evaluate((row: HTMLElement) => row.click());
 
-    // Open the first check
-    const checkRow = page.locator(`[aria-label="Check row for ${checkName}"]`).first();
-    await expect(checkRow).toBeVisible();
-    await checkRow.click();
+    const collapseRow = rowLocator.locator('xpath=following-sibling::tr[1]');
+    const collapseRowCount = await collapseRow.count();
+    logger.info(`Collapse rows found after test row: ${collapseRowCount}`);
+    const checksContainer = collapseRow.locator(`[data-test-checks-ready="true"]`).first();
+    const containerCount = await checksContainer.count();
+    logger.info(`Checks container count: ${containerCount}`);
+    await expect(checksContainer).toBeVisible({ timeout: 10_000 });
+
+    const previewLink = checksContainer.locator(`[data-check-previw-link="${checkName}"]`).first();
+    const previewLinkCount = await previewLink.count();
+    logger.info(`Preview links found for check "${checkName}": ${previewLinkCount}`);
+    await expect(previewLink).toBeVisible({ timeout: 10_000 });
+    logger.info(`Clicking preview link for check "${checkName}"`);
+    await previewLink.click({ force: true });
   },
 );
 
 Then('I get the current URL', async ({ page }) => {
   const currentUrl = page.url();
   logger.info(`Current URL: ${currentUrl}`);
-  // In a real scenario, you might want to return this URL to the user or assert something.
-  // For now, we'll just log it.
+  // Returning the URL so the MCP scenario can assert on it.
+  return `Current URL: ${currentUrl}`;
 });

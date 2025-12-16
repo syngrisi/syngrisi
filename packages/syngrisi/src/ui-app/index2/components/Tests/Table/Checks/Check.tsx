@@ -6,12 +6,13 @@ import {
     Group,
     Image,
     Paper,
+    Skeleton,
     Text,
     Tooltip,
     useMantineTheme,
 } from '@mantine/core';
 
-import queryString from 'query-string';
+import { stringify } from '@shared/utils/queryParams';
 import { useLocalStorage } from '@mantine/hooks';
 import { encodeQueryParams } from 'use-query-params';
 import { useParams } from '@hooks/useParams';
@@ -44,7 +45,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
     const imageFilename = check.diffId?.filename || check.actualSnapshotId?.filename || check.baselineId?.filename;
     const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
 
-    const overlayParamsString = queryString.stringify(
+    const overlayParamsString = stringify(
         encodeQueryParams(
             queryConfig,
             { ...query, ['checkId' as string]: check._id },
@@ -104,13 +105,9 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                                 src={imagePreviewSrc}
                                                 data-test-preview-image={check.name}
                                                 fit="contain"
-                                                // fit={'scale-down'}
-                                                // fit={'cover'} //default
-                                                // fit={'none'}
-                                                // fit={'fill'}
                                                 width={`${imageWeight * 4}px`}
-                                                // height="100px"
                                                 withPlaceholder
+                                                placeholder={<Skeleton height={80} width={imageWeight * 4} animate />}
                                                 alt={check.name}
                                                 // sx={{
                                                 //     cursor: 'pointer',
@@ -236,6 +233,8 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                                 src={imagePreviewSrc}
                                                 fit="contain"
                                                 alt={check.name}
+                                                withPlaceholder
+                                                placeholder={<Skeleton height={100} width="100%" animate />}
                                                 styles={
                                                     () => ({
                                                         image: {

@@ -1,7 +1,7 @@
 {
   "name": "create-sy",
   "displayName": "Syngrisi Setup Package",
-  "version": "2.4.1",
+  "version": "2.5.3",
   "description": "Easily install and configure Syngrisi for visual testing.",
   "author": {
     "name": "Viktar Silakou",
@@ -11,7 +11,7 @@
   "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/create-sy",
   "repository": {
     "type": "git",
-    "url": "git+git@github.com:syngrisi/syngrisi.git",
+    "url": "https://github.com/syngrisi/syngrisi",
     "directory": "packages/create-sy"
   },
   "bugs": {
@@ -31,6 +31,9 @@
     "create-sy": "./bin/sy.js"
   },
   "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "scripts": {
     "build": "run-s clean compile",
     "clean": "rimraf tsconfig.tsbuildinfo ./build ./coverage",
@@ -41,7 +44,7 @@
     "release:minor": "run-s 'release -- minor'",
     "release:major": "run-s 'release -- major'",
     "test": "run-s build test:eslint test:unit",
-    "test:eslint": "eslint -c ./.eslintrc.cjs ./src/**/*.ts ./tests/**/*.ts",
+    "test:eslint": "ESLINT_USE_FLAT_CONFIG=false eslint -c ./.eslintrc.cjs ./src/**/*.ts ./tests/**/*.ts",
     "test:unit": "vitest run",
     "test:e2e": "run-s e2e:setup e2e:run",
     "e2e:setup": "bash e2e/container/start-containers.sh --build",
@@ -60,7 +63,7 @@
     "@typescript-eslint/parser": "^8.48.1",
     "@vitest/coverage-v8": "^4.0.15",
     "c8": "^10.1.3",
-    "eslint": "^8.57.1",
+    "eslint": "^9.39.1",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-unicorn": "^62.0.0",
     "npm-run-all": "^4.1.5",
@@ -73,5 +76,9 @@
     "cross-spawn": "^7.0.3",
     "semver": "^7.7.3"
   },
+  "files": [
+    "build",
+    "bin"
+  ],
   "gitHead": "12bfda406cbe5aaccf3f17fdab02a9bd1a9d6343"
 }

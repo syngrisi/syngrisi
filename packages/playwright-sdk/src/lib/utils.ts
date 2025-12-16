@@ -1,8 +1,8 @@
-import logger from '@wdio/logger'
+import logger, { Logger } from '@wdio/logger'
 import { faker } from '@faker-js/faker'
 import { TestInfo } from '@playwright/test'
 
-export const log = logger('syngrisi-playwright-sdk')
+export const log: Logger = logger('syngrisi-playwright-sdk')
 
 interface WaitOptions {
     attempts?: number;

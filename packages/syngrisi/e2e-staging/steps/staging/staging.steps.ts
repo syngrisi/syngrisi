@@ -7,7 +7,7 @@ import * as crypto from 'crypto';
 
 // Load staging environment variables
 const syngrisiRoot = path.resolve(__dirname, '..', '..');
-dotenv.config({ path: path.join(syngrisiRoot, '..', '.env.staging') });
+dotenv.config({ path: path.join(syngrisiRoot, '..', '.env.staging'), quiet: true });
 
 const logger = createLogger('StagingSteps');
 

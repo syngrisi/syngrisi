@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import React, { useState, useEffect, useCallback } from 'react';
 import { render, Box, Text, useInput, useApp } from 'ink';
-import { exec, spawnSync } from 'child_process';
+import { exec, spawnSync, spawn, ChildProcess } from 'child_process';
 import { promisify } from 'util';
 import { existsSync } from 'fs';
 import path from 'path';
@@ -193,6 +193,8 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [executing, setExecuting] = useState(false);
   const [output, setOutput] = useState<string>('');
+  const [logProcess, setLogProcess] = useState<ChildProcess | null>(null);
+  const [viewingLogs, setViewingLogs] = useState(false);
   const { exit } = useApp();
 
   // Load status on mount and periodically
@@ -211,6 +213,15 @@ const App: React.FC = () => {
     const interval = setInterval(loadStatus, 3000);
     return () => clearInterval(interval);
   }, [loadStatus]);
+
+  // Cleanup log process on unmount
+  useEffect(() => {
+    return () => {
+      if (logProcess) {
+        logProcess.kill();
+      }
+    };
+  }, [logProcess]);
 
   // Menu items
   const menuItems = [
@@ -234,7 +245,7 @@ const App: React.FC = () => {
     {
       key: '2',
       label: 'Start',
-      description: 'Start staging server',
+      description: 'Start staging server (background)',
       action: async () => {
         setExecuting(true);
         setOutput('Starting server in background...\n\n');
@@ -242,7 +253,7 @@ const App: React.FC = () => {
           exec(`${CONTROL_SCRIPT} start > /dev/null 2>&1 &`);
           await new Promise((resolve) => setTimeout(resolve, 2000));
           await loadStatus();
-          setOutput('Server started!\n\nPress any key to continue...');
+          setOutput('Server started!\nUse option [7] Logs to view server output.\n\nPress any key to continue...');
         } catch (error: any) {
           setOutput(`Error: ${error.message}\n\nPress any key to continue...`);
         }
@@ -318,10 +329,49 @@ const App: React.FC = () => {
     {
       key: '7',
       label: 'Logs',
-      description: 'View server logs (Ctrl+C to stop)',
+      description: 'Start server & stream logs (Q to stop)',
       action: async () => {
-        setExecuting(true);
-        setOutput('To view logs, exit TUI and run:\n./scripts/staging-control.sh logs\n\nPress any key to continue...');
+        setViewingLogs(true);
+        setOutput('Starting server with log streaming...\n\n');
+
+        // Check if server is already running
+        const pid = await getServerPid();
+        if (pid) {
+          setOutput('Server is already running (PID: ' + pid + ').\nTo view logs, stop the server first and restart with this option.\n\nPress Q to go back...');
+          return;
+        }
+
+        // Start the staging server and capture output
+        const startScript = path.join(__dirname, 'staging/start-staging.sh');
+        const serverProcess = spawn(startScript, [], {
+          cwd: STAGING_WORKTREE,
+          env: { ...process.env },
+          shell: true,
+        });
+        setLogProcess(serverProcess);
+
+        const appendOutput = (data: Buffer) => {
+          setOutput((prev) => {
+            // Strip ANSI codes for cleaner display, keep last 80 lines
+            const text = data.toString();
+            const lines = (prev + text).split('\n');
+            const trimmed = lines.slice(-80).join('\n');
+            return trimmed;
+          });
+        };
+
+        serverProcess.stdout.on('data', appendOutput);
+        serverProcess.stderr.on('data', appendOutput);
+
+        serverProcess.on('close', (code) => {
+          setOutput((prev) => prev + `\n\n[Server exited with code ${code}]\nPress Q to go back...`);
+          setLogProcess(null);
+        });
+
+        serverProcess.on('error', (err) => {
+          setOutput((prev) => prev + `\n\n[Error: ${err.message}]\nPress Q to go back...`);
+          setLogProcess(null);
+        });
       },
     },
     {
@@ -364,6 +414,23 @@ const App: React.FC = () => {
       },
     },
     {
+      key: '0',
+      label: 'Claude Continue',
+      description: 'Continue Claude session with MCP',
+      action: () => {
+        if (status.serverRunning) {
+          // Exit TUI first, then launch Claude with --continue
+          exit();
+          const claudeScript = path.join(__dirname, 'staging/start-claude-with-staging-mcp.sh');
+          // Use spawnSync with --continue flag
+          spawnSync(claudeScript, ['--continue'], { stdio: 'inherit', shell: true });
+        } else {
+          setExecuting(true);
+          setOutput('Server is not running.\nPlease start it first (option 2).\n\nPress any key to continue...');
+        }
+      },
+    },
+    {
       key: 'q',
       label: 'Quit',
       description: 'Exit TUI',
@@ -372,6 +439,20 @@ const App: React.FC = () => {
   ];
 
   useInput((input, key) => {
+    // Handle log viewing mode - Q to exit
+    if (viewingLogs) {
+      if (input === 'q' || input === 'Q') {
+        if (logProcess) {
+          logProcess.kill();
+          setLogProcess(null);
+        }
+        setViewingLogs(false);
+        setOutput('');
+        loadStatus();
+      }
+      return;
+    }
+
     if (executing) {
       setExecuting(false);
       setOutput('');
@@ -395,6 +476,23 @@ const App: React.FC = () => {
       }
     }
   });
+
+  // Log viewing mode - full screen logs
+  if (viewingLogs) {
+    return (
+      <Box flexDirection="column" padding={1}>
+        <Box marginBottom={1} justifyContent="space-between">
+          <Text bold color="green">
+            STAGING SERVER LOGS
+          </Text>
+          <Text dimColor>Press Q to go back</Text>
+        </Box>
+        <Box borderStyle="round" borderColor="green" paddingX={1} flexDirection="column">
+          <Text>{output}</Text>
+        </Box>
+      </Box>
+    );
+  }
 
   if (executing) {
     return (
@@ -442,7 +540,7 @@ const App: React.FC = () => {
       </Box>
 
       <Box marginTop={1}>
-        <Text dimColor>↑↓ arrows or numbers (1-9) to navigate • Enter to select • Q to quit</Text>
+        <Text dimColor>↑↓ arrows or numbers (0-9) to navigate • Enter to select • Q to quit</Text>
       </Box>
     </Box>
   );
