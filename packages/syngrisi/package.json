@@ -1,6 +1,6 @@
 {
   "name": "@syngrisi/syngrisi",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "Syngrisi - Visual Testing Tool",
   "main": "./dist/server/server.js",
   "type": "module",
@@ -45,6 +45,7 @@
   "scripts": {
     "server:watch": "npx tsup --watch --onSuccess \"node ./dist/server/server.js\" # compile all server ts files changes",
     "start": "if [ \"$NODE_ENV\" = \"development\" ]; then yarn server:watch; else node ./dist/server/server.js; fi",
+    "start:dev": "cross-env SYNGRISI_AUTH=true SYNGRISI_TEST_MODE=true SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE=true npx tsup --watch --onSuccess \"node ./dist/server/server.js\"",
     "test": "yarn build && cd e2e && yarn test",
     "test:mcp": "cd e2e && yarn test:mcp",
     "start:mcp": "cd e2e && yarn start:mcp",
@@ -103,7 +104,7 @@
     "@asteasolutions/zod-to-openapi": "^8.2.0",
     "@inquirer/prompts": "^8.0.2",
     "@node-saml/passport-saml": "^5.1.0",
-    "@syngrisi/node-resemble.js": "^2.6.0",
+    "@syngrisi/node-resemble.js": "^2.6.1",
     "compression": "^1.8.1",
     "connect-mongo": "^5.1.0",
     "dotenv": "^17.2.3",

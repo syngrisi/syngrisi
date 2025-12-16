@@ -1,23 +1,23 @@
 metadata:
   category: common/debug
-  generatedAt: '2025-12-10T10:05:46.341Z'
+  generatedAt: '2025-12-12T15:43:17.922Z'
   totalFiles: 1
-  totalSteps: 9
+  totalSteps: 10
   sourceFiles:
     - steps/common/debug.steps.ts
 steps:
   - pattern: I fail
     description: ''
-    line: 315
+    line: 321
   - pattern: I log current URL
     description: ''
-    line: 320
+    line: 326
   - pattern: I pause
     description: ''
-    line: 277
+    line: 283
   - pattern: I PAUSE
     description: ''
-    line: 268
+    line: 274
   - pattern: I pause for {int} ms
     description: |-
       Pauses execution for a specified number of milliseconds.
@@ -28,16 +28,30 @@ steps:
       When I pause for 1000 ms
       When I pause for 500 ms
       ```
-    line: 306
+    line: 312
   - pattern: 'I pause with phrase: {string}'
     description: ''
-    line: 284
+    line: 290
+  - pattern: I seed test environment with example data
+    description: |-
+      Step definition: `When I seed test environment with example data`
+
+      Seeds the test environment with a demo test session containing:
+      - A "New Check" (no baseline)
+      - A "Passed Check" (matching baseline)
+      - A "Failed Check" (differs from baseline)
+
+      @example
+      ```gherkin
+      When I seed test environment with example data
+      ```
+    line: 434
   - pattern: I start the debug MCP Test Engine
     description: ''
-    line: 331
+    line: 337
   - pattern: 'I start the MCP test engine with "codex":'
     description: ⚠️ experimental, not used widely yet
-    line: 342
+    line: 348
   - pattern: I test
     description: ''
-    line: 326
+    line: 332

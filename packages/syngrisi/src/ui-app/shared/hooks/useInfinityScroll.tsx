@@ -179,7 +179,7 @@ export default function useInfinityScroll(
             enabled: infinityQuery.data?.pages?.length! > 0,
             refetchOnWindowFocus: true, // Always refetch on window focus
             // @ts-ignore
-            refetchInterval: 5000, // Poll every 5 seconds in all modes
+            refetchInterval: 15000, // Poll every 15 seconds to reduce server load
             onError: (e) => {
                 errorMsg({ error: e });
             },

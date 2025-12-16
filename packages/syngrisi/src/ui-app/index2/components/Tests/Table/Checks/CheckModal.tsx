@@ -9,7 +9,7 @@ import {
     Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { IconX } from '@tabler/icons-react';
 import { useParams } from '@hooks/useParams';
@@ -26,6 +26,7 @@ interface Props {
 export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Props) {
     const { query, setQuery } = useParams();
     const [checkModalOpened, checkModalHandlers] = useDisclosure(false);
+    const pollCountRef = useRef(0);
 
     const [initCheckId, setInitCheckId] = useState<string>('');
     useEffect(function onCheckIdChange() {
@@ -54,7 +55,7 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
                 {
                     populate: 'baselineId,actualSnapshotId,diffId,test,suite,app',
                     limit: '1',
-                    apikey,
+                    share: apikey,
                 },
                 'initial_check_for_check_details_modal',
             ),
@@ -62,8 +63,11 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
             refetchInterval: (data) => {
                 const check = data?.results?.[0];
                 if (check && !check.diffId) {
-                    return 1000;
+                    pollCountRef.current += 1;
+                    const interval = Math.min(2000 * Math.pow(1.5, pollCountRef.current - 1), 10000);
+                    return interval;
                 }
+                pollCountRef.current = 0;
                 return false;
             },
             refetchOnWindowFocus: false,
@@ -121,6 +125,7 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
                                     closeHandler={closeHandler}
                                     relatedRendered={relatedRendered}
                                     testList={testList}
+                                    apikey={apikey}
                                 />
                             )
                             : (

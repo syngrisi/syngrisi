@@ -18,10 +18,10 @@ Feature: Remove item
   @smoke
   Scenario: Remove Run
     When I go to "main" page
+    When I wait for test "TestName-0" to appear in table
+    When I wait for test "TestName-1" to appear in table
     When I wait 10 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be visible
     When I wait 10 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
 
     # remove
     When I click element with locator "[data-item-name='RunName-0'] button"
@@ -41,13 +41,13 @@ Feature: Remove item
 
   Scenario: Remove Suite
     When I go to "main" page
+    When I wait for test "TestName-0" to appear in table
+    When I wait for test "TestName-1" to appear in table
     When I wait on element "select[data-test='navbar-group-by']" to exist
     When I select the option with the text "Suites" for element "select[data-test='navbar-group-by']"
 
     When I wait 10 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'SuiteName-0')]" to be visible
     When I wait 10 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'SuiteName-1')]" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
 
     # remove
     When I click element with locator "[data-item-name='SuiteName-0'] button"

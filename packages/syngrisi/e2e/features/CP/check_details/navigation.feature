@@ -32,9 +32,7 @@ Feature: Check Details Navigation
 
     Scenario: Navigate between tests
         Given I create a test run "Test 1" with 1 checks
-        And I pause for 1000 ms
         And I create a test run "Test 2" with 1 checks
-        And I pause for 1000 ms
         And I create a test run "Test 3" with 1 checks
 
         # Tests are sorted by date desc, so Test 3 is first, Test 1 is last.
@@ -50,11 +48,9 @@ Feature: Check Details Navigation
         Given I create a test run "Test 1" with checks:
             | Name  |
             | T1-C1 |
-        And I pause for 1000 ms
         And I create a test run "Test 2" with checks:
             | Name  |
             | T2-C1 |
-        And I pause for 1000 ms
         And I create a test run "Test 3" with checks:
             | Name  |
             | T3-C1 |

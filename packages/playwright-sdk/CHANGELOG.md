@@ -1,5 +1,11 @@
 # @syngrisi/playwright-sdk
 
+## 2.6.1
+
+### Patch Changes
+
+-   @syngrisi/core-api@2.6.1
+
 ## 2.6.0
 
 ### Patch Changes

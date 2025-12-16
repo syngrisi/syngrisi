@@ -5,7 +5,7 @@ import { Midleware } from '@types';
 import { validateRequest } from '@utils/validateRequest';
 import { TestDistinctRequestFieldParamsSchema, TestGetSchema } from '@schemas/Test.schema';
 import { createApiResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
-import { ensureLoggedIn } from '@middlewares/ensureLogin';
+import { ensureLoggedIn, ensureLoggedInOrApiKey } from '@middlewares/ensureLogin';
 import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schema';
 import { createRequestQuerySchema } from '@schemas/utils/createRequestQuerySchema';
 import { commonValidations } from '@schemas/utils';
@@ -26,7 +26,7 @@ registry.registerPath({
 
 router.get(
     '/',
-    ensureLoggedIn(),
+    ensureLoggedInOrApiKey(),
     validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/checks'),
     testController.getTest as Midleware
 );

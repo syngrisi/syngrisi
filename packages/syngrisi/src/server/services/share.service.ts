@@ -53,7 +53,7 @@ const createShareToken = async (
 const validateShareToken = async (
     checkId: string,
     rawToken: string
-): Promise<boolean> => {
+): Promise<any> => {
     const hashedToken = hashSync(rawToken);
 
     const shareToken = await ShareToken.findOne({
@@ -64,11 +64,11 @@ const validateShareToken = async (
 
     if (shareToken) {
         log.debug(`Valid share token used for check: '${checkId}'`, logOpts);
-        return true;
+        return shareToken;
     }
 
     log.debug(`Invalid or revoked share token for check: '${checkId}'`, logOpts);
-    return false;
+    return null;
 };
 
 const revokeShareToken = async (
@@ -127,10 +127,30 @@ const revokeAllTokensForCheck = async (
     return result.modifiedCount;
 };
 
+const findShareToken = async (
+    rawToken: string
+): Promise<any> => {
+    const hashedToken = hashSync(rawToken);
+
+    const shareToken = await ShareToken.findOne({
+        token: hashedToken,
+        isRevoked: false,
+    }).exec();
+
+    if (shareToken) {
+        log.debug(`Found share token: '${shareToken._id}'`, logOpts);
+        return shareToken;
+    }
+
+    log.debug('Share token not found or revoked', logOpts);
+    return null;
+};
+
 export {
     createShareToken,
     validateShareToken,
     revokeShareToken,
     getShareTokensForCheck,
     revokeAllTokensForCheck,
+    findShareToken,
 };

@@ -178,7 +178,6 @@ Feature: Check details Related Checks
                 viewport: 500x500
                 browserName: safari0
       """
-    When I pause for 500 ms
     Given I create "1" tests with:
       """
           testName: TestName-Related-1
@@ -194,7 +193,6 @@ Feature: Check details Related Checks
                 viewport: 500x500
                 browserName: safari1
       """
-    When I pause for 500 ms
     Given I create "1" tests with:
       """
           testName: TestName-Related-2

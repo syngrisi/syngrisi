@@ -33,6 +33,21 @@ router.get(
 );
 
 registry.registerPath({
+    method: 'get',
+    path: '/v1/settings/public',
+    summary: "Get public application settings",
+    tags: ['Settings'],
+    responses: createApiResponse(SettingsResponseSchema, 'Success'),
+});
+
+router.get(
+    '/public',
+    ensureLoggedIn(),
+    validateRequest(SkipValid, 'get, /v1/settings/public'),
+    settingsController.getPublicSettings as Midleware
+);
+
+registry.registerPath({
     method: 'patch',
     path: '/v1/settings/{name}',
     summary: "Update a setting by name",

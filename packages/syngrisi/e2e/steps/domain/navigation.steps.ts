@@ -23,6 +23,7 @@ When('I go to {string} page', async ({ page, appServer }: { page: Page; appServe
     admin2: `${baseURL}/admin`,
     logs: `${baseURL}/admin/logs`,
     settings: `${baseURL}/admin/settings`,
+    "admin/settings": `${baseURL}/admin/settings`,
   };
 
   const adminPages: Record<string, Record<string, string>> = {
@@ -80,7 +81,7 @@ When('I go to {string} page', async ({ page, appServer }: { page: Page; appServe
       if (await refreshButton.isVisible({ timeout: 2000 }).catch(() => false)) {
         logger.info('First Refresh click to reset timestamp filter after navigation to main page');
         await refreshButton.click();
-        await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+        await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
         await page.waitForTimeout(1000); // Wait for UI to update and any late data to arrive
       }
 
@@ -92,7 +93,7 @@ When('I go to {string} page', async ({ page, appServer }: { page: Page; appServe
       if (hasBadge || await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
         logger.info(`Second Refresh click (badge visible: ${hasBadge}) to ensure all data is loaded`);
         await refreshButton.click();
-        await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+        await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
         await page.waitForTimeout(500);
       }
     }
@@ -180,7 +181,7 @@ When('I wait for navbar to be ready', async ({ page }) => {
 
 When('I wait for table to stabilize', async ({ page }) => {
   // Wait for network to be idle to ensure all API calls are complete
-  await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+  await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => { });
   // Additional stabilization - allow React to finish rendering
   await page.waitForTimeout(300);
 });
@@ -238,7 +239,7 @@ When('I open the saved share URL', async ({ page, testData }: { page: Page; test
 
   logger.info(`Opening saved share URL: ${shareUrl}`);
   await page.goto(shareUrl, { waitUntil: 'domcontentloaded' });
-  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => { });
 });
 
 /**
@@ -282,5 +283,5 @@ When('I open the shared check URL', async ({ page }: { page: Page }) => {
 
   logger.info(`Opening share URL: ${shareUrl}`);
   await page.goto(shareUrl, { waitUntil: 'domcontentloaded' });
-  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => { });
 });

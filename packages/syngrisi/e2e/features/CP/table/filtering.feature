@@ -385,6 +385,8 @@ Feature: Tests Table Filter
       """
 
     When I go to "main" page
+    When I wait for test "TestName filter-0" to appear in table
+    When I wait for test "TestName filter-1" to appear in table
 
     # not accepted failed
     When I create "1" tests with:
@@ -398,10 +400,7 @@ Feature: Tests Table Filter
               browserName: safari-1
       """
     When I go to "main" page
-
-
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+    When I wait for test "TestName filter-3" to appear in table
 
     # BROWSER
     # open filter

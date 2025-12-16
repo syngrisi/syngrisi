@@ -38,6 +38,14 @@
         "enabled": true
     },
     {
+        "name": "share_enabled",
+        "label": "Enable Sharing",
+        "description": "Allow users to share checks via public links",
+        "type": "Boolean",
+        "value": "true",
+        "enabled": true
+    },
+    {
         "name": "sso_enabled",
         "label": "Enable SSO",
         "description": "Enable Single Sign-On (SSO) authentication",

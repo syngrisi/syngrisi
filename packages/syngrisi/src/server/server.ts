@@ -15,6 +15,7 @@ import { appSettings } from '@settings';
 const logMeta = { scope: 'entrypoint' };
 
 log.info('Connect to database', logMeta);
+
 connectDB().then(async () => {
     log.debug('run init jobs', logMeta);
     // const startUp = await import('@lib/startup');

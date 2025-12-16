@@ -8,6 +8,7 @@ import {
     Stack,
 } from '@mantine/core';
 import { useEffect, useState } from 'react';
+import { useMediaQuery } from '@mantine/hooks';
 import RelativeDrawer from '@shared/components/RelativeDrawer';
 import { tableColumns } from '@index/components/Tests/Table/tableColumns';
 import LogicalGroup from '@shared/components/filter/LogicalGroup';
@@ -41,6 +42,7 @@ function Filter(
 ) {
     const [groupsData, setGroupsData] = useState<{ [key: string]: any }>(mainGroupInit);
     const { setQuery } = useParams();
+    const isMobile = useMediaQuery('(max-width: 500px)');
 
     const removeGroupsData = (key: string) => {
         setGroupsData((prev) => {
@@ -127,10 +129,10 @@ function Filter(
             open={open}
             setOpen={setOpen}
             title="Filter"
-            width="20vw"
+            width={isMobile ? '100%' : 420}
         >
-            <ScrollArea.Autosize maxHeight="80vh" mr={-12} sx={{ height: '80vh' }}>
-                <Box sx={{ paddingRight: 16, marginBottom: 100 }}>
+            <ScrollArea.Autosize maxHeight="80vh" sx={{ height: '80vh' }}>
+                <Box sx={{ paddingRight: 60, marginBottom: 100 }}>
                     <Stack>
                         <LogicalGroup
                             id="mainGroup"
@@ -144,7 +146,7 @@ function Filter(
                         </LogicalGroup>
                     </Stack>
 
-                    <Group mt={24} spacing="sm" position="right">
+                    <Group mt={24} position="apart">
                         <Button
                             onClick={() => resetAll()}
                             data-test="table-filter-reset"
@@ -154,24 +156,27 @@ function Filter(
                         >
                             Reset
                         </Button>
-                        <Button
-                            data-test="table-filter-cancel"
-                            aria-label="Cancel filter"
-                            variant="light"
-                            color="gray"
-                            onClick={() => setOpen(false)}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            data-test="table-filter-apply"
-                            aria-label="Apply filter"
-                            onClick={() => {
-                                applyFilter();
-                            }}
-                        >
-                            Apply
-                        </Button>
+                        <Group spacing="sm">
+                            <Button
+                                data-test="table-filter-cancel"
+                                aria-label="Cancel filter"
+                                variant="light"
+                                color="gray"
+                                onClick={() => setOpen(false)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                            mr={10}
+                                data-test="table-filter-apply"
+                                aria-label="Apply filter"
+                                onClick={() => {
+                                    applyFilter();
+                                }}
+                            >
+                                Apply
+                            </Button>
+                        </Group>
                     </Group>
                 </Box>
             </ScrollArea.Autosize>
