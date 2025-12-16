@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@cucumber/cucumber-expressions": "^18.0.1",
-    "@playwright/test": "^1.56.1",
+    "@playwright/test": "^1.57.0",
     "@types/node": "^24.10.1",
     "chalk": "^4.1.2",
     "cross-env": "^10.1.0",
@@ -40,11 +40,11 @@
     "envalid": "^8.1.1",
     "mongodb": "^6.12.0",
     "npm-run-all": "^4.1.5",
-    "playwright-bdd": "^8.4.1",
+    "playwright-bdd": "^8.4.2",
     "playwright-mcp-advanced": "^0.1.0",
     "typescript": "^5.9.3",
-    "winston": "^3.18.3",
-    "zod": "^3.25.76"
+    "winston": "^3.19.0",
+    "zod": "^4.1.13"
   },
   "dependencies": {
     "@cucumber/cucumber": "^12.3.0",
@@ -55,7 +55,7 @@
     "@types/winston": "^2.4.4",
     "cheerio": "^1.0.0",
     "domhandler": "^5.0.3",
-    "form-data": "^4.0.4",
+    "form-data": "^4.0.5",
     "got-cjs": "^12.5.4",
     "hasha": "^7.0.0",
     "js-yaml": "^4.1.1",
@@ -65,7 +65,7 @@
     "yaml": "^2.8.1"
   },
   "overrides": {
-    "playwright": "^1.56.1",
+    "playwright": "^1.57.0",
     "tar-fs": "^3.1.1",
     "ws": "^8.18.0"
   },

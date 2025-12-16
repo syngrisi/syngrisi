@@ -12,10 +12,10 @@
     "bddgen": "npx bddgen"
   },
   "dependencies": {
-    "@playwright/test": "^1.49.0",
-    "playwright-bdd": "^8.2.1",
+    "@playwright/test": "^1.57.0",
+    "playwright-bdd": "^8.4.2",
     "dotenv": "^17.2.3",
     "got-cjs": "^12.5.4",
-    "form-data": "^4.0.0"
+    "form-data": "^4.0.5"
   }
 }

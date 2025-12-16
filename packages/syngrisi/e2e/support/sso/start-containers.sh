@@ -267,16 +267,20 @@ main() {
     log_info "OIDC Discovery:  http://localhost:${LOGTO_PORT}/oidc/.well-known/openid-configuration"
     log_info "============================================"
 
-    # Run provisioning script to configure Logto
-    if [ -f "${SCRIPT_DIR}/provision-logto-api.sh" ]; then
-        log_info "Running provisioning script..."
-        "${SCRIPT_DIR}/provision-logto-api.sh"
+    # Run provisioning script to configure Logto unless explicitly skipped
+    if [ "${E2E_LOGTO_SKIP_PROVISIONING}" = "true" ]; then
+        log_warn "E2E_LOGTO_SKIP_PROVISIONING=true, skipping provisioning script"
     else
-        log_warn "Provisioning script not found, skipping auto-configuration"
-        echo ""
-        echo "# Environment variables for Syngrisi SSO configuration:"
-        echo "export LOGTO_ENDPOINT=http://localhost:${LOGTO_PORT}"
-        echo "export LOGTO_ADMIN_ENDPOINT=http://localhost:${LOGTO_ADMIN_PORT}"
+        if [ -f "${SCRIPT_DIR}/provision-logto-api.sh" ]; then
+            log_info "Running provisioning script..."
+            "${SCRIPT_DIR}/provision-logto-api.sh"
+        else
+            log_warn "Provisioning script not found, skipping auto-configuration"
+            echo ""
+            echo "# Environment variables for Syngrisi SSO configuration:"
+            echo "export LOGTO_ENDPOINT=http://localhost:${LOGTO_PORT}"
+            echo "export LOGTO_ADMIN_ENDPOINT=http://localhost:${LOGTO_ADMIN_PORT}"
+        fi
     fi
 }
 

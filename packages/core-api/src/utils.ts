@@ -1,8 +1,8 @@
-import logger from '@wdio/logger'
+import log from 'loglevel'
 import { ZodObject } from 'zod'
 import { ErrorObject } from '../schemas/SyngrisiApi.schema'
 
-const log = logger('syngrisi-core-api')
+export { log }
 
 export const printErrorResponseBody = (e: any): void => {
     if (e.response && e.response?.body) {

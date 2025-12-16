@@ -1,7 +1,7 @@
 import FormData from 'form-data'
 import got from 'got-cjs'
 import { createHash } from 'node:crypto'
-import logger from '@wdio/logger'
+import log from 'loglevel'
 import { LogLevelDesc } from 'loglevel'
 import { errorObject, paramsGuard, prettyCheckResult, printErrorResponseBody } from './utils'
 import { prepareDomDumpForTransfer } from './compression'
@@ -24,7 +24,8 @@ import {
     SessionResponse, ConstructorParam, ErrorObject,
 } from '../schemas/SyngrisiApi.schema'
 
-const log = logger('core-api')
+// Initialize logger
+log.setDefaultLevel('info')
 // 0 | 4 | 2 | 1 | 3 | 5 | "trace" | "debug" | "info" | "warn" | "error" |
 if (process.env.SYNGRISI_LOG_LEVEL) {
     log.setLevel(process.env.SYNGRISI_LOG_LEVEL as LogLevelDesc)

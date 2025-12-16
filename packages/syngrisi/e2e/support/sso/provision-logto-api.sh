@@ -161,6 +161,37 @@ configure_sign_in_experience() {
     fi
 }
 
+# Configure admin console onboarding/experience to avoid UI wizard
+configure_admin_experience() {
+    log_step "Configuring admin console experience..."
+
+    # Set a default experience profile to bypass onboarding UI
+    curl -s -X PUT "${LOGTO_ENDPOINT}/api/experience" \
+        -H "Authorization: Bearer $TOKEN" \
+        -H "Content-Type: application/json" \
+        -d '{
+            "branding": {
+                "name": "Syngrisi",
+                "logoUrl": "",
+                "faviconUrl": "",
+                "colors": {
+                    "primary": "#635bff"
+                }
+            },
+            "signInExperience": {
+                "postSignUpRedirectUri": "",
+                "postSignInRedirectUri": ""
+            }
+        }' > /dev/null || true
+
+    curl -s -X POST "${LOGTO_ENDPOINT}/api/experience/profile" \
+        -H "Authorization: Bearer $TOKEN" \
+        -H "Content-Type: application/json" \
+        -d '{}' > /dev/null || true
+
+    log_info "Admin console experience configured (onboarding bypass)"
+}
+
 # Create or update test user
 create_test_user() {
     log_step "Creating test user: $TEST_USER_EMAIL..."
@@ -615,6 +646,7 @@ main() {
     configure_sign_in_experience
     create_test_user
     create_admin_user
+    configure_admin_experience
     create_oidc_app
     create_saml_app
     get_saml_metadata

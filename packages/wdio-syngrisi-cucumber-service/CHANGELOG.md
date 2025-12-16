@@ -1,5 +1,20 @@
 # wdio-syngrisi-cucumber-service
 
+## 3.1.1
+
+### Patch Changes
+
+-   [`3ebe869`](https://github.com/syngrisi/syngrisi/commit/3ebe869da9c9ef67176f00e374d9da7b7139d01d) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - fix(deps): replace @wdio/logger with loglevel and sync dependencies
+
+    -   Replace @wdio/logger with loglevel in core-api package
+    -   Update playwright-bdd to ^8.4.2
+    -   Update vite to ^7.2.6
+    -   Sync zod, got-cjs, winston versions across packages
+    -   Update @changesets/cli to ^2.29.8
+
+-   Updated dependencies [[`3ebe869`](https://github.com/syngrisi/syngrisi/commit/3ebe869da9c9ef67176f00e374d9da7b7139d01d)]:
+    -   @syngrisi/wdio-sdk@3.1.1
+
 ## 3.1.0
 
 ### Patch Changes

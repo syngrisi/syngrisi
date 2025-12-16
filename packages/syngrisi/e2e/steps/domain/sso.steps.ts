@@ -5,6 +5,7 @@ import { AppServerFixture } from '../../support/fixtures/app-server.fixture';
 import type { SSOServerFixture } from '../../support/fixtures/sso-server.fixture';
 import { got } from 'got-cjs';
 import { MongoClient } from 'mongodb';
+import type { TestStore } from '@fixtures';
 
 // Store last response for assertions
 let lastResponse: { status: number; body: any } | null = null;
@@ -176,8 +177,148 @@ When(
         await page.waitForSelector('input[type="password"]', { timeout: 30000 });
         await page.fill('input[type="password"]', password);
         await page.click('button[type="submit"]');
+
+        // Wait for redirect back to app (give more time for cold start + consent)
+        await page.waitForURL(/http:\/\/127\.0\.0\.1:3002|http:\/\/localhost:3002/, { timeout: 120000 });
+        await page.waitForLoadState('domcontentloaded', { timeout: 60000 });
     }
 );
+
+/**
+ * Directly perform Logto OAuth login using provisioned app and user
+ */
+When(
+    'I perform direct Logto SSO login with provisioned user',
+    async ({ page, ssoServer, appServer }: { page: Page; ssoServer: SSOServerFixture; appServer: any }) => {
+        const creds = ssoServer.getProvisionedCredentials();
+        const user = ssoServer.getProvisionedUser();
+        if (!creds?.clientId || !creds?.clientSecret) {
+            throw new Error('Provisioned Logto app credentials not found.');
+        }
+        if (!user?.email || !user?.password) {
+            throw new Error('Provisioned Logto user not found.');
+        }
+
+        const logtoEndpoint = ssoServer.logtoConfig?.endpoint || 'http://localhost:3001';
+        const authUrl = `${logtoEndpoint}/oidc/auth`;
+        const redirectUri = `${appServer?.baseURL || 'http://127.0.0.1:3002'}/v1/auth/sso/oauth/callback`;
+        const url = `${authUrl}?client_id=${encodeURIComponent(creds.clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid%20profile%20email&state=e2e`;
+
+        await page.goto(url, { waitUntil: 'networkidle' });
+        // Logto may redirect to Sign-In Experience at /sign-in?app_id=...
+        // Accept either direct /oidc/auth or /sign-in path.
+        const currentUrl = page.url();
+        if (!(currentUrl.includes('/oidc/auth') || currentUrl.includes('/sign-in'))) {
+            throw new Error(`Failed to open Logto auth page, current URL: ${currentUrl}`);
+        }
+
+        // 2-step login: identifier then password
+        const identifierInput = page.locator('input[name="identifier"]');
+        await identifierInput.waitFor({ state: 'visible', timeout: 60000 });
+        const identifier = user.username || user.email;
+        await identifierInput.fill(identifier);
+        await page.click('button[type="submit"]');
+
+        const passwordInput = page.locator('input[type="password"]');
+        await passwordInput.waitFor({ state: 'visible', timeout: 60000 });
+        await passwordInput.fill(user.password);
+        await page.click('button[type="submit"]');
+
+        await page.waitForURL(new RegExp(`${appServer?.baseURL || 'http://127.0.0.1:3002'}`), { timeout: 120000 });
+        await page.waitForLoadState('domcontentloaded', { timeout: 60000 });
+    }
+);
+
+/**
+ * Login to Logto using provisioned test user on the current Logto page
+ * (relies on SSO button redirect to preserve state)
+ */
+When(
+    'I login to Logto with provisioned user',
+    async ({ page, ssoServer, appServer }: { page: Page; ssoServer: SSOServerFixture; appServer: any }) => {
+        const user = ssoServer.getProvisionedUser();
+        if (!user?.password) {
+            throw new Error('Provisioned Logto user credentials not found.');
+        }
+
+        const identifier = user.username || user.email;
+        if (!identifier) {
+            throw new Error('Provisioned Logto user missing username/email.');
+        }
+
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForLoadState('networkidle');
+
+        // If the Sign in link is present (from sign-up page), navigate to it
+        const signInLink = page.locator('a:has-text("Sign in")');
+        if (await signInLink.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await signInLink.click();
+            await page.waitForLoadState('networkidle');
+        }
+
+        const identifierInput = page.locator('input[name="identifier"]');
+        await identifierInput.waitFor({ state: 'visible', timeout: 90000 });
+        await identifierInput.fill(identifier);
+
+        const passwordField = page.locator('input[type="password"]');
+
+        if (await passwordField.isVisible({ timeout: 2000 }).catch(() => false)) {
+            await passwordField.fill(user.password);
+            await Promise.all([
+                page.waitForNavigation({ waitUntil: 'networkidle', timeout: 30000 }).catch(() => { }),
+                page.click('button[type="submit"]'),
+            ]);
+        } else {
+            await page.click('button[type="submit"]');
+            await passwordField.waitFor({ state: 'visible', timeout: 30000 });
+            await passwordField.fill(user.password);
+            await Promise.all([
+                page.waitForNavigation({ waitUntil: 'networkidle', timeout: 30000 }).catch(() => { }),
+                page.click('button[type="submit"]'),
+            ]);
+        }
+
+        await page.waitForURL(`${appServer?.baseURL || 'http://127.0.0.1:3002'}/**`, { timeout: 120000 });
+        await page.waitForLoadState('networkidle');
+    }
+);
+
+/**
+ * Optionally open Logto Admin console and show the Syngrisi application settings.
+ * Skips entirely when SKIP_DEMO_TESTS=true to keep silent runs fast.
+ */
+When('I show Logto admin application settings', async ({ page }: { page: Page }) => {
+    if (process.env.SKIP_DEMO_TESTS === 'true') {
+        console.log('[Demo] SKIP_DEMO_TESTS is true, skipping Logto admin console preview.');
+        return;
+    }
+
+    const adminUrl = 'http://localhost:3050';
+    await page.goto(adminUrl, { waitUntil: 'networkidle' });
+
+    // Log in to Logto Admin with provisioned admin user
+    const identifierInput = page.locator('input[name="identifier"]');
+    await identifierInput.waitFor({ state: 'visible', timeout: 60000 });
+    await identifierInput.fill('admin');
+    await page.click('button[type="submit"]');
+
+    const passwordInput = page.locator('input[type="password"]');
+    await passwordInput.waitFor({ state: 'visible', timeout: 30000 });
+    await passwordInput.fill('Admin123!');
+    await page.click('button[type="submit"]');
+
+    // Navigate to Applications and open Syngrisi app
+    const applicationsLink = page.locator('a:has-text("Applications")').first();
+    await applicationsLink.waitFor({ state: 'visible', timeout: 60000 });
+    await applicationsLink.click();
+
+    const syngrisiApp = page.locator('text=syngrisi-e2e-app').first();
+    await syngrisiApp.waitFor({ state: 'visible', timeout: 60000 });
+    await syngrisiApp.click();
+
+    // Wait for Redirect URIs section to load (best-effort)
+    await page.waitForSelector('text=Redirect URIs', { timeout: 30000 }).catch(() => { });
+});
 
 /**
  * Fill Logto login form with username (single-page form)
@@ -516,6 +657,344 @@ When(
 // ==========================================
 // Logto Admin Console Step Definitions
 // ==========================================
+
+/**
+ * Complete first-time Logto admin onboarding or log in if admin already exists
+ */
+When(
+    'I complete Logto admin onboarding with username {string} email {string} and password {string}',
+    async (
+        { page, ssoServer, testData }: { page: Page; ssoServer: SSOServerFixture; testData: TestStore },
+        username: string,
+        email: string,
+        password: string
+    ) => {
+        const adminUrl = ssoServer.getProvisionedAdmin()?.consoleUrl || 'http://localhost:3050';
+        await page.goto(adminUrl);
+        await page.waitForLoadState('networkidle');
+
+        // If we landed on a 404 shell, try known sign-in paths
+        const ensureLoginPage = async () => {
+            const identifierInput = page.locator('input[name="identifier"], input[name="username"]');
+            const notFoundText = page.getByText(/404 Not Found|Session not found/i);
+
+            const candidates = [
+                adminUrl,
+                `${adminUrl.replace(/\/$/, '')}/sign-in`,
+                `${adminUrl.replace(/\/$/, '')}/admin`,
+                `${adminUrl.replace(/\/$/, '')}/admin/sign-in`,
+                `${adminUrl.replace(/\/$/, '')}/console`,
+                `${adminUrl.replace(/\/$/, '')}/console/sign-in`,
+            ];
+
+            for (const url of candidates) {
+                await page.goto(url);
+                await page.waitForLoadState('networkidle');
+                if (await identifierInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+                    return;
+                }
+            }
+
+            // If still on 404, surface a clearer error
+            if (await notFoundText.isVisible({ timeout: 3000 }).catch(() => false)) {
+                throw new Error('Logto Admin sign-in page not available (404).');
+            }
+        };
+
+        await ensureLoginPage();
+
+        // If admin already exists, log in and return
+        const identifierInput = page.locator('input[name="identifier"]');
+        if (await identifierInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+            await identifierInput.fill(username);
+            await page.click('button[type="submit"]');
+            await page.waitForSelector('input[type="password"]', { timeout: 30000 });
+            await page.fill('input[type="password"]', password);
+            await Promise.all([
+                page.waitForLoadState('networkidle'),
+                page.click('button[type="submit"]'),
+            ]);
+            testData.set('logtoAdmin', { username, email, password, consoleUrl: adminUrl });
+            return;
+        }
+
+        // Onboarding flow: create first admin account
+        const usernameField = page.locator('input[name="username"], input[name="identifier"]');
+        await usernameField.waitFor({ state: 'visible', timeout: 60000 });
+        await usernameField.fill(username);
+
+        const emailField = page.locator('input[type="email"], input[name="email"]').first();
+        if (await emailField.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await emailField.fill(email);
+        }
+
+        const passwordField = page.locator('input[type="password"]').first();
+        await passwordField.fill(password);
+
+        const createButton = page.getByRole('button', { name: /create|continue|next|sign up|submit/i }).first();
+        await createButton.click();
+        await page.waitForLoadState('networkidle');
+
+        testData.set('logtoAdmin', { username, email, password, consoleUrl: adminUrl });
+    }
+);
+
+/**
+ * Create first Logto admin account (welcome screen)
+ */
+When(
+    'I create first Logto admin with username {string} email {string} and password {string}',
+    async (
+        { page, ssoServer, testData }: { page: Page; ssoServer: SSOServerFixture; testData: TestStore },
+        username: string,
+        email: string,
+        password: string
+    ) => {
+        // Navigate to admin console root explicitly (fresh instance has welcome screen here)
+        const baseUrl = ssoServer.logtoConfig?.adminEndpoint || 'http://localhost:3050';
+        await page.goto(baseUrl, { waitUntil: 'networkidle' });
+
+        // Click "Create account" on welcome screen
+        const createBtn = page.getByRole('button', { name: /create account/i });
+        if (!(await createBtn.isVisible({ timeout: 3000 }).catch(() => false))) {
+            // If we landed on an error/session screen, try to go back to welcome or hash route
+            const back = page.getByRole('link', { name: /back/i }).first();
+            if (await back.isVisible({ timeout: 2000 }).catch(() => false)) {
+                await back.click().catch(() => {});
+                await page.waitForLoadState('networkidle').catch(() => {});
+            }
+            await page.goto(`${baseUrl}/#/welcome`, { waitUntil: 'networkidle' }).catch(() => {});
+            await page.waitForTimeout(500);
+        }
+
+        await createBtn.click();
+        await page.waitForLoadState('networkidle');
+
+        // Fill profile fields
+        const usernameInput = page.getByLabel(/username/i).first();
+        const emailInput = page.getByLabel(/email/i).first();
+        const passwordInput = page.getByLabel(/password/i).first();
+
+        await usernameInput.fill(username);
+        await emailInput.fill(email);
+        await passwordInput.fill(password);
+
+        // Submit
+        const nextBtn = page.getByRole('button', { name: /next|continue|create/i }).first();
+        await nextBtn.click();
+        await page.waitForLoadState('networkidle');
+
+        testData.set('logtoAdmin', { username, email, password, consoleUrl: 'http://localhost:3050' });
+    }
+);
+
+/**
+ * Create OIDC application via Logto Admin UI and store client credentials
+ */
+When(
+    'I create Logto OIDC application named {string} with redirect uri {string}',
+    async ({ page, ssoServer, testData }: { page: Page; ssoServer: SSOServerFixture; testData: TestStore }, appName: string, redirectUri: string) => {
+        const adminConfig = testData.get('logtoAdmin') || ssoServer.getProvisionedAdmin();
+        const baseUrl = (adminConfig && adminConfig.consoleUrl) ? adminConfig.consoleUrl : 'http://localhost:3050';
+
+        // Try direct creation route to skip any onboarding list views
+        await page.goto(`${baseUrl}/applications/create`);
+        await page.waitForLoadState('networkidle');
+
+        // Handle onboarding/experience screens if present
+        const handleExperience = async () => {
+            const ctas = [
+                /start building/i,
+                /get started/i,
+                /continue/i,
+                /next/i,
+                /done/i,
+                /skip/i,
+                /finish/i,
+            ];
+            for (const cta of ctas) {
+                const btn = page.getByRole('button', { name: cta }).first();
+                if (await btn.isVisible({ timeout: 1500 }).catch(() => false)) {
+                    await btn.click().catch(() => {});
+                    await page.waitForLoadState('networkidle').catch(() => {});
+                }
+            }
+        };
+        await handleExperience();
+
+        // Fall back to applications list if direct route did not render form
+        const createButton = page.getByRole('button', { name: /create application|create app|new application|add application/i }).first();
+        if (!(await createButton.isVisible({ timeout: 3000 }).catch(() => false))) {
+            await page.goto(`${baseUrl}/applications`);
+            await page.waitForLoadState('networkidle');
+        }
+
+        // Start app creation from the list view (or confirm we are on create page)
+        if (await createButton.isVisible({ timeout: 5000 }).catch(() => false)) {
+            await createButton.click();
+        }
+
+        // Select Traditional web app type (Logto UI shows cards)
+        const traditionalCard = page.getByText(/traditional web app|traditional web|web app/i).first();
+        await traditionalCard.waitFor({ state: 'visible', timeout: 20000 });
+        await traditionalCard.click();
+
+        const continueButton = page.getByRole('button', { name: /next|continue|create/i }).first();
+        if (await continueButton.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await continueButton.click();
+        }
+
+        // Fill app name and redirect URIs
+        const nameInput = page.getByLabel(/name/i).first();
+        if (await nameInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+            await nameInput.fill(appName);
+        }
+
+        const redirectInput = page.locator('input[type="url"], input[name*="redirect"], input[placeholder*="redirect"]').first();
+        await redirectInput.waitFor({ state: 'visible', timeout: 20000 });
+        await redirectInput.fill(redirectUri);
+        await redirectInput.press('Enter').catch(() => {});
+
+        const postLogoutInput = page.locator('input[name*="postLogout"], input[placeholder*="logout"]').first();
+        if (await postLogoutInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+            const baseRedirect = redirectUri.replace('/v1/auth/sso/oauth/callback', '');
+            await postLogoutInput.fill(baseRedirect);
+        }
+
+        const saveButton = page.getByRole('button', { name: /create|save/i }).first();
+        await saveButton.click();
+        await page.waitForLoadState('networkidle');
+
+        // Capture client credentials from the settings screen
+        const creds = await page.evaluate(() => {
+            const findValue = (labelPattern: RegExp) => {
+                const candidates = Array.from(document.querySelectorAll('label, div, dt, span'));
+                const labelEl = candidates.find((el) => labelPattern.test(el.textContent || ''));
+                if (!labelEl) return null;
+                const parent = labelEl.closest('div, dl, section') || labelEl.parentElement;
+                const code = parent?.querySelector('code, kbd, pre, span');
+                return code?.textContent?.trim() || null;
+            };
+            return {
+                clientId: findValue(/client id|app id/i),
+                clientSecret: findValue(/client secret|app secret/i),
+            };
+        });
+
+        if (!creds.clientId || !creds.clientSecret) {
+            throw new Error('Failed to read client credentials from Logto Admin UI');
+        }
+
+        testData.set('logtoApp', {
+            name: appName,
+            clientId: creds.clientId,
+            clientSecret: creds.clientSecret,
+            redirectUri,
+        });
+    }
+);
+
+/**
+ * Create a test user via Logto Admin UI
+ */
+When(
+    'I create Logto user with username {string} email {string} and password {string}',
+    async ({ page, ssoServer, testData }: { page: Page; ssoServer: SSOServerFixture; testData: TestStore }, username: string, email: string, password: string) => {
+        const adminConfig = testData.get('logtoAdmin') || ssoServer.getProvisionedAdmin();
+        const baseUrl = (adminConfig && adminConfig.consoleUrl) ? adminConfig.consoleUrl : 'http://localhost:3050';
+
+        await page.goto(`${baseUrl}/users`);
+        await page.waitForLoadState('networkidle');
+
+        const createButton = page.getByRole('button', { name: /create user|add user|new user/i }).first();
+        if (await createButton.isVisible({ timeout: 5000 }).catch(() => false)) {
+            await createButton.click();
+        }
+
+        const usernameInput = page.getByLabel(/username/i).first();
+        await usernameInput.waitFor({ state: 'visible', timeout: 20000 });
+        await usernameInput.fill(username);
+
+        const emailInput = page.getByLabel(/email/i).first();
+        if (await emailInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+            await emailInput.fill(email);
+        }
+
+        const passwordInput = page.locator('input[type="password"]').first();
+        await passwordInput.fill(password);
+
+        const saveButton = page.getByRole('button', { name: /create|save/i }).first();
+        await saveButton.click();
+        await page.waitForLoadState('networkidle');
+
+        testData.set('logtoUser', { username, email, password });
+    }
+);
+
+/**
+ * Configure Syngrisi SSO env vars from stored Logto app credentials
+ */
+When(
+    'I configure Syngrisi SSO env from created Logto app',
+    async ({ ssoServer, testData }: { ssoServer: SSOServerFixture; testData: TestStore }) => {
+        const app = testData.get('logtoApp');
+        if (!app?.clientId || !app?.clientSecret) {
+            throw new Error('Logto app credentials are not stored. Create the app first.');
+        }
+
+        const logtoEndpoint = ssoServer.getConfig()?.endpoint || 'http://localhost:3001';
+
+        const envVars: Record<string, string> = {
+            SSO_ENABLED: 'true',
+            SSO_PROTOCOL: 'oauth2',
+            SSO_CLIENT_ID: app.clientId,
+            SSO_CLIENT_SECRET: app.clientSecret,
+            SSO_AUTHORIZATION_URL: `${logtoEndpoint}/oidc/auth`,
+            SSO_TOKEN_URL: `${logtoEndpoint}/oidc/token`,
+            SSO_USERINFO_URL: `${logtoEndpoint}/oidc/me`,
+            SSO_CALLBACK_URL: '/v1/auth/sso/oauth/callback',
+        };
+
+        Object.entries(envVars).forEach(([key, value]) => {
+            process.env[key] = value;
+        });
+
+        testData.set('ssoEnv', envVars);
+    }
+);
+
+/**
+ * Configure Syngrisi SSO env vars from provisioned Logto app (provision-logto-api.sh)
+ */
+When(
+    'I configure Syngrisi SSO env from provisioned Logto app',
+    async ({ ssoServer, testData }: { ssoServer: SSOServerFixture; testData: TestStore }) => {
+        const creds = ssoServer.getProvisionedCredentials();
+        const endpoints = ssoServer.getProvisionedOAuth2Config()?.endpoints || ssoServer.provisionedConfig?.endpoints;
+        if (!creds?.clientId || !creds?.clientSecret) {
+            throw new Error('Provisioned Logto app credentials not found. Ensure provisioning script ran.');
+        }
+
+        const logtoEndpoint = ssoServer.logtoConfig?.endpoint || 'http://localhost:3001';
+
+        const envVars: Record<string, string> = {
+            SSO_ENABLED: 'true',
+            SSO_PROTOCOL: 'oauth2',
+            SSO_CLIENT_ID: creds.clientId,
+            SSO_CLIENT_SECRET: creds.clientSecret,
+            SSO_AUTHORIZATION_URL: endpoints?.authorization || `${logtoEndpoint}/oidc/auth`,
+            SSO_TOKEN_URL: endpoints?.token || `${logtoEndpoint}/oidc/token`,
+            SSO_USERINFO_URL: endpoints?.userinfo || `${logtoEndpoint}/oidc/me`,
+            SSO_CALLBACK_URL: '/v1/auth/sso/oauth/callback',
+        };
+
+        Object.entries(envVars).forEach(([k, v]) => {
+            process.env[k] = v;
+        });
+
+        testData.set('ssoEnv', envVars);
+    }
+);
 
 /**
  * Open Logto Admin Console
