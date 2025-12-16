@@ -3,7 +3,7 @@ import * as React from 'react';
 import { ActionIcon, Group, ScrollArea, Stack, Text, Transition, Chip, Burger, Divider, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconArrowsSort, IconFilter, IconRefresh, IconX } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { RelatedChecksSkeleton } from '@index/components/Tests/Table/Checks/CheckDetails/RelatedChecks/RelatedChecksSkeleton';
 import { RelatedChecksItems } from '@index/components/Tests/Table/Checks/CheckDetails/RelatedChecks/RelatedChecksItems';
@@ -25,6 +25,7 @@ export function RelatedChecks(
     const [filter, setFilter] = useState(['name']);
     const title = related.opened ? 'Close related checks' : 'Open related checks';
     const queryClient = useQueryClient();
+    const viewportRef = useRef<HTMLDivElement>(null);
 
     const hideRelatedChecks = () => {
         sortHandler.close();
@@ -163,10 +164,11 @@ export function RelatedChecks(
                                     mt={4}
                                     style={{ height: '75vh' }}
                                     styles={styles}
+                                    viewportRef={viewportRef}
                                 >
                                     {
                                         related.relatedChecksQuery.infinityQuery.isLoading
-                                            ? (<RelatedChecksSkeleton num={5} infinityQuery={null} />)
+                                            ? (<RelatedChecksSkeleton num={5} infinityQuery={null} scrollRootRef={viewportRef} />)
                                             : (
                                                 related.relatedChecksQuery.infinityQuery.isError
                                                     ? (<Text size="xs" color="red"> Fail to load</Text>)
@@ -185,6 +187,7 @@ export function RelatedChecks(
                                     <RelatedChecksSkeleton
                                         num={3}
                                         infinityQuery={related.relatedChecksQuery.infinityQuery}
+                                        scrollRootRef={viewportRef}
                                     />
                                 </ScrollArea>
                             )

@@ -1,5 +1,5 @@
 import express from 'express';
-import StatusCodes from 'http-status';
+import { HttpStatus } from '@utils';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { Midleware } from '@types';
 import { usersController } from '@controllers';
@@ -87,7 +87,7 @@ registry.registerPath({
     summary: 'Remove user by user ID.',
     tags: ['Users'],
     request: { params: getByIdParamsSchema('userId') },
-    responses: createApiEmptyResponse('No Content', StatusCodes.NO_CONTENT),
+    responses: createApiEmptyResponse('No Content', HttpStatus.NO_CONTENT),
 });
 
 router

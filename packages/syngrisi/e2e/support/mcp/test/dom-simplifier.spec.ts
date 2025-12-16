@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { DOMSimplifier } from '@helpers/dom-simplifier';
 
-test.describe('DOMSimplifier', () => {
+test.describe('DOMSimplifier', { tag: '@no-app-start' }, () => {
   test.describe('CSS class filtering', () => {
     test('should remove Tailwind utility classes', async ({ page }) => {
       await page.setContent(`
@@ -154,10 +154,10 @@ test.describe('DOMSimplifier', () => {
       const result = await simplifier.simplify();
 
       expect(result.elements.size).toBeGreaterThan(0);
-      
+
       const buttonId = result.html.match(/data-ai-id="(ai-\d+)"[^>]*>Click me/)?.[1];
       expect(buttonId).toBeDefined();
-      
+
       if (buttonId) {
         const handle = result.elements.get(buttonId);
         expect(handle).toBeDefined();
@@ -310,7 +310,7 @@ test.describe('DOMSimplifier', () => {
 
       expect(result.html).toContain('content');
       expect(result.html).toContain('Nested content');
-      
+
       const divCount = (result.html.match(/<div/g) || []).length;
       expect(divCount).toBeLessThan(4);
     });
@@ -449,13 +449,13 @@ test.describe('DOMSimplifier', () => {
       expect(result.html).toContain('task-title');
       expect(result.html).toContain('btn');
       expect(result.html).toContain('btn-primary');
-      
+
       expect(result.html).not.toContain('flex');
       expect(result.html).not.toContain('bg-background');
       expect(result.html).not.toContain('text-2xl');
       expect(result.html).not.toContain('shadow-lg');
       expect(result.html).not.toContain('group/sidebar-wrapper');
-      
+
       const reductionPercentage = result.stats.percentageRemoved.overall;
       expect(reductionPercentage).toBeGreaterThan(10);
     });
@@ -494,9 +494,9 @@ test.describe('DOMSimplifier', () => {
       if (buttonMatch) {
         const aiId = buttonMatch[1];
         const handle = simplifier.getElementHandle(aiId);
-        
+
         expect(handle).toBeDefined();
-        
+
         if (handle) {
           const text = await handle.textContent();
           expect(text).toBe('Click me');
@@ -623,7 +623,7 @@ test.describe('DOMSimplifier', () => {
     test('should mark elements outside viewport with data-ai-offscreen', async ({ page }) => {
       // Set a small viewport
       await page.setViewportSize({ width: 800, height: 600 });
-      
+
       await page.setContent(`
         <div>
           <div style="height: 100px;">Visible content in viewport</div>
@@ -638,14 +638,14 @@ test.describe('DOMSimplifier', () => {
       expect(result.html).toContain('Visible content in viewport');
       expect(result.html).toContain('Offscreen button');
       expect(result.html).toContain('data-ai-offscreen="true"');
-      
+
       // Check that the offscreen button has the attribute
       expect(result.html).toMatch(/<button[^>]*data-ai-offscreen="true"[^>]*>Offscreen button/);
     });
 
     test('should not mark viewport elements with data-ai-offscreen', async ({ page }) => {
       await page.setViewportSize({ width: 800, height: 600 });
-      
+
       await page.setContent(`
         <div>
           <button style="display: block;">Visible button</button>
@@ -663,7 +663,7 @@ test.describe('DOMSimplifier', () => {
 
     test('should handle elements partially in viewport', async ({ page }) => {
       await page.setViewportSize({ width: 800, height: 600 });
-      
+
       await page.setContent(`
         <div>
           <div style="height: 550px;">Content</div>
@@ -742,7 +742,7 @@ test.describe('DOMSimplifier', () => {
           <p style="display: block;">Outer shadow text</p>
           <article style="display: block; width: 200px; height: 200px;"></article>
         `;
-        
+
         const article = outerShadow.querySelector('article')!;
         const innerShadow = article.attachShadow({ mode: 'open' });
         innerShadow.innerHTML = '<p style="display: block;">Inner shadow text</p>';

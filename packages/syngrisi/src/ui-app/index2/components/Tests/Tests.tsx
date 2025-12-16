@@ -7,7 +7,7 @@ import {
 } from '@mantine/core';
 import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '@mantine/hooks';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { IconAdjustments, IconFilter } from '@tabler/icons-react';
 import RefreshActionIcon from '@index/components/Tests/Table/RefreshActionIcon';
 import useInfinityScroll from '@shared/hooks/useInfinityScroll';
@@ -117,9 +117,26 @@ export default function Tests({ updateToolbar }: Props) {
         ],
     );
 
+    // Debounce refetch to prevent race conditions when filters change rapidly
+    const refetchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     useEffect(
         function refetchData() {
-            firstPageQuery.refetch();
+            // Clear any pending refetch
+            if (refetchTimeoutRef.current) {
+                clearTimeout(refetchTimeoutRef.current);
+            }
+
+            // Debounce the refetch by 100ms to prevent multiple rapid refetches
+            refetchTimeoutRef.current = setTimeout(() => {
+                firstPageQuery.refetch();
+            }, 100);
+
+            return () => {
+                if (refetchTimeoutRef.current) {
+                    clearTimeout(refetchTimeoutRef.current);
+                }
+            };
         }, [
             query.base_filter,
             query.quick_filter,

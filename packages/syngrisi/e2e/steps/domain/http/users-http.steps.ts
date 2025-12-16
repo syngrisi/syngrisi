@@ -2,6 +2,7 @@ import { When } from '@fixtures';
 import type { AppServerFixture } from '@fixtures';
 import type { TestStore } from '@fixtures';
 import { createLogger } from '@lib/logger';
+import { createAuthHeaders } from '@utils/http-client';
 import { got } from 'got-cjs';
 import { expect } from '@playwright/test';
 
@@ -14,8 +15,22 @@ When(
     logger.info(`Creating test user via ${uri}`);
     const res = await got.get(uri);
     logger.info(`Response: ${res.body}`);
-    const response = JSON.parse(res.body);
+    let response;
+    try {
+      response = JSON.parse(res.body);
+    } catch (e) {
+      throw new Error(`Failed to parse JSON response: ${res.body.substring(0, 200)}...`);
+    }
     logger.info(`Parsed response:`, response);
+
+    // Handle "already exist" case
+    if (response.msg && response.msg.includes("already exist")) {
+      logger.info("User already exists, proceeding.");
+      if (uri.includes('loadTestUser')) {
+        response.username = 'Test';
+      }
+    }
+
     // The endpoint should return an object with username field
     if (!response.username) {
       throw new Error(`Expected username in response, but got: ${JSON.stringify(response)}`);
@@ -36,9 +51,12 @@ When(
     logger.info(`Logging in user "${login}"`);
 
     const res = await got.post(uri, {
-      headers: {
-        'upgrade-insecure-requests': '1',
-      },
+      headers: createAuthHeaders(appServer, {
+        path: '/v1/auth/login',
+        headers: {
+          'upgrade-insecure-requests': '1',
+        },
+      }),
       json: { username: login, password },
     });
 
@@ -75,16 +93,21 @@ When(
     }
 
     const res = await got.get(uri, {
-      headers: {
-        cookie: `connect.sid=${sessionSid}`,
-      },
+      headers: createAuthHeaders(appServer, {
+        sessionId: sessionSid,
+        path: '/v1/auth/apikey',
+      }),
     });
 
     const response = JSON.parse(res.body);
-    const apiKey = response.apikey;
-    logger.info(`API key generated: ${apiKey.substring(0, 10)}...`);
+    testData.set('apiKey', { value: response.apikey });
+    logger.info('API key generated successfully');
 
-    testData.set('apiKey', { value: apiKey });
+    // Small delay to ensure API key is indexed by MongoDB before proceeding
+    // This prevents race conditions where the driver tries to use the API key
+    // before the user document is updated with the hashed key
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    logger.info('API key indexing stabilization complete');
   }
 );
 
@@ -105,9 +128,10 @@ When(
 
     const params = JSON.parse(json);
     const res = await got.post(uri, {
-      headers: {
-        cookie: `connect.sid=${sessionSid}`,
-      },
+      headers: createAuthHeaders(appServer, {
+        sessionId: sessionSid,
+        path: '/v1/users',
+      }),
       json: params,
     });
 
@@ -115,4 +139,3 @@ When(
     logger.info(`User created: ${response.username || response.email || 'unknown'}`);
   }
 );
-

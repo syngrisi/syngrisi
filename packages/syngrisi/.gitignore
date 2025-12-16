@@ -25,6 +25,7 @@ logs/**
 /debug2.js
 /debug.html
 .env
+.env.staging
 /src/server/data/custom_devices.json
 /static/data/custom_devices.json
 mvc/**

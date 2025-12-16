@@ -51,6 +51,7 @@ export default function TestsTable(
     }, [JSON.stringify(query.base_filter), query.app]);
 
     const scrollAreaRef = useRef(null);
+    const viewportRef = useRef<HTMLDivElement>(null);
     // eslint-disable-next-line max-len
     const toggleAllRows = () => setSelection((current: string) => (current.length === flatData.length ? [] : flatData.map((item: ILog) => item.id)));
 
@@ -79,6 +80,7 @@ export default function TestsTable(
             <ScrollArea.Autosize
                 data-test="table-scroll-area"
                 ref={scrollAreaRef}
+                viewportRef={viewportRef}
                 maxHeight="100vh"
                 sx={{ width: size }}
                 pb={124}
@@ -106,7 +108,7 @@ export default function TestsTable(
                     {
                         // eslint-disable-next-line no-nested-ternary
                         infinityQuery.isLoading
-                            ? (<InfinityScrollSkeleton infinityQuery={null} visibleFields={visibleFields} />)
+                            ? (<InfinityScrollSkeleton infinityQuery={null} visibleFields={visibleFields} scrollRootRef={viewportRef} />)
                             : infinityQuery.isError
                                 ? (
                                     <Text color="red">
@@ -126,7 +128,7 @@ export default function TestsTable(
                                     </tbody>
                                 )
                     }
-                    <InfinityScrollSkeleton infinityQuery={infinityQuery} visibleFields={visibleFields} />
+                    <InfinityScrollSkeleton infinityQuery={infinityQuery} visibleFields={visibleFields} scrollRootRef={viewportRef} />
                 </Table>
             </ScrollArea.Autosize>
             <PagesCountAffix
@@ -134,7 +136,7 @@ export default function TestsTable(
                 total={infinityQuery.data?.pages && infinityQuery.data?.pages[0].totalPages}
                 scrollAreaRef={scrollAreaRef}
             />
-            <CheckModal firstPageQuery={firstPageQuery} />
+            <CheckModal firstPageQuery={firstPageQuery} testList={flatData} />
         </>
     );
 }

@@ -22,6 +22,7 @@ import { ViewPortLabel } from '@index/components/Tests/Table/Checks/ViewPortLabe
 import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
 import { Status } from '@shared/components/Check/Status';
 import { PreviewCheckTooltipLabel } from '@index/components/Tests/Table/Checks/PreviewCheckTooltipLabel';
+import { useImagePreloadOnHover } from '@shared/hooks';
 
 interface Props {
     check: any
@@ -36,6 +37,9 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
 
     const imageWeight: number = 24 * sizes[checksViewSize].coefficient;
     const theme = useMantineTheme();
+
+    // Preload all check images (baseline, actual, diff) on hover with high priority
+    const { onMouseEnter: onHoverPreload } = useImagePreloadOnHover(check);
 
     const imageFilename = check.diffId?.filename || check.actualSnapshotId?.filename || check.baselineId?.filename;
     const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
@@ -64,6 +68,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                         <Group
                             data-check={check.name}
                             p="sm"
+                            onMouseEnter={onHoverPreload}
                             sx={{
                                 width: '100%',
                                 borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]}`,
@@ -166,6 +171,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                         // CARD VIEW
                         <Card
                             data-check={check.name}
+                            onMouseEnter={onHoverPreload}
                             sx={{
                                 width: `${imageWeight}%`,
                                 '&:hover': {

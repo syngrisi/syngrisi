@@ -208,7 +208,7 @@ export default function Task({ item }: { item: ITask }) {
                 <Title order={3}>{item.label}</Title>
                 {getStatusBadge()}
             </Group>
-            <Text size="sm">{item.description}</Text>
+            <Text size="sm" data-test="task-description">{item.description}</Text>
             {errorMessage && (
                 <Alert color="red" mt={10}>
                     {errorMessage}
@@ -226,6 +226,7 @@ export default function Task({ item }: { item: ITask }) {
                             size="sm"
                             type="submit"
                             disabled={taskStatus === 'running'}
+                            data-test="task-start-button"
                         >
                             Start Task
                         </Button>

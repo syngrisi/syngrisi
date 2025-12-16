@@ -5,10 +5,13 @@ import { useState } from 'react';
 import HeaderIndex from '@index/components/Header/HeaderIndex';
 import NavBarIndex from '@index/components/Navbar/NavbarIndex';
 import Tests from '@index/components/Tests/Tests';
+import Baselines from '@index/components/Baselines/Baselines';
+import { useLocation } from 'react-router-dom';
 
 export default function IndexLayout() {
     const [breadCrumbs, setBreadCrumbs] = useState<any>([]);
     const [toolbar, setToolbar]: [any[], any] = useState([]);
+    const location = useLocation();
 
     const updateToolbar = (newItem: any, index: number = 0) => {
         setToolbar((prevArr: any[]) => {
@@ -17,6 +20,8 @@ export default function IndexLayout() {
             return newArray;
         });
     };
+
+    const isBaselinesPage = location.pathname.includes('/baselines');
 
     return (
         <AppShell
@@ -27,7 +32,13 @@ export default function IndexLayout() {
                 main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
             })}
         >
-            <Tests updateToolbar={updateToolbar} />
+            <main
+                role="main"
+                aria-label="Test results content"
+                style={{ width: '100%' }}
+            >
+                {isBaselinesPage ? <Baselines updateToolbar={updateToolbar} /> : <Tests updateToolbar={updateToolbar} />}
+            </main>
             <ReactQueryDevtools initialIsOpen={false} />
         </AppShell>
     );

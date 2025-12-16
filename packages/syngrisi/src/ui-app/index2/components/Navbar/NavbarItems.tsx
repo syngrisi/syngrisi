@@ -12,27 +12,30 @@ type Props = {
 
 export function NavbarItems({ infinityQuery, groupByValue, activeItemsHandler }: Props) {
 
-    return infinityQuery.data
-        ? (infinityQuery.data.pages.map((page: IPage<ILog>) => (
-                    page.results.map(
-                        (item: any, index: number) => {
-                            const Item = BaseItemWrapper;
-                            return (
-                                <React.Fragment key={item._id || item.name}>
-                                    <Item
-                                        id={item._id || item.name}
-                                        activeItemsHandler={activeItemsHandler}
-                                        infinityQuery={infinityQuery}
-                                        index={index}
-                                        item={item}
-                                        itemType={groupByValue}
-                                    />
-                                </React.Fragment>
-                            );
-                        },
-                    )
-                )
-            )
+    if (!infinityQuery.data) return [];
+
+    let globalIndex = 0;
+
+    return infinityQuery.data.pages.flatMap((page: IPage<ILog>) => (
+        page.results.map(
+            (item: any) => {
+                const Item = BaseItemWrapper;
+                const currentIndex = globalIndex;
+                globalIndex += 1;
+
+                return (
+                    <React.Fragment key={item._id || item.name}>
+                        <Item
+                            id={item._id || item.name}
+                            activeItemsHandler={activeItemsHandler}
+                            infinityQuery={infinityQuery}
+                            index={currentIndex}
+                            item={item}
+                            itemType={groupByValue}
+                        />
+                    </React.Fragment>
+                );
+            },
         )
-        : [];
+    ));
 }

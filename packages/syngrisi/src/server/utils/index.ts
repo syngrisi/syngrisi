@@ -9,12 +9,18 @@ export { removeEmptyProperties } from './removeEmptyProperties';
 export { default as deserializeIfJSON } from './deserializeIfJSON';
 export { default as prettyCheckParams } from './prettyCheckParams';
 export { waitUntil } from './waitUntil';
+export * from './imageUtils';
 export { paramsGuard } from './paramsGuard';
 export { buildIdentObject } from './buildIdentObject';
 export { calculateAcceptedStatus } from './calculateAcceptedStatus';
 export { ident } from './ident';
 import subDays from './subDays';
 export { errMsg } from './errMsg';
+export { hashSync, generateApiKey } from './hash';
+export { createTable } from './stringTable';
+export { colors } from './colors';
+export { default as HttpStatus } from './httpStatus';
+export { cookieParser } from './cookieParser';
 
 export {
     pick,

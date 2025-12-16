@@ -70,6 +70,7 @@
   },
   "exclude": [
     "tests/**",
+    "e2e/**",
     "example",
     "scripts",
     "build",

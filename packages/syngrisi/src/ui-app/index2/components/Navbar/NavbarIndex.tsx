@@ -15,7 +15,7 @@ import {
     IconRefresh,
 } from '@tabler/icons-react';
 import { createStyles } from '@mantine/styles';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useToggle } from '@mantine/hooks';
 import useInfinityScroll from '@shared/hooks/useInfinityScroll';
 
@@ -65,6 +65,8 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
     const theme = useMantineTheme();
     const { classes } = useStyles();
     const { query, setQuery } = useParams();
+
+    const scrollViewportRef = useRef<HTMLDivElement>(null);
 
     const [groupByValue, setGroupByValue] = useState(query.groupBy || 'runs');
     const activeItemsHandler = useNavbarActiveItems({ groupByValue, classes });
@@ -134,9 +136,11 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
                         <Navbar.Section
                             grow
                             component={ScrollArea}
+                            viewportRef={scrollViewportRef}
                             styles={{ scrollbar: { marginTop: '74px' } }}
                             pr={12}
                             pb={90}
+                            data-test="navbar-scroll-area"
                         >
                             <Group
                                 position="apart"
@@ -215,6 +219,7 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
                                             itemType={groupByValue}
                                             num={20}
                                             itemClass={classes.navbarItem}
+                                            scrollRootRef={scrollViewportRef}
                                         />
                                     )
                                     : infinityQuery.status === 'error'
@@ -226,6 +231,7 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
                                                 sx={{ width: '100%' }}
                                                 styles={{ itemWrapper: { width: '100%' } }}
                                                 pt={4}
+                                                data-test-navbar-ready={!infinityQuery.isFetching ? 'true' : 'false'}
                                             >
                                                 {/* eslint-disable-next-line max-len */}
                                                 <NavbarItems
@@ -240,6 +246,7 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
                                 itemType={groupByValue}
                                 infinityQuery={infinityQuery}
                                 itemClass={classes.navbarItem}
+                                scrollRootRef={scrollViewportRef}
                             />
                         </Navbar.Section>
                     </Navbar>

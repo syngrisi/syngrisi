@@ -1,6 +1,6 @@
 {
   "name": "wdio-syngrisi-cucumber-service",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "WDIO Service for Syngrisi visual tests using Cucumber",
   "main": "dist/index.js",
   "np": {
@@ -19,8 +19,8 @@
     "clean": "rimraf ./dist",
     "compile": "babel src/ -d dist/ --config-file ./babel.config.js",
     "test": "ls",
-    "install:local": "npm rm @syngrisi/syngrisi-wdio-sdk && npm install -S ../wdio-sdk",
-    "install:global": "npm rm @syngrisi/syngrisi-wdio-sdk && npm install -S @syngrisi/syngrisi-wdio-sdk",
+    "install:local": "yarn remove @syngrisi/syngrisi-wdio-sdk && yarn add ../wdio-sdk",
+    "install:global": "yarn remove @syngrisi/syngrisi-wdio-sdk && yarn add @syngrisi/syngrisi-wdio-sdk",
     "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
   },
   "keywords": [
@@ -31,25 +31,25 @@
   "author": "Viktar Silakou",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "7.16.0",
-    "@babel/core": "^7.16.0",
-    "@babel/plugin-proposal-class-properties": "^7.16.0",
-    "@babel/plugin-proposal-function-bind": "7.16.0",
-    "@babel/plugin-proposal-optional-catch-binding": "7.16.0",
-    "@babel/plugin-transform-runtime": "^7.16.4",
-    "@babel/preset-env": "^7.16.4",
-    "@babel/register": "^7.16.0",
-    "babel-plugin-source-map-support": "^2.1.3",
-    "eslint": "^8.3.0",
+    "@babel/cli": "^7.28.3",
+    "@babel/core": "^7.28.5",
+    "@babel/plugin-transform-class-properties": "^7.27.1",
+    "@babel/plugin-proposal-function-bind": "^7.27.1",
+    "@babel/plugin-transform-optional-catch-binding": "^7.27.1",
+    "@babel/plugin-transform-runtime": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@babel/register": "^7.28.3",
+    "babel-plugin-source-map-support": "^2.2.0",
+    "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-import": "^2.32.0",
     "npm-run-all": "^4.1.5"
   },
   "dependencies": {
-    "@syngrisi/wdio-sdk": "^2.3.0",
-    "@wdio/logger": "^7.7.0",
-    "faker": "^5.5.3",
-    "rimraf": "^3.0.2"
+    "@syngrisi/wdio-sdk": "^2.4.0",
+    "@wdio/logger": "^7.26.0",
+    "@faker-js/faker": "^10.1.0",
+    "rimraf": "^6.1.2"
   },
   "publishConfig": {
     "access": "public"

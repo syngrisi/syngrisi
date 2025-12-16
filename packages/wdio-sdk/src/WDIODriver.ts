@@ -1,4 +1,4 @@
-import hasha from 'hasha'
+import { createHash } from 'node:crypto'
 import { LogLevelDesc } from 'loglevel'
 
 import { default as logger } from '@wdio/logger'
@@ -267,7 +267,7 @@ export class WDIODriver {
                 browserVersion: this.params.test.browserVersion,
                 browserFullVersion: this.params.test.browserFullVersion,
 
-                hashCode: hasha(imageBuffer),
+                hashCode: createHash('sha512').update(imageBuffer).digest('hex'),
                 domDump: domDump,
             }
             paramsGuard(opts, 'check, opts', CheckOptsSchema)
@@ -284,6 +284,38 @@ export class WDIODriver {
             return result
         } catch (e: any) {
             log.error(`cannot create check, params: '${JSON.stringify(params)}' opts: '${JSON.stringify(opts)}, error: '${e.stack || e.toString()}'`)
+            throw e
+        }
+    }
+
+    /**
+     * Accepts a check by setting a new baseline for it.
+     * @param {string} checkId - The unique identifier of the check to accept.
+     * @param {string} baselineId - The unique identifier of the baseline to set as the new accepted baseline.
+     * @param {boolean} [suppressErrors=false] - Flag to suppress thrown errors.
+     * @returns {Promise<CheckResponse | ErrorObject>} The accept check response or an error object.
+     * @example
+     * const driver = new WDIODriver({ url: 'http://syngrisi-server.com', apiKey: 'your-api-key' });
+     * const result = await driver.acceptCheck({
+     *   checkId: 'check-id-123',
+     *   baselineId: 'baseline-id-456'
+     * });
+     */
+    async acceptCheck({ checkId, baselineId, suppressErrors = false }: {
+        checkId: string,
+        baselineId: string,
+        suppressErrors?: boolean
+    }): Promise<CheckResponse | ErrorObject> {
+        try {
+            const result = await this.api.acceptCheck(checkId, baselineId)
+
+            if ((result as ErrorObject).error && !suppressErrors) {
+                throw `❌ Accept Check error: ${JSON.stringify(result, null, '  ')}`
+            }
+            return result
+        } catch (e: any) {
+            const eMsg = `Cannot accept check, checkId: '${checkId}', baselineId: '${baselineId}', error: '${e.stack || e.toString()}'`
+            log.error(eMsg)
             throw e
         }
     }

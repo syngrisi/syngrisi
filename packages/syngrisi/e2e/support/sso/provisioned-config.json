@@ -1,0 +1,68 @@
+{
+  "oauth2": {
+    "app": {
+      "clientId": "syngrisi-e2e-app",
+      "clientSecret": "syngrisi-test-secret-12345",
+      "appName": "syngrisi-e2e-test"
+    },
+    "endpoints": {
+      "authorization": "http://localhost:3001/oidc/auth",
+      "token": "http://localhost:3001/oidc/token",
+      "userinfo": "http://localhost:3001/oidc/me"
+    },
+    "env": {
+      "SSO_ENABLED": "true",
+      "SSO_PROTOCOL": "oauth2",
+      "SSO_CLIENT_ID": "syngrisi-e2e-app",
+      "SSO_CLIENT_SECRET": "syngrisi-test-secret-12345",
+      "SSO_AUTHORIZATION_URL": "http://localhost:3001/oidc/auth",
+      "SSO_TOKEN_URL": "http://localhost:3001/oidc/token",
+      "SSO_USERINFO_URL": "http://localhost:3001/oidc/me"
+    }
+  },
+  "saml": {
+    "appId": "qlx3cex83i0cpo58ogrul",
+    "spEntityId": "syngrisi-e2e-sp",
+    "idpEntityId": "http://localhost:3001/saml/qlx3cex83i0cpo58ogrul",
+    "acsUrl": "http://localhost:3002/v1/auth/sso/saml/callback",
+    "idpEndpoint": "http://localhost:3001",
+    "metadataUrl": "http://localhost:3001/api/saml-applications/qlx3cex83i0cpo58ogrul/metadata",
+    "certificate": "MIIEzjCCAragAwIBAgIQUmgzxPsgdDcl8r5cuAXbgTANBgkqhkiG9w0BAQUFADAwMREwDwYDVQQDEwhsb2d0by5pbzEOMAwGA1UEChMFTG9ndG8xCzAJBgNVBAYTAlVTMB4XDTI1MTIwNjE0MzA1NVoXDTI4MTIwNjE0MzA1NVowFjEUMBIGA1UEAxMLZXhhbXBsZS5jb20wggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCi1TZVhnC9oVT8j+n5nBN8UJu5DITS2nlHnx9bIXD21MoPGUIqELNsFTSereOzBC/K2d5/wmeT544FK/k0hS/59FvTz2//Yb/4OAtwI8iaJdII8Jw4ybMDzhv6N3niV46BBi6ZsPIxsqa1J59+o+lQ451CBvOH4hudgtz4zfEs+bo+tAko6KsDvwBOJiU2lFV2FTQkO6EK0/aOqSzlaGZ+zvBZjEuheFi3R7KlnCFiYvvIPiYiOJeC2F/hktutFY9AOzacYu62e7cG9XCAtwUlr8pmBX//x2Z1H82rTv7FB5IINOF3mVTmTZjVAZPsHPt7Pz4uS0tyEzVeFD0U0YUCRJZyQd9n2U1YK2KDzDADOAtz/XJ+Yw3tD/1y/mJqXSHotlpJDV4GWxfhmtmsbEGJVNoxEgb3st3ZcGKLbtMT80PBx4GT9Ilc0rdZ9e9E+WqDyxgw9knupqW6z3FT9W/dDLrxfFg79dT6taAUffud22oQwC97DoHxCLMMjJumN9I6r/O2wxyYv9mGfNGjGxGJA/EvxNvlTzd2ysbnz2XHe1Js1FVry243BDbawxhjlC4BcAhO/nXSNo961DgFUBVsjdy6AwO85RlXoob4gSfRFQ2YtxaGB6coKha2awDV5gtDoiLrjTTVDse9F9VcqNc6+mHQt3Z9g8Yy31movJeo1wIDAQABMA0GCSqGSIb3DQEBBQUAA4ICAQA+jYwgG3AQlNUGye3MHIDTgvAkoddbL+UweGbIYdgwe0vp5C8cOp6USsx0Z8ln0BWo0ntAS1zJCxYlmfepwuYFqfsKbwbtITVf62WKG2lgqg7br/fQRxAowIEzkaZx+aDrKpB4Rd6dJ7auUx0jWYANj2Dk4o4/ujEriLWUocudPuc/Buc0YHbw0g5MeaKQBjTR9M3a53TpkdHrONLq+2rzgKAFRFPh4M4JkJc5IoasR1bn8nc3GoawzpbhAo2rR2Et7WYGoXUsq4qZaM8WyKTGb++/CgNefDS2DD1B2WJYQ/Q+nf1GbWP54IY3AJst4I0sR6Se3KfrFop9LJESlJ0mcTOwxf4QdbnrHWnbq0+eX65hDiotL/OAqc4n+i5C2/p+XI4Bti/Hb6c26BKE6erBRqLzyhd+KHCD56xQLu2LCowDud1H/ZkMQTHktaodpa4RFUoQVSOjEDT9bI2VRo+evDlWdcHqCKpLWnztxOLp7vQJaRwiuXrrVtHid+/1KoUPvogiqUc46ft07d8upJ31X2lph1TVluLVshM1ZVsIhVXR/W5Bo0wN8VM14QiFGxFPiwial2ccAJbwHYYK+FYQXDdQcRzeY/T1C58uQNfp7rpm3awk/v5dk1/mavNuNvRu2KtMuPfu5ann0o33YbksNuMbSNkdE0iIm2BpLofLqQ==",
+    "endpoints": {
+      "entryPoint": "http://localhost:3001/api/saml/qlx3cex83i0cpo58ogrul/authn",
+      "issuer": "http://localhost:3001/saml/qlx3cex83i0cpo58ogrul"
+    },
+    "env": {
+      "SSO_ENABLED": "true",
+      "SSO_PROTOCOL": "saml",
+      "SSO_ENTRY_POINT": "http://localhost:3001/api/saml/qlx3cex83i0cpo58ogrul/authn",
+      "SSO_ISSUER": "syngrisi-e2e-sp",
+      "SSO_IDP_ISSUER": "http://localhost:3001/saml/qlx3cex83i0cpo58ogrul",
+      "SSO_CERT": "MIIEzjCCAragAwIBAgIQUmgzxPsgdDcl8r5cuAXbgTANBgkqhkiG9w0BAQUFADAwMREwDwYDVQQDEwhsb2d0by5pbzEOMAwGA1UEChMFTG9ndG8xCzAJBgNVBAYTAlVTMB4XDTI1MTIwNjE0MzA1NVoXDTI4MTIwNjE0MzA1NVowFjEUMBIGA1UEAxMLZXhhbXBsZS5jb20wggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCi1TZVhnC9oVT8j+n5nBN8UJu5DITS2nlHnx9bIXD21MoPGUIqELNsFTSereOzBC/K2d5/wmeT544FK/k0hS/59FvTz2//Yb/4OAtwI8iaJdII8Jw4ybMDzhv6N3niV46BBi6ZsPIxsqa1J59+o+lQ451CBvOH4hudgtz4zfEs+bo+tAko6KsDvwBOJiU2lFV2FTQkO6EK0/aOqSzlaGZ+zvBZjEuheFi3R7KlnCFiYvvIPiYiOJeC2F/hktutFY9AOzacYu62e7cG9XCAtwUlr8pmBX//x2Z1H82rTv7FB5IINOF3mVTmTZjVAZPsHPt7Pz4uS0tyEzVeFD0U0YUCRJZyQd9n2U1YK2KDzDADOAtz/XJ+Yw3tD/1y/mJqXSHotlpJDV4GWxfhmtmsbEGJVNoxEgb3st3ZcGKLbtMT80PBx4GT9Ilc0rdZ9e9E+WqDyxgw9knupqW6z3FT9W/dDLrxfFg79dT6taAUffud22oQwC97DoHxCLMMjJumN9I6r/O2wxyYv9mGfNGjGxGJA/EvxNvlTzd2ysbnz2XHe1Js1FVry243BDbawxhjlC4BcAhO/nXSNo961DgFUBVsjdy6AwO85RlXoob4gSfRFQ2YtxaGB6coKha2awDV5gtDoiLrjTTVDse9F9VcqNc6+mHQt3Z9g8Yy31movJeo1wIDAQABMA0GCSqGSIb3DQEBBQUAA4ICAQA+jYwgG3AQlNUGye3MHIDTgvAkoddbL+UweGbIYdgwe0vp5C8cOp6USsx0Z8ln0BWo0ntAS1zJCxYlmfepwuYFqfsKbwbtITVf62WKG2lgqg7br/fQRxAowIEzkaZx+aDrKpB4Rd6dJ7auUx0jWYANj2Dk4o4/ujEriLWUocudPuc/Buc0YHbw0g5MeaKQBjTR9M3a53TpkdHrONLq+2rzgKAFRFPh4M4JkJc5IoasR1bn8nc3GoawzpbhAo2rR2Et7WYGoXUsq4qZaM8WyKTGb++/CgNefDS2DD1B2WJYQ/Q+nf1GbWP54IY3AJst4I0sR6Se3KfrFop9LJESlJ0mcTOwxf4QdbnrHWnbq0+eX65hDiotL/OAqc4n+i5C2/p+XI4Bti/Hb6c26BKE6erBRqLzyhd+KHCD56xQLu2LCowDud1H/ZkMQTHktaodpa4RFUoQVSOjEDT9bI2VRo+evDlWdcHqCKpLWnztxOLp7vQJaRwiuXrrVtHid+/1KoUPvogiqUc46ft07d8upJ31X2lph1TVluLVshM1ZVsIhVXR/W5Bo0wN8VM14QiFGxFPiwial2ccAJbwHYYK+FYQXDdQcRzeY/T1C58uQNfp7rpm3awk/v5dk1/mavNuNvRu2KtMuPfu5ann0o33YbksNuMbSNkdE0iIm2BpLofLqQ=="
+    }
+  },
+  "user": {
+    "email": "test@syngrisi.test",
+    "password": "Test123!",
+    "username": "testuser"
+  },
+  "app": {
+    "clientId": "syngrisi-e2e-app",
+    "clientSecret": "syngrisi-test-secret-12345",
+    "appName": "syngrisi-e2e-test"
+  },
+  "endpoints": {
+    "authorization": "http://localhost:3001/oidc/auth",
+    "token": "http://localhost:3001/oidc/token",
+    "userinfo": "http://localhost:3001/oidc/me"
+  },
+  "env": {
+    "SSO_ENABLED": "true",
+    "SSO_PROTOCOL": "oauth2",
+    "SSO_CLIENT_ID": "syngrisi-e2e-app",
+    "SSO_CLIENT_SECRET": "syngrisi-test-secret-12345",
+    "SSO_AUTHORIZATION_URL": "http://localhost:3001/oidc/auth",
+    "SSO_TOKEN_URL": "http://localhost:3001/oidc/token",
+    "SSO_USERINFO_URL": "http://localhost:3001/oidc/me"
+  }
+}

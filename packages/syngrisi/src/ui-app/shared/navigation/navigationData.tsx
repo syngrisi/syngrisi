@@ -11,6 +11,7 @@ import {
     IconStatusChange,
     IconUser,
     IconUserExclamation,
+    IconPhoto,
 } from '@tabler/icons-react';
 import { INavDataItem } from '@shared/navigation/interfaces';
 
@@ -96,6 +97,15 @@ export function navigationData(): INavDataItem[] {
         //     ],
         // },
         {
+            title: 'Baselines',
+            description: 'Baselines Management',
+            group: 'main',
+            icon: <IconPhoto size={18} />,
+            crumbs: [
+                { title: 'Baselines', href: '/baselines' },
+            ],
+        },
+        {
             title: 'Admin Panel',
             description: 'Visit Admin Panel',
             group: 'main',
@@ -173,6 +183,16 @@ export function navigationData(): INavDataItem[] {
                 { title: 'Admin', href: '/admin' },
                 { title: 'Tasks', href: '/admin/tasks' },
                 { title: 'Handle Orphan Files', href: '/admin/tasks/handle_orphan_files' },
+            ],
+        },
+        {
+            title: 'Task: Handle Orphan Baselines',
+            description: 'Find and remove orphan baselines',
+            group: 'tasks',
+            crumbs: [
+                { title: 'Admin', href: '/admin' },
+                { title: 'Tasks', href: '/admin/tasks' },
+                { title: 'Handle Orphan Baselines', href: '/admin/tasks/handle_orphan_baselines' },
             ],
         },
         {

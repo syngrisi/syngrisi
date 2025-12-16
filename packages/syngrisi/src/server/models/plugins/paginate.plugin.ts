@@ -18,11 +18,18 @@ const paginate = (schema: Schema) => {
     let sort: string | object;
     if (options.sortBy) {
       const sortingCriteria: string[] = [];
+      let primaryOrder = 'desc'; // Track order of the first sort criterion
       options.sortBy.split(',')
-        .forEach((sortOption: string) => {
+        .forEach((sortOption: string, index: number) => {
           const [key, order] = sortOption.split(':');
+          if (index === 0) primaryOrder = order || 'asc';
           sortingCriteria.push((order === 'desc' ? '-' : '') + key);
         });
+      // Add _id as secondary sort to ensure stable ordering when primary field values are equal
+      // Use same direction as the primary sort
+      if (!sortingCriteria.some(s => s === '_id' || s === '-_id')) {
+        sortingCriteria.push((primaryOrder === 'desc' ? '-' : '') + '_id');
+      }
       sort = sortingCriteria.join(' ');
     } else {
       sort = { _id: -1 };
@@ -32,7 +39,12 @@ const paginate = (schema: Schema) => {
     const page = options.page && parseInt(options.page.toString(), 10) > 0 ? parseInt(options.page.toString(), 10) : 1;
     const skip = (page - 1) * limit;
 
-    const countPromise = this.countDocuments(filter).exec();
+    // Prefer fast estimation for unfiltered queries on large collections; fall back to exact counts when filters are used.
+    const countStrategy = options.countStrategy
+      ?? (filter && Object.keys(filter).length === 0 ? 'estimated' : 'exact');
+    const countPromise = countStrategy === 'estimated'
+      ? this.estimatedDocumentCount().exec()
+      : this.countDocuments(filter).exec();
     let docsPromise = this.find(filter)
       .sort(sort)
       .skip(skip)

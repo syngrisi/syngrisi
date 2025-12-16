@@ -67,3 +67,4 @@ build
 .DS_Store
 *.tsbuildinfo
 tests/*.js
+e2e/**/*.js

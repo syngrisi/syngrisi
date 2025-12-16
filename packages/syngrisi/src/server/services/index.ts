@@ -9,6 +9,9 @@ import * as tasksService from './tasks.service';
 import * as clientService from './client.service';
 import * as usersService from './user.service';
 import * as checkService from './check.service';
+import * as testRunService from './test-run.service';
+import * as snapshotFileService from './snapshot-file.service';
+import * as comparisonService from './comparison.service';
 
 export {
     runService,
@@ -21,4 +24,7 @@ export {
     clientService,
     usersService,
     checkService,
+    testRunService,
+    snapshotFileService,
+    comparisonService,
 };

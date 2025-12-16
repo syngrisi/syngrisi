@@ -3,11 +3,52 @@ import type { AppServerFixture } from '@fixtures';
 import type { TestStore } from '@fixtures';
 
 export interface HttpRequestOptions {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   json?: Record<string, unknown>;
   form?: Record<string, unknown>;
   body?: string;
   headers?: Record<string, string>;
+}
+
+export interface AuthHeaderOptions {
+  sessionId?: string;
+  apiKey?: string;
+  path?: string;
+  headers?: Record<string, string>;
+}
+
+export function createSameOriginHeaders(appServer: AppServerFixture, path = '/'): Record<string, string> {
+  try {
+    const base = new URL(appServer.baseURL);
+    const referer = new URL(path, base).toString();
+
+    return {
+      origin: base.origin,
+      referer,
+    };
+  } catch {
+    return {};
+  }
+}
+
+export function createAuthHeaders(
+  appServer: AppServerFixture,
+  options: AuthHeaderOptions = {}
+): Record<string, string> {
+  const { sessionId, apiKey, path = '/', headers = {} } = options;
+  const authHeaders: Record<string, string> = {
+    ...createSameOriginHeaders(appServer, path),
+    ...headers,
+  };
+
+  if (sessionId) {
+    authHeaders.cookie = `connect.sid=${sessionId}`;
+  }
+  if (apiKey) {
+    authHeaders.apikey = apiKey;
+  }
+
+  return authHeaders;
 }
 
 export async function requestWithSession(
@@ -18,7 +59,16 @@ export async function requestWithSession(
 ): Promise<{ raw: any; json: any }> {
   const sessionSid = testData.get('lastSessionId') as string | undefined;
 
+  const targetPath = (() => {
+    try {
+      return new URL(uri).pathname || '/';
+    } catch {
+      return '/';
+    }
+  })();
+
   const headers: Record<string, string> = {
+    ...createSameOriginHeaders(appServer, targetPath),
     ...options.headers,
   };
 
@@ -57,5 +107,4 @@ export async function requestWithSession(
     json,
   };
 }
-
 

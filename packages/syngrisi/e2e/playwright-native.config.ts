@@ -7,6 +7,7 @@ export const confObject = {
     timeout: config.expectTimeout
   },
   globalSetup: './support/global-setup.ts',
+  globalTeardown: './support/global-teardown.ts',
   fullyParallel: true,
   retries: env.CI ? config.retriesCI : config.retriesLocal,
   outputDir: './reports/test-artifacts',
@@ -25,7 +26,7 @@ export const confObject = {
     baseURL: env.E2E_BASE_URL,
     headless: !env.PLAYWRIGHT_HEADED,
     trace: env.E2E_FORCE_TRACE ? 'on' : (env.CI ? 'on-first-retry' : 'on'),
-    actionTimeout: 5000,
+    actionTimeout: 7000,
     screenshot: 'only-on-failure'
   },
   projects: [
@@ -34,7 +35,7 @@ export const confObject = {
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1366, height: 768 }
-      }
+      },
     }
   ]
 } satisfies PlaywrightTestConfig;

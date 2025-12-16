@@ -1,0 +1,43 @@
+metadata:
+  category: common/debug
+  generatedAt: '2025-12-05T04:19:37.324Z'
+  totalFiles: 1
+  totalSteps: 9
+  sourceFiles:
+    - steps/common/debug.steps.ts
+steps:
+  - pattern: I fail
+    description: ''
+    line: 307
+  - pattern: I log current URL
+    description: ''
+    line: 312
+  - pattern: I pause
+    description: ''
+    line: 274
+  - pattern: I PAUSE
+    description: ''
+    line: 265
+  - pattern: I pause for {int} ms
+    description: |-
+      Pauses execution for a specified number of milliseconds.
+      Useful for waiting for async operations or animations to complete.
+
+      @example
+      ```gherkin
+      When I pause for 1000 ms
+      When I pause for 500 ms
+      ```
+    line: 302
+  - pattern: 'I pause with phrase: {string}'
+    description: ''
+    line: 281
+  - pattern: I start the debug MCP Test Engine
+    description: ''
+    line: 323
+  - pattern: 'I start the MCP test engine with "codex":'
+    description: ⚠️ experimental, not used widely yet
+    line: 334
+  - pattern: I test
+    description: ''
+    line: 318

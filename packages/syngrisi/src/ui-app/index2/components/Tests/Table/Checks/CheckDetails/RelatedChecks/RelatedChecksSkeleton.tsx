@@ -6,16 +6,21 @@ import { useEffect } from 'react';
 interface Props {
     num: number
     infinityQuery: any
+    scrollRootRef?: React.RefObject<HTMLDivElement>
 }
 
-export function RelatedChecksSkeleton({ num, infinityQuery }: Props) {
-    const { ref, inView } = useInView();
+export function RelatedChecksSkeleton({ num, infinityQuery, scrollRootRef }: Props) {
+    const { ref, inView } = useInView({
+        root: scrollRootRef?.current,
+        rootMargin: '0px',
+        threshold: 0.1,
+    });
 
     useEffect(() => {
-        if (inView && infinityQuery) {
+        if (inView && infinityQuery && !infinityQuery.isFetchingNextPage) {
             infinityQuery.fetchNextPage();
         }
-    }, [inView]);
+    }, [inView, infinityQuery?.isFetchingNextPage]);
 
     return (
         <Stack ref={ref}>

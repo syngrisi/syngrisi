@@ -4,8 +4,9 @@ import type { ElementTarget } from '@params';
 import { getLabelLocator, getLocatorQuery, getRoleLocator } from '@helpers/locators';
 import { AriaRole } from '@helpers/types';
 import { renderTemplate } from '@helpers/template';
-import type { TestStore } from '@fixtures';
+import type { TestStore, AppServerFixture } from '@fixtures';
 import { createLogger } from '@lib/logger';
+import { ensureServerReady } from '@utils/app-server';
 
 const logger = createLogger('ActionsSteps');
 const SAVE_IGNORE_REGION_SELECTOR = /data-check\s*=\s*['"]save-ignore-region['"]/i;
@@ -256,6 +257,45 @@ When(
 );
 
 /**
+ * Step definition: `When I fill {string} into {role} {string}`
+ *
+ * @param value - Text to input into the control.
+ * @param role - {@link AriaRole} derived from `{role}`.
+ * @param name - Accessible name identifying the control.
+ *
+ * @example
+ * ```gherkin
+ * When I fill "user" into textbox "Username"
+ * ```
+ */
+When(
+  'I fill {string} into {role} {string}',
+  async ({ page, testData }, value: string, role: AriaRole, name: string) => {
+    const renderedValue = renderTemplate(value, testData);
+    const renderedName = renderTemplate(name, testData);
+    const locator = getRoleLocator(page, role, renderedName);
+    await locator.fill(renderedValue);
+  }
+);
+
+When(
+  'I fill {string} into element with placeholder {string}',
+  async ({ page, testData }, value: string, placeholder: string) => {
+    const renderedValue = renderTemplate(value, testData);
+    const renderedPlaceholder = renderTemplate(placeholder, testData);
+    await page.getByPlaceholder(renderedPlaceholder).fill(renderedValue);
+  }
+);
+
+Then(
+  'the element with placeholder {string} should be visible for {int} sec',
+  async ({ page, testData }, placeholder: string, seconds: number) => {
+    const renderedPlaceholder = renderTemplate(placeholder, testData);
+    await page.getByPlaceholder(renderedPlaceholder).waitFor({ state: 'visible', timeout: seconds * 1000 });
+  }
+);
+
+/**
  * Step definition: `When I wait for "{string}" seconds`
  *
  * Waits for the specified number of seconds, accepting templated values.
@@ -284,7 +324,30 @@ When(
     const trimmedJs = js.trim();
     const expression = trimmedJs.includes('return') ? trimmedJs : `return (${trimmedJs});`;
     const wrappedFunction = `(() => { ${expression} })()`;
-    await page.waitForFunction(wrappedFunction, { timeout: timeoutSeconds * 1000 });
+
+    // Custom polling implementation to bypass global actionTimeout
+    const pollingInterval = 100; // Check every 100ms
+    const timeoutMs = timeoutSeconds * 1000;
+    const startTime = Date.now();
+
+    while (true) {
+      try {
+        const result = await page.evaluate(wrappedFunction);
+        if (result) {
+          return; // Condition met
+        }
+      } catch (error) {
+        // Ignore evaluation errors and continue polling
+      }
+
+      if (Date.now() - startTime >= timeoutMs) {
+        throw new Error(
+          `Timeout ${timeoutSeconds}s exceeded waiting for javascript condition:\n${trimmedJs}`
+        );
+      }
+
+      await page.waitForTimeout(pollingInterval);
+    }
   }
 );
 
@@ -345,9 +408,19 @@ When(/I open (?:url|site) "(.*)"/, async ({ page, testData }, url) => {
   await page.goto(parsedUrl);
 });
 
-When('I open the url {string}', async ({ page, testData }, url: string) => {
+When('I open the url {string}', async ({ page, testData, appServer }: { page: Page; testData: TestStore; appServer: AppServerFixture }, url: string) => {
   const parsedUrl = testData.renderTemplate(url);
-  await page.goto(parsedUrl);
+  logger.info(`Navigating to URL: ${parsedUrl}`);
+
+  // Ensure server is ready before navigation if it looks like an app URL
+  // Check both full URL and relative paths (starting with /)
+  const isAppUrl = (appServer.baseURL && parsedUrl.startsWith(appServer.baseURL)) || parsedUrl.startsWith('/');
+  if (isAppUrl && appServer.serverPort) {
+    await ensureServerReady(appServer.serverPort);
+  }
+
+  // Use networkidle to ensure all network requests complete (React Query data loading)
+  await page.goto(parsedUrl, { waitUntil: 'networkidle' });
 });
 
 When('I set window size: {string}', async ({ page }, viewport: string) => {
@@ -361,11 +434,12 @@ When('I refresh page', async ({ page }) => {
 
 When('I wait for canvas to be ready', async ({ page }) => {
   await page.waitForFunction(() => {
-    if (typeof mainView === 'undefined' || !mainView?.canvas) {
+    const globalMain = (window as any).mainView;
+    if (typeof globalMain === 'undefined' || !globalMain?.canvas) {
       return false;
     }
     // Check that canvas is initialized and has objects
-    return mainView.canvas.getObjects().length > 0;
+    return globalMain.canvas.getObjects().length > 0;
   }, { timeout: 10000 });
 
   // Wait for resizeImageIfNeeded to complete (it uses setTimeout(10))
@@ -373,16 +447,21 @@ When('I wait for canvas to be ready', async ({ page }) => {
 });
 
 When('I wait for viewportTransform to stabilize', async ({ page }) => {
-  const maxAttempts = 20; // 20 seconds maximum
+  // Optimized: exponential backoff starting at 100ms (was fixed 1s intervals for 20s)
+  const maxWaitMs = 10000; // 10 seconds max (reduced from 20s)
   const stabilityThreshold = 3; // 3 identical values in a row
+  const startTime = Date.now();
 
   let lastValue: string | null = null;
   let stableCount = 0;
+  let interval = 100; // Start with 100ms
+  let attempt = 0;
 
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  while (Date.now() - startTime < maxWaitMs) {
     const currentValue = await page.evaluate(() => {
-      if (typeof mainView !== 'undefined' && mainView?.canvas?.viewportTransform) {
-        return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5];
+      const globalMain = (window as any).mainView;
+      if (typeof globalMain !== 'undefined' && globalMain?.canvas?.viewportTransform) {
+        return globalMain.canvas.viewportTransform[4] + '_' + globalMain.canvas.viewportTransform[5];
       }
       return null;
     });
@@ -390,7 +469,7 @@ When('I wait for viewportTransform to stabilize', async ({ page }) => {
     if (currentValue === lastValue && currentValue !== null) {
       stableCount++;
       if (stableCount >= stabilityThreshold) {
-        logger.info(`ViewportTransform stabilized at: ${currentValue} after ${attempt + 1} attempts`);
+        logger.info(`ViewportTransform stabilized at: ${currentValue} after ${attempt + 1} attempts (${Date.now() - startTime}ms)`);
         return;
       }
     } else {
@@ -398,10 +477,12 @@ When('I wait for viewportTransform to stabilize', async ({ page }) => {
       lastValue = currentValue;
     }
 
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(interval);
+    interval = Math.min(interval * 1.5, 500); // Exponential backoff, max 500ms
+    attempt++;
   }
 
-  throw new Error(`ViewportTransform did not stabilize after ${maxAttempts} attempts. Last value: ${lastValue}`);
+  throw new Error(`ViewportTransform did not stabilize after ${Date.now() - startTime}ms. Last value: ${lastValue}`);
 });
 
 When('I execute javascript OLD code:', async ({ page, testData }: { page: Page; testData: TestStore }, js: string) => {
@@ -446,9 +527,10 @@ When('I execute javascript OLD code:', async ({ page, testData }: { page: Page; 
       // Log detailed info for viewportTransform debugging
       if (trimmedJs.includes('viewportTransform')) {
         const viewportDetails = await page.evaluate(() => {
-          if (typeof mainView !== 'undefined' && mainView?.canvas?.viewportTransform) {
-            const [scaleX, , , scaleY, translateX, translateY] = mainView.canvas.viewportTransform;
-            const zoom = typeof mainView.canvas.getZoom === 'function' ? mainView.canvas.getZoom() : null;
+          const globalMain = (window as any).mainView;
+          if (typeof globalMain !== 'undefined' && globalMain?.canvas?.viewportTransform) {
+            const [scaleX, , , scaleY, translateX, translateY] = globalMain.canvas.viewportTransform;
+            const zoom = typeof globalMain.canvas.getZoom === 'function' ? globalMain.canvas.getZoom() : null;
             return {
               summary: `${translateX}_${translateY}`,
               scaleX,
@@ -526,8 +608,8 @@ When('I execute javascript OLD code:', async ({ page, testData }: { page: Page; 
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       const isDisconnected = errorMsg.includes('disconnected') ||
-                            errorMsg.includes('failed to check if window was closed') ||
-                            errorMsg.includes('ECONNREFUSED');
+        errorMsg.includes('failed to check if window was closed') ||
+        errorMsg.includes('ECONNREFUSED');
       if (isDisconnected) {
         logger.warn('Browser disconnected or ChromeDriver unavailable, skipping javascript execution');
         testData.set('js', '');
@@ -568,6 +650,11 @@ When('I execute javascript OLD code:', async ({ page, testData }: { page: Page; 
  */
 When('I execute javascript code:', async ({ page, testData }: { page: Page; testData: TestStore }, js: string) => {
   const trimmedJs = js.trim();
+
+  if (trimmedJs.includes('mainView')) {
+    await waitForCanvasBootstrap(page);
+  }
+
   const evaluateFunction = (code: string) => {
     // eslint-disable-next-line no-eval
     return eval(code);
@@ -582,10 +669,63 @@ When('I execute javascript code:', async ({ page, testData }: { page: Page; test
 When('I scroll to element {string}', async ({ page }, selector: string) => {
   const locator = getLocatorQuery(page, selector);
   const element = locator.first();
+  // Use scrollIntoView with 'end' alignment to ensure element is scrolled to bottom of viewport
+  // This is important for triggering infinite scroll loaders that are positioned after the element
   await element.evaluate((el) => {
-    el.scrollIntoView();
+    el.scrollIntoView({ behavior: 'instant', block: 'end' });
   });
-  await page.waitForTimeout(100);
+  // Wait longer to allow intersection observer to trigger and async fetch to complete
+  await page.waitForTimeout(500);
+});
+
+When('I scroll container {string} to bottom', async ({ page }, selector: string) => {
+  const locator = getLocatorQuery(page, selector);
+  const container = locator.first();
+
+  // Wait for container to be visible
+  await container.waitFor({ state: 'visible', timeout: 10000 });
+
+  // Get initial item count before scroll (for detecting new items loaded)
+  const initialCount = await page.locator('[data-test="table-row-Name"]').count();
+
+  // Scroll with requestAnimationFrame to ensure IntersectionObserver fires
+  await container.evaluate((el) => {
+    return new Promise<void>((resolve) => {
+      const maxScroll = el.scrollHeight - el.clientHeight;
+      el.scrollTop = maxScroll;
+
+      // requestAnimationFrame ensures observer can react
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // Small bounce to guarantee observer triggers
+          el.scrollTop = maxScroll - 1;
+          requestAnimationFrame(() => {
+            el.scrollTop = maxScroll;
+            requestAnimationFrame(() => resolve());
+          });
+        });
+      });
+    });
+  });
+
+  // Wait for intersection observer to trigger and new data to load
+  // Use waitForFunction to detect when new items appear (more reliable than fixed timeout)
+  try {
+    await page.waitForFunction(
+      (prevCount) => {
+        const currentCount = document.querySelectorAll('[data-test="table-row-Name"]').length;
+        return currentCount > prevCount;
+      },
+      initialCount,
+      { timeout: 5000 }
+    );
+  } catch {
+    // If no new items loaded within timeout, that's okay - might already have all items
+    logger.info('Scroll to bottom: no new items detected within timeout (may have reached end of data)');
+  }
+
+  // Additional stabilization wait for DOM updates
+  await page.waitForTimeout(500);
 });
 
 When(
@@ -674,7 +814,16 @@ When('I set {string} to the inputfield {string}', async ({ page, testData }, val
 
 When('I reload session', async ({ page, testData }: { page: Page; testData: TestStore }) => {
   await page.context().clearCookies();
-  testData.clear();
+  // Clear all browser storage to ensure clean session state
+  try {
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+  } catch {
+    // Page might not have a valid context yet - ignore
+  }
+  testData.clearAll();
 });
 
 When('I delete the cookie {string}', async ({ page }, cookieName: string) => {
@@ -698,9 +847,22 @@ When('I click on the element {string} via js', async ({ page }, selector: string
   await locator.first().evaluate((el: HTMLElement) => el.click());
 });
 
+When('I force click element with locator {string}', async ({ page, testData }, rawValue: string) => {
+  const renderedValue = renderTemplate(rawValue, testData);
+  const locator = getLocatorQuery(page, renderedValue);
+  await locator.first().click({ force: true });
+});
+
 When('I move to element {string}', async ({ page }, selector: string) => {
   const locator = getLocatorQuery(page, selector);
   await locator.first().hover();
+});
+
+When('I hover over {string} and wait for tooltip {string}', async ({ page }, hoverSelector: string, tooltipSelector: string) => {
+  const element = getLocatorQuery(page, hoverSelector).first();
+  await element.hover();
+  // Keep hovering while waiting for tooltip (handles openDelay)
+  await getLocatorQuery(page, tooltipSelector).waitFor({ state: 'visible', timeout: 10000 });
 });
 
 When('I move to element {string} with an offset of {int},{int}', async ({ page }, selector: string, x: number, y: number) => {
@@ -710,3 +872,25 @@ When('I move to element {string} with an offset of {int},{int}', async ({ page }
     await page.mouse.move(box.x + x, box.y + y);
   }
 });
+
+/**
+ * Step definition: `When I click the {ordinal} {role} {string}`
+ * Clicks on the Nth element of a given role and name.
+ *
+ * @param ordinal - Zero-based ordinal index supplied by `{ordinal}` (e.g. `1st` -> `0`).
+ * @param role - {@link AriaRole} derived from the `{role}` parameter type.
+ * @param name - Accessible name for the element.
+ *
+ * @example
+ * ```gherkin
+ * When I click the 1st button "Open Check"
+ * ```
+ */
+When(
+  'I click the {ordinal} {role} {string}',
+  async ({ page, testData }, ordinal: number, role: AriaRole, name: string) => {
+    const renderedName = renderTemplate(name, testData);
+    const locator = getRoleLocator(page, role, renderedName, ordinal);
+    await locator.click();
+  }
+);

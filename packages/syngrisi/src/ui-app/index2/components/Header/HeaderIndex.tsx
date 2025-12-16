@@ -133,8 +133,8 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
         ),
         {
             enabled: true,
-            staleTime: Infinity,
-            refetchOnWindowFocus: false,
+            staleTime: 60 * 1000, // 1 minute - projects don't change often
+            refetchOnWindowFocus: true,
             onError: (e) => {
                 errorMsg({ error: e });
             },

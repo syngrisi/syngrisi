@@ -1,0 +1,523 @@
+metadata:
+  category: common/assertions
+  generatedAt: '2025-12-05T04:19:37.324Z'
+  totalFiles: 1
+  totalSteps: 60
+  sourceFiles:
+    - steps/common/assertions.steps.ts
+steps:
+  - pattern: I wait {int} seconds for the {role} with {attribute} {string} for {ordinal} to be {condition}
+    description: |-
+      Waits for an element to reach a specific state with an additional timeout in milliseconds.
+      Note: The timeout in milliseconds overrides the timeout in seconds if provided.
+
+      @param {object} context - The test context object.
+      @param {number} timeoutInSeconds - The maximum time to wait in seconds.
+      @param {AriaRole | 'element'} role - The ARIA role of the element or 'element' for generic locators.
+      @param {ElementAttribute} attribute - The attribute to locate the element by ('name' | 'locator' | 'label').
+      @param {string} value - The value of the attribute.
+      @param {number} timeoutMs - Additional timeout in milliseconds (overrides seconds timeout).
+      @param {StepCondition} assert - The state to wait for (e.g., 'visible', 'enabled', 'checked').
+
+      @example
+      ```gherkin
+      When I wait 30 seconds for the element with locator "[data-test='table-row-Message']" for 10000ms to be visible
+      ```
+    line: 1113
+  - pattern: I wait {int} seconds for the {role} with {attribute} {string} to be {condition}
+    description: |-
+      Waits for an element to reach a specific state.
+
+      @param {object} context - The test context object.
+      @param {number} timeoutInSeconds - The maximum time to wait.
+      @param {AriaRole | 'element'} role - The ARIA role of the element or 'element' for generic locators.
+      @param {ElementAttribute} attribute - The attribute to locate the element by ('name' | 'locator' | 'label').
+      @param {string} value - The value of the attribute.
+      @param {StepCondition} assert - The state to wait for (e.g., 'visible', 'enabled', 'checked').
+
+      @example
+      ```gherkin
+      When I wait 5 seconds for the button with name "Submit" to be visible
+      ```
+
+      @example
+      ```gherkin
+      When I wait 10 seconds for the element with locator "##flora-GridLayout" to be visible
+      ```
+    line: 1005
+  - pattern: I wait {int} seconds for the {role} with {attribute} {string} to exist
+    description: ''
+    line: 1077
+  - pattern: I wait {int} seconds for the {role} with {attribute} {string} to not be displayed
+    description: |-
+      Waits for an element to not be displayed (hidden) with a specified timeout.
+
+      @param {object} context - The test context object.
+      @param {number} timeoutInSeconds - The maximum time to wait.
+      @param {AriaRole | 'element'} role - The ARIA role of the element or 'element' for generic locators.
+      @param {ElementAttribute} attribute - The attribute to locate the element by ('name' | 'locator' | 'label').
+      @param {string} value - The value of the attribute.
+
+      @example
+      ```gherkin
+      When I wait 30 seconds for the element with locator "[data-test='folding-table-items']" to not be displayed
+      ```
+    line: 1039
+  - pattern: I wait {int} seconds for the {role} with {attribute} {string} to not exist
+    description: ''
+    line: 1058
+  - pattern: I wait on element {string}
+    description: ''
+    line: 947
+  - pattern: I wait on element {string} to be {condition}
+    description: ''
+    line: 976
+  - pattern: I wait on element {string} to exist
+    description: ''
+    line: 870
+  - pattern: I wait on element {string} to not be displayed
+    description: ''
+    line: 745
+  - pattern: I wait on element {string} to not exist
+    description: ''
+    line: 754
+  - pattern: the {ordinal} {role} {string} should be {condition}
+    description: |-
+      Step definition: `Then the {ordinal} {role} {string} should be {condition}`
+
+      @param ordinal - Zero-based ordinal index supplied by `{ordinal}` (e.g. `3rd` -> `2`).
+      @param role - {@link AriaRole} derived from the `{role}` parameter type.
+      @param name - Accessible name for the target element.
+      @param condition - {@link StepCondition} to evaluate (e.g. `'visible'`, `'checked'`).
+
+      @example
+      ```gherkin
+      Then the 3rd checkbox "Select item" should be checked
+      ```
+    line: 132
+  - pattern: the {ordinal} {role} {string} should have text {string}
+    description: |-
+      Step definition: `Then the {ordinal} {role} {string} should have text {string}`
+
+      @param ordinal - Zero-based ordinal index from the `{ordinal}` parameter.
+      @param role - {@link AriaRole} derived from `{role}`.
+      @param name - Accessible name for the element.
+      @param expected - Exact text expected for the locator.
+
+      @example
+      ```gherkin
+      Then the 2nd button "Remove" should have text "Remove"
+      ```
+    line: 296
+  - pattern: the {ordinal} element with {target} {string} should be {condition}
+    description: |-
+      Step definition: `Then the {ordinal} element with {target} {string} should be {condition}`
+
+      @param ordinal - Zero-based ordinal index supplied by `{ordinal}`.
+      @param target - {@link ElementTarget} specifying resolution strategy.
+      @param rawValue - Label text or locator query used to find the element set.
+      @param condition - {@link StepCondition} to evaluate.
+
+      @example
+      ```gherkin
+      Then the 2nd element with locator ".todo-item" should be visible
+      ```
+    line: 246
+  - pattern: the {ordinal} element with {target} {string} should have {valueCondition} {string}
+    description: |-
+      Step definition: `Then the {ordinal} element with {target} {string} should have {valueCondition} {string}`
+
+      @param ordinal - Zero-based ordinal index derived from `{ordinal}`.
+      @param target - {@link ElementTarget} resolution strategy.
+      @param rawValue - Label text or locator query.
+      @param condition - {@link ExpectationCondition} describing the assertion.
+      @param expected - Expected value string.
+
+      @example
+      ```gherkin
+      Then the 2nd element with label "Email" should have value "admin@example.com"
+      ```
+    line: 499
+  - pattern: the {ordinal} element with {target} {string} should have text {string}
+    description: |-
+      Step definition: `Then the {ordinal} element with {target} {string} should have text {string}`
+
+      @param ordinal - Zero-based ordinal index from `{ordinal}`.
+      @param target - {@link ElementTarget} used to resolve the locator.
+      @param rawValue - Label text or locator query.
+      @param expected - Exact text expected for the locator.
+
+      @example
+      ```gherkin
+      Then the 3rd element with label "Todo" should have text "Finish docs"
+      ```
+    line: 430
+  - pattern: the {role} {string} should be {condition}
+    description: |-
+      Step definition: `Then the {role} {string} should be {condition}`
+
+      @param role - {@link AriaRole} derived from the `{role}` parameter type.
+      @param name - Accessible name for the element.
+      @param condition - {@link StepCondition} value (e.g. `'visible'`, `'enabled'`).
+
+      @example
+      ```gherkin
+      Then the button "Save" should be visible
+      ```
+    line: 88
+  - pattern: the {role} {string} should be {condition} for {int} sec
+    description: |-
+      Step definition: `Then the {role} {string} should be {condition} for {int} sec`
+
+      @param role - {@link AriaRole} derived from the `{role}` parameter type.
+      @param name - Accessible name for the element.
+      @param condition - {@link StepCondition} value (e.g. `'visible'`, `'enabled'`).
+      @param seconds - Number of seconds to wait for the condition.
+
+      @example
+      ```gherkin
+      Then the button "Save" should be visible for 5 sec
+      ```
+    line: 110
+  - pattern: the {role} {string} should have {valueCondition} {string}
+    description: |-
+      Step definition: `Then the {role} {string} should have {valueCondition} {string}`
+
+      Supports all string/number/key-value expectations defined in {@link ExpectationCondition}.
+
+      @param role - {@link AriaRole} derived from `{role}`.
+      @param name - Accessible name for the target element.
+      @param condition - {@link ExpectationCondition} such as `'contains text'`, `'has attribute'`, `'has css'`.
+      @param expected - Expected string value, numeric string, or `key=value` pair depending on the condition.
+
+      @examples
+      ```gherkin
+      Then the button "Submit" should have accessible name "Submit"
+      Then the listitem "Todo" should have count "3"
+      Then the checkbox "Accept" should have attribute "aria-checked=true"
+      ```
+    line: 455
+  - pattern: the {role} {string} should have contains text {string}
+    description: ''
+    line: 409
+  - pattern: the {role} {string} should have text {string}
+    description: |-
+      Step definition: `Then the {role} {string} should have text {string}`
+
+      Retained for readability alongside the generic `{valueCondition}` variant.
+
+      @param role - {@link AriaRole} derived from `{role}`.
+      @param name - Accessible name bound to the element.
+      @param expected - Exact text expected for the locator.
+
+      @example
+      ```gherkin
+      Then the heading "Welcome" should have text "Welcome"
+      ```
+    line: 274
+  - pattern: the {role} {string} should not be {condition}
+    description: |-
+      Step definition: `Then the {role} {string} should not be {condition}`
+
+      Verifies that an element with specified role and name does NOT satisfy the condition.
+
+      @param role - {@link AriaRole} derived from the `{role}` parameter type.
+      @param name - Accessible name for the element.
+      @param condition - {@link StepCondition} value (e.g. `'visible'`, `'enabled'`).
+
+      @example
+      ```gherkin
+      Then the button "Baselines" should not be visible
+      ```
+    line: 1153
+  - pattern: the cookie {string} should be present
+    description: |-
+      Step definition: `Then the cookie {string} should be present`
+
+      Verifies that a cookie with the given name is present in the browser context.
+
+      @param name - The name of the cookie to check.
+
+      @example
+      ```gherkin
+      Then the cookie "my_session_id" should be present
+      ```
+    line: 1236
+  - pattern: the cookie {string} should have value {string}
+    description: |-
+      Step definition: `Then the cookie {string} should have value {string}`
+
+      Verifies that a cookie with the given name is present and its value matches the expected value.
+
+      @param name - The name of the cookie to check.
+      @param expectedValue - The expected value of the cookie.
+
+      @example
+      ```gherkin
+      Then the cookie "my_session_id" should have value "abc-123"
+      ```
+    line: 1279
+  - pattern: the cookie {string} should not be present
+    description: |-
+      Step definition: `Then the cookie {string} should not be present`
+
+      Verifies that a cookie with the given name is NOT present in the browser context.
+
+      @param name - The name of the cookie to check.
+
+      @example
+      ```gherkin
+      Then the cookie "my_session_id" should not be present
+      ```
+    line: 1257
+  - pattern: the css attribute {string} from element {string} is {string}
+    description: ''
+    line: 782
+  - pattern: the current url does not contain {string}
+    description: ''
+    line: 928
+  - pattern: the element {string} contains HTML {string}
+    description: ''
+    line: 894
+  - pattern: the element {string} contains the text {string}
+    description: ''
+    line: 876
+  - pattern: the element {string} does appear exactly {string} times
+    description: ''
+    line: 884
+  - pattern: the element {string} does not exist
+    description: ''
+    line: 763
+  - pattern: the element {string} does not have attribute {string}
+    description: ''
+    line: 967
+  - pattern: the element {string} does not have attribute {string} {string}
+    description: ''
+    line: 919
+  - pattern: the element {string} does not have the class {string}
+    description: ''
+    line: 911
+  - pattern: the element {string} has attribute {string}
+    description: ''
+    line: 956
+  - pattern: the element {string} has attribute {string} {string}
+    description: ''
+    line: 721
+  - pattern: the element {string} has the class {string}
+    description: ''
+    line: 903
+  - pattern: the element {string} matches the text {string}
+    description: ''
+    line: 599
+  - pattern: the element {string} should have at least {int} items within {int} seconds
+    description: |-
+      Step definition: `Then the element {string} should have at least {int} items within {int} seconds`
+
+      Polls for minimum item count with timeout. Use for pagination/infinite scroll scenarios.
+
+      @param selector - CSS selector for items
+      @param minCount - Minimum expected count
+      @param seconds - Timeout in seconds
+
+      @example
+      ```gherkin
+      Then the element "[data-test*='navbar_item_']" should have at least 21 items within 10 seconds
+      ```
+    line: 1303
+  - pattern: the element {string} should have exactly {int} items within {int} seconds
+    description: |-
+      Step definition: `Then the element {string} should have exactly {int} items within {int} seconds`
+
+      Polls for exact item count with timeout.
+
+      @param selector - CSS selector for items
+      @param exactCount - Exact expected count
+      @param seconds - Timeout in seconds
+
+      @example
+      ```gherkin
+      Then the element "[data-test*='navbar_item_']" should have exactly 22 items within 10 seconds
+      ```
+    line: 1332
+  - pattern: the element with {target} {string} should be {condition}
+    description: |-
+      Step definition: `Then the element with {target} {string} should be {condition}`
+
+      @param target - {@link ElementTarget} (`'label' | 'locator'`).
+      @param rawValue - Label text or locator query that identifies the element.
+      @param condition - {@link StepCondition} to evaluate against the resolved locator.
+
+      @example
+      ```gherkin
+      Then the element with label "Email" should be enabled
+      ```
+    line: 152
+  - pattern: the element with {target} {string} should be {condition} for {int} sec
+    description: |-
+      Step definition: `Then the element with {target} {string} should be {condition} for {int} sec`
+
+      @param target - {@link ElementTarget} (`'label' | 'locator'`).
+      @param rawValue - Label text or locator query that identifies the element.
+      @param condition - {@link StepCondition} to evaluate against the resolved locator.
+      @param seconds - Number of seconds to wait for the condition.
+
+      @example
+      ```gherkin
+      Then the element with label "Loading" should be visible for 10 sec
+      ```
+    line: 219
+  - pattern: the element with {target} {string} should contain value {string}
+    description: ''
+    line: 366
+  - pattern: the element with {target} {string} should have {valueCondition} {string}
+    description: |-
+      Step definition: `Then the element with {target} {string} should have {valueCondition} {string}`
+
+      @param target - {@link ElementTarget} resolving the strategy (`'label' | 'locator'`).
+      @param rawValue - Label text or raw locator query.
+      @param condition - {@link ExpectationCondition} applied to the resolved locator.
+      @param expected - Expected value string provided in the step.
+
+      @examples
+      ```gherkin
+      Then the element with label "Email" should have value "user@example.com"
+      Then the element with locator ".pill" should have css "background-color=red"
+      ```
+    line: 477
+  - pattern: the element with {target} {string} should have attribute {string} {string}
+    description: ''
+    line: 530
+  - pattern: the element with {target} {string} should have contains HTML {string}
+    description: ''
+    line: 546
+  - pattern: the element with {target} {string} should have contains text {string}
+    description: |-
+      Step definition: `Then the element with {target} {string} should have contains text {string}`
+
+      Uses checkElementContainsText for locator targets to support polling and date placeholders.
+      For label targets, uses assertCondition for simpler behavior.
+
+      @param target - {@link ElementTarget} representing either a label lookup or raw locator.
+      @param rawValue - Label text or locator query.
+      @param expected - Partial text expected within the resolved element.
+
+      @example
+      ```gherkin
+      Then the element with label "Status" should have contains text "Pending"
+      Then the element with locator "[data-test='status']" should have contains text "Pending"
+      ```
+    line: 395
+  - pattern: the element with {target} {string} should have has attribute {string}
+    description: ''
+    line: 538
+  - pattern: the element with {target} {string} should have has class {string}
+    description: ''
+    line: 554
+  - pattern: the element with {target} {string} should have text {string}
+    description: |-
+      Step definition: `Then the element with {target} {string} should have text {string}`
+
+      @param target - {@link ElementTarget} representing either a label lookup or raw locator.
+      @param rawValue - Label text or locator query.
+      @param expected - Exact text expected for the locator.
+
+      @example
+      ```gherkin
+      Then the element with locator "//h1" should have text "Welcome"
+      ```
+    line: 316
+  - pattern: the element with {target} {string} should have value {string}
+    description: |-
+      Step definition: `Then the element with {target} {string} should have value {string}`
+
+      Asserts the form control's current value using a label or raw locator.
+
+      @param target - {@link ElementTarget} representing either a label lookup or raw locator.
+      @param rawValue - Label text or locator query identifying the element.
+      @param expected - Exact value expected for the element.
+
+      @example
+      ```gherkin
+      Then the element with label "Email" should have value "user@example.com"
+      ```
+    line: 338
+  - pattern: the element with {target} {string} should not be {condition}
+    description: |-
+      Step definition: `Then the element with {target} {string} should not be {condition}`
+
+      @param target - {@link ElementTarget} (`'label' | 'locator'`).
+      @param rawValue - Label text or locator query that identifies the element.
+      @param condition - {@link StepCondition} to evaluate against the resolved locator.
+
+      @example
+      ```gherkin
+      Then the element with locator "[data-test='modal']" should not be visible
+      ```
+    line: 172
+  - pattern: the element with {target} {string} should not have attribute {string}
+    description: ''
+    line: 514
+  - pattern: the element with {target} {string} should not have attribute {string} {string}
+    description: ''
+    line: 522
+  - pattern: 'the HTML contains:'
+    description: ''
+    line: 938
+  - pattern: the page should be visible
+    description: |-
+      Step definition: `Then the {role} {string} with aria-pressed {string} should be {condition}`
+
+      Checks if an element with specific aria-pressed value has a specified condition.
+
+      @example
+      ```gherkin
+      Then the button "Inline" with aria-pressed "true" should be visible
+      Then the button "Split" with aria-pressed "false" should be visible
+      ```
+    line: 592
+  - pattern: the table containing {string} should be {condition}
+    description: |-
+      Step definition: `Then the table containing {string} should be {condition}`
+
+      Checks if a table containing specific text has a specified condition.
+
+      @example
+      ```gherkin
+      Then the table containing "This is line 1" should be visible
+      Then the table containing "Some text" should be absent
+      ```
+    line: 573
+  - pattern: the text {string} should be {condition}
+    description: |-
+      Step definition: `Then the text {string} should be {condition}`
+
+      Verifies that text is visible on the page.
+
+      @param text - The text to search for on the page.
+      @param condition - {@link StepCondition} value (e.g. `'visible'`).
+
+      @example
+      ```gherkin
+      Then the text "Welcome" should be visible
+      ```
+    line: 1186
+  - pattern: the text {string} should not be {condition}
+    description: |-
+      Step definition: `Then the text {string} should not be {condition}`
+
+      Verifies that text is NOT visible on the page.
+
+      @param text - The text to search for on the page.
+      @param condition - {@link StepCondition} value (e.g. `'visible'`).
+
+      @example
+      ```gherkin
+      Then the text "Error" should not be visible
+      ```
+    line: 1208
+  - pattern: the title contains {string}
+    description: ''
+    line: 776
+  - pattern: the title is {string}
+    description: ''
+    line: 772

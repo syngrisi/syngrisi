@@ -1,7 +1,7 @@
 // noinspection ExceptionCaughtLocallyJS
 import * as utils from './utils.js'
 import { MONGODB_SETUP_MANUAL_URL, MONGODB_VERSION, NODE_VERSION, SYNGRISI_DOCUMENTATION_LINK } from './constants.js'
-import chalk from 'chalk'
+import { c } from './native/colors.js'
 import { createSyngrisiProject } from './createSyngrisiProject.js'
 import { checkMongoDB } from './utils.js'
 
@@ -27,7 +27,7 @@ export async function run() {
         if (args.yes === undefined && !args._.includes('--yes')) {
             const continueInstallation = await utils.prompt('Do you want to continue with the installation?')
             if (!continueInstallation) {
-                console.log(chalk.yellow('❌ Installation canceled'))
+                console.log(c.yellow('❌ Installation canceled'))
                 return
             }
         }
@@ -36,11 +36,11 @@ export async function run() {
 
             const mongoCheck = checkMongoDB()
             if (!mongoCheck || (!mongoCheck.supported && (mongoCheck.version === 'unknown'))) {
-                console.log(chalk.yellow('⚠️ MongoDB is not installed.'
+                console.log(c.yellow('⚠️ MongoDB is not installed.'
                     + `Please install MongoDB if you want to run Syngrisi in the native mode. ${MONGODB_SETUP_MANUAL_URL}\n`))
             }
             if (!mongoCheck.supported && (mongoCheck.version !== 'unknown')) {
-                console.log(chalk.yellow(
+                console.log(c.yellow(
                     `⚠️ Wrong MongoDB version: '${mongoCheck.version}' `
                     + `Please install the proper MongoDB version: '${MONGODB_VERSION}' if you want to run Syngrisi in the native mode. ${MONGODB_SETUP_MANUAL_URL}\n`
                     + `Or use standalone remote MongoDB instance, for more information read Syngrisi documentation ${SYNGRISI_DOCUMENTATION_LINK}.`
@@ -50,7 +50,7 @@ export async function run() {
             const versionObj = utils.checkNodeVersion()
             if (!versionObj.supported) {
                 const msg = `❌ This version: '${versionObj.version}' of Node.js is not supported. Please use Node.js version ${NODE_VERSION}\n`
-                console.log(chalk.yellow(msg))
+                console.log(c.yellow(msg))
                 process.exitCode = 1
                 throw new Error(msg)
             }
@@ -64,7 +64,7 @@ export async function run() {
             npmTag: args.npmTag || ''
         })
     } catch (error: any) {
-        console.error(chalk.red(error.message))
+        console.error(c.red(error.message))
     }
 }
 

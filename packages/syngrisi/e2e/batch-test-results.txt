@@ -1,0 +1,124 @@
+Batch Test Results - Thu Dec  4 01:45:57 +04 2025
+========================================
+
+
+BATCH 1 Results:
+  Files: features/AP/access.feature features/AP/logs/logs_basics.feature features/AP/logs/logs_filtering.feature features/AP/logs/logs_settings.feature features/AP/settings/settings.feature
+  Duration: 82s
+  Passed: 16, Failed: 0, Flaky: 0
+  Exit code: 0
+
+BATCH 2 Results:
+  Files: features/AP/tasks/cli_tasks.feature features/AP/tasks/remove_inconsistent_items.feature features/AP/tasks/remove_old_checks.feature features/AP/users/api_key_generation.feature features/AP/users/create.feature
+  Duration: 280s
+  Passed: 16, Failed: 2, Flaky: 0
+  Exit code: 0
+  Failed tests:
+
+BATCH 3 Results:
+  Files: features/AP/users/default_users.feature features/AP/users/delete.feature features/AP/users/update.feature features/AUTH/auth_off.feature features/AUTH/change_passwords.feature
+  Duration: 56s
+  Passed: 9, Failed: 0, Flaky: 0
+  Exit code: 0
+
+BATCH 4 Results:
+  Files: features/AUTH/first_run.feature features/AUTH/login.feature features/AUTH/login_smoke.feature features/AUTH/logout.feature features/CHECKS_HANDLING/accept_by_user.feature
+  Duration: 63s
+  Passed: 9, Failed: 0, Flaky: 0
+  Exit code: 0
+
+BATCH 5 Results:
+  Files: features/CHECKS_HANDLING/accept_via_sdk.feature features/CHECKS_HANDLING/check_without_session_starting.feature features/CHECKS_HANDLING/checks_with_different_resolution_1_px.feature features/CHECKS_HANDLING/ident.feature features/CHECKS_HANDLING/low_diff.feature
+  Duration: 31s
+  Passed: 6, Failed: 0, Flaky: 0
+  Exit code: 0
+
+BATCH 6 Results:
+  Files: features/CHECKS_HANDLING/partially_accepted.feature features/CHECKS_HANDLING/remove_checks.feature features/CHECKS_HANDLING/standard_flow_ui.feature features/CHECKS_HANDLING/test_calculated_fields.feature features/CP/baselines/baselines_access.feature
+  Duration: 72s
+  Passed: 11, Failed: 0, Flaky: 0
+  Exit code: 0
+
+BATCH 7 Results:
+  Files: features/CP/baselines/baselines_backend.feature features/CP/baselines/baselines_debug.feature features/CP/baselines/baselines_extended.feature features/CP/baselines/baselines_ui.feature features/CP/baselines/delete_baseline_demo.feature
+  Duration: 70s
+  Passed: 9, Failed: 0, Flaky: 0
+  Exit code: 0
+
+BATCH 8 Results:
+  Files: features/CP/baselines/delete_baseline_via_check_details.feature features/CP/check_details/accept_via_details.feature features/CP/check_details/appearance_common.feature features/CP/check_details/apperance_enabled_buttons.feature features/CP/check_details/heighlight.feature
+  Duration: 51s
+  Passed: 7, Failed: 0, Flaky: 0
+  Exit code: 0
+
+BATCH 9 Results:
+  Files: features/CP/check_details/initial_resize.feature features/CP/check_details/navigation.feature features/CP/check_details/open_close_check_details.feature features/CP/check_details/regions.feature features/CP/check_details/related/related.feature
+  Duration: 105s
+  Passed: 11, Failed: 2, Flaky: 0
+  Exit code: 0
+  Failed tests:
+
+BATCH 10 Results:
+  Files: features/CP/check_details/related/related_navigation.feature features/CP/check_details/related/related_navigation_and_accept.feature features/CP/check_details/resize_and_pan.feature features/CP/check_details/side_to_side_view.feature features/CP/check_details/simple_views.feature
+  Duration: 124s
+  Passed: 4, Failed: 2, Flaky: 0
+  Exit code: 0
+  Failed tests:
+
+BATCH 11 Results:
+  Files: features/CP/header/filter_by_project.feature features/CP/header/spotlight_navigation.feature features/CP/header/switch_theme.feature features/CP/header/user_info.feature features/CP/items_isolations/checks_by_test.feature
+  Duration: 40s
+  Passed: 10, Failed: 0, Flaky: 0
+  Exit code: 0
+
+BATCH 12 Results:
+  Files: features/CP/items_isolations/filter_by_project.feature features/CP/items_isolations/tests_by_accept_status.feature features/CP/items_isolations/tests_by_browser.feature features/CP/items_isolations/tests_by_run.feature features/CP/items_isolations/tests_by_suite.feature
+  Duration: 53s
+  Passed: 6, Failed: 0, Flaky: 0
+  Exit code: 0
+
+BATCH 13 Results:
+  Files: features/CP/items_isolations/tests_by_test_status.feature features/CP/navbar/group_by.feature features/CP/navbar/group_by_navigation.feature features/CP/navbar/pagination.feature features/CP/navbar/quick_filtering.feature
+  Duration: 150s
+  Passed: 14, Failed: 1, Flaky: 0
+  Exit code: 0
+  Failed tests:
+
+BATCH 14 Results:
+  Files: features/CP/navbar/refresh.feature features/CP/navbar/remove_item.feature features/CP/navbar/runs_ring_status.feature features/CP/navbar/select.feature features/CP/navbar/sorting.feature
+  Duration: 79s
+  Passed: 6, Failed: 0, Flaky: 3
+  Exit code: 0
+
+BATCH 15 Results:
+  Files: features/CP/table/auto_update.feature features/CP/table/bulk_test_apply.feature features/CP/table/bulk_test_delete.feature features/CP/table/check_preview/accept_icon_color.feature features/CP/table/check_preview/check_modes.feature
+  Duration: 36s
+  Passed: 6, Failed: 0, Flaky: 0
+  Exit code: 0
+
+BATCH 16 Results:
+  Files: features/CP/table/check_preview/images_visibility.feature features/CP/table/check_preview/tooltip.feature features/CP/table/distincts_filter.feature features/CP/table/filtering.feature features/CP/table/folding.feature
+  Duration: 77s
+  Passed: 12, Failed: 0, Flaky: 1
+  Exit code: 0
+
+BATCH 17 Results:
+  Files: features/CP/table/infinity_scroll.feature features/CP/table/navigation_via_link_params.feature features/CP/table/quick_filter.feature features/CP/table/settings.feature features/CP/table/test_status.feature
+  Duration: 55s
+  Passed: 7, Failed: 0, Flaky: 1
+  Exit code: 0
+
+BATCH 18 Results:
+  Files: features/MIXED/users/roles.feature features/ai_features.feature
+  Duration: 90s
+  Passed: 14, Failed: 0, Flaky: 0
+  Exit code: 0
+
+========================================
+FINAL SUMMARY
+========================================
+Total time: 1514s (25m 14s)
+Total passed: 173
+Total failed: 7
+Total flaky: 5
+

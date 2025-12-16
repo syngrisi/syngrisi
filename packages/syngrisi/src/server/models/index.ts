@@ -1,5 +1,5 @@
 export { default as Check } from './Check.model';
-export { CheckDocument } from './Check.model';
+export type { CheckDocument } from './Check.model';
 export { default as Log } from './Log.model';
 export { default as App } from './App.model';
 export { default as Snapshot } from './Snapshot.model';
@@ -9,3 +9,4 @@ export { default as Run } from './Run.model';
 export { default as User } from './User.model';
 export { default as Baseline } from './Baseline.model';
 export { default as Test } from './Test.model';
+export { default as Webhook } from './Webhook.model';
