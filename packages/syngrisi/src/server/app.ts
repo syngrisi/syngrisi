@@ -24,7 +24,7 @@ import errorHandler from './middlewares/errorHandler';
 import { openAPIRouter } from './api-docs/openAPIRouter';
 import { LogOpts } from '../types';
 import { env } from './envConfig';
-import { ensureLoggedInOrApiKey } from './middlewares/ensureLogin/ensureLoggedIn';
+import { ensureLoggedInOrApiKey, ensureLoggedInOrApiKeyOrShareToken } from './middlewares/ensureLogin/ensureLoggedIn';
 import { initSSOStrategies } from './services/auth-sso.service';
 
 const logMeta: LogOpts = { scope: 'app.ts', msgType: "Init" };
@@ -86,7 +86,7 @@ passport.deserializeUser(User.deserializeUser());
 log.info('\t- static files', logMeta);
 app.use(
     '/snapshoots',
-    ensureLoggedInOrApiKey(),
+    ensureLoggedInOrApiKeyOrShareToken(),
     express.static(config.defaultImagesPath)
 );
 app.use('/assets', express.static(path.join(baseDir, './mvc/views/react/assets'), {

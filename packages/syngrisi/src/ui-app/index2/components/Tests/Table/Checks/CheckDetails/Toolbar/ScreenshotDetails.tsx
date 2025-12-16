@@ -32,9 +32,10 @@ const useStyles = createStyles((theme) => ({
 interface Props {
     mainView: any
     check: any
+    apikey?: string
 }
 
-export function ScreenshotDetails({ mainView, check = {} }: Props) {
+export function ScreenshotDetails({ mainView, check = {}, apikey }: Props) {
     const { classes } = useStyles();
 
     const checkResult = check.result ? JSON.parse(check.result) : null;
@@ -50,6 +51,10 @@ export function ScreenshotDetails({ mainView, check = {} }: Props) {
     const imageSize = useMemo(() => {
         if (mainView?.actualImage) {
             const image = mainView.actualImage;
+            let imgSrc = image.getSrc();
+            if (apikey) {
+                imgSrc += `?apikey=${apikey}`;
+            }
             return (
                 <Tooltip
                     withinPortal
@@ -57,7 +62,7 @@ export function ScreenshotDetails({ mainView, check = {} }: Props) {
                 >
                     <Badge color="blue" radius={'sm'} className={classes.infoBadges} data-check="image-size">
                         <a
-                            href={image.getSrc()}
+                            href={imgSrc}
                             target="_blank"
                             style={{ color: 'inherit', textDecoration: 'inherit' }}
                             rel="noreferrer"
@@ -73,7 +78,7 @@ export function ScreenshotDetails({ mainView, check = {} }: Props) {
                 <Loader size="xs" color="blue" variant="dots" />
             </Badge>
         );
-    }, [mainView]);
+    }, [mainView, apikey]);
 
     // Always show actual image date (consistent across all view modes)
     const actualDateFull = check?.actualSnapshotId?.createdDate

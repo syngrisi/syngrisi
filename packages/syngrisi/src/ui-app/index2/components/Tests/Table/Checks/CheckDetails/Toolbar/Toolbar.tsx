@@ -52,8 +52,9 @@ export function Toolbar(
         isFirstTest,
         isLastTest,
         navigationReady,
-    }: Props,
-) {
+        isShareEnabled = true,
+        apikey,
+    }: Props & { isShareEnabled?: boolean, apikey?: string }) {
     const { query } = useParams();
     const [view, setView] = useState('actual');
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
@@ -103,46 +104,50 @@ export function Toolbar(
             <Group position="apart" noWrap data-check="toolbar" data-navigation-ready={navigationReady ? 'true' : 'false'}>
                 {/* Left side: Navigation arrows (fixed position) + ScreenshotDetails */}
                 <Group spacing="sm" noWrap>
-                    <Group spacing={2} noWrap>
-                        <ActionIcon
-                            onClick={() => onNavigateCheck && onNavigateCheck('prev')}
-                            disabled={isFirstCheck}
-                            title="Previous Check"
-                            variant="transparent"
-                        >
-                            <IconChevronLeft size={20} />
-                        </ActionIcon>
-                        <ActionIcon
-                            onClick={() => onNavigateCheck && onNavigateCheck('next')}
-                            disabled={isLastCheck}
-                            title="Next Check"
-                            variant="transparent"
-                        >
-                            <IconChevronRight size={20} />
-                        </ActionIcon>
-                    </Group>
-                    <Group spacing={2} noWrap>
-                        <ActionIcon
-                            onClick={() => onNavigateTest && onNavigateTest('prev')}
-                            disabled={isFirstTest}
-                            title="Previous Test"
-                            variant="transparent"
-                        >
-                            <IconChevronUp size={20} />
-                        </ActionIcon>
-                        <ActionIcon
-                            onClick={() => onNavigateTest && onNavigateTest('next')}
-                            disabled={isLastTest}
-                            title="Next Test"
-                            variant="transparent"
-                        >
-                            <IconChevronDown size={20} />
-                        </ActionIcon>
-                    </Group>
+                    {!isShareMode && (
+                        <>
+                            <Group spacing={2} noWrap>
+                                <ActionIcon
+                                    onClick={() => onNavigateCheck && onNavigateCheck('prev')}
+                                    disabled={isFirstCheck}
+                                    title="Previous Check"
+                                    variant="transparent"
+                                >
+                                    <IconChevronLeft size={20} />
+                                </ActionIcon>
+                                <ActionIcon
+                                    onClick={() => onNavigateCheck && onNavigateCheck('next')}
+                                    disabled={isLastCheck}
+                                    title="Next Check"
+                                    variant="transparent"
+                                >
+                                    <IconChevronRight size={20} />
+                                </ActionIcon>
+                            </Group>
+                            <Group spacing={2} noWrap>
+                                <ActionIcon
+                                    onClick={() => onNavigateTest && onNavigateTest('prev')}
+                                    disabled={isFirstTest}
+                                    title="Previous Test"
+                                    variant="transparent"
+                                >
+                                    <IconChevronUp size={20} />
+                                </ActionIcon>
+                                <ActionIcon
+                                    onClick={() => onNavigateTest && onNavigateTest('next')}
+                                    disabled={isLastTest}
+                                    title="Next Test"
+                                    variant="transparent"
+                                >
+                                    <IconChevronDown size={20} />
+                                </ActionIcon>
+                            </Group>
 
-                    <Divider orientation="vertical" />
+                            <Divider orientation="vertical" />
+                        </>
+                    )}
 
-                    <ScreenshotDetails mainView={mainView} check={curCheck} />
+                    <ScreenshotDetails mainView={mainView} check={curCheck} apikey={apikey} />
                 </Group>
 
                 {/* Right side: Tools and actions */}
@@ -170,9 +175,12 @@ export function Toolbar(
 
                     <Divider orientation="vertical" />
 
-                    <RegionsToolbar mainView={mainView} baselineId={baselineId} view={view} hasDiff={!!mainView?.diffImage} />
-
-                    <Divider orientation="vertical" />
+                    {!isShareMode && (
+                        <>
+                            <RegionsToolbar mainView={mainView} baselineId={baselineId} view={view} hasDiff={!!mainView?.diffImage} />
+                            <Divider orientation="vertical" />
+                        </>
+                    )}
 
                     {!isShareMode && (
                         <>
@@ -205,8 +213,11 @@ export function Toolbar(
                             <Menu.Dropdown>
                                 <Menu.Item
                                     icon={<IconShare size={14} />}
-                                    onClick={() => setShareModalOpened(true)}
+                                    onClick={isShareEnabled ? () => setShareModalOpened(true) : undefined}
                                     data-test="menu-share-check"
+                                    data-share-enabled={isShareEnabled.toString()}
+                                    disabled={!isShareEnabled}
+                                    title={!isShareEnabled ? 'Sharing is globally disabled by administrator' : 'Share'}
                                 >
                                     Share
                                 </Menu.Item>

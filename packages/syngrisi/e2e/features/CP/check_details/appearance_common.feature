@@ -58,11 +58,11 @@ Feature: Check Detail Appearance
     Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-disabled" "true"
     Then the element with locator "[data-segment-value='slider']" should have attribute "data-segment-disabled" "true"
 
-    # action icons (NEW check)
+    # action icons (NEW check - no baseline yet, so add/save are disabled)
     Then  the element "[data-check='highlight-icon']" has attribute "data-disabled" "true"
     Then  the element "[data-check='remove-ignore-region']" has attribute "data-disabled" "true"
     Then  the element "[data-check='add-ignore-region']" has attribute "data-disabled" "true"
-    Then  the element "[data-check='save-ignore-region']" does not have attribute "data-disabled" "true"
+    Then  the element "[data-check='save-ignore-region']" has attribute "data-disabled" "true"
 
     # accept icon before acceptance - wait for loading=false first (use toolbar scope to avoid multiple matches)
     When I wait 10 seconds for the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'][data-loading='false']" to be visible
@@ -114,11 +114,11 @@ Feature: Check Detail Appearance
     Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-disabled" "true"
     Then the element with locator "[data-segment-value='slider']" should have attribute "data-segment-disabled" "true"
 
-    # action icons (PASSED check)
+    # action icons (PASSED check - has baseline, so add enabled, but no regions so save is disabled)
     Then  the element "[data-check='highlight-icon']" has attribute "data-disabled" "true"
     Then  the element "[data-check='remove-ignore-region']" has attribute "data-disabled" "true"
     Then  the element "[data-check='add-ignore-region']" does not have attribute "data-disabled" "true"
-    Then  the element "[data-check='save-ignore-region']" does not have attribute "data-disabled" "true"
+    Then  the element "[data-check='save-ignore-region']" has attribute "data-disabled" "true"
 
     # FAILED
     When I accept via http the 1st check with name "CheckName"
@@ -159,8 +159,8 @@ Feature: Check Detail Appearance
     Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-disabled" "false"
     Then the element with locator "[data-segment-value='slider']" should have attribute "data-segment-disabled" "false"
 
-    # action icons (FAILED check)
+    # action icons (FAILED check - has baseline, add enabled, but no regions so save is disabled)
     Then  the element "[data-check='highlight-icon']" does not have attribute "data-disabled" "true"
     Then  the element "[data-check='remove-ignore-region']" has attribute "data-disabled" "true"
     Then  the element "[data-check='add-ignore-region']" does not have attribute "data-disabled" "true"
-    Then  the element "[data-check='save-ignore-region']" does not have attribute "data-disabled" "true"
+    Then  the element "[data-check='save-ignore-region']" has attribute "data-disabled" "true"

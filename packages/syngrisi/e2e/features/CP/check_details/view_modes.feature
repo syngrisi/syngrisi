@@ -27,29 +27,24 @@ Feature: View Modes - Expected, Actual, Diff, Slider
   Scenario: Simple Views (Expected, Actual, Diff)
     When I wait 10 seconds for the element with locator "[data-segment-value='expected']" to be visible
     Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "false"
-    # Wait for React state to stabilize before interacting with segment control
-    When I pause for 500 ms
 
     # expected
     When I click element with locator "[data-segment-value='expected']"
-    When I pause for 300 ms
     Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-active" "true"
     Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-active" "false"
     Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-active" "false"
 
     # actual
     When I click element with locator "[data-segment-value='actual']"
-    When I pause for 300 ms
-    Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-active" "false"
     Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-active" "true"
+    Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-active" "false"
     Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-active" "false"
 
     # diff
     When I click element with locator "[data-segment-value='diff']"
-    When I pause for 300 ms
+    Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-active" "true"
     Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-active" "false"
     Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-active" "false"
-    Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-active" "true"
 
   Scenario: Slider View with Divider
     When I wait 10 seconds for the element with locator "[data-segment-value='slider']" to be visible

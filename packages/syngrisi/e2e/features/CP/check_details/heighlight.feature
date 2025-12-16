@@ -24,6 +24,7 @@ Feature: Check Details Difference Highlight
       """
 
     When I go to "main" page
+    When I wait for test "TestName" to appear in table
     When I unfold the test "TestName"
 
     When I click element with locator "[data-test-preview-image='CheckName']"

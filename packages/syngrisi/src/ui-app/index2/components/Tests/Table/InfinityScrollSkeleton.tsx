@@ -32,7 +32,7 @@ function InfinityScrollSkeleton({ infinityQuery, visibleFields, scrollRootRef }:
         checkForRoot();
 
         if (!root) {
-            checkIntervalRef.current = setInterval(checkForRoot, 100);
+            checkIntervalRef.current = setInterval(checkForRoot, 250);
         }
 
         return () => {

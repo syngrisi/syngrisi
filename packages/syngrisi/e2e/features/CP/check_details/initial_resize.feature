@@ -15,6 +15,7 @@ Feature: Check Details - Initial image resize
       """
     When I set window size: "1440x900"
     When I open the app
+    When I wait for test "TestName" to appear in table
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
     When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
@@ -59,6 +60,7 @@ Feature: Check Details - Initial image resize
       """
     When I set window size: "1440x900"
     When I open the app
+    When I wait for test "TestName" to appear in table
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
     When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
@@ -103,6 +105,7 @@ Feature: Check Details - Initial image resize
       """
     When I set window size: "1440x900"
     When I open the app
+    When I wait for test "TestName" to appear in table
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
     When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
@@ -147,6 +150,7 @@ Feature: Check Details - Initial image resize
       """
     When I set window size: "1440x900"
     When I open the app
+    When I wait for test "TestName" to appear in table
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
     When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible

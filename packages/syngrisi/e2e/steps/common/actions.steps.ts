@@ -71,6 +71,18 @@ async function waitForViewChange(page: Page, view: string): Promise<void> {
       if (!mainView || !isActive) {
         return false;
       }
+      // For slider view, check sliderView exists and divider is on canvas
+      if (expected === 'slider') {
+        if (mainView.currentView !== expected || !mainView.sliderView) {
+          return false;
+        }
+        // Check if divider object is on canvas (indicates render completed)
+        const objects = typeof mainView.canvas?.getObjects === 'function'
+          ? mainView.canvas.getObjects()
+          : [];
+        const hasDivider = Array.isArray(objects) && objects.some((obj: any) => obj.name === 'divider');
+        return hasDivider;
+      }
       const targetImage = mainView?.[`${expected}Image`];
       if (!targetImage) {
         return false;
@@ -798,10 +810,22 @@ When(
     await selectLocator.first().click();
     await page.waitForTimeout(500); // Wait for dropdown to open
 
-    // Click on the div option
-    const optionLocator = page.locator(`div:has-text('${renderedOptionText}')`).first();
-    await optionLocator.waitFor({ state: 'visible', timeout: 5000 });
-    await optionLocator.click();
+    // Click on the div option - prioritize role="option" to match actual dropdown items
+    // and avoid matching parent containers with common text like "false"
+    // Use try-catch to attempt specific selector first
+    const roleOptionSelector = `[role="option"]:has-text("${renderedOptionText}")`;
+    const genericDivSelector = `div:has-text("${renderedOptionText}")`;
+
+    try {
+      const optionLocator = page.locator(roleOptionSelector).first();
+      await optionLocator.waitFor({ state: 'visible', timeout: 2000 });
+      await optionLocator.click();
+    } catch (e) {
+      logger.warn(`Could not find role="option" with text "${renderedOptionText}", falling back to generic div`);
+      const optionLocator = page.locator(genericDivSelector).first();
+      await optionLocator.waitFor({ state: 'visible', timeout: 5000 });
+      await optionLocator.click();
+    }
 
     // Also set value via selectOption as fallback to ensure value is properly set
     try {

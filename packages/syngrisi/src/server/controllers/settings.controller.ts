@@ -9,6 +9,12 @@ const getSettings = catchAsync(async (req: ExtRequest, res: Response) => {
     res.json(result);
 });
 
+const getPublicSettings = catchAsync(async (req: ExtRequest, res: Response) => {
+    const AppSettings = appSettings;
+    const result = AppSettings.cache.filter((x: any) => ['share_enabled'].includes(x.name));
+    res.json(result);
+});
+
 const updateSetting = catchAsync(async (req: ExtRequest, res: Response) => {
     const AppSettings = appSettings;
 
@@ -24,5 +30,6 @@ const updateSetting = catchAsync(async (req: ExtRequest, res: Response) => {
 
 export {
     getSettings,
+    getPublicSettings,
     updateSetting,
 };

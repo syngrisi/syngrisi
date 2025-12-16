@@ -22,11 +22,22 @@ function RelativeDrawer(
     return (
         <Transition mounted={open} transition="slide-left" duration={200} timingFunction="ease">
             {(styles: CSSProperties) => (
-                <Box sx={{ ...styles as any, minWidth: width, maxWidth: Number(width) + 60 }}>
+                <Box sx={{
+                    ...styles as any,
+                    minWidth: width,
+                    maxWidth: typeof width === 'number' ? width + 60 : width,
+                    zIndex: 20,
+                }}
+                >
                     <Paper p="md" m={8} shadow="sm" radius="xs" withBorder>
                         <Group position="apart" align="start" noWrap>
                             <Text size="sm" pb={24}>{title}</Text>
-                            <ActionIcon size="sm" onClick={() => setOpen(false)} data-test="relative-wrapper-icon" aria-label="Close">
+                            <ActionIcon
+                                size="sm"
+                                onClick={() => setOpen(false)}
+                                data-test="relative-wrapper-icon"
+                                aria-label="Close"
+                            >
                                 <IconX stroke={1} size={16} />
                             </ActionIcon>
                         </Group>
