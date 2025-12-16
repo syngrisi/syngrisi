@@ -1,0 +1,55 @@
+{
+  "name": "@syngrisi/core-api",
+  "version": "2.3.0",
+  "description": "Syngrisi Core JS client",
+  "main": "dist/src/SyngrisiApi.js",
+  "private": false,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "pub": "np",
+    "build": "run-s clean compile",
+    "clean": "rimraf tsconfig.tsbuildinfo ./build ./coverage",
+    "compile": "tsc -p ./tsconfig.json --declaration",
+    "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:syngrisi/syngrisi.git"
+  },
+  "keywords": [
+    "visual",
+    "regression",
+    "test",
+    "SDK"
+  ],
+  "author": "Viktar Silakou",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/syngrisi/syngrisi/issues"
+  },
+  "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/core-api",
+  "dependencies": {
+    "@syngrisi/core-api": "*",
+    "@wdio/logger": "^7.16.0",
+    "form-data": "^4.0.0",
+    "got-cjs": "^12.0.4",
+    "hasha": "^5.2.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
+    "@vitest/coverage-v8": "^4.0.8",
+    "@wdio/types": "^8.20.0",
+    "c8": "^7.12.0",
+    "eslint": "^8.52.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-unicorn": "^45.0.2",
+    "typedoc": "^0.25.3",
+    "typescript": "^5.2.2",
+    "vitest": "^4.0.8"
+  },
+  "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"
+}

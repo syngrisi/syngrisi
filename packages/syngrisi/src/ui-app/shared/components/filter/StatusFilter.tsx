@@ -1,0 +1,20 @@
+/* eslint-disable react/jsx-props-no-spreading,react-hooks/exhaustive-deps */
+import * as React from 'react';
+import { CommonDistinctFilter } from '@shared/components/filter/CommonDistinctFilter';
+
+interface Props {
+    label: string
+    updateGroupRules: any
+    id: string
+}
+
+export function StatusFilter({ label, updateGroupRules, id }: Props) {
+    return (
+        <CommonDistinctFilter
+            label={label}
+            updateGroupRules={updateGroupRules}
+            id={id}
+            resource="test-distinct/status"
+        />
+    );
+}

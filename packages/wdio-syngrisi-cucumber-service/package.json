@@ -1,0 +1,58 @@
+{
+  "name": "wdio-syngrisi-cucumber-service",
+  "version": "2.3.0",
+  "description": "WDIO Service for Syngrisi visual tests using Cucumber",
+  "main": "dist/index.js",
+  "np": {
+    "releaseDraft": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:syngrisi/syngrisi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/syngrisi/syngrisi/issues"
+  },
+  "scripts": {
+    "pub": "run-s install:global clean compile; np",
+    "build": "run-s clean compile",
+    "clean": "rimraf ./dist",
+    "compile": "babel src/ -d dist/ --config-file ./babel.config.js",
+    "test": "ls",
+    "install:local": "npm rm @syngrisi/syngrisi-wdio-sdk && npm install -S ../wdio-sdk",
+    "install:global": "npm rm @syngrisi/syngrisi-wdio-sdk && npm install -S @syngrisi/syngrisi-wdio-sdk",
+    "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
+  },
+  "keywords": [
+    "wdio-plugin",
+    "wdio-service",
+    "syngrisi"
+  ],
+  "author": "Viktar Silakou",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "7.16.0",
+    "@babel/core": "^7.16.0",
+    "@babel/plugin-proposal-class-properties": "^7.16.0",
+    "@babel/plugin-proposal-function-bind": "7.16.0",
+    "@babel/plugin-proposal-optional-catch-binding": "7.16.0",
+    "@babel/plugin-transform-runtime": "^7.16.4",
+    "@babel/preset-env": "^7.16.4",
+    "@babel/register": "^7.16.0",
+    "babel-plugin-source-map-support": "^2.1.3",
+    "eslint": "^8.3.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3",
+    "npm-run-all": "^4.1.5"
+  },
+  "dependencies": {
+    "@syngrisi/wdio-sdk": "^2.3.0",
+    "@wdio/logger": "^7.7.0",
+    "faker": "^5.5.3",
+    "rimraf": "^3.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"
+}

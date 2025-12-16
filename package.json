@@ -1,0 +1,39 @@
+{
+  "name": "syngrisi-monorepo",
+  "private": "false",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "publish": "lerna publish",
+    "test": "lerna run packages/syngrisi/test --scope=create-sy --scope=@syngrisi/syngrisi",
+    "start": "lerna run start --scope=@syngrisi/syngrisi",
+    "build": "lerna run build",
+    "graph": "nx graph",
+    "docs": "typedoc",
+    "gpt:export": "node src_to_json.js # this serializes the source folder and individual files into a single JSON file in the `src_to_json` folder for export to custom GPTs.",
+    "e2e:bddgen": "npm run --prefix packages/syngrisi/e2e bddgen",
+    "test:ap:tasks": "npm run e2e:bddgen && cd packages/syngrisi/e2e && yarn playwright test \"features/AP/tasks/\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "lerna": "^7.4.1",
+    "playwright-bdd": "^8.4.1",
+    "vite": "^7.2.2"
+  },
+  "overrides": {
+    "socks": "^2.8.4",
+    "vite": "^7.2.2",
+    "minimatch@3": {
+      "brace-expansion": "1.1.12"
+    },
+    "brace-expansion@1": "1.1.12",
+    "minimatch@9.0.4": {
+      "brace-expansion": "2.0.2"
+    },
+    "minimatch@9.0.5": {
+      "brace-expansion": "2.0.2"
+    }
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+}

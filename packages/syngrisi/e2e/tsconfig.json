@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "types": ["node", "@playwright/test"],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "downlevelIteration": true,
+    "baseUrl": ".",
+    "paths": {
+      "@config": ["config"],
+      "@pw-native-config": ["playwright-native.config"],
+      "@fixtures": ["support/fixtures/index"],
+      "@fixtures/*": ["support/fixtures/*"],
+      "@helpers/*": ["steps/helpers/*"],
+      "@utils/*": ["support/utils/*"],
+      "@lib/*": ["support/lib/*"],
+      "@params": ["support/params"],
+      "@app-server": ["support/utils/app-server"],
+      "@logger": ["support/lib/logger"]
+    },
+    "rootDir": ".",
+    "outDir": "dist"
+  },
+  "include": [
+    "playwright.config.ts",
+    "playwright-native.config.ts",
+    "merge.config.ts",
+    "config.ts",
+    "steps/**/*.ts",
+    "support/**/*.ts"
+  ]
+}

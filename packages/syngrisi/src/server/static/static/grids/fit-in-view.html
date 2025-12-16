@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../css/common.min.css">
+    <style>
+        .row {
+            min-height: 125px; /* 500 / 4 */
+        }
+
+        .col {
+            padding-top: 18px;
+            min-height: 125px; /* 500 / 4 */
+            background-color: #9fcdff;
+        }
+
+        .col:hover {
+            background-color: #85144B !important;
+        }
+
+    </style>
+    <title>Desktop Grid</title>
+</head>
+<body>
+<div id="external-element-wrapper"
+     class="container p-3 text-center h-100"
+     style="min-width: 550px; max-width: 550px; min-height: 550px; height: 550px;">
+    <span class="display-4 text-secondary">500x500</span>
+    <div id="external-element"
+         class="container m-3 border border-secondary text-center align-items-center display-3 text-dark"
+         style="min-height: 500px; max-width: 500px; min-width: 500px; max-width: 500px">
+        <div class="row align-items-center">
+            <div class="col cl" id="col-1">1</div>
+            <div class="col" id="col-2">2</div>
+            <div class="col" id="col-3">3</div>
+            <div class="col" id="col-4">4</div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col" id="col-5">5</div>
+            <div class="col bg-secondary text-light" id="col-6"><span>6</span></div>
+            <div class="col border border-secondary bg-light" id="col-7">7</div>
+            <div class="col" id="col-8">8</div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col" id="col-9">9</div>
+            <div class="col border border-secondary bg-light" id="col-10">10</div>
+            <div class="col bg-secondary text-light cl" id="col-11">11</div>
+            <div class="col" id="col-12">12</div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col" id="col-13">13</div>
+            <div class="col" id="col-14">14</div>
+            <div class="col" id="col-15">15</div>
+            <div class="col" id="col-16">16</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

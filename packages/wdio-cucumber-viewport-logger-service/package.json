@@ -1,0 +1,32 @@
+{
+  "name": "wdio-cucumber-viewport-logger-service",
+  "version": "2.1.36-alpha.0",
+  "description": "WebdriverIO Viewport Logger Service for Cucumber",
+  "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/wdio-cucumber-viewport-logger-service",
+  "repository": {
+    "type": "git",
+    "getUrl": "git+https://github.com/syngrisi/syngrisi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/syngrisi/syngrisi/issues"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "test": "exit 0",
+    "pub": "np",
+    "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
+  },
+  "keywords": [
+    "wdio",
+    "debug",
+    "visual",
+    "logger",
+    "webdriverio"
+  ],
+  "author": "Viktar Silakou",
+  "license": "MIT",
+  "dependencies": {
+    "@wdio/logger": "^7.19.0"
+  },
+  "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"
+}

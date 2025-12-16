@@ -1,0 +1,16 @@
+assets
+coverage
+src
+tests
+!build
+/*.js
+/*.yml
+/*.tgz
+.gitignore
+.editorconfig
+.nvmrc
+.github
+protocol
+tsconfig.*
+CONTRIBUTING.md
+!scripts

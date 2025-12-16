@@ -1,0 +1,40 @@
+[
+    {
+        "name": "first_run",
+        "label": "First Run",
+        "description": "Indicates if the application is running the first time",
+        "type": "Boolean",
+        "value": "true",
+        "enabled": true
+    },
+    {
+        "name": "authentication",
+        "label": "Authentication",
+        "description": "Enable application authentication",
+        "type": "Boolean",
+        "value": "false",
+        "enabled": true
+    },
+    {
+        "name": "auto_remove_old_checks",
+        "label": "Auto remove old checks",
+        "description": "Automatically delete checks older than the configured number of days once per day",
+        "type": "AutoOldChecks",
+        "value": {
+            "days": 365,
+            "lastRunAt": null
+        },
+        "enabled": false
+    },
+    {
+        "name": "auto_remove_old_logs",
+        "label": "Auto remove old logs",
+        "description": "Automatically delete logs older than the configured number of days once per day",
+        "type": "AutoOldLogs",
+        "value": {
+            "days": 120,
+            "lastRunAt": null
+        },
+        "enabled": true
+    }
+]

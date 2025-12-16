@@ -1,0 +1,20 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Server Watch",
+			"type": "shell",
+			"command": "cd packages/syngrisi/ && npm run server:watch",
+			"problemMatcher": [],
+			"isBackground": true,
+			"group": {
+			  "kind": "build",
+			  "isDefault": true
+			},
+			// "runOptions": {
+			//   "runOn": "folderOpen"
+			// }
+		  }
+
+	]	
+}

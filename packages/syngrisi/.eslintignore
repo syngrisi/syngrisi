@@ -1,0 +1,16 @@
+dist
+.idea
+node_modules
+/baselines/
+/baselinesTest/
+/baselineProd/
+/backups
+/data
+/coverage/
+/logs/
+/.snapshots-images/
+/.nyc_output/
+/src_to_json/
+/logs/*
+package-lock.json
+package.json

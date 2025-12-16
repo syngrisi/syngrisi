@@ -1,0 +1,17 @@
+{
+  "all": true,
+  "include": ["src/server", "server.js", "config.js"],
+  "exclude": [
+    "src/**/index.ts",
+    "src/**/*-fuzz.ts"
+  ],
+  "clean": false,
+  "report-dir": "coverage",
+  "skip-full": true,
+  "reporter": ["html"],
+  "check-coverage": true,
+  "branches": 100,
+  "lines": 100,
+  "functions": 100,
+  "statements": 100
+}
