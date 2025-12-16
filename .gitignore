@@ -36,3 +36,6 @@ baselines*/
 packages/syngrisi/docs/staging-testing-guide.md
 packages/syngrisi/e2e/docs/E2E_OPTIMIZATION_GUIDE.md
 packages/syngrisi/docs/technical_debt/infinity_scroll_complexity.md
+docs/CURSOR_ISSUE_REPORT.md
+packages/syngrisi/docs/agent/investigations/cursor-not-allowed-issue.md
+packages/syngrisi/docs/agent/investigations/syngrisi-improvements-report.md

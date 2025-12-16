@@ -1,5 +1,31 @@
 # @syngrisi/syngrisi
 
+## 2.6.0
+
+### Minor Changes
+
+-   ### Features
+
+    -   Refactor screenshot details and view controls with improved UI/UX
+
+    ### Bug Fixes
+
+    -   Fix race condition in check details canvas rendering
+    -   Improve check details canvas performance by updating images on existing canvas instead of re-initializing
+    -   Resolve cursor display issues in canvas view
+    -   Improve toolbar layout and fix navigation arrow positioning
+    -   Improve ActionPopoverIcon click handling and E2E test stability
+
+    ### Improvements
+
+    -   Centralize retry logic in SyngrisiApi (core-api)
+    -   Update seed scripts and data
+
+### Patch Changes
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@2.6.0
+
 ## 2.5.3
 
 ### Patch Changes

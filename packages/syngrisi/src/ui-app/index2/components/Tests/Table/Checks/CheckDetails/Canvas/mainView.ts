@@ -119,6 +119,103 @@ export class MainView {
         // this.sideToSideView.render()
     }
 
+    /**
+     * Update images without recreating canvas - used for navigation optimization
+     */
+    // Concurrency control
+    private currentUpdateId: number = 0;
+
+    /**
+     * Update images without recreating canvas - used for navigation optimization
+     */
+    /**
+     * Update images without recreating canvas - used for navigation optimization
+     */
+    async updateImages({
+        expectedImage,
+        actualImage,
+        diffImage,
+        actual,
+    }: {
+        expectedImage: fabric.Image;
+        actualImage: fabric.Image;
+        diffImage: fabric.Image | null;
+        actual: any;
+    }): Promise<void> {
+        // Generate new update ID
+        this.currentUpdateId++;
+        const updateId = this.currentUpdateId;
+
+        // 1. Destroy old views but keep canvas
+        await this.destroyAllViews();
+
+        // Check if a new update has started while we were clearing
+        if (updateId !== this.currentUpdateId) {
+            log.debug(`[MainView] updateImages aborted after destroy (stale updateId: ${updateId}, current: ${this.currentUpdateId})`);
+            return;
+        }
+
+        // 2. Update image references
+        // Guard against disposed state
+        if (!this.canvas) return;
+
+        this.actualImage = lockImage(actualImage);
+        this.expectedImage = lockImage(expectedImage);
+        this.diffImage = diffImage ? lockImage(diffImage) : null;
+
+        // 3. Recreate views with new images
+        try {
+            if (actual) {
+                this.sliderView = new SideToSideView({ mainView: this });
+            }
+            this.expectedView = new SimpleView(this, 'expected');
+            this.actualView = new SimpleView(this, 'actual');
+            this.diffView = new SimpleView(this, 'diff');
+
+            // 4. Render current view
+            // Check updateId again before rendering
+            if (updateId !== this.currentUpdateId) {
+                log.debug(`[MainView] updateImages aborted before render (stale updateId: ${updateId}, current: ${this.currentUpdateId})`);
+                await this.destroyAllViews(); // Clean up partial state
+                return;
+            }
+
+            if ((this as any)[`${this.currentView}View`]) {
+                (this as any)[`${this.currentView}View`].render();
+            }
+
+            // 5. Clear regions (will be reloaded by useEffect)
+            if (updateId === this.currentUpdateId) {
+                this.removeAllRegions();
+            }
+        } catch (e) {
+            log.error('[MainView] Error during updateImages:', e);
+            // Attempt cleanup if something failed
+            await this.destroyAllViews();
+        }
+    }
+
+    /**
+     * Check if canvas dimensions need to be updated
+     */
+    needsCanvasResize(newWidth: number, newHeight: number): boolean {
+        return this.canvasElementWidth !== newWidth ||
+            this.canvasElementHeight !== newHeight;
+    }
+
+    /**
+     * Resize canvas (only when viewport changes)
+     */
+    resizeCanvas(newWidth: number, newHeight: number): void {
+        this.canvasElementWidth = newWidth;
+        this.canvasElementHeight = newHeight;
+        this.canvas.setDimensions({
+            width: newWidth,
+            height: newHeight,
+        });
+        this.canvas.renderAll();
+    }
+
     /*
      this is the area from the left top canvas corner till the end of the viewport
      ┌──────┬─────────────┐
@@ -464,6 +561,15 @@ export class MainView {
     }
 
     addBoundingRegion(name) {
+        // Check if bound_rect already exists
+        const existingBoundRect = this.canvas.getObjects()
+            .find((obj) => obj.name === 'bound_rect');
+
+        if (existingBoundRect) {
+            log.warn('[MainView] Bound region already exists, skipping creation');
+            return;
+        }
+
         const params = {
             name,
             fill: 'rgba(0,0,0,0)',

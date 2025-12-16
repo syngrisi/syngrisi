@@ -6,6 +6,7 @@ import { LogOpts } from '@types';
 import { ClientStartSessionType } from '@schemas/Client.schema';
 import { UpdateTestType } from '@schemas/Test.schema';
 import { TestDocument } from '@models/Test.model';
+import { CheckDocument } from '@models/Check.model';
 
 const updateTest = async (id: string, update: UpdateTestType) => {
     const logOpts: LogOpts = {
@@ -131,6 +132,6 @@ export const updateTestAfterCheck = async (test: TestDocument, check: CheckDocum
     await test.save({ session });
 
     log.debug('update suite and run', logOpts);
-    await updateItemDate('VRSSuite', check.suite); // updateItemDate might need session support too?
-    await updateItemDate('VRSRun', check.run);
+    await updateItemDate('VRSSuite', check.suite, session);
+    await updateItemDate('VRSRun', check.run, session);
 };

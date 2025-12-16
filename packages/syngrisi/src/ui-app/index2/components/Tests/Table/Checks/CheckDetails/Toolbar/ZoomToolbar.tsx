@@ -1,8 +1,8 @@
 /* eslint-disable prefer-arrow-callback,react/jsx-one-expression-per-line */
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { ActionIcon, Button, Group, Kbd, Popover, Stack, Text, Tooltip } from '@mantine/core';
-import { IconChevronDown, IconZoomIn, IconZoomOut } from '@tabler/icons-react';
+import { ActionIcon, Button, Group, Kbd, Popover, Stack, Text } from '@mantine/core';
+import { IconChevronDown } from '@tabler/icons-react';
 import { useDisclosure, useHotkeys } from '@mantine/hooks';
 import { fabric } from 'fabric';
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
@@ -86,25 +86,19 @@ export function ZoomToolbar(
             zoomTo(mainView[imageName as keyof MainView], anotherDimension);
         }
 
-        setTimeout(() => {
-            mainView.panToCanvasWidthCenter(imageName);
-        }, 10);
+        mainView.panToCanvasWidthCenter(imageName);
     };
 
     const fitImageByWith = (imageName: string) => {
         const image = mainView[imageName as keyof MainView];
         zoomTo(image, 'width');
 
-        setTimeout(() => {
-            mainView.panToCanvasWidthCenter(imageName);
-        }, 10);
+        mainView.panToCanvasWidthCenter(imageName);
     };
 
     const resizeImageIfNeeded = () => {
         const initPan = (imageName: string) => {
-            setTimeout(() => {
-                mainView.panToCanvasWidthCenter(imageName);
-            }, 10);
+            mainView.panToCanvasWidthCenter(imageName);
         };
 
         const greatestImage = calculateMaxImagesDimensions();
@@ -170,27 +164,9 @@ export function ZoomToolbar(
     return (
         <>
 
-            <Tooltip
-                label={
-                    (
-                        <Group noWrap>
-                            <Text>Zoom In</Text>
-                            <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>+</Kbd>
-                        </Group>
-                    )
-                }
-            >
-                <ActionIcon
-                    data-check="zoom-in"
-                    onClick={() => zoomByDelta(15)}
-                >
-                    <IconZoomIn size={24} stroke={1} />
-                </ActionIcon>
-            </Tooltip>
-
             <Popover position="bottom" withArrow shadow="md" opened={openedZoomPopover}>
                 <Popover.Target>
-                    <Group spacing={0} position="center" onClick={zoomPopoverHandler.toggle} noWrap>
+                    <Group spacing={0} position="center" onClick={zoomPopoverHandler.toggle} noWrap sx={{ cursor: 'pointer' }} data-check="open-zoom-dropdown">
                         <Text
                             size="lg"
                             weight={400}
@@ -198,7 +174,7 @@ export function ZoomToolbar(
                         >
                             {Math.round(zoomPercent)}%
                         </Text>
-                        <ActionIcon ml={-10} data-check="open-zoom-dropdown">
+                        <ActionIcon ml={-10} sx={{ pointerEvents: 'none' }}>
                             <IconChevronDown />
                         </ActionIcon>
                     </Group>
@@ -303,24 +279,6 @@ export function ZoomToolbar(
                     </Stack>
                 </Popover.Dropdown>
             </Popover>
-
-            <Tooltip
-                label={
-                    (
-                        <Group noWrap>
-                            <Text>Zoom out</Text>
-                            <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>-</Kbd>
-                        </Group>
-                    )
-                }
-            >
-                <ActionIcon
-                    data-check="zoom-out"
-                    onClick={() => zoomByDelta(-15)}
-                >
-                    <IconZoomOut size={24} stroke={1} />
-                </ActionIcon>
-            </Tooltip>
         </>
     );
 }
