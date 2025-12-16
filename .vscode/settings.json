@@ -1,0 +1,74 @@
+{
+  "zencoder.enableRepoIndexing": true,
+  "playwright-bdd-helper.componentsFilePath": "packages/syngrisi/src/dummy.po.ts",
+  "cucumberautocomplete.steps": ["packages/syngrisi/e2e/steps/**/*.ts"],
+  // "cucumberautocomplete.strictGherkinCompletion": true,
+  "cucumberautocomplete.syncfeatures": "packages/syngrisi/e2e/features/**/*.feature",
+  "_cucumberautocomplete.syncfeatures": "packages/syngrisi/tests/features/**/*.feature",
+  "playwright-bdd-helper.commandTemplate": "npx bddgen && yarn playwright test \"{{featurePath}}\" --grep \"{{grepPattern}}\"{{commandArgsString}} --workers=1 --headed",
+  // "playwright-bdd-helper.commandTemplate": "npx cross-env LOG=1 npx wdio --spec \"{{featurePath}}\""
+  "cucumberautocomplete.customParameters": [
+    {
+      "parameter": "{role}",
+      "value": "(element|.+?)"
+    },
+    {
+      "parameter": "{verbs}",
+      "value": "(create|update|delete|path)"
+    },
+    {
+      "parameter": "{state}",
+      "value": "(attached|detached|visible|hidden|undefined)"
+    },
+    {
+      "parameter": "{action}",
+      "value": "(click|hover|fill|type|check|select|press|fill in|set|focus|clear|hide|scroll to)"
+    },
+    {
+      "parameter": "{attribute}",
+      "value": "(name|test-id|label|role|text|placeholder|alt-text|title|tag|id|selector)"
+    },
+    {
+      "parameter": "{assert}",
+      "value": "(be visible|is visible|is not visible|is checked|is not checked|is present|is not present|is in viewport|is not in viewport|is focused|is not focused|is enabled|is not enabled|is editable|is not editable)"
+    },
+    {
+      "parameter": "{string}",
+      "value": "\".*\""
+    },
+    {
+      "parameter": "{component}",
+      "value": "\".*\""
+    },
+    {
+      "parameter": "{target}",
+      "value": "(locator|label)"
+    }
+  ],
+  "zencoder.mcpServers": {
+    "mac-say-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mac-say-mcp@latest"
+      ]
+    },
+    "vscode_tester": {
+      "type": "sse",
+      "url": "http://localhost:3232/sse"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--isolated",
+        "--headless",
+        "--browser",
+        "firefox",
+        "--user-agent",
+        "\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.6422.112 Safari/537.3\""
+      ]
+    }
+  }
+}

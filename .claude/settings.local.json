@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(LOG_LEVEL=debug npm test:*)",
+      "Bash(npm test:*)",
+      "Bash(curl:*)",
+      "Bash(npx cross-env:*)",
+      "Bash(tee:*)",
+      "Bash(nvm use:*)",
+      "Bash(pkill:*)",
+      "Bash(done)",
+      "Bash(find:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

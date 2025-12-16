@@ -1,0 +1,60 @@
+{
+  "name": "@syngrisi/playwright-sdk",
+  "version": "2.3.0",
+  "description": "Syngrisi Playwright SDK",
+  "main": "dist/PlaywrightDriver.js",
+  "directories": {
+    "lib": "src/lib"
+  },
+  "engines": {
+    "node": ">=14.20.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "pub": "np",
+    "build": "run-s clean compile",
+    "clean": "rimraf tsconfig.tsbuildinfo ./build ./coverage",
+    "compile": "tsc -p ./tsconfig.json",
+    "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:syngrisi/syngrisi.git"
+  },
+  "keywords": [
+    "visual",
+    "regression",
+    "test",
+    "SDK"
+  ],
+  "author": "Viktar Silakou",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/syngrisi/syngrisi/issues"
+  },
+  "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/playwright-sdk#readme",
+  "dependencies": {
+    "@faker-js/faker": "^8.2.0",
+    "@playwright/test": "^1.39.0",
+    "@syngrisi/core-api": "^2.3.0",
+    "@wdio/logger": "^7.16.0",
+    "hasha": "^5.2.2",
+    "loglevel": "^1.8.1",
+    "playwright-core": "^1.39.0",
+    "ua-parser-js": "^1.0.37",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/ua-parser-js": "^0.7.38",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
+    "@vitest/coverage-v8": "^4.0.8",
+    "c8": "^7.12.0",
+    "eslint": "^8.52.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-unicorn": "^45.0.2",
+    "typescript": "^5.2.2",
+    "vitest": "^4.0.8"
+  },
+  "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"
+}

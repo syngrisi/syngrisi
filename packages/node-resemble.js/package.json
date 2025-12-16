@@ -1,0 +1,43 @@
+{
+  "name": "@syngrisi/node-resemble.js",
+  "version": "2.3.0",
+  "description": "Image analysis and comparison for nodejs",
+  "main": "resemble.js",
+  "scripts": {
+    "test": "jasmine resemble.spec.js",
+    "test:auto": "chokidar 'resemble.js' 'resemble.spec.js' -c \"npm test\"",
+    "build": "echo build",
+    "release": "release-it --github.release",
+    "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+git@github.com:syngrisi/syngrisi.git",
+    "directory": "packages/node-resemble.js"
+  },
+  "keywords": [
+    "comparison",
+    "image",
+    "diff",
+    "compare"
+  ],
+  "author": {
+    "name": "Viktar Silakou",
+    "email": "1105714@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/syngrisi/syngrisi/issues"
+  },
+  "homepage": "https://github.com/syngrisi/syngrisi/node-resemble.js/",
+  "dependencies": {
+    "jpeg-js": "0.4.4",
+    "pngjs": "^7.0.0",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "jasmine": "^5.3.0"
+  },
+  "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"
+}

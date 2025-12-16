@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "ES2020",
+    "module": "commonjs",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    //    "types": ["index.d.ts"],
+    "outDir": "./dist",
+    /* Redirect output structure to the directory. */
+//    "rootDir": "./src",
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": [
+    "tests/**",
+    "example",
+    "scripts",
+    "dist",
+    "__mocks__",
+    "coverage",
+    "node_modules",
+    "vitest.config.ts"
+  ]
+}

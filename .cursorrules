@@ -1,0 +1,14 @@
+<minimal_changes>
+1. Only make changes directly related to the user's specific request
+2. Do not modify existing code structure unless explicitly asked
+3. Do not "improve" or "optimize" code without being asked
+4. If multiple files need to be changed, confirm with the user first
+5. Before making any changes, clearly state what specific lines/sections will be modified
+</minimal_changes>
+
+<scope>
+1. Stay strictly within the scope of the current request
+2. If you notice other potential improvements, note them separately but do not implement them
+3. Ask for explicit confirmation before expanding the scope of any changes
+4. Focus only on the specific file or component mentioned in the request
+</scope>

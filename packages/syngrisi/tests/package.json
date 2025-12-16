@@ -1,0 +1,70 @@
+{
+  "author": {
+    "name": "Viktar Silakou",
+    "email": "1105714@gmail.com"
+  },
+  "license": "MIT",
+  "name": "syngrisi-test-solution",
+  "version": "2.0.0",
+  "description": "Syngrisi test solution",
+  "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi",
+  "repository": {
+    "type": "git",
+    "getUrl": "git@github.com:syngrisi/syngrisi.git"
+  },
+  "scripts": {
+    "test": "cross-env RETRY=3 STREAMS=4 LOG=1 HL=1 npx wdio --cucumberOpts.tagExpression='not @Pending' --spec './features/**/*.feature' --exclude 'features/debug/debug.feature' 2>&1 | tee run.log",
+    "test:ui": "cross-env RETRY=2 STREAMS=2 LOG=1 HL=0 npx wdio --spec './features/**/*.feature' --exclude 'features/debug/debug.feature' 2>&1 | tee run.log",
+    "test:docker": "cd .. && docker-compose build && cd tests && arch -x86_64 cross-env LOG=1 RETRY=1 HL=1 DOCKER=1 SYNGRISI_DOCKER_PORT=3102 SYNGRISI_DOCKER_DB_PORT=27018 SYNGRISI_DOCKER_IMAGES_PATH=./baselinesTest/100/ SYNGRISI_DB_URI=mongodb://syngrisi-db:27017/SyngrisiDb npx wdio --cucumberOpts.tagExpression='not @exclude_docker and not @Pending' --spec 'features/**/*.feature'",
+    "report": "cp -R ./allure-report/history ./allure-results/; allure generate -c && allure open",
+    "smoke": "arch -x86_64 cross-env STREAMS=4 LOG=1 HL=1 npx wdio --spec 'features/**/*.feature' --cucumberOpts.tagExpression='@smoke'",
+    "testui": "arch -x86_64 cross-env LOG=1 HL=0 npx wdio --spec 'features/**/*.feature'"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.23.0",
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-export-default-from": "^7.8.3",
+    "@babel/plugin-proposal-logical-assignment-operators": "^7.20.7",
+    "@babel/plugin-transform-modules-commonjs": "^7.27.1",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/register": "^7.9.0",
+    "@cucumber/cucumber": "^7.0.0",
+    "@syngrisi/syngrisi-wdio-sdk": "../../wdio-sdk",
+    "@wdio/allure-reporter": "^7.0.0",
+    "@wdio/cli": "^7.0.0",
+    "@wdio/codemod": "^0.12.0",
+    "@wdio/config": "^7.0.0",
+    "@wdio/cucumber-framework": "^7.0.0",
+    "@wdio/local-runner": "file:src/support/local-runner-patched",
+    "@wdio/shared-store-service": "^7.16.15",
+    "@wdio/spec-reporter": "^7.0.0",
+    "@wdio/static-server-service": "^7.0.0",
+    "allure-commandline": "^2.17.2",
+    "babel-jest": "^26.0.1",
+    "chalk": "^4.1.0",
+    "chromedriver": "^142.0.1",
+    "compression": "^1.7.4",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.24.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-wdio": "^6.0.8",
+    "faker": "^5.5.3",
+    "frisby": "^2.1.3",
+    "got-cjs": "^12.0.1",
+    "http-server": "^0.12.1",
+    "imagejs": "0.0.9",
+    "inquirer": "^9.0.1",
+    "jest": "^26.2.2",
+    "jscodeshift": "^17.3.0",
+    "nodemon": "^2.0.19",
+    "npm-run-all": "^4.1.5",
+    "wdio-chromedriver-service": "^7.0.0",
+    "webdriverio": "^7.0.0",
+    "yaml": "^1.10.0"
+  },
+  "dependencies": {
+    "@syngrisi/wdio-sdk": "^2.2.4",
+    "ts-node": "^10.9.2"
+  }
+}

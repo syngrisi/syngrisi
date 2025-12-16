@@ -1,0 +1,64 @@
+/**
+ * Wait for the given element to be enabled, displayed, or to exist
+ * @param  {String}   selector                  Element selector
+ * @param  {String}   ms                       Wait duration (optional)
+ * @param  {String}   falseState               Check for opposite state
+ * @param  {String}   state                    State to check for (default
+ *                                             existence)
+ */
+export default async (selector, ms, falseState, state) => {
+    /**
+     * Maximum number of milliseconds to wait, default 10000
+     * @type {Int}
+     */
+    const intMs = parseInt(ms, 10) || 10000;
+
+    /**
+     * Command to perform on the browser object
+     * @type {String}
+     */
+    let command = 'waitForDisplayed';
+
+    /**
+     * Boolean interpretation of the false state
+     * @type {Boolean}
+     */
+    let boolFalseState = !!falseState;
+
+    /**
+     * Parsed interpretation of the state
+     * @type {String}
+     */
+    let parsedState = '';
+
+    if (falseState || state) {
+        parsedState = state.indexOf(' ') > -1
+            ? state.split(/\s/)[state.split(/\s/).length - 1]
+            : state;
+
+        if (parsedState) {
+            command = `waitFor${parsedState[0].toUpperCase()}`
+                + `${parsedState.slice(1)}`;
+        }
+    }
+
+    if (typeof falseState === 'undefined') {
+        boolFalseState = false;
+    }
+    console.log({ command });
+    try {
+        const element = await $(selector);
+        await element[command]({ reverse: boolFalseState, timeout: intMs });
+    } catch (error) {
+        const errorMsg = error.message || error.toString() || '';
+        const isDisconnected = errorMsg.includes('disconnected')
+            || errorMsg.includes('failed to check if window was closed')
+            || errorMsg.includes('ECONNREFUSED');
+        if (isDisconnected) {
+            // Browser disconnected or ChromeDriver unavailable, skip wait
+            console.warn('Browser disconnected or ChromeDriver unavailable, skipping waitFor');
+        } else {
+            throw error;
+        }
+    }
+};
