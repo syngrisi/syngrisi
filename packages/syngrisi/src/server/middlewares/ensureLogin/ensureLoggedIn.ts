@@ -58,12 +58,15 @@ export const normalizeIncomingApiKey = (rawKey: unknown): string | undefined => 
 
 
 
-const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
+const handleBasicAuth = async (req: ExtRequest, retryCount = 0): Promise<any> => {
 
     const logOpts = {
         scope: 'handleBasicAuth',
         msgType: 'AUTH_API',
     };
+
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY_MS = 500;
 
     const AppSettings = appSettings;
 
@@ -76,6 +79,23 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
     }
     if (!authEnabled) {
         const guest = await User.findOne({ username: 'Guest' });
+
+        // Retry logic for Guest user lookup during startup (MongoDB indexing race condition)
+        if (!guest) {
+            if (retryCount < MAX_RETRIES) {
+                log.warn(`Guest user not found in handleBasicAuth (attempt ${retryCount + 1}/${MAX_RETRIES}), retrying in ${RETRY_DELAY_MS}ms...`, logOpts);
+                await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+                return handleBasicAuth(req, retryCount + 1);
+            }
+            log.error(`cannot find Guest user after ${MAX_RETRIES} retries`, logOpts);
+            return {
+                type: 'redirect',
+                status: 301,
+                value: `/auth?=Error: cannot find Guest user after ${MAX_RETRIES} retries`,
+                user: null,
+            };
+        }
+
         const result = new Promise((resolve) => {
             req.logIn(guest, (err: any) => {
                 if (err) {
@@ -257,6 +277,134 @@ export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: Ne
 
         if (apiKeyResult.type !== 'success') {
             log.info(`Unauthorized - ${req.originalUrl}`);
+            res.status(401).json({ error: `Unauthorized - ${req.originalUrl}` });
+            return next(new Error(`Unauthorized - ${req.originalUrl}`));
+        }
+        if ('apikey' in req.headers) {
+            delete (req.headers as Record<string, unknown>).apikey;
+        }
+        return next();
+    };
+}
+
+/**
+ * Middleware that allows access if:
+ * 1. User is logged in, OR
+ * 2. A valid share token is present in query params
+ *
+ * Used for pages that can be accessed anonymously via share links.
+ */
+export function ensureLoggedInOrShareToken(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        // Check if share token is present in query params
+        const shareToken = req.query.share as string | undefined;
+
+        if (shareToken) {
+            // Share token present - allow access without login
+            // The frontend will validate the token and show read-only mode
+            log.debug('Share token present, allowing access without login', { scope: 'ensureLoggedInOrShareToken' });
+
+            // Login as Guest user for share mode (with retry for MongoDB indexing race condition)
+            const MAX_RETRIES = 3;
+            const RETRY_DELAY_MS = 500;
+            let guest = null;
+
+            for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+                guest = await User.findOne({ username: 'Guest' });
+                if (guest) break;
+                if (attempt < MAX_RETRIES - 1) {
+                    log.warn(`Guest user not found for share access (attempt ${attempt + 1}/${MAX_RETRIES}), retrying...`, { scope: 'ensureLoggedInOrShareToken' });
+                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+                }
+            }
+
+            if (guest) {
+                await new Promise<void>((resolve) => {
+                    req.logIn(guest, (err: any) => {
+                        if (err) {
+                            log.warn(`Failed to login as Guest for share access: ${err}`, { scope: 'ensureLoggedInOrShareToken' });
+                        }
+                        resolve();
+                    });
+                });
+            } else {
+                log.error(`Guest user not found for share access after ${MAX_RETRIES} retries`, { scope: 'ensureLoggedInOrShareToken' });
+            }
+            return next();
+        }
+
+        // No share token - require normal authentication
+        const result = await handleBasicAuth(req);
+        req.user = result.user || req.user;
+        if (result.type === 'success') {
+            return next();
+        }
+        res.status(result.status).redirect(result.value);
+    };
+}
+
+/**
+ * Middleware that allows access if:
+ * 1. User is logged in, OR
+ * 2. Valid API key, OR
+ * 3. Valid share token
+ *
+ * Used for API endpoints that can be accessed via share links (read-only).
+ */
+export function ensureLoggedInOrApiKeyOrShareToken(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        const logOpts = {
+            scope: 'ensureLoggedInOrApiKeyOrShareToken',
+            msgType: 'AUTH_API',
+        };
+
+        // Check if share token is present in query params or headers
+        const shareToken = (req.query.share || req.headers['x-share-token']) as string | undefined;
+
+        if (shareToken) {
+            // Share token present - allow read access without login
+            log.debug('Share token present in API request, allowing read access', logOpts);
+
+            // Login as Guest user for share mode (with retry for MongoDB indexing race condition)
+            const MAX_RETRIES = 3;
+            const RETRY_DELAY_MS = 500;
+            let guest = null;
+
+            for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+                guest = await User.findOne({ username: 'Guest' });
+                if (guest) break;
+                if (attempt < MAX_RETRIES - 1) {
+                    log.warn(`Guest user not found for share API access (attempt ${attempt + 1}/${MAX_RETRIES}), retrying...`, logOpts);
+                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+                }
+            }
+
+            if (guest) {
+                req.user = guest;
+            } else {
+                log.error(`Guest user not found for share API access after ${MAX_RETRIES} retries`, logOpts);
+            }
+            // Mark request as share mode to skip creator filtering
+            (req as any).isShareMode = true;
+            return next();
+        }
+
+        // Try basic auth first
+        const basicAuthResult = await handleBasicAuth(req);
+        if (basicAuthResult.type === 'success') {
+            return next();
+        }
+
+        // Try API key
+        const rawApiKey = req.headers.apikey ?? req.query.apikey;
+        const apiKeyResult = await handleAPIAuth(rawApiKey);
+        req.user = req.user || apiKeyResult.user;
+        if ('apikey' in req.query) {
+            delete (req.query as Record<string, unknown>).apikey;
+        }
+
+        if (apiKeyResult.type !== 'success') {
+            log.info(`Unauthorized - ${req.originalUrl}`, logOpts);
             res.status(401).json({ error: `Unauthorized - ${req.originalUrl}` });
             return next(new Error(`Unauthorized - ${req.originalUrl}`));
         }

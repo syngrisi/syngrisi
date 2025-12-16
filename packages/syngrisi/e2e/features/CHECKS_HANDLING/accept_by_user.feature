@@ -1,4 +1,4 @@
-@fast-server
+@fast-server @smoke
 Feature: Accept by user
 
     Background:

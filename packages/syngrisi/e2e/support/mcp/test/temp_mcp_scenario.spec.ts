@@ -4,6 +4,7 @@ import { testEngineFixture } from '../../fixtures/test-engine.fixture';
 import { appServerFixture } from '../../fixtures/app-server.fixture';
 import { testDataFixture } from '../../fixtures/test-data.fixture';
 import { testManagerFixture } from '../../fixtures/test-manager.fixture';
+import { extractContentText } from './utils';
 
 const test = mergeTests(appServerFixture, testEngineFixture, testDataFixture, testManagerFixture);
 
@@ -20,9 +21,15 @@ test.describe('MCP Session with App Open and UI Check', () => {
       await testEngine.start();
     }
     expect(testEngine.client).not.toBeNull(); // Moved after start()
-    const result = await testEngine.client?.callTool('session_start_new', { sessionName, headless });
-    console.log(`MCP session start result: ${JSON.stringify(result)}`);
-    expect(result?.status).toBe('success');
+    const result = await testEngine.client?.callTool({
+      name: 'session_start_new',
+      arguments: { sessionName, headless },
+    });
+
+    expect(result?.isError).not.toBe(true);
+    const sessionText = extractContentText(result);
+    console.log(`MCP session start result: ${sessionText}`);
+    expect(sessionText).toContain('Status: Success');
 
     // 2. Open the app
     await page.goto(appServer.baseURL);

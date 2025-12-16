@@ -6,7 +6,7 @@ import { createStyles, Group, Loader, Stack } from '@mantine/core';
 import { useDisclosure, useDocumentTitle } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
-import { createImageAndWaitForLoad, imageFromUrl } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/helpers';
+import { createImageAndWaitForLoad, imageFromUrl, imageFromElement } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/helpers';
 import { errorMsg } from '@shared/utils';
 import { GenericService, imagePreloadService } from '@shared/services';
 import config from '@config';
@@ -129,7 +129,7 @@ export function CheckDetails({
             return baselineQuery.data?.results[0]._id as string;
         }
         return '';
-    }, [baselineQuery.data?.timestamp]);
+    }, [baselineQuery.data?.results]);
 
     const usageCount = useMemo<number>(() => {
         if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
@@ -239,44 +239,56 @@ export function CheckDetails({
             let expectedImg = imagePreloadService.getPreloadedImage(expectedImgSrcBase);
             let actualImg = imagePreloadService.getPreloadedImage(actualImgSrcBase);
 
-            const cacheHit = !!(expectedImg && actualImg);
-            if (cacheHit) {
+            const expectedCacheHit = !!expectedImg;
+            const actualCacheHit = !!actualImg;
+
+            if (expectedCacheHit && actualCacheHit) {
                 log.debug('[CheckDetails] Using preloaded images from cache');
             } else {
-                log.debug('[CheckDetails] Loading images (cache miss)');
+                log.debug(`[CheckDetails] Loading images (expected: ${expectedCacheHit ? 'HIT' : 'MISS'}, actual: ${actualCacheHit ? 'HIT' : 'MISS'})`);
             }
 
-            // Load images that are not in cache
+            // Load images that are not in cache (no query params - use base URL for browser caching)
             if (!expectedImg) {
-                const expectedImgSrc = `${expectedImgSrcBase}?expectedImg`;
-                expectedImg = await createImageAndWaitForLoad(expectedImgSrc) as HTMLImageElement;
+                expectedImg = await createImageAndWaitForLoad(expectedImgSrcBase) as HTMLImageElement;
+                // Store in preload cache for future use
+                imagePreloadService.storeImage(expectedImgSrcBase, expectedImg);
             }
 
             const actual = currentCheck.actualSnapshotId || null;
             if (!actualImg) {
-                const actualImgSrc = `${actualImgSrcBase}?actualImg`;
-                actualImg = await createImageAndWaitForLoad(actualImgSrc) as HTMLImageElement;
+                actualImg = await createImageAndWaitForLoad(actualImgSrcBase) as HTMLImageElement;
+                // Store in preload cache for future use
+                imagePreloadService.storeImage(actualImgSrcBase, actualImg);
             }
 
             canvasElementRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
 
-            const expectedImage = await imageFromUrl(expectedImg.src);
-            const actualImage = await imageFromUrl(actualImg.src);
+            // Convert HTMLImageElement to fabric.Image without reloading
+            const expectedImage = imageFromElement(expectedImg);
+            const actualImage = imageFromElement(actualImg);
 
             // Handle diff image
-            let diffImage = null;
+            let diffImage: fabric.Image | null = null;
             if (diffImgSrcBase) {
-                const cachedDiff = imagePreloadService.getPreloadedImage(diffImgSrcBase);
-                if (cachedDiff) {
-                    diffImage = await imageFromUrl(cachedDiff.src);
+                let diffImg = imagePreloadService.getPreloadedImage(diffImgSrcBase);
+                if (diffImg) {
+                    log.debug('[CheckDetails] Using preloaded diff image from cache');
+                    diffImage = imageFromElement(diffImg);
                 } else {
-                    const diffImgSrc = `${diffImgSrcBase}?diffImg`;
-                    diffImage = await imageFromUrl(diffImgSrc);
+                    log.debug('[CheckDetails] Loading diff image (cache miss)');
+                    diffImg = await createImageAndWaitForLoad(diffImgSrcBase) as HTMLImageElement;
+                    imagePreloadService.storeImage(diffImgSrcBase, diffImg);
+                    diffImage = imageFromElement(diffImg);
                 }
             }
 
             setMainView((prev) => {
-                if (prev) return prev; // for dev mode, when components render twice
+                if (prev) {
+                    // @ts-ignore - update window.mainView for E2E tests even when returning existing instance
+                    window.mainView = prev;
+                    return prev; // for dev mode, when components render twice
+                }
                 const MV = new MainView(
                     {
                         canvasId: '2d',
@@ -288,7 +300,7 @@ export function CheckDetails({
                         actual,
                     },
                 );
-                // @ts-ignore
+                // @ts-ignore - set window.mainView for E2E tests
                 window.mainView = MV;
                 return MV;
             });
@@ -301,13 +313,21 @@ export function CheckDetails({
         query.checkId,
     ]);
 
+    // Sync window.mainView with React state for E2E tests
+    useEffect(function syncWindowMainView() {
+        if (mainView) {
+            // @ts-ignore - window.mainView is used by E2E tests
+            window.mainView = mainView;
+        }
+    }, [mainView]);
+
     useEffect(function afterMainViewCreatedHandleRegions() {
         if (!baselineId) return;
         if (mainView) {
             mainView.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
         }
     }, [
-        mainView?.toString(),
+        mainView,
         baselineId,
     ]);
 
@@ -359,6 +379,7 @@ export function CheckDetails({
                     <Canvas
                         canvasElementRef={canvasElementRef}
                         isRelatedOpened={relatedRendered && relatedChecksOpened}
+                        isLoading={!mainView}
                     />
                 </Group>
             </Stack>

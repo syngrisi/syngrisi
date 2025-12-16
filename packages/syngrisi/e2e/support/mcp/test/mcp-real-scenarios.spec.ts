@@ -31,20 +31,24 @@ test.describe('MCP Real Scenarios', () => {
         });
 
         try {
-            // 1. Start Session
+            const sessionName = 'mcp-real-scenario-1';
+            // 1. Start Session before triggering any server restarts.
             await client.callTool({ name: 'sessions_clear', arguments: {} });
-            const { text: sessionText } = await startNewSession(client, 'mcp-real-scenario-1');
-            expect(sessionText, 'Session should start successfully').toContain('Status: Success');
+            const { text: initialSessionText } = await startNewSession(client, sessionName);
+            expect(initialSessionText, 'Session should start successfully').toContain('Status: Success');
 
-            // Wait for server to be fully ready (socket hang up mitigation)
-            await new Promise(resolve => setTimeout(resolve, 5000));
-
-            // Start the app server explicitly before creating tests
+            // Ensure the app server is running after session startup; this step may restart the server.
             const { text: startServerText } = await executeStep(client, 'I start Server');
             expect(startServerText, 'Server should start successfully').toContain('Status: Success');
+            await new Promise((resolve) => setTimeout(resolve, 5000));
 
-            // Wait for server to be fully ready (needs more time in CI/parallel environment)
-            await new Promise(resolve => setTimeout(resolve, 15000));
+            // Start a fresh session now that the server restart is complete.
+            await client.callTool({ name: 'sessions_clear', arguments: {} });
+            const { text: sessionText } = await startNewSession(client, sessionName);
+            expect(sessionText, 'Session should start successfully after server restart').toContain('Status: Success');
+
+            // Give the MCP session a moment to stabilize
+            await new Promise((resolve) => setTimeout(resolve, 3000));
 
             // 2. Create Test with Check (Single Step with DocString)
             // Using 'I create "1" tests with:' uses keepOriginalTestNames=true

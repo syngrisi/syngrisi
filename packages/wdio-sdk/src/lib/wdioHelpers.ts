@@ -1,4 +1,4 @@
-import { default as logger } from '@wdio/logger'
+import logger from './logger'
 import { LogLevelDesc } from 'loglevel'
 
 const log = logger('syngrisi-wdio-sdk')
@@ -8,7 +8,17 @@ if (process.env.SYNGRISI_LOG_LEVEL) {
 
 import { transformOs } from '@syngrisi/core-api'
 
-declare var browser: WebdriverIO.Browser
+interface BrowserInstance {
+    isAndroid: boolean;
+    isIOS: boolean;
+    pause: (ms: number) => Promise<void>;
+    execute: <T>(fn: () => T) => Promise<T>;
+    getWindowSize: () => Promise<{ width: number; height: number }>;
+    options?: { capabilities?: Record<string, any> };
+    capabilities?: Record<string, any>;
+}
+
+declare var browser: BrowserInstance
 
 export const getViewport = async () => {
     if (isAndroid()) {

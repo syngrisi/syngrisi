@@ -4,7 +4,7 @@
 		{
 			"label": "Run Server Watch",
 			"type": "shell",
-			"command": "cd packages/syngrisi/ && npm run server:watch",
+			"command": "cd packages/syngrisi/ && yarn server:watch",
 			"problemMatcher": [],
 			"isBackground": true,
 			"group": {

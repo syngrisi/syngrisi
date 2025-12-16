@@ -190,7 +190,16 @@ When(
         return;
       }
 
-      await targetLocator.click();
+      // Use dispatchEvent for buttons with popover tooltips that can intercept clicks
+      const isPopoverButton = /aria-label=['"](Remove|Delete|Accept)/i.test(renderedValue)
+        || /check-accept-icon|check-remove-icon/i.test(renderedValue)
+        || /Generate/i.test(renderedValue);
+
+      if (isPopoverButton) {
+        await targetLocator.dispatchEvent('click');
+      } else {
+        await targetLocator.click();
+      }
       return;
     }
 
@@ -853,9 +862,24 @@ When('I force click element with locator {string}', async ({ page, testData }, r
   await locator.first().click({ force: true });
 });
 
+When('I real click element with locator {string}', async ({ page, testData }, rawValue: string) => {
+  const renderedValue = renderTemplate(rawValue, testData);
+  const locator = getLocatorQuery(page, renderedValue);
+  await locator.first().click();
+});
+
 When('I move to element {string}', async ({ page }, selector: string) => {
   const locator = getLocatorQuery(page, selector);
-  await locator.first().hover();
+  const element = locator.first();
+
+  // Use dispatchEvent for popover buttons that have Group/Tooltip overlays intercepting hover
+  const isPopoverButton = /check-accept-icon|check-remove-icon/i.test(selector);
+  if (isPopoverButton) {
+    await element.dispatchEvent('mouseenter');
+    await element.dispatchEvent('mouseover');
+  } else {
+    await element.hover();
+  }
 });
 
 When('I hover over {string} and wait for tooltip {string}', async ({ page }, hoverSelector: string, tooltipSelector: string) => {
@@ -892,5 +916,29 @@ When(
     const renderedName = renderTemplate(name, testData);
     const locator = getRoleLocator(page, role, renderedName, ordinal);
     await locator.click();
+  }
+);
+
+When(
+  'I safely click element with {target} {string}',
+  async ({ page, testData }, target: ElementTarget, rawValue: string) => {
+    const renderedValue = renderTemplate(rawValue, testData);
+
+    if (target === 'label') {
+      const locator = getLabelLocator(page, renderedValue);
+      await locator.click();
+      return;
+    }
+
+    if (target === 'locator') {
+      const locator = getLocatorQuery(page, renderedValue);
+      const targetLocator = locator.first();
+      await targetLocator.waitFor({ state: 'visible', timeout: 5000 });
+
+      // Use JS click to bypass ALL interception/pointer-events issues
+      await targetLocator.evaluate((e: HTMLElement) => e.click());
+      return;
+    }
+    throw new Error(`Unsupported target: ${target}`);
   }
 );

@@ -1,10 +1,11 @@
 metadata:
   category: common/other
-  generatedAt: '2025-12-07T10:28:46.488Z'
-  totalFiles: 2
-  totalSteps: 8
+  generatedAt: '2025-12-10T10:05:46.341Z'
+  totalFiles: 3
+  totalSteps: 16
   sourceFiles:
     - steps/common/demo.steps.ts
+    - steps/common/network.steps.ts
     - steps/common/polling.steps.ts
 steps:
   - pattern: 'I announce: {string}'
@@ -22,7 +23,7 @@ steps:
       ```gherkin
       When I announce: "Now observe the drag and drop behavior"
       ```
-    line: 193
+    line: 194
   - pattern: 'I announce: {string} and PAUSE'
     description: |-
       Step definition: `When I announce: {string} and PAUSE`
@@ -38,7 +39,7 @@ steps:
       ```gherkin
       When I announce: "Task creation completed" and PAUSE
       ```
-    line: 222
+    line: 224
   - pattern: I clear highlight
     description: |-
       Step definition: `When I clear highlight`
@@ -50,7 +51,7 @@ steps:
       ```gherkin
       When I clear highlight
       ```
-    line: 269
+    line: 272
   - pattern: I end the demo
     description: |-
       Step definition: `When I end the demo`
@@ -62,7 +63,7 @@ steps:
       ```gherkin
       When I end the demo
       ```
-    line: 287
+    line: 290
   - pattern: I highlight element {string}
     description: |-
       Step definition: `When I highlight element {string}`
@@ -79,13 +80,37 @@ steps:
       When I highlight element "[data-testid='submit-button']"
       When I highlight element ".task-card"
       ```
-    line: 251
+    line: 254
+  - pattern: I expect {int} new image requests were made for cached images
+    description: ''
+    line: 44
+  - pattern: I expect at least {int} image requests were made
+    description: ''
+    line: 36
+  - pattern: I expect at most {int} new image requests were made
+    description: ''
+    line: 64
+  - pattern: I expect exactly {int} image requests were made
+    description: ''
+    line: 57
+  - pattern: I log image request count
+    description: ''
+    line: 74
+  - pattern: I reset image request counter
+    description: ''
+    line: 30
+  - pattern: I start intercepting image requests
+    description: ''
+    line: 14
   - pattern: 'I repeat javascript code until stored {string} string equals {string}:'
     description: ''
     line: 47
+  - pattern: 'I repeat javascript code until stored {string} string matches {string}:'
+    description: ''
+    line: 82
   - pattern: I wait until element {string} contains text {string}
     description: ''
     line: 20
   - pattern: I wait until the css attribute {string} from element {string} is {string}
     description: ''
-    line: 82
+    line: 117

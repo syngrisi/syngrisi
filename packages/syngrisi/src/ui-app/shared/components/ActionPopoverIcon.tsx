@@ -4,13 +4,12 @@ import {
     Popover,
     Button,
     MantineNumberSize,
-    Group,
-    Text,
     Tooltip,
     MantineColor,
+    Box,
 } from '@mantine/core';
 import React, { ReactElement } from 'react';
-import { useDisclosure, useClickOutside } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 
 interface IActionPopoverIcon {
     icon: ReactElement
@@ -19,7 +18,7 @@ interface IActionPopoverIcon {
     buttonColor?: MantineColor
     action: () => void,
     confirmLabel: string
-    title?: string
+    title?: React.ReactNode
     testAttr: string
     loading: boolean
     variant?: string
@@ -47,15 +46,22 @@ export default function ActionPopoverIcon(
         disabled = false,
         withinPortal = true,
         size = 24,
+        sx,
         ...rest
     }: IActionPopoverIcon,
 ): ReactElement {
     const [openPopover, handlers] = useDisclosure(false);
 
-    const ref = useClickOutside(() => handlers.close());
+    // We rely on Popover's closeOnClickOutside={true} instead of useClickOutside
+    // to avoid conflicts where clicking the trigger immediately closes the popover.
+
     return (
         <Popover
             opened={openPopover}
+            onChange={(nextOpened) => {
+                if (disabled && nextOpened) return;
+                handlers.toggle();
+            }}
             position="bottom"
             withArrow
             shadow="md"
@@ -65,42 +71,67 @@ export default function ActionPopoverIcon(
         >
             <Popover.Target>
                 <Tooltip
+                    label={title}
                     withinPortal={withinPortal}
-                    label={
-                        (
-                            <Group noWrap>
-                                <Text>{title}</Text>
-                            </Group>
-                        )
-                    }
+                    disabled={!title || openPopover}
                 >
-                    <ActionIcon
-                        disabled={disabled}
-                        data-test={testAttr}
-                        data-popover-icon-name={testAttrName}
-                        aria-label={title}
-                        variant={'light' as any}
-                        color={iconColor}
-                        onClick={() => {
-                            if (paused) return;
+                    <Box
+                        onClick={(e) => {
+                            if (paused || disabled) {
+                                e.stopPropagation();
+                                return;
+                            }
+                            e.stopPropagation();
                             handlers.toggle();
                         }}
-                        title={title}
-                        loading={loading}
-                        size={size}
-                        {...rest}
+                        data-test={testAttr}
+                        data-popover-icon-name={testAttrName}
+                        data-loading={loading}
+                        aria-label={typeof title === 'string' ? title : undefined}
+                        role="button"
+                        tabIndex={disabled ? -1 : 0}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                if (paused || disabled) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    return;
+                                }
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handlers.toggle();
+                            }
+                        }}
+                        sx={[
+                            {
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                cursor: disabled ? 'not-allowed' : 'pointer',
+                            },
+                            ...(sx ? (Array.isArray(sx) ? sx : [sx]) : []),
+                        ]}
                     >
-                        {icon}
-                    </ActionIcon>
+                        <ActionIcon
+                            disabled={disabled}
+                            aria-hidden="true"
+                            variant={'light' as any}
+                            color={iconColor || color}
+                            loading={loading}
+                            size={size}
+
+                            style={{
+                                pointerEvents: 'none',
+                            }}
+                            {...rest}
+                        >
+                            {icon}
+                        </ActionIcon>
+                    </Box>
                 </Tooltip>
             </Popover.Target>
-            <Popover.Dropdown
-                p={4}
-                // onBlurCapture={() => handlers.close()}
-                // onBlurCapture={() => alert(123)}
-            >
+
+            <Popover.Dropdown p={4}>
                 <Button
-                    ref={ref}
                     data-test={`${testAttr}-confirm`}
                     aria-label={confirmLabel}
                     color={buttonColor || color}

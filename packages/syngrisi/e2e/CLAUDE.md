@@ -6,19 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Install dependencies
-npm install
+yarn install
 
 # Run full E2E suite (parallel + SSO + flaky tests)
-npm test
+yarn test
 
 # Run smoke tests
-npm run test:smoke
+yarn test:smoke
 
 # Run in headed mode (visible browser)
-npm run test:headed
+yarn test:headed
 
 # Run demo tests (headed mode, single worker)
-npm run test:demo
+yarn test:demo
 
 # Run specific feature file (ALWAYS run bddgen first)
 npx bddgen && npx playwright test --project=chromium "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=2
@@ -30,7 +30,7 @@ npx bddgen && npx playwright test --project=chromium "features/path/to/file.feat
 npx bddgen && npx playwright test --project=chromium "features/path/to/file.feature" --grep "Test name" --workers=3 --repeat-each=4
 
 # Run MCP test engine tests
-npm run test:mcp
+yarn test:mcp
 ```
 
 ## Architecture
@@ -75,7 +75,7 @@ Test tags:
 - **Regular tests**: Run with 10 workers in parallel (`--project=chromium`)
 - **SSO tests**: Tagged `@saml`, `@sso-external`, `@sso-logto` - run with 1 worker
 - **Flaky tests**: Tagged `@flaky` - run separately with 3 workers
-- **Demo tests**: Tagged `@demo` - separate project, run with `npm run test:demo` or `--project=demo`
+- **Demo tests**: Tagged `@demo` - separate project, run with `yarn test:demo` or `--project=demo`
 - **Smoke tests**: Tagged `@smoke` - quick validation subset
 
 ## Strict Rules for E2E Tests

@@ -80,6 +80,41 @@ When(
 );
 
 When(
+  'I repeat javascript code until stored {string} string matches {string}:',
+  async (
+    { page, testData }: { page: Page; testData: TestStore },
+    itemName: string,
+    pattern: string,
+    js: string
+  ) => {
+    const renderedJs = renderTemplate(js, testData);
+    const regex = new RegExp(pattern);
+    const expression = renderedJs.includes('return')
+      ? `(() => { ${renderedJs} })()`
+      : renderedJs;
+    const evaluateFn = (code: string) => {
+      // eslint-disable-next-line no-eval
+      return eval(code);
+    };
+
+    const deadline = Date.now() + 30000;
+    let lastResult = '';
+    while (Date.now() < deadline) {
+      const result = await page.evaluate(evaluateFn, expression);
+      lastResult = result === undefined || result === null ? '' : String(result).trim();
+      testData.set(itemName, lastResult);
+      if (regex.test(lastResult)) {
+        return;
+      }
+      await page.waitForTimeout(400);
+    }
+    throw new Error(
+      `Stored "${itemName}" value "${lastResult}" did not match pattern "${pattern}" after 30s`
+    );
+  }
+);
+
+When(
   'I wait until the css attribute {string} from element {string} is {string}',
   async ({ page }: { page: Page }, cssProperty: string, selector: string, expected: string) => {
     const locator = getLocatorQuery(page, selector);

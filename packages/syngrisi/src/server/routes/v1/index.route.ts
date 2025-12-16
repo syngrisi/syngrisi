@@ -13,6 +13,7 @@ import settingsRoute from './settings.route';
 import testDistinctRoute from './test_distinct.route';
 import tasksRoute from './tasks.route';
 import clientRoute from './client.route';
+import shareRoute from './share.route';
 
 const router = express.Router();
 
@@ -72,6 +73,10 @@ const defaultRoutes = [
     {
         path: '/test-distinct',
         route: testDistinctRoute,
+    },
+    {
+        path: '/share',
+        route: shareRoute,
     },
 ];
 

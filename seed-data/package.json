@@ -1,0 +1,23 @@
+{
+  "name": "syngrisi-seed-data",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Seed data generator for Syngrisi server to showcase different check statuses",
+  "scripts": {
+    "seed": "npx playwright test",
+    "seed:fast": "SEED_MODE=fast npx playwright test"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.57.0",
+    "@syngrisi/playwright-sdk": "file:../packages/playwright-sdk"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3"
+  },
+  "resolutions": {
+    "**/@wdio/logger/**/chalk": "4.1.2",
+    "@wdio/logger/chalk": "4.1.2",
+    "strip-ansi": "6.0.1"
+  }
+}

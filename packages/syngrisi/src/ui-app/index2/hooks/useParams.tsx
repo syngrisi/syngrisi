@@ -11,6 +11,7 @@ export function useParams() {
         checkId: StringParam,
         quick_filter: JsonParam,
         modalIsOpen: StringParam,
+        share: StringParam,
     };
     const [query, setQuery] = useQueryParams(queryConfig);
     const updateQueryJsonParam = (section: string, key: string, value: string) => {

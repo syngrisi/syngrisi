@@ -37,8 +37,7 @@ Feature: Navbar Sorting
     When I click element with locator "[data-test='navbar-icon-open-sort']"
     When I wait 10 seconds for the element with locator "button[data-test='navbar-sort-by-order']" to be visible
     When I click element with locator "button[data-test='navbar-sort-by-order']"
-    When I wait 2 seconds
-
+    
     When I repeat javascript code until stored "js" string equals "RunName - 0, RunName - 1, RunName - 2":
       """
       const elements = Array
@@ -54,7 +53,6 @@ Feature: Navbar Sorting
 
     # sort order - descendant
     When I click element with locator "button[data-test='navbar-sort-by-order']"
-    When I wait 2 seconds
 
     When I repeat javascript code until stored "js" string equals "RunName - 2, RunName - 1, RunName - 0":
       """

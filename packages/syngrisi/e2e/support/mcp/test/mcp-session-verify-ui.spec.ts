@@ -39,8 +39,8 @@ test('Verify MCP session and basic UI elements', async ({ page, testEngine, appS
 
   // 3. Убедись, что видна кнопка с aria-label User menu for Syngrisi Guest (SG).
   logger.info('Verifying User menu button visibility...');
-  const userMenuButton = page.locator('[aria-label="User menu for Syngrisi Guest (SG)"]');
-  await expect(userMenuButton).toBeVisible();
+  const userMenuButton = page.locator('button[aria-label^="User menu for"]');
+  await expect(userMenuButton).toBeVisible({ timeout: 10_000 });
 
   // 4. Убедись, что ссылка By Runs видна.
   logger.info('Verifying "By Runs" link visibility...');

@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { config } from '@config';
 import log from '@logger';
 import { errMsg } from '../utils/errMsg';
+import { env } from '../envConfig';
 
 mongoose.Promise = global.Promise;
 mongoose.set('strictQuery', false);
@@ -13,19 +14,20 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const connectDB = async () => {
     let lastError: unknown;
+    const mongoOptions = {
+        maxPoolSize: env.SYNGRISI_MONGO_MAX_POOL_SIZE,
+        minPoolSize: env.SYNGRISI_MONGO_MIN_POOL_SIZE,
+        serverSelectionTimeoutMS: env.SYNGRISI_MONGO_SERVER_SELECTION_TIMEOUT_MS,
+        connectTimeoutMS: env.SYNGRISI_MONGO_CONNECT_TIMEOUT_MS,
+        socketTimeoutMS: env.SYNGRISI_MONGO_SOCKET_TIMEOUT_MS,
+        family: 4, // Use IPv4, disable IPv6
+        maxIdleTimeMS: env.SYNGRISI_MONGO_MAX_IDLE_TIME_MS,
+        waitQueueTimeoutMS: env.SYNGRISI_MONGO_WAIT_QUEUE_TIMEOUT_MS,
+    };
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
-            await mongoose.connect(config.connectionString, {
-                maxPoolSize: 50,
-                minPoolSize: 2,
-                serverSelectionTimeoutMS: 10000,
-                connectTimeoutMS: 30000,
-                socketTimeoutMS: 45000,
-                family: 4, // Use IPv4, disable IPv6
-                maxIdleTimeMS: 30000, // Close idle connections after 30s
-                waitQueueTimeoutMS: 30000, // Wait up to 30s for a connection from pool
-            });
+            await mongoose.connect(config.connectionString, mongoOptions);
             return; // Success
         } catch (error: unknown) {
             lastError = error;

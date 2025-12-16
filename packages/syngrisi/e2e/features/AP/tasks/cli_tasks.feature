@@ -13,6 +13,7 @@ Feature: CLI Tasks
       """
     Then I expect exact "1" snapshot files
     Given I stop Server
+    When I wait 2 seconds
     When I clear database
     Given I start Server
 
@@ -37,6 +38,7 @@ Feature: CLI Tasks
       """
     Then I expect exact "1" snapshot files
     Given I stop Server
+    When I wait 2 seconds
     When I clear database
     Given I start Server
 
@@ -52,6 +54,11 @@ Feature: CLI Tasks
     Then I expect exact "1" snapshot files
 
   Scenario: CLI - Handle Old Checks [statistics only]
+    Given I stop Server
+    When I wait 5 seconds
+    When I clear database
+    Given I start Server
+
     When I create "1" tests with:
       """
       testName: TestName
@@ -66,7 +73,7 @@ Feature: CLI Tasks
     Then I expect via http that "unaccepted" check exist exactly "1" times
     Then I expect via http that "unaccepted" snapshot exist exactly "1" times
     Then I expect exact "1" snapshot files
-
+    
     When I run CLI task "old-checks" with args "--days 9"
 
     Then I expect via http that "unaccepted" check exist exactly "1" times

@@ -60,7 +60,7 @@ npm run test:demo
 npx bddgen && npx playwright test --project=demo --grep "Demo name" --workers=1
 
 # Skip demo steps for faster debugging (recommended during development)
-SKIP_DEMO_TESTS=true npx bddgen && npx playwright test --project=demo --grep "your_demo" --workers=1
+export SKIP_DEMO_TESTS=true && npx bddgen && npx playwright test --project=demo --grep "your_demo" --workers=1
 
 # Run with full demo experience (for final verification)
 npx bddgen && npx playwright test --project=demo --grep "your_demo" --workers=1
@@ -95,13 +95,13 @@ Scenario: Demo: My Feature
     When I end the demo
 ```
 
-### 2. Debug & Test Phase
+### 2. `Silent mode` for Debug & Test Phase
 
 Run with `SKIP_DEMO_TESTS=true` to quickly iterate:
 
 ```bash
 # Fast iteration without narration
-SKIP_DEMO_TESTS=true npx bddgen && npx playwright test --project=demo --grep "my_demo" --workers=1
+export SKIP_DEMO_TESTS=true && npx bddgen && npx playwright test --project=demo --grep "my_demo" --workers=1
 ```
 
 This skips all `announce`, `highlight`, `clear highlight`, and `end the demo` steps, allowing you to focus on:
@@ -132,7 +132,7 @@ Verify:
 1. **Debug run**: Set `SKIP_DEMO_TESTS=true` and run the scenario locally to ensure all selectors, actions, and assertions work correctly without narration:
 
     ```bash
-    SKIP_DEMO_TESTS=true npx bddgen && npx playwright test --project=demo --grep "<Scenario name>" --workers=1
+    export SKIP_DEMO_TESTS=true && npx bddgen && npx playwright test --project=demo --grep "<Scenario name>" --workers=1
     ```
 
 2. **Full demo run**: Run with `SKIP_DEMO_TESTS=false` (or omit the variable) to verify announcements, highlights, and animations work correctly (demo project runs headed by default):
@@ -142,7 +142,7 @@ Verify:
     ```
 
 3. **Documentation**: When sharing the demo with users, provide both commands:
-    - **Debug mode**: `SKIP_DEMO_TESTS=true npm run test:demo`
+    - **Silent Mode**: `export SKIP_DEMO_TESTS=true && yarn run test:demo`
     - **Full demo mode**: `npm run test:demo`
 
 ## Critical Rules

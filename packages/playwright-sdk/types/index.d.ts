@@ -6,6 +6,11 @@ export interface Config {
     page: Page
     url: string
     apiKey: string
+    /**
+     * Automatically accept new checks (when no baseline exists).
+     * Can be overridden at check level.
+     */
+    autoAccept?: boolean
 }
 
 export interface SessionParams {
@@ -49,6 +54,11 @@ export interface CheckParams {
     os?: string,
     browserVersion?: string,
     browserFullVersion?: string,
+    /**
+     * Automatically accept this check if it's new (no baseline exists).
+     * Overrides driver-level autoAccept setting.
+     */
+    autoAccept?: boolean,
 }
 
 export interface CheckResult {

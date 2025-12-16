@@ -98,6 +98,18 @@ const BaselinePutSchema = z.object({
         description: 'Username of the user who marked the baseline',
         example: 'Guest'
     }).optional(),
+    ignoreRegions: z.string().openapi({
+        description: 'JSON string representing regions to ignore during comparison',
+        example: '[{"left":0,"top":0,"right":100,"bottom":50}]'
+    }).optional(),
+    boundRegions: z.string().openapi({
+        description: 'JSON string representing the checked area (only compare within this region)',
+        example: '[{"left":0,"top":0,"right":500,"bottom":300}]'
+    }).optional(),
+    matchType: z.enum(['antialiasing', 'nothing', 'colors']).openapi({
+        description: 'Comparison mode: nothing (standard), antialiasing (auto-ignore), or colors (ignore color differences)',
+        example: 'nothing'
+    }).optional(),
 });
 
 

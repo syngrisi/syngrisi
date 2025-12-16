@@ -30,7 +30,7 @@ Feature: Check details Related Checks - Navigation and Accept
     Then the element with locator ".modal [data-test='check-accept-icon'] svg" should have has attribute "data-test-icon-type=outline"
 
     # accept
-    When I click element with locator ".modal button[data-test='check-accept-icon']"
+    When I click element with locator ".modal [data-test='check-accept-icon']"
     When I click element with locator "button[data-test='check-accept-icon-confirm']"
 
     Then I expect via http 1st check filtered as "name=CheckName" matched:

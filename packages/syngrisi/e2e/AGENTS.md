@@ -40,7 +40,7 @@ npx bddgen && yarn playwright test "features/CP/check_details/regions.feature" "
 | **Filter by Scenario**     | `--grep "Scenario Name"`                                      |
 | **Debug Mode**             | `--headed --workers=1`                                        |
 | **Verify Fix (Stability)** | `--workers=3 --repeat-each=4` (Mandatory after fixing a test) |
-| **Full Suite**             | Run `npm test` instead of specific files                      |
+| **Full Suite**             | Run `yarn test` instead of specific files                     |
 
 ## 📚 Documentation Reference (`packages/syngrisi/docs/agent/guides/`)
 

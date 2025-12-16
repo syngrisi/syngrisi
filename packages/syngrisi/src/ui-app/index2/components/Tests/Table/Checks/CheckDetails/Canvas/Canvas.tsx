@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { Group, Paper, useMantineTheme } from '@mantine/core';
+import { Center, Group, Loader, Paper, useMantineTheme } from '@mantine/core';
 
 interface Props {
     canvasElementRef: React.MutableRefObject<any>;
     isRelatedOpened?: boolean;
+    isLoading?: boolean;
 }
 
-export function Canvas({ canvasElementRef, isRelatedOpened = false }: Props) {
+export function Canvas({ canvasElementRef, isRelatedOpened = false, isLoading = false }: Props) {
     const theme = useMantineTheme();
 
     return (
@@ -29,6 +30,20 @@ export function Canvas({ canvasElementRef, isRelatedOpened = false }: Props) {
                     }
                 }
             >
+                {isLoading && (
+                    <Center
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            zIndex: 10,
+                        }}
+                    >
+                        <Loader size="xl" />
+                    </Center>
+                )}
                 <canvas style={{ width: '100%' }} id="2d" />
             </Paper>
         </Group>

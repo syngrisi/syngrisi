@@ -3,8 +3,8 @@ import path from 'path';
 import { bool, cleanEnv, num, str } from 'envalid';
 
 // Load .env from e2e directory first, then from parent (packages/syngrisi)
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
+dotenv.config({ path: path.resolve(__dirname, '.env'), quiet: true });
+dotenv.config({ path: path.resolve(__dirname, '..', '.env'), quiet: true });
 
 export const env = cleanEnv(process.env, {
   CI: bool({

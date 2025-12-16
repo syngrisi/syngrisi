@@ -5,6 +5,7 @@ import { lockImage } from '@index/components/Tests/Table/Checks/CheckDetails/Can
 import { errorMsg, successMsg } from '@shared/utils/utils';
 import config from '@config';
 import { log } from '@shared/utils/Logger';
+import { highlightDiff, mergeNearbyGroups } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/highlightDiff';
 
 /* eslint-disable dot-notation,no-underscore-dangle */
 interface IRectParams {
@@ -56,15 +57,8 @@ export class MainView {
 
     diffImage: any;
 
-    // _currentView: string;
-    //
-    // public get currentView() {
-    //     return this._currentView;
-    // }
-    //
-    // public set currentView(value: string) {
-    //     this._currentView = value;
-    // }
+    // Bounding region overlay state
+    boundingOverlayEnabled: boolean = false;
 
     constructor(
         {
@@ -97,6 +91,9 @@ export class MainView {
         // this.expectedCanvasViewportAreaSize = MainView.calculateExpectedCanvasViewportAreaSize();
 
         this.defaultMode = '';
+
+        // @ts-ignore - Expose mainView instance for E2E tests
+        window.mainView = this;
         this.currentView = 'actual';
 
         if (actual) {
@@ -111,6 +108,8 @@ export class MainView {
         this.selectionEvents();
         this.zoomEvents();
         this.panEvents();
+        this.initBoundingOverlay();
+        this.boundingRegionEvents();
 
         // views
         this.expectedView = new SimpleView(this, 'expected');
@@ -214,6 +213,79 @@ export class MainView {
         });
     }
 
+    /**
+     * Initialize bounding overlay rendering in the after:render event
+     */
+    initBoundingOverlay() {
+        this.canvas.on('after:render', () => this.renderBoundingOverlay());
+    }
+
+    /**
+     * Render semi-transparent overlay with a cutout for the bounding region
+     * Uses evenodd fill rule to create the "hole" effect
+     */
+    renderBoundingOverlay() {
+        if (!this.boundingOverlayEnabled) return;
+
+        const boundRect = this.canvas.getObjects()
+            .find((obj) => obj.name === 'bound_rect') as fabric.Rect;
+        if (!boundRect) return;
+
+        const ctx = this.canvas.getContext();
+        const vpt = this.canvas.viewportTransform;
+
+        ctx.save();
+        ctx.beginPath();
+        // Outer rectangle (entire canvas)
+        ctx.rect(0, 0, this.canvas.width!, this.canvas.height!);
+        // Apply viewport transform for correct zoom/pan handling
+        ctx.transform(vpt![0], vpt![1], vpt![2], vpt![3], vpt![4], vpt![5]);
+        // Inner rectangle (cutout) - the bounding region area
+        ctx.rect(
+            boundRect.left!,
+            boundRect.top!,
+            boundRect.getScaledWidth(),
+            boundRect.getScaledHeight(),
+        );
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fill('evenodd');
+        ctx.restore();
+    }
+
+    /**
+     * Update bounding overlay state based on presence of bound_rect
+     */
+    updateBoundingOverlay() {
+        const hasBoundRect = this.canvas.getObjects()
+            .some((obj) => obj.name === 'bound_rect');
+        this.boundingOverlayEnabled = hasBoundRect;
+        this.canvas.requestRenderAll();
+    }
+
+    /**
+     * Subscribe to bounding region events for real-time overlay updates
+     */
+    boundingRegionEvents() {
+        // Update overlay during move/resize for real-time feedback
+        this.canvas.on('object:moving', (e) => {
+            if (e.target?.name === 'bound_rect') {
+                this.canvas.requestRenderAll();
+            }
+        });
+
+        this.canvas.on('object:scaling', (e) => {
+            if (e.target?.name === 'bound_rect') {
+                this.canvas.requestRenderAll();
+            }
+        });
+
+        this.canvas.on('object:modified', (e) => {
+            if (e.target?.name === 'bound_rect') {
+                this.canvas.requestRenderAll();
+            }
+        });
+    }
+
     // get objects() {
     //     return this.canvas.getObjects();
     // }
@@ -311,8 +383,17 @@ export class MainView {
     }
 
     addIgnoreRegion(params) {
+        // @ts-ignore - Always sync window.mainView for E2E tests
+        window.mainView = this;
+
         Object.assign(params, { fill: 'MediumVioletRed' });
         const r = this.addRect(params);
+
+        // Explicitly set name property - fabric.js might not set it from constructor options
+        if (params.name && !r.name) {
+            r.name = params.name;
+        }
+
         r.setControlsVisibility({
             bl: true,
             br: true,
@@ -332,6 +413,56 @@ export class MainView {
         this.canvas.setActiveObject(r);
     }
 
+    /**
+     * Create ignore regions automatically from diff areas
+     * @param padding - pixels to add around each diff region (default: 5)
+     * @param mergeDistance - merge regions within this distance in pixels (default: 15)
+     * @returns number of regions created
+     */
+    async createAutoIgnoreRegions(padding: number = 5, mergeDistance: number = 15): Promise<number> {
+        if (!this.diffImage) {
+            log.warn('[MainView] Cannot create auto regions: no diff image');
+            return 0;
+        }
+
+        try {
+            // Get diff groups without animation
+            const { groups: rawGroups } = await highlightDiff(this, null, null, { skipAnimation: true });
+
+            if (rawGroups.length === 0) {
+                log.debug('[MainView] No diff regions found');
+                return 0;
+            }
+
+            // Merge nearby groups to reduce number of small regions
+            const groups = mergeNearbyGroups(rawGroups, mergeDistance);
+
+            log.debug(`[MainView] Creating ${groups.length} auto ignore regions (merged from ${rawGroups.length} raw groups, mergeDistance: ${mergeDistance}px)`);
+
+            // Create ignore region for each diff group
+            // eslint-disable-next-line no-restricted-syntax
+            for (const group of groups) {
+                const regionParams = {
+                    left: Math.max(0, group.minX - padding),
+                    top: Math.max(0, group.minY - padding),
+                    width: (group.maxX - group.minX) + padding * 2,
+                    height: (group.maxY - group.minY) + padding * 2,
+                    name: 'ignore_rect',
+                    strokeWidth: 0,
+                    noSelect: true, // Don't select each region as we add it
+                };
+                this.addIgnoreRegion(regionParams);
+            }
+
+            this.canvas.renderAll();
+            return groups.length;
+        } catch (e) {
+            log.error('[MainView] Failed to create auto regions:', e);
+            errorMsg({ error: 'Failed to create auto ignore regions' });
+            return 0;
+        }
+    }
+
     addBoundingRegion(name) {
         const params = {
             name,
@@ -346,6 +477,7 @@ export class MainView {
         const r = this.addRect(params);
         this.canvas.add(r);
         r.bringToFront();
+        this.updateBoundingOverlay();
     }
 
     removeAllRegions() {
@@ -353,6 +485,7 @@ export class MainView {
         regions.forEach((region) => {
             this.canvas.remove(region);
         });
+        this.updateBoundingOverlay();
     }
 
     get allRects() {
@@ -368,6 +501,7 @@ export class MainView {
      * 1. collect data about all rects
      * 2. convert the data to resemble.js format
      * 3. return json string
+     * @deprecated Use getRegionsData() instead
      */
     getRectData() {
         const rects = this.allRects;
@@ -390,10 +524,46 @@ export class MainView {
         return JSON.stringify(data);
     }
 
+    /**
+     * Collect data about all regions, separated by type
+     * @returns {{ ignoreRegions: string, boundRegions: string }} JSON strings for each region type
+     */
+    getRegionsData(): { ignoreRegions: string, boundRegions: string } {
+        const rects = this.allRects;
+        const ignoreRegions: any[] = [];
+        const boundRegions: any[] = [];
+        const coef = parseFloat(this.coef);
+
+        rects.forEach((reg) => {
+            const right = reg.left + reg.getScaledWidth();
+            const bottom = reg.top + reg.getScaledHeight();
+            if (coef) {
+                const regionData = {
+                    top: reg.top * coef,
+                    left: reg.left * coef,
+                    bottom: bottom * coef,
+                    right: right * coef,
+                };
+                if (reg.name === 'ignore_rect') {
+                    ignoreRegions.push(regionData);
+                } else if (reg.name === 'bound_rect') {
+                    boundRegions.push(regionData);
+                }
+            }
+        });
+        return {
+            ignoreRegions: JSON.stringify(ignoreRegions),
+            boundRegions: JSON.stringify(boundRegions),
+        };
+    }
+
     get coef() {
         return this.expectedImage.height / this.expectedImage.getScaledHeight();
     }
 
+    /**
+     * @deprecated Use sendRegions() instead
+     */
     static async sendIgnoreRegions(id: string, regionsData) {
         try {
             const response = await fetch(`${config.baseUri}/v1/baselines/${id}`, {
@@ -415,6 +585,34 @@ export class MainView {
             log.error(`Cannot set baseline ignored regions: ${errorMsg(e)}`);
             errorMsg({ error: 'Cannot set baseline ignored regions' });
             // MainView.showToaster('Cannot set baseline ignored regions', 'Error');
+        }
+    }
+
+    /**
+     * Send both ignore and bound regions to the server
+     */
+    static async sendRegions(id: string, regionsData: { ignoreRegions: string, boundRegions: string }) {
+        try {
+            const response = await fetch(`${config.baseUri}/v1/baselines/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id,
+                    ignoreRegions: regionsData.ignoreRegions,
+                    boundRegions: regionsData.boundRegions,
+                }),
+            });
+            const text = await response.text();
+            if (response.status === 200) {
+                log.debug(`Successful send baseline regions, id: '${id}'  resp: '${text}'`);
+                successMsg({ message: 'Regions saved' });
+                return;
+            }
+            log.error(`Cannot set baseline regions, status: '${response.status}',  resp: '${text}'`);
+            errorMsg({ error: 'Cannot set baseline regions' });
+        } catch (e: unknown) {
+            log.error(`Cannot set baseline regions: ${errorMsg(e)}`);
+            errorMsg({ error: 'Cannot set baseline regions' });
         }
     }
 
@@ -455,6 +653,8 @@ export class MainView {
         regs.forEach((regParams) => {
             // eslint-disable-next-line no-param-reassign
             regParams['noSelect'] = true;
+            // eslint-disable-next-line no-param-reassign
+            regParams['name'] = 'ignore_rect';
             classThis.addIgnoreRegion(regParams);
         });
     }
@@ -492,5 +692,33 @@ export class MainView {
         this.removeAllRegions();
         const regionData = await MainView.getRegionsData(id);
         this.drawRegions(regionData.ignoreRegions);
+        this.drawBoundRegions(regionData.boundRegions);
+    }
+
+    /**
+     * Draw bound regions on the canvas
+     * @param data JSON string with bound region data
+     */
+    drawBoundRegions(data: string) {
+        if (!data || data === 'undefined' || data === '[]') {
+            return;
+        }
+        const regs = this.convertRegionsDataFromServer(JSON.parse(data));
+        regs.forEach((regParams) => {
+            const params = {
+                name: 'bound_rect',
+                fill: 'rgba(0,0,0,0)',
+                stroke: 'green',
+                strokeWidth: 3,
+                top: regParams.top,
+                left: regParams.left,
+                width: regParams.width,
+                height: regParams.height,
+            };
+            const r = this.addRect(params);
+            this.canvas.add(r);
+            r.bringToFront();
+        });
+        this.updateBoundingOverlay();
     }
 }

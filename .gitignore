@@ -1,22 +1,38 @@
+# Dependencies
 node_modules/
+
+# System
 .DS_Store
+
+# IDE & Tools
 .claude/
 **/.claude/
-baselines*/
-!packages/syngrisi/src/ui-app/**/Baselines/
 /.idea/
 .idea/
-/coverage/
-/src_to_json/
-/packages/playwright-sdk/dist/
-/export_gpt_codebase/
-debug.html
-.tmp_
-lerna-debug.log
-chrome
+
+# Build & Output
 *.tsbuildinfo
+/packages/playwright-sdk/dist/
+/src_to_json/
+/export_gpt_codebase/
+.tmp_
+
+# Logs & Debug
+lerna-debug.log
+debug.html
+chrome
+ci-artifacts
+
+# Testing & Coverage
+/coverage/
+packages/core-api/coverage
 packages/syngrisi/e2e/support/mcp/screenshots
+
+# Application Data
+baselines*/
+!packages/syngrisi/src/ui-app/**/Baselines/
+
+# Documentation & Misc
 packages/syngrisi/docs/staging-testing-guide.md
 packages/syngrisi/e2e/docs/E2E_OPTIMIZATION_GUIDE.md
 packages/syngrisi/docs/technical_debt/infinity_scroll_complexity.md
-ci-artifacts

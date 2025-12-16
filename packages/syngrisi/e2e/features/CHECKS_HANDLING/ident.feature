@@ -5,6 +5,7 @@ Feature: Ident flow
   we should use different baselines for each checks.
 
   Background:
+    Given I clear database
 
   @smoke @flaky
   Scenario: Ident flow, same ident [accepted, passed]

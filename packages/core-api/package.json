@@ -1,11 +1,12 @@
 {
   "name": "@syngrisi/core-api",
-  "version": "2.4.1",
+  "version": "2.5.3",
   "description": "Syngrisi Core JS client",
   "main": "dist/src/SyngrisiApi.js",
+  "types": "dist/src/SyngrisiApi.d.ts",
   "private": false,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 0",
+    "test": "vitest run",
     "pub": "np",
     "build": "run-s clean compile",
     "clean": "rimraf tsconfig.tsbuildinfo ./build ./coverage",
@@ -14,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:syngrisi/syngrisi.git"
+    "url": "https://github.com/syngrisi/syngrisi"
   },
   "keywords": [
     "visual",
@@ -28,20 +29,26 @@
     "url": "https://github.com/syngrisi/syngrisi/issues"
   },
   "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/core-api",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
-    "@wdio/logger": "^7.26.0",
+    "@wdio/logger": "^9.18.0",
+    "@wdio/types": "^9.20.0",
     "form-data": "^4.0.5",
     "got-cjs": "^12.0.4",
-    "zod": "^3.25.76"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.48.1",
     "@typescript-eslint/parser": "^8.48.1",
     "@vitest/coverage-v8": "^4.0.15",
-    "@wdio/types": "^8.41.0",
     "c8": "^10.1.3",
-    "eslint": "^8.57.1",
+    "eslint": "^9.39.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-unicorn": "^62.0.0",
