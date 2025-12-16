@@ -1,7 +1,7 @@
 {
   "name": "create-sy",
-  "displayName": "Syngrisi setup package",
-  "version": "2.3.0",
+  "displayName": "Syngrisi Setup Package",
+  "version": "2.3.3",
   "description": "Easily install and configure Syngrisi for visual testing.",
   "author": {
     "name": "Viktar Silakou",
