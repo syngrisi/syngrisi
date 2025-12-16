@@ -19,3 +19,4 @@ packages/syngrisi/e2e/support/mcp/screenshots
 packages/syngrisi/docs/staging-testing-guide.md
 packages/syngrisi/e2e/docs/E2E_OPTIMIZATION_GUIDE.md
 packages/syngrisi/docs/technical_debt/infinity_scroll_complexity.md
+ci-artifacts

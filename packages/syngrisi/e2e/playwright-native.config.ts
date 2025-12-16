@@ -15,6 +15,8 @@ export const confObject = {
     ? [
       ['list'],
       ['blob', { outputDir: config.blobReportPath }],
+      ['json', { outputFile: 'reports/json/results.json' }],
+      ['html', { open: 'never', outputFolder: config.mergedReportPath }],
     ]
     : [
       ['list'],

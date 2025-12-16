@@ -32,6 +32,20 @@ router.get(
 
 registry.registerPath({
     method: 'get',
+    path: '/v1/app/system-info',
+    summary: "The current Syngrisi system information including Node.js version, MongoDB version, and auth type.",
+    tags: ['App'],
+    responses: createApiResponse(AppInfoRespSchema, 'Success'),
+});
+
+router.get(
+    '/system-info',
+    validateRequest(SkipValid, 'get, /v1/app/system-info'),
+    appController.systemInfo as Midleware
+);
+
+registry.registerPath({
+    method: 'get',
     path: '/v1/app',
     summary: "List of applications (projects) with pagination, and optional filtering and sorting.",
     tags: ['App'],

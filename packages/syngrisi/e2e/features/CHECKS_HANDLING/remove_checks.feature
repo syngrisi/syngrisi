@@ -73,9 +73,7 @@ Feature: Remove checks
 
     When I wait 10 seconds for the element with locator "//*[@data-check-header-name]//*[@data-test='check-status']/span[text()='new']" to be visible
 
-    When I click element with locator ".modal [data-test='check-remove-icon']"
-    When I wait 10 seconds for the element with locator "[data-test='check-remove-icon-confirm']" to be visible
-    When I click element with locator "[data-test='check-remove-icon-confirm']"
+    When I delete check from modal
 
     When I wait 10 seconds for the element with locator "//*[contains(@class, 'mantine-Notification-body')]//div[text()='Success']" to be visible
     When I wait 10 seconds for the element with locator "//*[contains(@class, 'mantine-Notification-body')]//div[text()='Check has been successfully removed']" to be visible
@@ -89,9 +87,7 @@ Feature: Remove checks
     When I wait 10 seconds for the element with locator "[data-check='check-name']" to be visible
     Then the element with locator "[data-check='check-name']" should have contains text "CheckName-RC-1"
 
-    When I click element with locator ".modal [data-test='check-remove-icon']"
-    When I wait 10 seconds for the element with locator "[data-test='check-remove-icon-confirm']" to be visible
-    When I click element with locator "[data-test='check-remove-icon-confirm']"
+    When I delete check from modal
 
 
     When I wait 10 seconds for the element with locator "//*[contains(@class, 'mantine-Notification-body')]//div[text()='Success']" to be visible

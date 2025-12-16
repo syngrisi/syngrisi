@@ -1,8 +1,8 @@
 metadata:
   category: diagnostics
-  generatedAt: '2025-12-05T04:19:37.324Z'
+  generatedAt: '2025-12-07T10:28:46.488Z'
   totalFiles: 1
-  totalSteps: 13
+  totalSteps: 16
   sourceFiles:
     - support/mcp/sd/diagnostics.sd.ts
 steps:
@@ -33,6 +33,14 @@ steps:
       When I get accessibility snapshot of 2nd "role=button"
       ```
     line: 177
+  - pattern: ^I get browser console logs$
+    description: |-
+      Gets captured browser console logs.
+      @example
+      ```gherkin
+      When I get browser console logs
+      ```
+    line: 617
   - pattern: ^I get count of "([^"]+)"$
     description: |-
       Counts elements matching the provided selector or component alias.
@@ -57,6 +65,14 @@ steps:
       When I get DOM quality metrics of 2nd "role=button"
       ```
     line: 539
+  - pattern: ^I get page errors$
+    description: |-
+      Gets page errors (uncaught exceptions) by evaluating window.onerror history.
+      @example
+      ```gherkin
+      When I get page errors
+      ```
+    line: 638
   - pattern: ^I get screenshot of (?:(first)|(\d+)(?:st|nd|rd|th)?)?\s*"([^"]+)"$
     description: |-
       Captures a screenshot of a matching element as base64.
@@ -82,6 +98,15 @@ steps:
       When I save screenshot of "css=.task-card" as "task-card"
       ```
     line: 252
+  - pattern: ^I start capturing console logs$
+    description: |-
+      Starts capturing browser console logs for the current page.
+      Call this before navigating to capture all logs.
+      @example
+      ```gherkin
+      When I start capturing console logs
+      ```
+    line: 583
   - pattern: ^I verify page is loaded$
     description: |-
       Verifies that the page is fully loaded and ready for interaction.
@@ -97,7 +122,7 @@ steps:
       ```gherkin
       When I wait for navigation
       ```
-    line: 580
+    line: 667
   - pattern: ^the screenshots "([^"]+)" and "([^"]+)" should match(?:\s+with\s+threshold\s+([0-9.]+))?$
     description: |-
       Compares two saved screenshots with optional threshold.
