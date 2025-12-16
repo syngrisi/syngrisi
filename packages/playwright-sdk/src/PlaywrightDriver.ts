@@ -19,10 +19,11 @@ import { BrowserName, CheckParams, Config, Params } from '../types'
 import { SessionParams, SessionParamsSchema } from './schemas/SessionParams.schema'
 import { getBrowserFullVersion, getBrowserName, getBrowserVersion, getOS, getViewport } from './lib/pwHelpers'
 import { paramsGuard } from './schemas/paramsGuard'
-import { default as logger } from '@wdio/logger'
+import log from 'loglevel'
 import { PlaywrightEntities } from './PlaywrightEntities'
 
-const log = logger('syngrisi-playwright-sdk')
+// Initialize logger
+log.setDefaultLevel('info')
 // 0 | 4 | 2 | 1 | 3 | 5 | "trace" | "debug" | "info" | "warn" | "error" |
 if (process.env.SYNGRISI_LOG_LEVEL) {
     log.setLevel(process.env.SYNGRISI_LOG_LEVEL as LogLevelDesc)

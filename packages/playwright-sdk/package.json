@@ -40,7 +40,6 @@
     "@faker-js/faker": "^10.1.0",
     "@playwright/test": "^1.57.0",
     "@syngrisi/core-api": "^3.1.0",
-    "@wdio/logger": "^9.18.0",
     "loglevel": "^1.9.2",
     "playwright-core": "^1.57.0",
     "ua-parser-js": "^1.0.41",
