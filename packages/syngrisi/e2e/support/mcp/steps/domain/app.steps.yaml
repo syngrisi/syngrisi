@@ -1,0 +1,518 @@
+metadata:
+  category: domain/app
+  generatedAt: '2025-12-05T04:19:37.324Z'
+  totalFiles: 19
+  totalSteps: 123
+  sourceFiles:
+    - steps/domain/ai.steps.ts
+    - steps/domain/api-key.steps.ts
+    - steps/domain/app.steps.ts
+    - steps/domain/auth.steps.ts
+    - steps/domain/check-details.steps.ts
+    - steps/domain/checks.steps.ts
+    - steps/domain/cli-tasks.steps.ts
+    - steps/domain/http/baselines-backend.steps.ts
+    - steps/domain/http/checks-http.steps.ts
+    - steps/domain/http/common-http-additional.steps.ts
+    - steps/domain/http/common-http.steps.ts
+    - steps/domain/http/logs-http.steps.ts
+    - steps/domain/http/users-http.steps.ts
+    - steps/domain/mcp.steps.ts
+    - steps/domain/navigation.steps.ts
+    - steps/domain/server.steps.ts
+    - steps/domain/sso.steps.ts
+    - steps/domain/stored-values.steps.ts
+    - steps/domain/tests.steps.ts
+steps:
+  - pattern: I batch accept {string} via AI endpoint
+    description: ''
+    line: 57
+  - pattern: I filter checks by date range
+    description: ''
+    line: 116
+  - pattern: I filter checks by name {string}
+    description: ''
+    line: 100
+  - pattern: I request {string} with API key
+    description: ''
+    line: 7
+  - pattern: I request analysis for {string} via AI endpoint
+    description: ''
+    line: 44
+  - pattern: I request details for {string} via AI endpoint
+    description: ''
+    line: 32
+  - pattern: I should receive a CSV response
+    description: ''
+    line: 145
+  - pattern: I should receive a JSON response
+    description: ''
+    line: 133
+  - pattern: I should receive an HTML response
+    description: ''
+    line: 16
+  - pattern: the check {string} should be {string}
+    description: ''
+    line: 72
+  - pattern: the check {string} should be marked as {string}
+    description: ''
+    line: 86
+  - pattern: the JSON response should have property {string}
+    description: ''
+    line: 140
+  - pattern: the JSON results should only contain specified fields
+    description: ''
+    line: 151
+  - pattern: the response should contain {string}
+    description: ''
+    line: 22
+  - pattern: the response should not contain {string}
+    description: ''
+    line: 27
+  - pattern: I parse the API key
+    description: ''
+    line: 28
+  - pattern: I set the API key in config
+    description: ''
+    line: 14
+  - pattern: I clear local storage
+    description: ''
+    line: 83
+  - pattern: I open the app
+    description: ''
+    line: 63
+  - pattern: the database is cleared
+    description: ''
+    line: 16
+  - pattern: the Syngrisi application is running
+    description: ''
+    line: 10
+  - pattern: I log out of the application
+    description: ''
+    line: 151
+  - pattern: I login with user:{string} password {string}
+    description: ''
+    line: 9
+  - pattern: I click the {string} button
+    description: ''
+    line: 135
+  - pattern: I create a test run {string} with {int} checks
+    description: ''
+    line: 25
+  - pattern: 'I create a test run {string} with checks:'
+    description: ''
+    line: 80
+  - pattern: I should see the check details for {string}
+    description: ''
+    line: 173
+  - pattern: the {string} button should be {string}
+    description: ''
+    line: 149
+  - pattern: I accept the {string} check
+    description: ''
+    line: 7
+  - pattern: I delete the {string} check
+    description: ''
+    line: 95
+  - pattern: I open the {ordinal} check {string}
+    description: ''
+    line: 37
+  - pattern: I remove the {string} check
+    description: ''
+    line: 129
+  - pattern: I run CLI task {string} with args {string}
+    description: ''
+    line: 11
+  - pattern: I log via http user {string} info
+    description: Step to log user info via HTTP API (replaces direct DB access)
+    line: 974
+  - pattern: I run orphan baselines task via http with dryRun {string}
+    description: ''
+    line: 62
+  - pattern: 'I seed via http baselines with owners:'
+    description: |-
+      Universal step for seeding baselines with different owners via HTTP API.
+
+      Example usage:
+      ```gherkin
+      Given I seed via http baselines with owners:
+          """
+          adminUser:
+            username: Test
+            password: "123456aA-"
+          users:
+            - username: admin@test.com
+              password: Password-123
+              role: admin
+              firstName: Admin
+              lastName: User
+              baselines:
+                - name: baseline-admin
+                  checkName: Check Admin
+                  filePath: files/A.png
+            - username: user@test.com
+              password: Password-123
+              role: user
+              firstName: Regular
+              lastName: User
+              baselines:
+                - name: baseline-user
+                  checkName: Check User
+                  filePath: files/A.png
+          """
+      ```
+    line: 158
+  - pattern: 'I seed via http baselines with usage:'
+    description: |-
+      Universal step for seeding baselines with configurable usage counts via HTTP API.
+
+      Example usage:
+      ```gherkin
+      Given I seed via http baselines with usage:
+          """
+          baselines:
+            - name: api-baseline-usage
+              usageCount: 2
+              filePath: files/A.png
+            - name: api-baseline-unused
+              usageCount: 0
+              filePath: files/B.png
+          """
+      ```
+    line: 667
+  - pattern: 'I seed via http diverse baselines:'
+    description: |-
+      Universal step for seeding diverse baselines for UI testing via HTTP API.
+
+      Example usage:
+      ```gherkin
+      Given I seed via http diverse baselines:
+          """
+          baselines:
+            - name: ui-base-alpha
+              browserName: firefox
+              viewport: "1920x1080"
+              os: Windows
+              usageCount: 1
+            - name: ui-base-beta
+              browserName: safari
+              viewport: "1440x900"
+              os: macOS
+              usageCount: 0
+            - name: ui-base-gamma
+              browserName: chrome
+              viewport: "800x600"
+              os: Linux
+              usageCount: 2
+          """
+      ```
+    line: 902
+  - pattern: 'I seed via http orphan baselines data:'
+    description: |-
+      Universal step for seeding orphan baselines data via HTTP API.
+      Creates one orphan baseline (no checks reference it) and one used baseline (has checks).
+
+      Example usage:
+      ```gherkin
+      Given I seed via http orphan baselines data:
+          """
+          orphanBaseline:
+            name: orphan-baseline-deleteme
+            filePath: files/A.png
+          usedBaseline:
+            name: orphan-baseline-keep
+            filePath: files/B.png
+          """
+      ```
+    line: 788
+  - pattern: I update via http user {string} role to {string}
+    description: Step to update user role via HTTP API (requires admin session)
+    line: 377
+  - pattern: via http baseline named {string} exist exactly {int} times
+    description: ''
+    line: 74
+  - pattern: 'via http baselines with includeUsage filtered by name {string} should match:'
+    description: ''
+    line: 22
+  - pattern: via http tests filtered by seeded baseline snapshot should return {int} items
+    description: ''
+    line: 46
+  - pattern: I accept via http the {ordinal} check with name {string}
+    description: ''
+    line: 20
+  - pattern: I accept via SDK the {ordinal} check with name {string}
+    description: ''
+    line: 273
+  - pattern: 'I check image with path: {string} as {string}'
+    description: ''
+    line: 98
+  - pattern: 'I check image with path: {string} as {string} and suppress exceptions'
+    description: ''
+    line: 154
+  - pattern: 'I update via http check with params:'
+    description: ''
+    line: 216
+  - pattern: 'I update via http last {string} checks with params:'
+    description: ''
+    line: 241
+  - pattern: 'I create via http log with params:'
+    description: ''
+    line: 199
+  - pattern: I expect exact {string} snapshot files
+    description: ''
+    line: 107
+  - pattern: I expect via http {int} baselines
+    description: ''
+    line: 92
+  - pattern: I expect via http logs with message {string} exist exactly {string} times
+    description: ''
+    line: 218
+  - pattern: I expect via http setting {string} days equals {int}
+    description: ''
+    line: 258
+  - pattern: I expect via http that {string} check exist exactly {string} times
+    description: ''
+    line: 12
+  - pattern: I expect via http that {string} run exist exactly {string} times
+    description: ''
+    line: 60
+  - pattern: I expect via http that {string} snapshot exist exactly {string} times
+    description: ''
+    line: 44
+  - pattern: I expect via http that {string} suite exist exactly {string} times
+    description: ''
+    line: 76
+  - pattern: I expect via http that {string} test exist exactly {string} times
+    description: ''
+    line: 28
+  - pattern: I remove via http checks that older than {string} days
+    description: ''
+    line: 138
+  - pattern: I remove via http Inconsistent items
+    description: ''
+    line: 124
+  - pattern: 'I update via http setting {string} with params:'
+    description: ''
+    line: 153
+  - pattern: I wait up to {int} seconds via http that {string} check exist exactly {string} times
+    description: ''
+    line: 173
+  - pattern: I wait up to {int} seconds via http that logs with message {string} exist exactly {string} times
+    description: ''
+    line: 232
+  - pattern: 'I expect via http {ordinal} {string} filtered as {string} matched:'
+    description: ''
+    line: 192
+  - pattern: 'I expect via http {ordinal} {string} filtered as {string} matched:'
+    description: ''
+    line: 113
+  - pattern: 'I expect via http {ordinal} baseline filtered as {string} matched:'
+    description: ''
+    line: 87
+  - pattern: 'I expect via http {ordinal} check filtered as {string} matched:'
+    description: ''
+    line: 74
+  - pattern: 'I expect via http {ordinal} test filtered as {string} matched:'
+    description: ''
+    line: 140
+  - pattern: I expect via http that {string} {string} exist exactly {string} times
+    description: ''
+    line: 27
+  - pattern: 'I create {string} log messages with params:'
+    description: ''
+    line: 12
+  - pattern: I create via http test user
+    description: ''
+    line: 11
+  - pattern: 'I create via http user as:{string} with params:'
+    description: ''
+    line: 114
+  - pattern: I generate via http API key for the User
+    description: ''
+    line: 82
+  - pattern: I login via http with user:{string} password {string}
+    description: ''
+    line: 43
+  - pattern: I find test {string} in the table, expand it, and open the first check {string}
+    description: ''
+    line: 25
+  - pattern: I get the current URL
+    description: ''
+    line: 43
+  - pattern: I start a new MCP session named {string} with headless {word}
+    description: ''
+    line: 8
+  - pattern: I go to {string} page
+    description: ''
+    line: 12
+  - pattern: the current url contains {string}
+    description: ''
+    line: 104
+  - pattern: I clear database
+    description: ''
+    line: 218
+  - pattern: I clear Database and stop Server
+    description: ''
+    line: 152
+  - pattern: I clear screenshots folder
+    description: ''
+    line: 228
+  - pattern: 'I set env variables:'
+    description: ''
+    line: 36
+  - pattern: I start Driver
+    description: ''
+    line: 198
+  - pattern: I start Server
+    description: ''
+    line: 97
+  - pattern: I start Server and start Driver
+    description: ''
+    line: 64
+  - pattern: I stop Server
+    description: ''
+    line: 135
+  - pattern: I stop the Syngrisi server
+    description: ''
+    line: 118
+  - pattern: a new user {string} should be created with role {string}
+    description: Verify user was created in database
+    line: 466
+  - pattern: I click SSO login button
+    description: Click SSO login button
+    line: 114
+  - pattern: I configure SAML SSO with auto-provisioned settings
+    description: |-
+      Configure SAML SSO with auto-provisioned settings
+
+      Loads SAML configuration from provisioned-config.json
+      SSO_CERT must be provided via environment variable
+    line: 294
+  - pattern: I configure SAML SSO with entry point {string} and issuer {string}
+    description: Configure SAML SSO with explicit parameters
+    line: 333
+  - pattern: I configure SSO with client ID {string} and secret {string}
+    description: |-
+      Configure SSO with client credentials
+
+      If clientSecret is "auto-provisioned", credentials will be loaded from
+      provisioned-config.json (created by setup-logto.sh)
+    line: 79
+  - pattern: I login to Logto with email {string} and password {string}
+    description: |-
+      Fill Logto login form
+
+      Note: Logto uses 2-step authentication flow:
+      1. Enter email/username -> Submit
+      2. Enter password -> Submit
+    line: 142
+  - pattern: I login to Logto with username {string} and password {string}
+    description: |-
+      Fill Logto login form with username (single-page form)
+
+      Note: When Logto is configured for username sign-in, it shows
+      both username and password fields on the same page.
+    line: 175
+  - pattern: I login to SAML IdP with username {string} and password {string}
+    description: |-
+      Fill SAML IdP login form (generic - works with most SAML IdPs)
+
+      This step handles login on a generic SAML Identity Provider
+    line: 360
+  - pattern: I register in Logto with email {string} and password {string}
+    description: Register a new user in Logto
+    line: 232
+  - pattern: I request {string} {string}
+    description: ''
+    line: 12
+  - pattern: I reset user {string} provider to local
+    description: |-
+      Reset user's provider to 'local' for testing account linking
+      This ensures test isolation when running multiple SSO provider tests
+    line: 486
+  - pattern: I should be authenticated via SSO
+    description: Verify successful SSO authentication
+    line: 279
+  - pattern: I should be redirected back to the app
+    description: Wait for redirect back to app after SSO login
+    line: 267
+  - pattern: I should be redirected to login page with error {string}
+    description: Verify redirected to login page with error
+    line: 418
+  - pattern: I start Logto SSO infrastructure
+    description: Start Logto SSO infrastructure
+    line: 54
+  - pattern: I stop Logto SSO infrastructure
+    description: Stop Logto SSO infrastructure
+    line: 61
+  - pattern: I try to access SSO directly
+    description: Try to access SSO directly when disabled
+    line: 427
+  - pattern: Logto SSO should be available
+    description: Verify Logto is running
+    line: 68
+  - pattern: my session should be destroyed
+    description: Verify user session is destroyed after logout
+    line: 435
+  - pattern: SSO login should be disabled
+    description: Verify SSO is disabled (no SSO button visible)
+    line: 410
+  - pattern: the response body should contain {string}
+    description: ''
+    line: 36
+  - pattern: the response status should be {int}
+    description: ''
+    line: 28
+  - pattern: the SSO login button should be visible
+    description: Verify SSO button is visible
+    line: 122
+  - pattern: the SSO login button should not be visible
+    description: Verify SSO button is not visible
+    line: 130
+  - pattern: the user {string} should have provider type {string}
+    description: Check user provider type in database (via API)
+    line: 447
+  - pattern: 'I expect the stored {string} string is contain:'
+    description: ''
+    line: 8
+  - pattern: 'I expect the stored {string} string is equal:'
+    description: ''
+    line: 38
+  - pattern: 'I expect the stored {string} string is not contain:'
+    description: ''
+    line: 23
+  - pattern: 'I expect the stored {string} string is not equal:'
+    description: ''
+    line: 53
+  - pattern: 'I create {string} tests with params:'
+    description: ''
+    line: 477
+  - pattern: 'I create {string} tests with:'
+    description: ''
+    line: 469
+  - pattern: I unfold the test {string}
+    description: ''
+    line: 623
+  - pattern: I wait for check {string} to appear in collapsed row of test {string}
+    description: |-
+      Waits for a specific check to appear in the collapsed row of a test.
+      This step handles race conditions by:
+      1. Clicking the test row to unfold if collapsed
+      2. Clicking Refresh if check doesn't appear
+
+      @example
+      ```gherkin
+      When I wait for check "CheckName-1" to appear in collapsed row of test "TestName-1"
+      ```
+    line: 740
+  - pattern: I wait for test {string} to appear in table
+    description: |-
+      Waits for a specific test row to appear in the table.
+      This step should be used after navigation when test data was created via API
+      and you need to ensure the UI has loaded and rendered the data.
+
+      @example
+      ```gherkin
+      When I wait for test "TestName-1" to appear in table
+      ```
+    line: 643

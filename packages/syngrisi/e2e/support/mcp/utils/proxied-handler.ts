@@ -52,8 +52,8 @@ export class ProxiedHandler {
       const tools = (remote.tools ?? []).filter(
         (tool: any) => tool?.name !== 'session_start_new' && tool?.name !== 'attach_existing_session',
       );
-      tools.push(sessionStartToolDefinition, attachExistingSessionToolDefinition);
-      return ListToolsResultSchema.parse({ tools });
+      tools.unshift(sessionStartToolDefinition, attachExistingSessionToolDefinition);
+      return { tools } as any;
     });
 
     this.server.setRequestHandler(CallToolRequestSchema, async (args) => {

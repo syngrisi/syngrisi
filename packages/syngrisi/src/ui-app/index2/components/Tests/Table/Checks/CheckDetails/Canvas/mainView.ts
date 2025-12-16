@@ -44,7 +44,7 @@ export class MainView {
 
     defaultMode: string;
 
-    // currentView: string;
+    currentView: string;
 
     actualView: SimpleView;
 
@@ -97,6 +97,7 @@ export class MainView {
         // this.expectedCanvasViewportAreaSize = MainView.calculateExpectedCanvasViewportAreaSize();
 
         this.defaultMode = '';
+        this.currentView = 'actual';
 
         if (actual) {
             this.sliderView = new SideToSideView(
@@ -225,7 +226,7 @@ export class MainView {
     }
 
     async switchView(view: string) {
-        // this.currentView = view;
+        this.currentView = view;
         await this.destroyAllViews();
         this.sliderView = new SideToSideView(
             {

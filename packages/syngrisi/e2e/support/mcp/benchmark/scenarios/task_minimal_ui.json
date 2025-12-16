@@ -1,0 +1,14 @@
+{
+  "id": "task_minimal_ui",
+  "type": "exploration",
+  "prompt": "Используй MCP сервер test_engine: 1) session_start_new с sessionName из BENCH_SESSION_NAME и headless=true. 2) When I open the app. 3) Убедись, что видна кнопка с aria-label \"User menu for Syngrisi Guest\" (SG). 4) Убедись, что ссылка \"By Runs\" видна. 5) Выполни \"Then I get current URL\". Никаких waitForTimeout, XPath.",
+  "expectations": {
+    "final_locator": "current URL",
+    "prohibited_actions": ["page.waitForTimeout"]
+  },
+  "config": {
+    "headless": true,
+    "max_steps": 6,
+    "min_steps": 4
+  }
+}

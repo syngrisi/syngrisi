@@ -1,4 +1,4 @@
-FROM node:21-alpine3.18
+FROM node:22.19.0-alpine
 
 ARG SY_VERSION=latest
 ENV SY_VERSION=${SY_VERSION}

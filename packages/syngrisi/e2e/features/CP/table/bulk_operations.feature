@@ -1,0 +1,93 @@
+@fast-server
+Feature: Bulk Operations - Apply and Delete
+
+  Background:
+    When I open the app
+    When I clear local storage
+
+  @smoke
+  Scenario: Apply 2 tests
+    Given I create "2" tests with:
+      """
+          testName: TestName-BulkApply-$
+          checks:
+            - checkName: CheckName
+              filePath: files/A.png
+      """
+    When I go to "main" page
+
+    # Use reliable wait for test step instead of raw locator waits
+    When I wait for test "TestName-BulkApply-0" to appear in table
+    When I wait for test "TestName-BulkApply-1" to appear in table
+    # Wait for Unaccepted status with extended timeout for parallel load
+    When I wait 15 seconds for the element with locator "//*[@data-row-name='TestName-BulkApply-0']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']" to be visible
+    When I wait 15 seconds for the element with locator "//*[@data-row-name='TestName-BulkApply-1']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']" to be visible
+
+    When I click element with locator "[data-test-checkbox-name=TestName-BulkApply-0]"
+    When I wait for "1" seconds
+    When I click element with locator "[data-test-checkbox-name=TestName-BulkApply-1]"
+
+    When I unfold the test "TestName-BulkApply-0"
+    When I unfold the test "TestName-BulkApply-1"
+
+    Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])" should have has attribute "data-test-icon-type=outline"
+    Then the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])" is "rgba(134,142,150,1)"
+
+    # accept
+    When I wait 10 seconds for the element with locator "[aria-label='Accept selected tests']" to be visible
+    When I click element with locator "[aria-label='Accept selected tests']"
+
+    When I wait 10 seconds for the element with locator "[aria-label='Accept']" to be visible
+    When I click element with locator "[aria-label='Accept']"
+
+    When I wait 10 seconds for the element with locator "//*[@data-row-name='TestName-BulkApply-0']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
+    When I wait 10 seconds for the element with locator "//*[@data-row-name='TestName-BulkApply-1']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
+
+
+
+    Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" should have has attribute "data-test-icon-type=fill"
+    Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" should have has attribute "data-test-icon-type=fill"
+    Then the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "rgba(64,192,87,1)"
+
+    When I refresh page
+    When I unfold the test "TestName-BulkApply-0"
+    When I unfold the test "TestName-BulkApply-1"
+
+    When I wait 10 seconds for the element with locator "//*[@data-row-name='TestName-BulkApply-0']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
+    When I wait 10 seconds for the element with locator "//*[@data-row-name='TestName-BulkApply-1']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
+
+    Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" should have has attribute "data-test-icon-type=fill"
+    Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" should have has attribute "data-test-icon-type=fill"
+    Then the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "rgba(64,192,87,1)"
+
+  @smoke
+  Scenario: Delete 2 tests
+    Given I create "2" tests with:
+      """
+          testName: TestName-BulkDelete-$
+          checks:
+            - checkName: CheckName
+              filePath: files/A.png
+      """
+    When I go to "main" page
+
+    # Use reliable wait for test step
+    When I wait for test "TestName-BulkDelete-0" to appear in table
+    When I wait for test "TestName-BulkDelete-1" to appear in table
+
+    When I click element with locator "[data-test-checkbox-name=TestName-BulkDelete-0]"
+    When I wait for "1" seconds
+    When I click element with locator "[data-test-checkbox-name=TestName-BulkDelete-1]"
+    When I wait 10 seconds for the element with locator "[aria-label='Remove selected tests']" to be visible
+    When I click element with locator "[aria-label='Remove selected tests']"
+    Then the element with locator ".mantine-Modal-modal" should have contains text "Remove selected tests?"
+    Then the element with locator ".mantine-Modal-modal" should have contains text "Are you sure you want to permanently delete the selected tests?"
+    When I wait 10 seconds for the element with locator "[aria-label='Remove']" to be visible
+
+    When I click element with locator "[aria-label='Remove']"
+
+    When I wait on element "[data-table-test-name=TestName-BulkDelete-0]" to not be displayed
+    When I wait on element "[data-table-test-name=TestName-BulkDelete-1]" to not be displayed
+
+    When I wait on element "[data-table-test-name=TestName-BulkDelete-0]" to not be displayed
+    When I wait on element "[data-table-test-name=TestName-BulkDelete-1]" to not be displayed

@@ -20,9 +20,10 @@ import { CheckDetails } from '@index/components/Tests/Table/Checks/CheckDetails/
 interface Props {
     relatedRendered?: boolean;
     apikey?: string;
+    testList?: any[];
 }
 
-export function CheckModal({ relatedRendered = true, apikey }: Props) {
+export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Props) {
     const { query, setQuery } = useParams();
     const [checkModalOpened, checkModalHandlers] = useDisclosure(false);
 
@@ -58,6 +59,13 @@ export function CheckModal({ relatedRendered = true, apikey }: Props) {
                 'initial_check_for_check_details_modal',
             ),
             enabled: checkModalOpened,
+            refetchInterval: (data) => {
+                const check = data?.results?.[0];
+                if (check && !check.diffId) {
+                    return 1000;
+                }
+                return false;
+            },
             refetchOnWindowFocus: false,
             onError: (e) => {
                 errorMsg({ error: e });
@@ -112,6 +120,7 @@ export function CheckModal({ relatedRendered = true, apikey }: Props) {
                                     checkQuery={checkQuery}
                                     closeHandler={closeHandler}
                                     relatedRendered={relatedRendered}
+                                    testList={testList}
                                 />
                             )
                             : (

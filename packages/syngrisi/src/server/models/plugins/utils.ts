@@ -6,6 +6,7 @@ export type PaginateOptions = {
   limit?: number;
   page?: number;
   field?: string;
+  countStrategy?: 'exact' | 'estimated';
 };
 
 interface PaginatedResponse<T> {

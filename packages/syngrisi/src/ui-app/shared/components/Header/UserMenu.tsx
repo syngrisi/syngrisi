@@ -60,7 +60,7 @@ function UserMenu() {
                             },
                         }}
                     >
-                        {userInitials}
+                        <span data-test="user-initials">{userInitials}</span>
                     </Button>
 
                 </Menu.Target>

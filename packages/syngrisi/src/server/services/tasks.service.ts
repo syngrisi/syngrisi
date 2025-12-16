@@ -12,6 +12,7 @@ import {
     handleDatabaseConsistencyTask,
     handleOldChecksTask,
     handleOrphanFilesTask,
+    handleOrphanBaselinesTask,
     removeOldLogsTask,
 } from '@/tasks/core';
 
@@ -111,6 +112,18 @@ const task_handle_orphan_files = async (options: any, res: Response) => {
     await handleOrphanFilesTask({ dryRun }, output);
 };
 
+const task_handle_orphan_baselines = async (options: any, res: Response) => {
+    const output = new HttpOutputWriter(res);
+    let dryRun = options.dryRun === 'true' || options.dryRun === true;
+    if (options.execute !== undefined) {
+        const execute = options.execute === 'true' || options.execute === true;
+        dryRun = !execute;
+    } else if (options.dryRun === undefined) {
+        dryRun = true;
+    }
+    await handleOrphanBaselinesTask({ dryRun }, output);
+};
+
 const task_test = async (options = 'empty', req: ExtRequest, res: Response) => {
     const output = new HttpOutputWriter(res);
 
@@ -140,6 +153,7 @@ export {
     task_handle_old_checks,
     task_handle_database_consistency,
     task_handle_orphan_files,
+    task_handle_orphan_baselines,
     task_remove_old_logs,
     status,
     loadTestUser,

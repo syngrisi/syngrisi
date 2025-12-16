@@ -1,17 +1,20 @@
 import { Given, When, Then } from '@fixtures';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { createLogger } from '@lib/logger';
 import * as yaml from 'yaml';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
+import { env } from '@config';
 import type { AppServerFixture } from '@fixtures';
+import { isServerRunning } from '@utils/app-server';
 import FormData from 'form-data';
 import { got } from 'got-cjs';
 import { SyngrisiDriver } from '@syngrisi/wdio-sdk';
 import type { TestStore } from '@fixtures';
 
 const logger = createLogger('TestsSteps');
+const timingLogger = createLogger('timing');
 
 function hashApiKey(apiKey: string): string {
   // hasha uses SHA-512 by default (as in wdio.conf.js:42)
@@ -26,6 +29,16 @@ function uuidv4(): string {
   });
 }
 
+const fileBufferCache = new Map<string, Buffer>();
+
+function getCachedFileBuffer(fullPath: string): Buffer {
+  const cached = fileBufferCache.get(fullPath);
+  if (cached) return cached;
+  const buffer = fs.readFileSync(fullPath);
+  fileBufferCache.set(fullPath, buffer);
+  return buffer;
+}
+
 async function createCheckViaAPI(
   vDriver: SyngrisiDriver,
   testId: string,
@@ -36,7 +49,7 @@ async function createCheckViaAPI(
   // Use SyngrisiDriver.check() method directly (as in old framework: browser.vDriver.check())
   // Parameters are taken from vDriver.params.test (set by startTestSession), so we only pass optional overrides
   logger.info(`Creating check "${checkName}" for test "${testId}" via SyngrisiDriver`);
-  
+
   try {
     const checkParams: any = {
       checkName,
@@ -64,7 +77,7 @@ async function createCheckForExistingTest(
   if (!fs.existsSync(fullPath)) {
     throw new Error(`Test file not found: ${fullPath}`);
   }
-  const imageBuffer = fs.readFileSync(fullPath);
+  const imageBuffer = getCachedFileBuffer(fullPath);
   const form = new FormData();
   form.append('testid', testId);
   const resolvedCheckName = check.checkName || check.name || params.checkName || 'CheckName';
@@ -120,6 +133,13 @@ async function createTestsWithParams(
   yml: string,
   options: CreateTestsOptions = {}
 ) {
+  const fastSeed = process.env.E2E_FAST_SEED === 'true';
+  // Use sequential creation to guarantee test order (important for sorting tests)
+  const concurrency = 1;
+  const useSharedDriver = concurrency === 1;
+  const quickCheckMaxWaitMs = fastSeed ? 500 : 2000;
+  const waitAfterStopMs = fastSeed ? 10 : 100;
+
   const apiKey = process.env.SYNGRISI_API_KEY || '123';
   const hashedApiKey = hashApiKey(apiKey);
   testData.set('hashedApiKey', hashedApiKey);
@@ -128,9 +148,47 @@ async function createTestsWithParams(
   testData.set('autoCreatedChecks', initialChecks);
   const createTest = async (params: any, index: number) => {
     try {
-      const vDriver = testData.get('vDriver') as SyngrisiDriver | undefined;
-      if (!vDriver) {
-        throw new Error('SyngrisiDriver not initialized. Please call "I start Driver" step first.');
+      const cid = process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
+      const serverPort = appServer.serverPort || parseInt(process.env.SYNGRISI_APP_PORT || '', 10) || 3002 + cid;
+      let serverWasStarted = false;
+      if (!(await isServerRunning(serverPort))) {
+        logger.info(`App server is not running on port ${serverPort}, starting before creating tests`);
+        await appServer.start();
+        serverWasStarted = true;
+        // Wait for server to be fully ready after startup using polling
+        logger.info('Waiting for server to be fully ready...');
+        const maxWaitMs = 10000;
+        const pollIntervalMs = 200;
+        const startTime = Date.now();
+        while (Date.now() - startTime < maxWaitMs) {
+          if (await isServerRunning(serverPort)) {
+            logger.info('Server is ready');
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+        }
+      }
+
+      let vDriver = testData.get('vDriver') as SyngrisiDriver | undefined;
+      // Recreate vDriver if server was just started or if vDriver is missing.
+      // When concurrency > 1 we avoid sharing the driver to prevent state races.
+      if (!useSharedDriver || !vDriver || serverWasStarted) {
+        const baseURL = appServer.baseURL || `http://${env.E2E_BACKEND_HOST}:${appServer.serverPort || 3002}`;
+        const normalizedURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
+        vDriver = new SyngrisiDriver({
+          url: normalizedURL,
+          apiKey,
+        });
+        if (useSharedDriver) {
+          testData.set('vDriver', vDriver);
+        }
+        logger.info(
+          serverWasStarted
+            ? 'SyngrisiDriver recreated after server restart'
+            : useSharedDriver
+              ? 'SyngrisiDriver auto-initialized because it was missing'
+              : 'SyngrisiDriver instantiated for fast seed'
+        );
       }
 
       const testIndex = index + 1;
@@ -165,19 +223,53 @@ async function createTestsWithParams(
       const testId = (sessionData as any).id || (sessionData as any)._id;
       logger.info(`Test session started with ID: ${testId}`);
       testData.set('lastTestId', testId);
-      // Allow backend to finish persisting test/check data before further actions
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Quick check that test is queryable (fast path - usually succeeds immediately)
+      // MongoDB indexing typically completes within milliseconds for single documents
+      const checkIntervalMs = 50;
+      const startTime = Date.now();
+      let testFound = false;
+
+      while (Date.now() - startTime < quickCheckMaxWaitMs) {
+        try {
+          const response = await got.get(`${appServer.baseURL}/v1/tests/${testId}`, {
+            headers: { apikey: hashedApiKey },
+            throwHttpErrors: false,
+            timeout: { request: 1000 },
+          });
+          if (response.statusCode === 200) {
+            testFound = true;
+            break;
+          }
+        } catch {
+          // Ignore errors, keep trying
+        }
+        await new Promise((resolve) => setTimeout(resolve, checkIntervalMs));
+      }
+
+      if (!testFound) {
+        logger.warn(`Test ${testId} not queryable after ${quickCheckMaxWaitMs}ms, proceeding anyway`);
+      }
 
       const checkResults = [];
       for (const check of params.checks || []) {
         const checkName = check.checkName || check.name || 'CheckName';
-        const filePath = check.filePath || 'files/A.png';
+        if (!check.filePath) {
+          throw new Error(
+            `filePath is required for check "${checkName}". ` +
+            `Please specify filePath in the feature file. Example:\n` +
+            `  checks:\n` +
+            `    - checkName: ${checkName}\n` +
+            `      filePath: files/A.png`
+          );
+        }
+        const filePath = check.filePath;
         const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
         const fullPath = path.join(repoRoot, 'syngrisi', 'tests', filePath);
         if (!fs.existsSync(fullPath)) {
           throw new Error(`Test file not found: ${fullPath}`);
         }
-        const imageBuffer = fs.readFileSync(fullPath);
+        const imageBuffer = getCachedFileBuffer(fullPath);
         const checkResult = await createCheckViaAPI(
           vDriver,
           testId,
@@ -213,7 +305,7 @@ async function createTestsWithParams(
         const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
         const defaultPath = path.join(repoRoot, 'syngrisi', 'tests', params.filePath || 'files/A.png');
         if (fs.existsSync(defaultPath)) {
-          const imageBuffer = fs.readFileSync(defaultPath);
+          const imageBuffer = getCachedFileBuffer(defaultPath);
           const checkResult = await createCheckViaAPI(
             vDriver,
             testId,
@@ -253,6 +345,11 @@ async function createTestsWithParams(
         logger.warn(`Failed to stop test session for "${testName}": ${stopError.message}`);
       }
 
+      // Brief wait to allow session stop to propagate (much faster than polling)
+      if (waitAfterStopMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, waitAfterStopMs));
+      }
+
       return { testId, checkResults };
     } catch (error) {
       logger.error(`Failed to create test: ${(error as Error).message}`);
@@ -261,11 +358,112 @@ async function createTestsWithParams(
   };
 
   const count = parseInt(num, 10);
-  for (let i = 0; i < count; i++) {
-    const processedYml = yml.replace(/\$/g, String(i));
-    const params = yaml.parse(processedYml);
-    logger.info(`Creating test #${i + 1} with params:`, params);
-    await createTest(params, i);
+  const createdTestIds: string[] = [];
+  const tasks = Array.from({ length: count }, (_v, i) => i).map((i) => ({
+    index: i,
+    params: yaml.parse(yml.replace(/\$/g, String(i))),
+  }));
+
+  const testCreationStart = performance.now();
+  timingLogger.info(`[timing] Starting test creation: ${count} tests with concurrency=${concurrency}`);
+
+  let next = 0;
+  const runNext = async () => {
+    const current = next;
+    next += 1;
+    if (current >= tasks.length) return;
+    const { index, params } = tasks[current];
+    const singleTestStart = performance.now();
+    logger.info(`Creating test #${index + 1} with params:`, params);
+    const result = await createTest(params, index);
+    if (result?.testId) {
+      createdTestIds.push(result.testId);
+    }
+    timingLogger.debug(`[timing] Test #${index + 1} created: ${Math.round(performance.now() - singleTestStart)}ms`);
+    await runNext();
+  };
+
+  const runners = Array.from({ length: Math.min(concurrency, tasks.length) }, () => runNext());
+  await Promise.all(runners);
+  timingLogger.info(`[timing] Test creation (${count} tests, concurrency=${concurrency}): ${Math.round(performance.now() - testCreationStart)}ms`);
+
+  // Brief final wait to ensure all data is indexed (typically <100ms for batch operations)
+  if (createdTestIds.length > 0) {
+    const verificationStart = performance.now();
+    logger.info(`Created ${createdTestIds.length} test(s), waiting for indexing...`);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    logger.info(`All ${createdTestIds.length} test(s) ready`);
+
+    const apiBaseUrl = appServer.baseURL;
+    logger.info(
+      `Verification context: baseURL=${apiBaseUrl}, ` +
+      `TEST_WORKER_INDEX=${process.env.TEST_WORKER_INDEX || 'unset'}, ` +
+      `SYNGRISI_DB_URI=${process.env.SYNGRISI_DB_URI || 'unset'}, ` +
+      `createdTestIds=${createdTestIds.length}`
+    );
+
+    // Validate count via /v1/checks endpoint which supports API key auth
+    // (unlike /v1/tests which only supports session auth)
+    const maxRetries = 5;
+    const retryDelays = [500, 1000, 2000, 3000, 5000];
+    let lastError: Error | null = null;
+    let verificationPassed = false;
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const listResp = await got.get(`${apiBaseUrl}/v1/checks?limit=${createdTestIds.length + 5}`, {
+          headers: { apikey: hashedApiKey },
+          throwHttpErrors: false,
+          timeout: { request: 5000 },
+        });
+
+        // Check content-type to detect HTML error pages
+        const contentType = listResp.headers['content-type'] || '';
+        const isJson = contentType.includes('application/json');
+        const isHtml = contentType.includes('text/html') || listResp.body?.startsWith('<!');
+
+        if (isHtml) {
+          const bodyPreview = listResp.body?.substring(0, 200) || '';
+          logger.warn(
+            `Attempt ${attempt + 1}/${maxRetries}: API returned HTML (status=${listResp.statusCode}). ` +
+            `Content-Type: ${contentType}. Body preview: ${bodyPreview}...`
+          );
+          throw new Error(`API returned HTML instead of JSON (status ${listResp.statusCode})`);
+        }
+
+        if (listResp.statusCode !== 200) {
+          throw new Error(`List verification failed: status ${listResp.statusCode}, body: ${listResp.body?.substring(0, 200)}`);
+        }
+
+        if (!isJson && listResp.body) {
+          logger.warn(`Response Content-Type is "${contentType}", attempting JSON parse anyway`);
+        }
+
+        const body = JSON.parse(listResp.body || '{}') as { totalResults?: number };
+        const total = body?.totalResults ?? 0;
+
+        if (total < createdTestIds.length) {
+          throw new Error(`List verification count mismatch: expected >=${createdTestIds.length} checks, got ${total}`);
+        }
+
+        logger.info(`List verification passed on attempt ${attempt + 1}: totalResults=${total}`);
+        verificationPassed = true;
+        break;
+      } catch (error) {
+        lastError = error as Error;
+        if (attempt < maxRetries - 1) {
+          const delay = retryDelays[attempt];
+          logger.warn(`Verification attempt ${attempt + 1} failed: ${lastError.message}. Retrying in ${delay}ms...`);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+      }
+    }
+
+    timingLogger.info(`[timing] Verification: ${Math.round(performance.now() - verificationStart)}ms`);
+
+    if (!verificationPassed) {
+      throw new Error(`Failed to verify created checks via list endpoint after ${maxRetries} attempts: ${lastError?.message}`);
+    }
   }
 }
 
@@ -286,56 +484,79 @@ When('I create {string} tests with params:', async (
 });
 
 async function unfoldTestRow(page: Page, testName: string): Promise<void> {
-  const candidateSelectors = [
-    `[data-table-test-name="${testName}"]`,
-    `tr[data-row-name="${testName}"]`,
-  ];
+  const selector = `[data-table-test-name="${testName}"], tr[data-row-name="${testName}"]`;
+  logger.info(`Waiting for test "${testName}" to appear on the page using selector: ${selector}`);
 
-  // Wait for the test to appear on the page
-  logger.info(`Waiting for test "${testName}" to appear on the page`);
-  await page.waitForFunction(
-    (name) => {
-      const selectors = [
-        `[data-table-test-name="${name}"]`,
-        `tr[data-row-name="${name}"]`,
-      ];
-      return selectors.some((sel) => document.querySelector(sel) !== null);
-    },
-    testName,
-    { timeout: 30000 }
-  );
-
-  let testElement = null;
-  let selectedSelector = '';
-
-  for (const selector of candidateSelectors) {
-    try {
+  // Helper to wait for element and verify it's connected (handles DOM detachment from React Query refetches)
+  const waitForConnectedElement = async (retries = 3): Promise<{ candidate: Locator; tagName: string }> => {
+    for (let i = 0; i < retries; i++) {
       const candidate = page.locator(selector).first();
-      if (await candidate.count() > 0) {
-        const tagName = await candidate.evaluate((el) => el.tagName.toLowerCase());
-        logger.info(`Matched selector "${selector}" with tag "${tagName}"`);
-
-        if (tagName === 'tr') {
-          testElement = candidate;
-        } else {
-          testElement = candidate.locator('xpath=./ancestor::tr[1]').first();
-        }
-
-        if ((await testElement.count()) > 0) {
-          selectedSelector = selector;
-          break;
-        }
+      try {
+        // Use 'visible' instead of 'attached' to ensure element is stable and rendered
+        await candidate.waitFor({ state: 'visible', timeout: 30000 });
+      } catch (error) {
+        // Log available tests for debugging
+        const availableTests = await page.locator('[data-row-name]').evaluateAll((els) =>
+          els.map((el) => el.getAttribute('data-row-name')).filter(Boolean)
+        );
+        logger.error(`Unable to locate test row for "${testName}". Available tests: ${availableTests.join(', ')}`);
+        throw new Error(`Unable to locate test row for "${testName}". Available: [${availableTests.join(', ')}]`);
       }
-    } catch (error) {
-      logger.warn(`Failed to find element with selector "${selector}": ${(error as Error).message}`);
+
+      // Check element is still connected before evaluating
+      const isConnected = await candidate.evaluate((el) => el.isConnected);
+      if (!isConnected) {
+        if (i < retries - 1) {
+          logger.warn(`Test row for "${testName}" was detached from DOM, retrying (attempt ${i + 2}/${retries})`);
+          await page.waitForTimeout(300); // Small delay to let React settle
+          continue;
+        }
+        throw new Error(`Test row for "${testName}" was detached from DOM after ${retries} attempts`);
+      }
+
+      const tagName = await candidate.evaluate((el) => el.tagName.toLowerCase());
+      return { candidate, tagName };
     }
+    throw new Error(`Failed to get connected element for "${testName}"`);
+  };
+
+  const { candidate, tagName } = await waitForConnectedElement();
+  logger.info(`Matched test element with tag "${tagName}"`);
+
+  let testElement: Locator;
+  if (tagName === 'tr') {
+    testElement = candidate;
+  } else {
+    testElement = candidate.locator('xpath=./ancestor::tr[1]').first();
   }
 
-  if (!testElement || (await testElement.count()) === 0) {
-    throw new Error(`Unable to locate test row for "${testName}"`);
-  }
+  const rebuildTestElement = async (): Promise<Locator> => {
+    const refreshedCandidate = page.locator(selector).first();
+    await refreshedCandidate.waitFor({ state: 'visible', timeout: 10000 });
+    const refreshedTag = await refreshedCandidate.evaluate((el) => el.tagName.toLowerCase());
+    if (refreshedTag === 'tr') {
+      return refreshedCandidate;
+    }
+    return refreshedCandidate.locator('xpath=./ancestor::tr[1]').first();
+  };
 
-  await testElement.scrollIntoViewIfNeeded();
+  const scrollIntoViewSafely = async (): Promise<void> => {
+    try {
+      await testElement.scrollIntoViewIfNeeded();
+    } catch (error: any) {
+      const message = error?.message || '';
+      if (message.includes('not attached to the DOM') || message.includes('detached from the DOM')) {
+        logger.warn(`Test row was detached before scrolling, reacquiring row for "${testName}"`);
+        testElement = await rebuildTestElement();
+        await testElement.waitFor({ state: 'visible', timeout: 10000 });
+        await testElement.scrollIntoViewIfNeeded();
+      } else {
+        throw error;
+      }
+    }
+  };
+
+  await scrollIntoViewSafely();
   await testElement.waitFor({ state: 'visible', timeout: 10000 });
 
   const maxRetries = 3;
@@ -404,6 +625,21 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
         { timeout: 15000 }
       );
 
+      // Wait for checks to be loaded (data-test-checks-ready attribute)
+      await page.waitForFunction(
+        (rowName) => {
+          const row = document.querySelector(`tr[data-row-name="${rowName}"]`);
+          if (!row) return false;
+          const collapse = row.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]');
+          if (!collapse) return false;
+          // Check for checks ready OR no-checks message
+          return collapse.querySelector('[data-test-checks-ready="true"]') !== null ||
+                 collapse.textContent?.includes('does not have any checks');
+        },
+        testName,
+        { timeout: 15000 }
+      );
+
       break;
     } catch (error) {
       lastError = error as Error;
@@ -423,3 +659,187 @@ When('I unfold the test {string}', async (
     testData.set('lastUnfoldedTest', testName);
   }
 });
+
+/**
+ * Waits for a specific test row to appear in the table.
+ * This step should be used after navigation when test data was created via API
+ * and you need to ensure the UI has loaded and rendered the data.
+ *
+ * @example
+ * ```gherkin
+ * When I wait for test "TestName-1" to appear in table
+ * ```
+ */
+When(
+  'I wait for test {string} to appear in table',
+  async ({ page }: { page: Page }, testName: string) => {
+    const selector = `tr[data-row-name="${testName}"]`;
+    logger.info(`Waiting for test "${testName}" to appear in table using selector: ${selector}`);
+
+    const maxRetries = 15;
+    const retryDelay = 500;
+    const refreshButton = page.locator('[data-test="table-refresh-icon"]');
+    const newItemsBadge = page.locator('[data-test="table-refresh-icon-badge"]');
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      // First check if test is already visible
+      const locator = page.locator(selector).first();
+      const isVisible = await locator.isVisible().catch(() => false);
+
+      if (isVisible) {
+        logger.info(`Test "${testName}" is now visible in table (attempt ${attempt})`);
+        return;
+      }
+
+      // Check if there's a badge indicating new items - click Refresh and wait for badge to disappear
+      const hasBadge = await newItemsBadge.isVisible({ timeout: 300 }).catch(() => false);
+
+      if (hasBadge && await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
+        logger.info(`New items badge found (attempt ${attempt}/${maxRetries}), clicking Refresh`);
+        await refreshButton.click();
+
+        // Wait for badge to disappear (indicates refresh completed)
+        try {
+          await newItemsBadge.waitFor({ state: 'hidden', timeout: 5000 });
+          logger.info('Badge disappeared after refresh');
+        } catch {
+          logger.warn('Badge still visible after refresh click, continuing anyway');
+        }
+
+        await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
+
+        // Check again after refresh
+        const isVisibleNow = await locator.isVisible().catch(() => false);
+        if (isVisibleNow) {
+          logger.info(`Test "${testName}" is now visible in table after badge refresh (attempt ${attempt})`);
+          return;
+        }
+
+        // Continue to next iteration without additional refresh
+        await page.waitForTimeout(retryDelay);
+        continue;
+      }
+
+      // No badge - click Refresh anyway (server may have data)
+      if (await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
+        logger.info(`Test not found, clicking Refresh (attempt ${attempt}/${maxRetries})`);
+        await refreshButton.click();
+        await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
+      }
+
+      // Brief wait for UI to update
+      await page.waitForTimeout(retryDelay);
+
+      // Check one more time after refresh
+      const isVisibleAfterRefresh = await locator.isVisible().catch(() => false);
+      if (isVisibleAfterRefresh) {
+        logger.info(`Test "${testName}" is now visible in table after refresh (attempt ${attempt})`);
+        return;
+      }
+
+      if (attempt === maxRetries) {
+        // Final attempt - log current page state for debugging
+        const tableRows = await page.locator('tr[data-row-name]').count();
+        const rowNames = await page.locator('tr[data-row-name]').evaluateAll(
+          (rows) => rows.map((r) => r.getAttribute('data-row-name')).slice(0, 10)
+        );
+        const badgeVisible = await newItemsBadge.isVisible().catch(() => false);
+        throw new Error(
+          `Test "${testName}" not found in table after ${maxRetries} attempts. ` +
+          `Table has ${tableRows} rows. First 10 row names: ${JSON.stringify(rowNames)}. ` +
+          `Badge visible: ${badgeVisible}`
+        );
+      }
+
+      logger.warn(`Test "${testName}" not found (attempt ${attempt}/${maxRetries}), will retry...`);
+    }
+  }
+);
+
+/**
+ * Waits for a specific check to appear in the collapsed row of a test.
+ * This step handles race conditions by:
+ * 1. Clicking the test row to unfold if collapsed
+ * 2. Clicking Refresh if check doesn't appear
+ *
+ * @example
+ * ```gherkin
+ * When I wait for check "CheckName-1" to appear in collapsed row of test "TestName-1"
+ * ```
+ */
+When(
+  'I wait for check {string} to appear in collapsed row of test {string}',
+  async ({ page }: { page: Page }, checkName: string, testName: string) => {
+    const testRowSelector = `tr[data-row-name="${testName}"]`;
+    const checkSelector = `[data-table-check-name="${checkName}"]`;
+
+    logger.info(`Waiting for check "${checkName}" to appear in collapsed row of test "${testName}"`);
+
+    // First ensure test row exists
+    const testRow = page.locator(testRowSelector).first();
+    await testRow.waitFor({ state: 'visible', timeout: 10000 });
+
+    const checkElement = page.locator(checkSelector).first();
+
+    const maxRetries = 8; // Increased from 6 to give more time for DOM updates after modal close
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        // First ensure checks container is ready (React Query finished loading)
+        const checksReady = page.locator('[data-test-checks-ready="true"]').first();
+        const isChecksReady = await checksReady.isVisible({ timeout: 1000 }).catch(() => false);
+        if (!isChecksReady) {
+          logger.info(`Attempt ${attempt}/${maxRetries}: checks container not ready yet, waiting...`);
+          throw new Error('Checks container not ready');
+        }
+
+        await checkElement.waitFor({ state: 'visible', timeout: 5000 });
+        logger.info(`Check "${checkName}" is now visible in collapsed row (attempt ${attempt})`);
+        return;
+      } catch {
+        // Log current DOM state for debugging
+        const checksCount = await page.locator('[data-table-check-name]').count();
+        logger.info(`Attempt ${attempt}/${maxRetries}: check not visible yet, total checks in DOM: ${checksCount}`);
+
+        if (attempt < maxRetries) {
+          // Check if collapsed row is empty or test row needs to be clicked to expand
+          const collapsedRow = testRow.locator('xpath=following-sibling::tr[1]');
+          const collapsedContent = collapsedRow.locator('[data-test="table-test-collapsed-row"]');
+          const isCollapsedVisible = await collapsedContent.isVisible({ timeout: 1000 }).catch(() => false);
+
+          if (!isCollapsedVisible) {
+            // Test row might be collapsed - click to expand
+            logger.info(`Collapsed row not visible, clicking test row to expand (attempt ${attempt}/${maxRetries})`);
+            const nameCell = testRow.locator('[data-test="table-row-Name"]').first();
+            if (await nameCell.isVisible()) {
+              await nameCell.click();
+            } else {
+              await testRow.click();
+            }
+            // Wait for checks-ready indicator after expanding
+            await page.waitForSelector('[data-test-checks-ready="true"]', { timeout: 5000 }).catch(() => null);
+            await page.waitForTimeout(300);
+          } else {
+            // Collapsed row visible but check not found - try refresh and wait for network
+            logger.info(`Check "${checkName}" not visible in collapsed row, clicking Refresh button (attempt ${attempt}/${maxRetries})`);
+            const refreshButton = page.locator('button[aria-label="Refresh"]').first();
+            if (await refreshButton.isVisible()) {
+              // Wait for network activity to complete after refresh
+              await Promise.all([
+                page.waitForResponse(
+                  (resp) => resp.url().includes('/v1/checks') && resp.status() === 200,
+                  { timeout: 5000 }
+                ).catch(() => null), // Don't fail if no request made
+                refreshButton.click(),
+              ]);
+              // Wait for checks container to be ready after refresh
+              await page.waitForSelector('[data-test-checks-ready="true"]', { timeout: 5000 }).catch(() => null);
+              await page.waitForTimeout(500);
+            }
+          }
+        } else {
+          throw new Error(`Check "${checkName}" not found in collapsed row of test "${testName}" after ${maxRetries} attempts`);
+        }
+      }
+    }
+  }
+);

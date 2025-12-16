@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 import { User } from '@models';
 import { ApiError } from '@utils';
 import log from "../lib/logger";
@@ -10,7 +10,7 @@ import { PaginateOptions } from '../models/plugins/utils';
 const createUser = async (userBody: UserCreateReq) => {
     //  @ts-ignore
     if (await User.isEmailTaken(userBody.username)) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Email already taken');
     }
     const logOpts = {
         msgType: 'CREATE',
@@ -55,11 +55,11 @@ const updateUserById = async (userId: string, updateBody: UserCreateReq) => {
     log.info(`update user with id: '${userId}' name '${updateBody.username}', params: '${JSON.stringify(updateBody)}'`, logOpts);
     const user = await getUserById(userId);
     if (!user) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+        throw new ApiError(HttpStatus.NOT_FOUND, 'User not found');
     }
     //  @ts-ignore
     if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Email already taken');
     }
     if (updateBody.password) {
         log.debug(`update password for '${updateBody.username}'`, logOpts);

@@ -9,6 +9,10 @@ import { existsSync } from 'node:fs';
 export function getMcpLogsDir(): string {
   // Strategy 1: If we have SYNGRISI_ROOT env var
   if (process.env.SYNGRISI_ROOT) {
+    // Check if SYNGRISI_ROOT already points to e2e directory
+    if (process.env.SYNGRISI_ROOT.endsWith('e2e')) {
+      return path.join(process.env.SYNGRISI_ROOT, 'support/mcp/logs');
+    }
     const logsDir = path.join(process.env.SYNGRISI_ROOT, 'packages/syngrisi/e2e/support/mcp/logs');
     return logsDir;
   }

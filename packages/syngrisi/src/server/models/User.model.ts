@@ -17,6 +17,8 @@ export interface UserDocument extends Document {
     updatedDate?: Date;
     expiration?: Date;
     meta?: Record<string, unknown>;
+    provider: 'local' | 'saml' | 'oauth';
+    providerId?: string;
     isEmailTaken: (username: string) => Promise<boolean>;
     setPassword: (password: string) => Promise<UserDocument>;
 }
@@ -39,6 +41,13 @@ const UserSchema = new Schema<UserDocument>({
         type: String,
         enum: ['admin', 'reviewer', 'user'],
         required: [true, 'UserSchema: The "role" field must be required'],
+    },
+    provider: {
+        type: String,
+        default: 'local',
+    },
+    providerId: {
+        type: String,
     },
     password: {
         type: String,
