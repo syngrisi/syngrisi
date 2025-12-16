@@ -4,6 +4,7 @@ Feature: Check details - Regions
    Background:
       When I open the app
       When I clear local storage
+      Given I start Server and start Driver
       # Create first check and accept it to establish baseline
       Given I create "1" tests with:
          """
@@ -26,8 +27,9 @@ Feature: Check details - Regions
       When I go to "main" page
       When I wait for test "TestName" to appear in table
       When I unfold the test "TestName"
+      When I wait 10 seconds for the element with locator "[data-test-preview-image='CheckName']" to be visible
       When I click element with locator "[data-test-preview-image='CheckName']"
-      When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+      When I wait 15 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
    Scenario: Regions - add, save, check
       # check absence

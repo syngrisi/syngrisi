@@ -73,8 +73,16 @@ class Logger {
         }, {});
     }
 
+    private static sanitizeForLog(obj: any): any {
+        try {
+            return JSON.parse(JSON.stringify(obj));
+        } catch (e) {
+            return String(obj);
+        }
+    }
+
     private log(severity: string, msg: string | object, meta: LogOpts[]): void {
-        const mergedMeta = Logger.mergeMeta(meta);
+        const mergedMeta = Logger.sanitizeForLog(Logger.mergeMeta(meta));
         const formattedMsg = typeof msg === 'object' ? JSON.stringify(msg, null, 2) : msg;
         this.winstonLogger.log(severity, formattedMsg, mergedMeta);
     }
@@ -83,10 +91,15 @@ class Logger {
         let message: unknown = String(msg);
         let code = 0;
         if ((msg instanceof Object)) {
-            message = JSON.stringify(msg);
+            try {
+                // Try to sanitize first to avoid BSON errors during stringify
+                message = JSON.stringify(Logger.sanitizeForLog(msg));
+            } catch (e) {
+                message = String(msg);
+            }
         }
         if ((msg instanceof Error)) {
-            message = msg.stack;
+            message = msg.stack || msg.message;
         }
         if ((msg instanceof ApiError)) {
             code = msg.statusCode;

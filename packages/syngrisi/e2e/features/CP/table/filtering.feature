@@ -179,6 +179,7 @@ Feature: Tests Table Filter
     # filter eq test name
     When I click element with locator "[aria-label='Filter the Table Data']"
     When I wait 10 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
+    When I click element with locator "//*[@data-test='filter-main-group']//*[@data-test='table-filter-add-rule-button']"
     When I select the option with the text "Name" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
     When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
     When I set "TestName-1" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"

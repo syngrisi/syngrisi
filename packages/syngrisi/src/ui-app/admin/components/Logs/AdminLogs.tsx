@@ -79,7 +79,7 @@ export default function AdminLogs() {
             <ActionIcon
                 title="Filter the Table Data"
                 color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
-                data-test="table-filtering"
+                data-test="logs-table-filtering"
                 variant="subtle"
                 onClick={() => {
                     setIsFilterDrawerOpen((prev) => !prev);

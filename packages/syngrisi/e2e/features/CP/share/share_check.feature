@@ -254,6 +254,7 @@ Feature: Share Check Feature
     # The code uses: <Text size="sm" color="dimmed">Created by ... on ...</Text>
     # And specifically: {token.createdByUsername} and {new Date(token.createdDate).toLocaleDateString()}
 
+    When I wait until element "body" contains text "Created by"
     Then the element with locator "body" should have contains text "Created by"
     Then the element with locator "body" should have contains text "Test"
 # "Test" is the username we logged in with

@@ -14,6 +14,7 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_DB_URI: str({ default: 'mongodb://127.0.0.1:27017/SyngrisiDb' }),
     SYNGRISI_APP_PORT: port({ default: 3000 }),
     SYNGRISI_IMAGES_PATH: str({ default: path.join(process.cwd(), './.snapshots-images') }),
+    SYNGRISI_DOM_SNAPSHOTS_PATH: str({ default: '' }),  // If empty, uses SYNGRISI_IMAGES_PATH
     SYNGRISI_TMP_DIR: str({ default: path.join(process.cwd(), '.tmp') }),
     SYNGRISI_HTTP_LOG: bool({ default: false }),
     SYNGRISI_COVERAGE: bool({ default: false }),
@@ -35,6 +36,9 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_AUTO_REMOVE_CHECKS_POLL_INTERVAL_MS: num({ default: 10 * 60 * 1000 }), // 10 minutes
     SYNGRISI_AUTO_REMOVE_CHECKS_MIN_INTERVAL_MS: num({ default: 24 * 60 * 60 * 1000 }),
     SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE: bool({ default: false }),
+
+    // RCA
+    SYNGRISI_RCA: bool({ default: false }),
 
     // trunk features
     SYNGRISI_TRUNK_FEATURE_AI_SEVERITY: bool({ default: false }),

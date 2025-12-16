@@ -107,6 +107,8 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
       const fixtureStart = performance.now();
       const envKeysToReset = [
         'SYNGRISI_AUTH',
+        'SYNGRISI_AUTH_OVERRIDE',
+        'SYNGRISI_API_KEY',
         'SYNGRISI_TEST_MODE',
         'SYNGRISI_DISABLE_FIRST_RUN',
         'SYNGRISI_APP_PORT',

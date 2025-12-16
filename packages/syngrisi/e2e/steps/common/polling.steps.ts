@@ -166,3 +166,27 @@ When(
     }
   }
 );
+
+When(
+  'I wait until element {string} has attribute {string} with value {string}',
+  async ({ page }: { page: Page }, selector: string, attribute: string, value: string) => {
+    const locator = getLocatorQuery(page, selector);
+    const expectedValue = value.trim();
+    const deadline = Date.now() + 30000;
+
+    const actual = await locator.first().getAttribute(attribute);
+    if (actual === expectedValue) return;
+
+    while (Date.now() < deadline) {
+      await page.waitForTimeout(250);
+      const val = await locator.first().getAttribute(attribute);
+      if (val === expectedValue) {
+        return;
+      }
+    }
+    const finalValue = await locator.first().getAttribute(attribute);
+    throw new Error(
+      `Element "${selector}" attribute "${attribute}" was "${finalValue}" instead of "${expectedValue}" after 30s`
+    );
+  }
+);

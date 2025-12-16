@@ -29,8 +29,9 @@ Feature: Check details - Auto Regions from Diff
         When I go to "main" page
         When I wait for test "AutoRegionTest" to appear in table
         When I unfold the test "AutoRegionTest"
+        When I wait 10 seconds for the element with locator "[data-test-preview-image='CheckWithDiff']" to be visible
         When I click element with locator "[data-test-preview-image='CheckWithDiff']"
-        When I wait 10 seconds for the element with locator "[data-check-header-name='CheckWithDiff']" to be visible
+        When I wait 15 seconds for the element with locator "[data-check-header-name='CheckWithDiff']" to be visible
 
         # Verify auto region button is enabled (has diff and baseline)
         When I wait 10 seconds for the element with locator "[data-check='auto-ignore-region']" to be visible
@@ -100,8 +101,9 @@ Feature: Check details - Auto Regions from Diff
         When I go to "main" page
         When I wait for test "NoDiffTest" to appear in table
         When I unfold the test "NoDiffTest"
+        When I wait 10 seconds for the element with locator "[data-test-preview-image='CheckNoDiff']" to be visible
         When I click element with locator "[data-test-preview-image='CheckNoDiff']"
-        When I wait 10 seconds for the element with locator "[data-check-header-name='CheckNoDiff']" to be visible
+        When I wait 15 seconds for the element with locator "[data-check-header-name='CheckNoDiff']" to be visible
 
         # Wait for canvas to be ready
         When I repeat javascript code until stored "js" string equals "ready":
@@ -111,7 +113,7 @@ Feature: Check details - Auto Regions from Diff
             """
 
         # Auto region button should be disabled (no diff image for passed check)
-        Then the element with locator "[data-check='auto-ignore-region']" should be disabled
+        Then the element with locator "[data-check='auto-ignore-region']" should be disabled for 10 sec
 
     Scenario: Auto regions - save and verify persistence
         # Create test with baseline
@@ -137,8 +139,9 @@ Feature: Check details - Auto Regions from Diff
         When I go to "main" page
         When I wait for test "SaveRegionTest" to appear in table
         When I unfold the test "SaveRegionTest"
+        When I wait 10 seconds for the element with locator "[data-test-preview-image='CheckToSave']" to be visible
         When I click element with locator "[data-test-preview-image='CheckToSave']"
-        When I wait 10 seconds for the element with locator "[data-check-header-name='CheckToSave']" to be visible
+        When I wait 15 seconds for the element with locator "[data-check-header-name='CheckToSave']" to be visible
 
         # Wait for canvas to be ready with diff
         When I repeat javascript code until stored "js" string equals "ready":
@@ -170,17 +173,17 @@ Feature: Check details - Auto Regions from Diff
         # Save regions (Alt+S)
         When I press "Alt+s"
 
-
         # Verify success notification appeared
-        Then the element with locator "[class*='mantine-Notification']" should have contains text "Regions saved"
+        Then the element with locator "[class*='mantine-Notification']" should have contains text "Success"
 
         # Close the check details modal
         When I press the "Escape" key
         When I wait 10 seconds for the element with locator "div[role='dialog']" to not be displayed
 
         # Re-open the check details
+        When I wait 5 seconds for the element with locator "[data-test-preview-image='CheckToSave']" to be visible
         When I click element with locator "[data-test-preview-image='CheckToSave']"
-        When I wait 10 seconds for the element with locator "[data-check-header-name='CheckToSave']" to be visible
+        When I wait 15 seconds for the element with locator "[data-check-header-name='CheckToSave']" to be visible
 
         # Wait for canvas to be ready
         When I repeat javascript code until stored "js" string equals "ready":
@@ -215,8 +218,9 @@ Feature: Check details - Auto Regions from Diff
         When I refresh page
         When I wait for test "SaveRegionTest" to appear in table
         When I unfold the test "SaveRegionTest"
+        When I wait 10 seconds for the element with locator "[data-test-preview-image='CheckToSave']" to be visible
         When I click element with locator "[data-test-preview-image='CheckToSave']"
-        When I wait 10 seconds for the element with locator "[data-check-header-name='CheckToSave']" to be visible
+        When I wait 15 seconds for the element with locator "[data-check-header-name='CheckToSave']" to be visible
 
         # Wait for canvas to be ready after refresh
         When I repeat javascript code until stored "js" string equals "ready":

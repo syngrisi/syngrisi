@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Test - HTML Removed Elements</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { background: #3498db; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .header h1 { font-size: 24px; }
+        .content { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .item { padding: 15px; border-bottom: 1px solid #eee; }
+        .item:last-child { border-bottom: none; }
+        .item-title { font-weight: bold; color: #333; }
+        .item-desc { color: #666; font-size: 14px; margin-top: 5px; }
+        .footer { text-align: center; color: #999; font-size: 12px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Dashboard</h1>
+            <!-- REMOVED: <p>Welcome to the application</p> -->
+        </div>
+        <div class="content">
+            <div class="item" data-id="item-1">
+                <div class="item-title">First Item</div>
+                <div class="item-desc">Description for the first item</div>
+            </div>
+            <!-- REMOVED: item-2 -->
+            <div class="item" data-id="item-3">
+                <div class="item-title">Third Item</div>
+                <div class="item-desc">Description for the third item</div>
+            </div>
+        </div>
+        <!-- REMOVED: footer -->
+    </div>
+</body>
+</html>

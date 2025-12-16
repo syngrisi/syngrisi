@@ -1,5 +1,22 @@
 # @syngrisi/playwright-sdk
 
+## 3.0.0
+
+### Minor Changes
+
+-   [`bfbd1c8`](https://github.com/syngrisi/syngrisi/commit/bfbd1c8b897cdf0d8806459ef84b8f435ef5be97) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - feat: add DOM collection capabilities for RCA (Root Cause Analysis)
+
+    -   Add collectDomDump() method for automatic DOM tree collection
+    -   Add optional collectDom parameter in check() method
+    -   Add skipDomData parameter to disable DOM data transmission
+    -   Respect SYNGRISI_DISABLE_DOM_DATA environment variable
+    -   Improve TypeScript typing for domDump parameter (DomNode instead of any)
+
+### Patch Changes
+
+-   Updated dependencies [[`bfbd1c8`](https://github.com/syngrisi/syngrisi/commit/bfbd1c8b897cdf0d8806459ef84b8f435ef5be97)]:
+    -   @syngrisi/core-api@3.0.0
+
 ## 2.6.1
 
 ### Patch Changes

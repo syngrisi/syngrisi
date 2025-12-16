@@ -255,6 +255,10 @@ export class WDIODriver {
         if (!Buffer.isBuffer(imageBuffer)) throw new Error('check - wrong imageBuffer')
         let opts: CheckOpts | null = null
 
+        // Check if DOM data should be skipped (via env var or option)
+        // Default: skipDomData is true (disabled) unless explicitly enabled via env var or params
+        const skipDomData = params?.skipDomData ?? (process.env.SYNGRISI_DISABLE_DOM_DATA !== 'false')
+
         try {
             opts = {
                 // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
@@ -272,7 +276,8 @@ export class WDIODriver {
                 browserFullVersion: this.params.test.browserFullVersion,
 
                 hashCode: createHash('sha512').update(imageBuffer).digest('hex'),
-                domDump: domDump,
+                domDump: skipDomData ? undefined : domDump,
+                skipDomData: skipDomData || undefined,
             }
             paramsGuard(opts, 'check, opts', CheckOptsSchema)
 

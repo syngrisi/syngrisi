@@ -9,6 +9,7 @@ import {
 import { Types, Schema } from 'mongoose';
 import { calculateAcceptedStatus, buildIdentObject } from '@utils';
 import * as snapshotService from './snapshot.service';
+import { domSnapshotService } from './dom-snapshot.service';
 import * as orm from '@lib/dbItems';
 import log from '@lib/logger';
 import { BaselineDocument } from '@models/Baseline.model';
@@ -349,7 +350,17 @@ const accept = async (
     }
 
     log.debug(`update check with options: '${JSON.stringify(check.toObject())}'`, logOpts);
-    await createNewBaseline(check.toObject());
+    const baseline = await createNewBaseline(check.toObject());
+
+    // Link DOM snapshot to the baseline for RCA feature
+    try {
+        await domSnapshotService.linkDomSnapshotToBaseline(id, baseline._id.toString());
+        log.debug(`DOM snapshot linked to baseline: '${baseline._id}'`, logOpts);
+    } catch (domErr) {
+        // DOM snapshot linking is non-critical
+        log.warn(`Failed to link DOM snapshot to baseline: ${domErr}`, logOpts);
+    }
+
     await check.save();
 
     const testCalculatedStatus = await calculateTestStatus(String(check.test));
@@ -413,6 +424,15 @@ async function removeCheck(id: string, user: RequestUser): Promise<CheckDocument
             log.debug(`try to remove snapshot, diff: ${check.diffId}`, logMeta);
             await snapshotService.remove(check.diffId.toString());
         }
+
+        // Remove DOM snapshots associated with the check
+        try {
+            await domSnapshotService.removeDomSnapshotsByCheckId(id);
+            log.debug(`DOM snapshots removed for check: ${id}`, logMeta);
+        } catch (domErr) {
+            log.warn(`Failed to remove DOM snapshots for check ${id}: ${domErr}`, logMeta);
+        }
+
         return check;
     } catch (e: unknown) {
         const errMsg = `cannot remove a check with id: '${id}', error: '${e instanceof Error ? e.stack : String(e)}'`;

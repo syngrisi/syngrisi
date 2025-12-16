@@ -78,7 +78,22 @@ export async function inspectBaseline(
         }
         Object.assign(params, updateCheckParamsFromBaseline(newCheckParams, storedBaseline));
         currentBaselineSnapshot = await Snapshot.findById(storedBaseline.snapshootId);
-        if (!currentBaselineSnapshot) throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, `Cannot find the snapshot with id: ${storedBaseline.snapshootId}`);
+        if (!currentBaselineSnapshot) {
+            log.warn(`Baseline check name: '${newCheckParams.name}', id: '${storedBaseline.snapshootId}' exists, but snapshot is missing (Zombie Baseline). Treating as no baseline.`, logOpts);
+            // Fallback logic as if baseline didn't exist or wasn't valid
+            const checksWithSameIdent = await getNotPendingChecksByIdent(checkIdent);
+            if (checksWithSameIdent.length > 0) {
+                params.failReasons.push('not_accepted');
+                // If we have history but no valid baseline snapshot, rely on current
+                params.baselineId = currentSnapshot.id.toString();
+                currentBaselineSnapshot = currentSnapshot;
+            } else {
+                params.baselineId = currentSnapshot.id;
+                params.status = 'new';
+                currentBaselineSnapshot = currentSnapshot;
+            }
+            // Don't throw, just recover
+        }
     } else {
         const checksWithSameIdent = await getNotPendingChecksByIdent(checkIdent);
         if (checksWithSameIdent.length > 0) {

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Group, Divider, ActionIcon, Menu } from '@mantine/core';
-import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare } from '@tabler/icons-react';
+import { Divider, Group, Menu, ActionIcon, Badge, Tooltip as MantineTooltip } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze, IconBoxModel } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -15,7 +16,8 @@ import { RegionsToolbar } from '@index/components/Tests/Table/Checks/CheckDetail
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 import { DeleteBaselineModal } from '../Modals/DeleteBaselineModal';
 import { ShareModal } from '../Modals/ShareModal';
-import { useState, useEffect } from 'react';
+import { DOMDiffResult } from '@shared/interfaces/IRCA';
+
 
 interface Props {
     mainView: any
@@ -33,6 +35,14 @@ interface Props {
     isFirstTest?: boolean
     isLastTest?: boolean
     navigationReady?: boolean
+    rcaEnabled?: boolean
+    onToggleRCA?: () => void
+    rcaStats?: DOMDiffResult['stats']
+    isWireframeEnabled?: boolean
+    onToggleWireframe?: () => void
+    isShareEnabled?: boolean
+    isRCAFeatureEnabled?: boolean
+    apikey?: string
 }
 
 export function Toolbar(
@@ -52,9 +62,16 @@ export function Toolbar(
         isFirstTest,
         isLastTest,
         navigationReady,
+        rcaEnabled,
+        onToggleRCA,
+        rcaStats,
+        isWireframeEnabled,
+        onToggleWireframe,
         isShareEnabled = true,
+        isRCAFeatureEnabled = false,
         apikey,
-    }: Props & { isShareEnabled?: boolean, apikey?: string }) {
+    }: Props,
+) {
     const { query } = useParams();
     const [view, setView] = useState('actual');
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
@@ -147,7 +164,7 @@ export function Toolbar(
                         </>
                     )}
 
-                    <ScreenshotDetails mainView={mainView} check={curCheck} apikey={apikey} />
+                    <ScreenshotDetails mainView={mainView} check={curCheck} apikey={apikey} rcaEnabled={rcaEnabled} />
                 </Group>
 
                 {/* Right side: Tools and actions */}
@@ -175,63 +192,157 @@ export function Toolbar(
 
                     <Divider orientation="vertical" />
 
-                    {!isShareMode && (
+                    {
+                        !isShareMode && (
+                            <>
+                                <RegionsToolbar mainView={mainView} baselineId={baselineId} view={view} hasDiff={!!mainView?.diffImage} />
+                                <Divider orientation="vertical" />
+                            </>
+                        )
+                    }
+
+                    {
+                        !isShareMode && (
+                            <>
+                                <AcceptButton
+                                    check={curCheck}
+                                    initCheck={initCheckData}
+                                    checksQuery={checkQuery}
+                                    size={24}
+                                    testUpdateQuery={checkQuery}
+                                />
+
+                                <RemoveButton
+                                    check={curCheck}
+                                    initCheck={initCheckData}
+                                    testUpdateQuery={checkQuery}
+                                    size={30}
+                                    closeHandler={closeHandler}
+                                />
+                            </>
+                        )
+                    }
+
+                    {
+                        !isShareMode && (
+                            <Menu shadow="md" width={200} withinPortal>
+                                <Menu.Target>
+                                    <ActionIcon data-test="check-details-menu">
+                                        <IconDotsVertical size={20} />
+                                    </ActionIcon>
+                                </Menu.Target>
+
+                                <Menu.Dropdown>
+                                    <Menu.Item
+                                        icon={<IconShare size={14} />}
+                                        onClick={isShareEnabled ? () => setShareModalOpened(true) : undefined}
+                                        data-test="menu-share-check"
+                                        data-share-enabled={isShareEnabled.toString()}
+                                        disabled={!isShareEnabled}
+                                        title={!isShareEnabled ? 'Sharing is globally disabled by administrator' : 'Share'}
+                                    >
+                                        Share
+                                    </Menu.Item>
+                                    <Menu.Item
+                                        color="red"
+                                        icon={<IconTrash size={14} />}
+                                        disabled={!baselineId}
+                                        onClick={() => setDeleteModalOpened(true)}
+                                        data-test="menu-delete-baseline"
+                                    >
+                                        Delete Baseline
+                                    </Menu.Item>
+                                </Menu.Dropdown>
+                            </Menu>
+                        )
+                    }
+
+                    {onToggleRCA && isRCAFeatureEnabled && (
                         <>
-                            <RegionsToolbar mainView={mainView} baselineId={baselineId} view={view} hasDiff={!!mainView?.diffImage} />
                             <Divider orientation="vertical" />
-                        </>
-                    )}
-
-                    {!isShareMode && (
-                        <>
-                            <AcceptButton
-                                check={curCheck}
-                                initCheck={initCheckData}
-                                checksQuery={checkQuery}
-                                size={24}
-                                testUpdateQuery={checkQuery}
-                            />
-
-                            <RemoveButton
-                                check={curCheck}
-                                initCheck={initCheckData}
-                                testUpdateQuery={checkQuery}
-                                size={30}
-                                closeHandler={closeHandler}
-                            />
-                        </>
-                    )}
-
-                    {!isShareMode && (
-                        <Menu shadow="md" width={200} withinPortal>
-                            <Menu.Target>
-                                <ActionIcon data-test="check-details-menu">
-                                    <IconDotsVertical size={20} />
+                            <Group spacing={4} noWrap>
+                                <ActionIcon
+                                    onClick={onToggleRCA}
+                                    title="Root Cause Analysis (D)"
+                                    variant={rcaEnabled ? 'filled' : 'default'}
+                                    color={rcaEnabled ? 'blue' : undefined}
+                                    data-test="rca-toggle-button"
+                                >
+                                    <IconAnalyze size={20} />
                                 </ActionIcon>
-                            </Menu.Target>
 
-                            <Menu.Dropdown>
-                                <Menu.Item
-                                    icon={<IconShare size={14} />}
-                                    onClick={isShareEnabled ? () => setShareModalOpened(true) : undefined}
-                                    data-test="menu-share-check"
-                                    data-share-enabled={isShareEnabled.toString()}
-                                    disabled={!isShareEnabled}
-                                    title={!isShareEnabled ? 'Sharing is globally disabled by administrator' : 'Share'}
-                                >
-                                    Share
-                                </Menu.Item>
-                                <Menu.Item
-                                    color="red"
-                                    icon={<IconTrash size={14} />}
-                                    disabled={!baselineId}
-                                    onClick={() => setDeleteModalOpened(true)}
-                                    data-test="menu-delete-baseline"
-                                >
-                                    Delete Baseline
-                                </Menu.Item>
-                            </Menu.Dropdown>
-                        </Menu>
+                                {rcaEnabled && onToggleWireframe && (
+                                    <ActionIcon
+                                        onClick={onToggleWireframe}
+                                        title="Toggle Wireframe"
+                                        variant={isWireframeEnabled ? 'filled' : 'default'}
+                                        color={isWireframeEnabled ? 'blue' : undefined}
+                                        data-test="rca-wireframe-toggle"
+                                    >
+                                        <IconBoxModel size={20} />
+                                    </ActionIcon>
+                                )}
+
+                                {rcaEnabled && rcaStats && (
+                                    <Group spacing={4} ml={4}>
+                                        <MantineTooltip label="Total changes" withinPortal>
+                                            <div style={{ display: 'flex' }}>
+                                                <Badge
+                                                    size="sm"
+                                                    color="gray"
+                                                    variant="light"
+                                                    data-test="rca-stats-total-toolbar"
+                                                >
+                                                    {rcaStats.totalChanges}
+                                                </Badge>
+                                            </div>
+                                        </MantineTooltip>
+                                        {rcaStats.addedNodes > 0 && (
+                                            <MantineTooltip label="Added elements" withinPortal>
+                                                <div style={{ display: 'flex' }}>
+                                                    <Badge
+                                                        size="sm"
+                                                        color="green"
+                                                        variant="light"
+                                                        data-test="rca-stats-added-toolbar"
+                                                    >
+                                                        +{rcaStats.addedNodes}
+                                                    </Badge>
+                                                </div>
+                                            </MantineTooltip>
+                                        )}
+                                        {rcaStats.removedNodes > 0 && (
+                                            <MantineTooltip label="Removed elements" withinPortal>
+                                                <div style={{ display: 'flex' }}>
+                                                    <Badge
+                                                        size="sm"
+                                                        color="red"
+                                                        variant="light"
+                                                        data-test="rca-stats-removed-toolbar"
+                                                    >
+                                                        -{rcaStats.removedNodes}
+                                                    </Badge>
+                                                </div>
+                                            </MantineTooltip>
+                                        )}
+                                        {rcaStats.styleChanges > 0 && (
+                                            <MantineTooltip label="Style changes" withinPortal>
+                                                <div style={{ display: 'flex' }}>
+                                                    <Badge
+                                                        size="sm"
+                                                        color="orange"
+                                                        variant="light"
+                                                        data-test="rca-stats-style-toolbar"
+                                                    >
+                                                        {rcaStats.styleChanges}
+                                                    </Badge>
+                                                </div>
+                                            </MantineTooltip>
+                                        )}
+                                    </Group>
+                                )}
+                            </Group>
+                        </>
                     )}
                 </Group>
             </Group>

@@ -50,19 +50,44 @@ async function createCheckViaAPI(
   // Parameters are taken from vDriver.params.test (set by startTestSession), so we only pass optional overrides
   logger.info(`Creating check "${checkName}" for test "${testId}" via SyngrisiDriver`);
 
-  try {
-    const checkParams: any = {
-      checkName,
-      imageBuffer,
-      params: params || {}, // Optional params to override defaults from test session
-    };
+  const maxAttempts = 3;
+  let lastError: any = null;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const checkParams: any = {
+        checkName,
+        imageBuffer,
+        params: params || {}, // Optional params to override defaults from test session
+      };
 
-    const result = await vDriver.check(checkParams);
-    return result;
-  } catch (error: any) {
-    logger.error(`Failed to create check: ${error.message}`);
-    throw error;
+      const result = await vDriver.check(checkParams);
+      return result;
+    } catch (error: any) {
+      lastError = error;
+      const message = error?.message || '';
+      const statusCode = error?.response?.statusCode || error?.statusCode;
+      const isRetryable =
+        statusCode === 404 ||
+        message.includes('404') ||
+        message.toLowerCase().includes('not found') ||
+        message.toLowerCase().includes('baseline is absent');
+
+      if (isRetryable && attempt < maxAttempts) {
+        const delayMs = 250 * attempt;
+        logger.warn(
+          `Failed to create check on attempt ${attempt}/${maxAttempts} (status: ${statusCode || 'n/a'}): ${message}. ` +
+          `Retrying in ${delayMs}ms...`
+        );
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        continue;
+      }
+
+      logger.error(`Failed to create check: ${message}`);
+      throw error;
+    }
   }
+
+  throw lastError;
 }
 
 async function createCheckForExistingTest(
@@ -140,7 +165,12 @@ async function createTestsWithParams(
   const quickCheckMaxWaitMs = fastSeed ? 500 : 2000;
   const waitAfterStopMs = fastSeed ? 10 : 100;
 
-  const apiKey = process.env.SYNGRISI_API_KEY || '123';
+  // For @fast-server tests, auth is disabled so we should always use the default API key.
+  // Priority: 1) explicitly set by this test, 2) env variable, 3) default
+  const storedApiKey = testData.get('explicitApiKey') as string | undefined;
+  const envApiKey = process.env.SYNGRISI_API_KEY;
+  const defaultApiKey = '123';
+  const apiKey = storedApiKey || envApiKey || defaultApiKey;
   const hashedApiKey = hashApiKey(apiKey);
   testData.set('hashedApiKey', hashedApiKey);
   testData.set('apiBaseUrl', appServer.baseURL);
@@ -634,7 +664,7 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
           if (!collapse) return false;
           // Check for checks ready OR no-checks message
           return collapse.querySelector('[data-test-checks-ready="true"]') !== null ||
-                 collapse.textContent?.includes('does not have any checks');
+            collapse.textContent?.includes('does not have any checks');
         },
         testName,
         { timeout: 15000 }
@@ -706,7 +736,7 @@ When(
           logger.warn('Badge still visible after refresh click, continuing anyway');
         }
 
-        await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
+        await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => { });
 
         // Check again after refresh
         const isVisibleNow = await locator.isVisible().catch(() => false);
@@ -724,7 +754,7 @@ When(
       if (await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
         logger.info(`Test not found, clicking Refresh (attempt ${attempt}/${maxRetries})`);
         await refreshButton.click();
-        await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
+        await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => { });
       }
 
       // Brief wait for UI to update
