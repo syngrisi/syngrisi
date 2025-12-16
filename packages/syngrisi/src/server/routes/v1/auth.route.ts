@@ -13,6 +13,8 @@ import { ensureSameOrigin, authLimiter } from '@middlewares';
 import passport from 'passport';
 import { AppSettings } from '../../models';
 import { initSSOStrategies, getSSOSecretsStatus, getOAuth2StrategyName, AUTH_STRATEGY } from '../../services/auth-sso.service';
+import { samlProvider } from '../../services/sso';
+import { env } from '../../envConfig';
 import log from '@logger';
 
 const logMeta = { scope: 'auth.route', msgType: 'SSO' };
@@ -112,6 +114,47 @@ router.get('/sso/status', async (req, res) => {
 router.get('/sso/secrets-status', async (req, res) => {
     const status = getSSOSecretsStatus();
     res.json(status);
+});
+
+/**
+ * SP Metadata endpoint
+ * Returns SAML Service Provider metadata in XML format
+ * Used by IdP administrators to configure trust relationship
+ */
+router.get('/sso/metadata', async (req, res) => {
+    try {
+        // Check if SAML is configured
+        if (env.SSO_PROTOCOL !== 'saml') {
+            return res.status(400).json({
+                error: 'SAML not configured',
+                message: 'SP metadata is only available when SSO_PROTOCOL=saml',
+            });
+        }
+
+        // Check if SAML provider is properly configured
+        if (!samlProvider.isConfigured()) {
+            return res.status(400).json({
+                error: 'SAML not initialized',
+                message: 'SAML provider is not properly configured',
+            });
+        }
+
+        const metadata = samlProvider.generateMetadata(passport);
+
+        if (!metadata) {
+            return res.status(500).json({
+                error: 'Metadata generation failed',
+                message: 'Could not generate SP metadata',
+            });
+        }
+
+        res.set('Content-Type', 'application/xml');
+        res.set('Content-Disposition', 'inline; filename="sp-metadata.xml"');
+        res.send(metadata);
+    } catch (error) {
+        log.error('Error generating SP metadata', { ...logMeta, error });
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 // Re-initialize SSO strategies (only in test mode)

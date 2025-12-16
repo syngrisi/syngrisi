@@ -26,6 +26,11 @@ TEST_USER_EMAIL="test@syngrisi.test"
 TEST_USER_PASSWORD="Test123!"
 TEST_USER_USERNAME="testuser"
 
+# Admin user credentials (for Logto Admin Console access)
+ADMIN_USER_EMAIL="admin@syngrisi.test"
+ADMIN_USER_PASSWORD="Admin123!"
+ADMIN_USER_USERNAME="admin"
+
 # OIDC App for Syngrisi
 OIDC_APP_ID="syngrisi-e2e-app"
 OIDC_APP_NAME="syngrisi-e2e-test"
@@ -197,6 +202,97 @@ create_test_user() {
         echo "$response" | jq '.'
         exit 1
     fi
+}
+
+# Create admin user for Logto Admin Console access
+create_admin_user() {
+    log_step "Creating admin user for Admin Console: $ADMIN_USER_USERNAME..."
+
+    # Check if admin user exists
+    local existing_user=$(curl -s "${LOGTO_ENDPOINT}/api/users?search=${ADMIN_USER_USERNAME}" \
+        -H "Authorization: Bearer $TOKEN" | jq -r '.[0].id // empty')
+
+    local admin_user_id=""
+
+    if [ -n "$existing_user" ] && [ "$existing_user" != "null" ]; then
+        log_info "Admin user already exists with ID: $existing_user"
+        admin_user_id="$existing_user"
+
+        # Update password
+        log_info "Updating admin user password..."
+        curl -s -X PATCH "${LOGTO_ENDPOINT}/api/users/${existing_user}/password" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"password\": \"${ADMIN_USER_PASSWORD}\"}" > /dev/null
+    else
+        # Create new admin user
+        local response=$(curl -s -X POST "${LOGTO_ENDPOINT}/api/users" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{
+                \"primaryEmail\": \"${ADMIN_USER_EMAIL}\",
+                \"username\": \"${ADMIN_USER_USERNAME}\",
+                \"password\": \"${ADMIN_USER_PASSWORD}\"
+            }")
+
+        admin_user_id=$(echo "$response" | jq -r '.id // empty')
+
+        if [ -z "$admin_user_id" ] || [ "$admin_user_id" = "null" ]; then
+            log_error "Failed to create admin user"
+            echo "$response" | jq '.'
+            exit 1
+        fi
+
+        log_info "Admin user created with ID: $admin_user_id"
+    fi
+
+    # Assign admin user to default tenant organization with admin role
+    log_info "Assigning admin role to user..."
+
+    # Get the default tenant organization ID (t-default)
+    local org_id="t-default"
+
+    # Check if user is already in organization
+    local org_membership=$(curl -s "${LOGTO_ENDPOINT}/api/organizations/${org_id}/users/${admin_user_id}" \
+        -H "Authorization: Bearer $TOKEN" 2>/dev/null | jq -r '.id // empty')
+
+    if [ -z "$org_membership" ] || [ "$org_membership" = "null" ]; then
+        # Add user to organization
+        curl -s -X POST "${LOGTO_ENDPOINT}/api/organizations/${org_id}/users" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"userIds\": [\"${admin_user_id}\"]}" > /dev/null 2>&1
+        log_info "User added to default organization"
+    fi
+
+    # Get admin role ID in organization
+    local admin_role_id=$(curl -s "${LOGTO_ENDPOINT}/api/organization-roles" \
+        -H "Authorization: Bearer $TOKEN" | jq -r '.[] | select(.name == "admin") | .id // empty')
+
+    if [ -n "$admin_role_id" ] && [ "$admin_role_id" != "null" ]; then
+        # Assign admin role in organization
+        curl -s -X POST "${LOGTO_ENDPOINT}/api/organizations/${org_id}/users/${admin_user_id}/roles" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"organizationRoleIds\": [\"${admin_role_id}\"]}" > /dev/null 2>&1
+        log_info "Admin role assigned in organization"
+    else
+        log_warn "Could not find admin role, user may have limited console access"
+    fi
+
+    # Also try to assign user-level admin roles if they exist
+    local user_admin_role_id=$(curl -s "${LOGTO_ENDPOINT}/api/roles" \
+        -H "Authorization: Bearer $TOKEN" | jq -r '.[] | select(.name == "admin" or .name == "Admin") | .id // empty' | head -1)
+
+    if [ -n "$user_admin_role_id" ] && [ "$user_admin_role_id" != "null" ]; then
+        curl -s -X POST "${LOGTO_ENDPOINT}/api/users/${admin_user_id}/roles" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"roleIds\": [\"${user_admin_role_id}\"]}" > /dev/null 2>&1
+        log_info "User-level admin role assigned"
+    fi
+
+    log_info "Admin user setup complete"
 }
 
 # Create or update OIDC application for Syngrisi
@@ -474,6 +570,12 @@ save_config() {
     "password": "${TEST_USER_PASSWORD}",
     "username": "${TEST_USER_USERNAME}"
   },
+  "admin": {
+    "email": "${ADMIN_USER_EMAIL}",
+    "password": "${ADMIN_USER_PASSWORD}",
+    "username": "${ADMIN_USER_USERNAME}",
+    "consoleUrl": "http://localhost:${LOGTO_ADMIN_PORT:-3050}"
+  },
   "app": {
     "clientId": "${OIDC_APP_ID}",
     "clientSecret": "${OIDC_APP_SECRET}",
@@ -512,6 +614,7 @@ main() {
     get_access_token
     configure_sign_in_experience
     create_test_user
+    create_admin_user
     create_oidc_app
     create_saml_app
     get_saml_metadata
@@ -522,9 +625,14 @@ main() {
     log_info "Provisioning complete!"
     echo "========================================"
     echo ""
-    echo "Test credentials:"
-    echo "  Email:    ${TEST_USER_EMAIL}"
+    echo "Test user credentials:"
+    echo "  Username: ${TEST_USER_USERNAME}"
     echo "  Password: ${TEST_USER_PASSWORD}"
+    echo ""
+    echo "Admin Console credentials:"
+    echo "  Username: ${ADMIN_USER_USERNAME}"
+    echo "  Password: ${ADMIN_USER_PASSWORD}"
+    echo "  URL:      http://localhost:${LOGTO_ADMIN_PORT:-3050}"
     echo ""
     echo "OIDC Application:"
     echo "  Client ID:     ${OIDC_APP_ID}"

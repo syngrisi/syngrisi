@@ -9,6 +9,7 @@ import type { PassportStatic } from 'passport';
 import log from '@logger';
 import { env } from '../../envConfig';
 import { ssoUserService } from './sso-user.service';
+import { metadataLoaderService, ParsedIdPMetadata } from './metadata-loader.service';
 import type { SSOProvider, NormalizedProfile } from './types';
 import { LogOpts } from '@types';
 
@@ -61,13 +62,18 @@ class SAMLProvider implements SSOProvider {
 
     /**
      * Check if provider is properly configured
+     * Configuration is valid if:
+     * - Manual config: SSO_ENTRY_POINT + SSO_ISSUER + SSO_CERT are set
+     * - Metadata URL: SSO_IDP_METADATA_URL + SSO_ISSUER are set (cert and entry point will be loaded)
      */
     isConfigured(): boolean {
         const hasEntryPoint = !!env.SSO_ENTRY_POINT;
         const hasIssuer = !!env.SSO_ISSUER;
         const hasCert = !!env.SSO_CERT;
+        const hasMetadataUrl = !!env.SSO_IDP_METADATA_URL;
 
-        return hasEntryPoint && hasIssuer && hasCert;
+        // Can be configured via manual settings or metadata URL
+        return (hasEntryPoint && hasIssuer && hasCert) || (hasMetadataUrl && hasIssuer);
     }
 
     /**
@@ -87,14 +93,65 @@ class SAMLProvider implements SSOProvider {
                 hasEntryPoint: !!env.SSO_ENTRY_POINT,
                 hasIssuer: !!env.SSO_ISSUER,
                 hasCert: !!env.SSO_CERT,
+                hasMetadataUrl: !!env.SSO_IDP_METADATA_URL,
             });
             return;
         }
 
-        const entryPoint = env.SSO_ENTRY_POINT;
+        // Start with env variables
+        let entryPoint = env.SSO_ENTRY_POINT;
         const issuer = env.SSO_ISSUER;
-        const cert = env.SSO_CERT;
-        const idpIssuer = env.SSO_IDP_ISSUER;
+        let cert = env.SSO_CERT;
+        let idpIssuer = env.SSO_IDP_ISSUER;
+
+        // If metadata URL is configured, try to load configuration from it
+        if (env.SSO_IDP_METADATA_URL) {
+            try {
+                const metadata = await metadataLoaderService.loadFromUrl(
+                    env.SSO_IDP_METADATA_URL,
+                    60 // 60 minutes cache TTL
+                );
+
+                // Use loaded values (env variables have priority as overrides)
+                entryPoint = env.SSO_ENTRY_POINT || metadata.ssoUrl;
+                cert = env.SSO_CERT || metadata.certificate;
+                idpIssuer = env.SSO_IDP_ISSUER || metadata.entityID;
+
+                log.info('Loaded IdP metadata from URL', {
+                    ...logMeta,
+                    url: env.SSO_IDP_METADATA_URL,
+                    entityID: metadata.entityID,
+                    usedEntryPointFromMetadata: !env.SSO_ENTRY_POINT,
+                    usedCertFromMetadata: !env.SSO_CERT,
+                });
+            } catch (error) {
+                // Graceful fallback: if URL fails, use env variables
+                log.warn('Failed to load IdP metadata from URL, using env variables as fallback', {
+                    ...logMeta,
+                    url: env.SSO_IDP_METADATA_URL,
+                    error: (error as Error).message,
+                    hasEntryPointFallback: !!env.SSO_ENTRY_POINT,
+                    hasCertFallback: !!env.SSO_CERT,
+                });
+
+                // Check that fallback values exist
+                if (!env.SSO_ENTRY_POINT || !env.SSO_CERT) {
+                    throw new Error(
+                        'IdP metadata URL failed and no fallback env variables (SSO_ENTRY_POINT, SSO_CERT) provided'
+                    );
+                }
+            }
+        }
+
+        // Final validation
+        if (!entryPoint || !cert) {
+            log.warn('SAML provider cannot initialize - missing entry point or certificate', {
+                ...logMeta,
+                hasEntryPoint: !!entryPoint,
+                hasCert: !!cert,
+            });
+            return;
+        }
 
         log.info('Initializing SAML strategy', {
             ...logMeta,
