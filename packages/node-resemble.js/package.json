@@ -1,6 +1,6 @@
 {
   "name": "@syngrisi/node-resemble.js",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Image analysis and comparison for nodejs",
   "main": "resemble.js",
   "scripts": {
@@ -39,5 +39,5 @@
     "chokidar-cli": "^3.0.0",
     "jasmine": "^5.13.0"
   },
-  "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"
+  "gitHead": "12bfda406cbe5aaccf3f17fdab02a9bd1a9d6343"
 }

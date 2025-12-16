@@ -570,6 +570,93 @@ When(
   },
 );
 
+const consoleLogs: Map<string, Array<{ type: string; text: string; location?: string }>> = new Map();
+
+/**
+ * Starts capturing browser console logs for the current page.
+ * Call this before navigating to capture all logs.
+ * @example
+ * ```gherkin
+ * When I start capturing console logs
+ * ```
+ */
+When(/^I start capturing console logs$/, async ({ page }) => {
+  const pageId = page.url() || 'unknown';
+  consoleLogs.set(pageId, []);
+  
+  page.on('console', (msg) => {
+    const logs = consoleLogs.get(pageId) || [];
+    logs.push({
+      type: msg.type(),
+      text: msg.text(),
+      location: msg.location()?.url,
+    });
+    consoleLogs.set(pageId, logs);
+  });
+  
+  page.on('pageerror', (error) => {
+    const logs = consoleLogs.get(pageId) || [];
+    logs.push({
+      type: 'error',
+      text: `${error.name}: ${error.message}\n${error.stack || ''}`,
+    });
+    consoleLogs.set(pageId, logs);
+  });
+  
+  logger.info(formatArgs('🎤 Started capturing console logs'));
+  return 'Console log capture started';
+});
+
+/**
+ * Gets captured browser console logs.
+ * @example
+ * ```gherkin
+ * When I get browser console logs
+ * ```
+ */
+When(/^I get browser console logs$/, async ({ page }) => {
+  const pageId = page.url() || 'unknown';
+  const logs = consoleLogs.get(pageId) || [];
+  
+  if (logs.length === 0) {
+    logger.info(formatArgs('📋 No console logs captured (start capturing first with "I start capturing console logs")'));
+    return '[]';
+  }
+  
+  const formatted = JSON.stringify(logs, null, 2);
+  logger.info(formatArgs(`📋 Browser console logs (${logs.length} entries):\n${formatted}`));
+  return formatted;
+});
+
+/**
+ * Gets page errors (uncaught exceptions) by evaluating window.onerror history.
+ * @example
+ * ```gherkin
+ * When I get page errors
+ * ```
+ */
+When(/^I get page errors$/, async ({ page }) => {
+  try {
+    const errors = await page.evaluate(() => {
+      const w = window as unknown as { __pageErrors?: Array<{ message: string; source?: string; lineno?: number; colno?: number; stack?: string }> };
+      return w.__pageErrors || [];
+    });
+    
+    if (errors.length === 0) {
+      logger.info(formatArgs('✅ No page errors detected'));
+      return '[]';
+    }
+    
+    const formatted = JSON.stringify(errors, null, 2);
+    logger.info(formatArgs(`❌ Page errors (${errors.length}):\n${formatted}`));
+    return formatted;
+  } catch (err) {
+    const message = `Failed to get page errors: ${formatError(err)}`;
+    logger.error(formatArgs(`❌ ${message}`));
+    throw new Error(message);
+  }
+});
+
 /**
  * Waits for navigation to complete.
  * @example

@@ -14,12 +14,17 @@
     "build": "lerna run build",
     "graph": "nx graph",
     "docs": "typedoc",
-    "e2e:bddgen": "yarn --cwd packages/syngrisi/e2e bddgen"
+    "e2e:bddgen": "yarn --cwd packages/syngrisi/e2e bddgen",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "yarn build && changeset publish"
   },
   "dependencies": {
     "playwright": "^1.57.0"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.29.8",
     "lerna": "^9.0.3",
     "playwright-bdd": "^8.4.2",
     "vite": "^7.2.6"
@@ -46,5 +51,6 @@
   "engines": {
     "npm": "please-use-yarn",
     "yarn": ">=1.22.0"
-  }
+  },
+  "version": "0.0.0"
 }

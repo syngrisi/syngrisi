@@ -16,6 +16,7 @@ const config = {
             '@auth': path.resolve(__dirname, './src/ui-app/auth'),
             '@asserts': path.resolve(__dirname, './src/ui-app/asserts'),
             '@config': path.resolve(__dirname, './src/ui-app/config.ts'),
+            '@shared/lib': path.resolve(__dirname, './src/ui-app/shared/lib'),
         },
     },
     build: {

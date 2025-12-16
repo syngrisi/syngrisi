@@ -14,10 +14,10 @@ import {
 } from '@mantine/core';
 import { useSearchParams } from 'react-router-dom';
 import { useForm } from '@mantine/form';
-import ky from 'ky';
 import { useDocumentTitle } from '@mantine/hooks';
 import { log } from '@shared/utils';
 import config from '@config';
+import { http } from '@shared/lib/http';
 
 export default function LoginForm() {
     useDocumentTitle('Login Page');
@@ -27,16 +27,19 @@ export default function LoginForm() {
 
     useEffect(() => {
         setSsoLoading(true);
-        ky.get(`${config.baseUri}/v1/auth/sso/status`, { retry: 2, timeout: 5000 })
-            .json<{ ssoEnabled: boolean }>()
+        http.get<{ ssoEnabled: boolean }>(
+            `${config.baseUri}/v1/auth/sso/status`,
+            { retry: 2, timeout: 5000, throwHttpErrors: false },
+            'LoginForm.ssoStatus'
+        )
+            .then(resp => resp.json() as Promise<{ ssoEnabled: boolean }>)
             .then(data => {
                 setSsoEnabled(data.ssoEnabled);
                 setSsoCheckFailed(false);
             })
             .catch(err => {
-                log.error('Failed to check SSO status:', err);
+                log.error('[LoginForm] Failed to check SSO status:', err);
                 setSsoCheckFailed(true);
-                // Don't show SSO button on error (conservative approach)
                 setSsoEnabled(false);
             })
             .finally(() => setSsoLoading(false));
@@ -75,22 +78,16 @@ export default function LoginForm() {
         try {
             setErrorMessage('');
             setLoader(true);
-            const resp = await ky(
-                `${config.baseUri}/v1/auth/login`,
-                {
-                    throwHttpErrors: false,
-                    method: 'POST',
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        username: values.email,
-                        password: values.password,
-                        rememberMe: values.rememberMe,
-                    }),
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                },
-            );
+            const resp = await fetch(`${config.baseUri}/v1/auth/login`, {
+                method: 'POST',
+                credentials: 'include',
+                body: JSON.stringify({
+                    username: values.email,
+                    password: values.password,
+                    rememberMe: values.rememberMe,
+                }),
+                headers: { 'Content-Type': 'application/json' },
+            });
             const result: { message: string } = await resp.json();
             setLoader(false);
 
@@ -98,13 +95,13 @@ export default function LoginForm() {
                 return window.location.assign(successRedirectUrl);
             }
             if (result.message) {
-                log.error(((typeof result) === 'object') ? JSON.stringify(result) : result.toString());
+                log.error(`[LoginForm] ${JSON.stringify(result)}`);
                 return setErrorMessage(result.message);
             }
-            log.error(((typeof result) === 'object') ? JSON.stringify(result) : result.toString());
+            log.error(`[LoginForm] ${JSON.stringify(result)}`);
             setErrorMessage('Connection error');
         } catch (e: any) {
-            log.error(e.stack || e.toString());
+            log.error(`[LoginForm] ${e.stack || e.toString()}`);
             setErrorMessage('Connection error');
         } finally {
             setLoader(false);

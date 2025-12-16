@@ -1,8 +1,8 @@
 metadata:
   category: common/actions
-  generatedAt: '2025-12-05T04:19:37.324Z'
+  generatedAt: '2025-12-07T10:28:46.488Z'
   totalFiles: 1
-  totalSteps: 31
+  totalSteps: 32
   sourceFiles:
     - steps/common/actions.steps.ts
 steps:
@@ -53,7 +53,7 @@ steps:
       ```gherkin
       When I click the 1st button "Open Check"
       ```
-    line: 882
+    line: 889
   - pattern: I delete the cookie {string}
     description: ''
     line: 829
@@ -127,12 +127,15 @@ steps:
   - pattern: I hold key {string}
     description: ''
     line: 837
+  - pattern: I hover over {string} and wait for tooltip {string}
+    description: ''
+    line: 861
   - pattern: I move to element {string}
     description: ''
     line: 856
   - pattern: I move to element {string} with an offset of {int},{int}
     description: ''
-    line: 861
+    line: 868
   - pattern: I press {string}
     description: ''
     line: 833
