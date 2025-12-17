@@ -2,7 +2,6 @@ import { createHash } from 'node:crypto'
 import { LogLevelDesc } from 'loglevel'
 
 import logger from './lib/logger'
-import { getDomDump } from './lib/getDomDump'
 
 import {
     SyngrisiApi,
@@ -14,7 +13,8 @@ import {
     BaselineParams,
     BaselineResponse,
     SnapshotResponse,
-    CheckResponse
+    CheckResponse,
+    collectDomTree
 } from '@syngrisi/core-api'
 import {
     BaselineParamsSchema,
@@ -31,7 +31,7 @@ if (process.env.SYNGRISI_LOG_LEVEL) {
     log.setLevel(process.env.SYNGRISI_LOG_LEVEL as LogLevelDesc)
 }
 
-export { getDomDump }
+export { collectDomTree }
 
 /**
  * The `WDIODriver` class is responsible for managing the interaction between WebdriverIO and the Syngrisi server.

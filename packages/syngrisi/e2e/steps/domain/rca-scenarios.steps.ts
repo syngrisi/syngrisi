@@ -9,6 +9,7 @@ import * as http from 'http';
 import FormData from 'form-data';
 import { got } from 'got-cjs';
 import { expect } from '@playwright/test';
+import { COLLECT_DOM_TREE_SCRIPT } from '@syngrisi/core-api';
 
 const RCA_SCENARIOS_DIR = path.resolve(__dirname, '..', '..', 'fixtures', 'rca-test-scenarios');
 const logger = createLogger('RCAScenariosSteps');
@@ -17,72 +18,9 @@ function hashApiKey(apiKey: string): string {
     return crypto.createHash('sha512').update(apiKey).digest('hex');
 }
 
-const IMPORTANT_STYLES = [
-    'display', 'visibility', 'opacity', 'position',
-    'width', 'height', 'margin', 'padding',
-    'backgroundColor', 'color', 'fontFamily', 'fontSize',
-    'fontWeight', 'lineHeight', 'textAlign', 'overflow',
-    'zIndex', 'transform', 'flexDirection', 'justifyContent', 'alignItems',
-    'borderRadius', 'border', 'boxShadow', 'gap',
-];
-
-const DOM_COLLECTOR_SCRIPT = `
-(function collectDOM() {
-    const IMPORTANT_STYLES = ${JSON.stringify(IMPORTANT_STYLES)};
-    const MAX_DEPTH = 15;
-    const SKIP_TAGS = ['SCRIPT', 'STYLE', 'NOSCRIPT', 'SVG', 'PATH'];
-
-    function collectNode(element, depth = 0) {
-        if (depth > MAX_DEPTH) return null;
-        if (!element || element.nodeType !== 1) return null;
-        if (SKIP_TAGS.includes(element.tagName)) return null;
-
-        const rect = element.getBoundingClientRect();
-        if (rect.width === 0 && rect.height === 0) return null;
-
-        const computedStyle = window.getComputedStyle(element);
-        const styles = {};
-        for (const prop of IMPORTANT_STYLES) {
-            styles[prop] = computedStyle.getPropertyValue(prop.replace(/([A-Z])/g, '-$1').toLowerCase());
-        }
-
-        const attributes = {};
-        for (const attr of element.attributes) {
-            attributes[attr.name] = attr.value;
-        }
-
-        const children = [];
-        for (const child of element.children) {
-            const childNode = collectNode(child, depth + 1);
-            if (childNode) children.push(childNode);
-        }
-
-        let text = '';
-        for (const node of element.childNodes) {
-            if (node.nodeType === 3) {
-                const t = node.textContent?.trim();
-                if (t) text += t + ' ';
-            }
-        }
-
-        return {
-            tagName: element.tagName.toLowerCase(),
-            attributes,
-            rect: {
-                x: Math.round(rect.x),
-                y: Math.round(rect.y),
-                width: Math.round(rect.width),
-                height: Math.round(rect.height),
-            },
-            computedStyles: styles,
-            children,
-            text: text.trim() || undefined,
-        };
-    }
-
-    return collectNode(document.body);
-})()
-`;
+// Use DOM collector script from @syngrisi/core-api
+// Note: COLLECT_DOM_TREE_SCRIPT returns JSON string, we need to parse it
+const DOM_COLLECTOR_SCRIPT = COLLECT_DOM_TREE_SCRIPT;
 
 let scenarioServer: http.Server | null = null;
 let scenarioServerPort: number = 0;
@@ -139,7 +77,12 @@ async function capturePageData(url: string, collectDom: boolean = true): Promise
         await page.waitForTimeout(500);
 
         const screenshot = await page.screenshot({ type: 'png' });
-        const domDump = collectDom ? await page.evaluate(DOM_COLLECTOR_SCRIPT) : null;
+        // COLLECT_DOM_TREE_SCRIPT returns JSON string, parse it to object
+        let domDump: object | null = null;
+        if (collectDom) {
+            const domDumpStr = await page.evaluate(DOM_COLLECTOR_SCRIPT) as string;
+            domDump = JSON.parse(domDumpStr);
+        }
 
         return { screenshot, domDump };
     } finally {
