@@ -205,13 +205,11 @@ async function createBaselineTest(
     const port = await startScenarioServer(scenarioPath);
     testData.set('rcaScenarioPort', port);
 
-    // Logic update: skipDomData is true (disabled) unless explicitly enabled via env var
-    // If SYNGRISI_DISABLE_DOM_DATA is 'false', then skipDomData is false (enabled)
-    // Otherwise (undefined or 'true'), skipDomData is true (disabled)
-    const skipDomData = process.env.SYNGRISI_DISABLE_DOM_DATA !== 'false';
-    const shouldCollectDom = collectDom && !skipDomData;
+    // For RCA tests: if collectDom is explicitly true, always collect DOM
+    // Skip only if collectDom is false OR if SYNGRISI_DISABLE_DOM_DATA is explicitly 'true'
+    const shouldCollectDom = collectDom;
 
-    logger.info(`Capturing baseline from scenario: ${scenarioPath}, collectDom: ${collectDom}, skipDomData: ${skipDomData}`);
+    logger.info(`Capturing baseline from scenario: ${scenarioPath}, collectDom: ${collectDom}`);
     const url = `http://127.0.0.1:${port}/`;
     const { screenshot, domDump } = await capturePageData(url, shouldCollectDom);
     logger.info(`Captured ${shouldCollectDom ? 'with' : 'without'} DOM data`);
@@ -316,11 +314,10 @@ async function createActualCheck(
 
     const port = await startScenarioServer(scenarioPath);
 
-    // Logic update: skipDomData is true (disabled) unless explicitly enabled via env var
-    const skipDomData = process.env.SYNGRISI_DISABLE_DOM_DATA !== 'false';
-    const shouldCollectDom = collectDom && !skipDomData;
+    // For RCA tests: if collectDom is explicitly true, always collect DOM
+    const shouldCollectDom = collectDom;
 
-    logger.info(`Capturing actual from scenario: ${scenarioPath}, collectDom: ${collectDom}, skipDomData: ${skipDomData}`);
+    logger.info(`Capturing actual from scenario: ${scenarioPath}, collectDom: ${collectDom}`);
     const url = `http://127.0.0.1:${port}/`;
     const { screenshot, domDump } = await capturePageData(url, shouldCollectDom);
 
