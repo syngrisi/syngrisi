@@ -4,7 +4,7 @@ const YAML = require('yaml');
 const { got } = require('got-cjs');
 const fs = require('fs');
 const { Given, When, Then } = require("@cucumber/cucumber");
-const { getDomDump } = require('@syngrisi/wdio-sdk');
+const { collectDomTree } = require('@syngrisi/wdio-sdk');
 // const SyngrisiDriver = require('@syngrisi/wdio-sdk').SyngrisiDriver;
 const checkVRS = require('../src/support/check/checkVrs');
 const waitForAndRefresh = require('../src/support/action/waitForAndRefresh').default;
@@ -45,7 +45,7 @@ When(/^I set properties for VRSDriver:$/, function (yml) {
 });
 
 When(/^I visually check page with DOM as "([^"]*)"$/, async function (checkName) {
-    const domDump = await browser.executeAsync(getDomDump);
+    const domDump = await browser.execute(collectDomTree);
     await browser.pause(300);
     const screenshot = await browser.saveDocumentScreenshot();
     const imageBuffer = Buffer.from(screenshot, 'base64');
