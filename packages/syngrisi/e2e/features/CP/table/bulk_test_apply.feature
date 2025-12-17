@@ -8,11 +8,11 @@ Feature: Bulk test Apply
 
     Scenario: Apply 2 tests
         Given I create "2" tests with:
-        """
+            """
           testName: TestName-$
           checks:
-              - checkName: CheckName
-        """
+              - {checkName: CheckName, filePath: files/A.png}
+            """
         When I go to "main" page
 
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
@@ -40,7 +40,7 @@ Feature: Bulk test Apply
         When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-1']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
 
         When I wait for "2" seconds
-        
+
         Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" should have has attribute "data-test-icon-type=fill"
         Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" should have has attribute "data-test-icon-type=fill"
         Then the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "rgba(64,192,87,1)"

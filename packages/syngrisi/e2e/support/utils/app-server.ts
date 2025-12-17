@@ -1,5 +1,5 @@
 import path from "path";
-import { spawn } from "child_process";
+import { spawn, execSync } from "child_process";
 import { once } from "events";
 import http from "http";
 import net from "net";
@@ -22,9 +22,15 @@ export interface RunningAppServer {
     connectionString: string;
     defaultImagesPath: string;
   };
+  pid?: number;
   stop: () => Promise<void>;
   getBackendLogs: () => string;
   getFrontendLogs: () => string;
+  exitInfo?: {
+    code: number | null;
+    signal: NodeJS.Signals | null;
+    message: string;
+  };
 }
 
 export type LaunchAppServerOptions = {
@@ -138,6 +144,10 @@ export async function launchAppServer(
   // Always force test DB and baselines path for e2e isolation (even if user .env points elsewhere)
   spawnEnv.SYNGRISI_DB_URI = defaultConnectionString;
   spawnEnv.SYNGRISI_IMAGES_PATH = defaultImagesPath;
+  // Ensure API key is set if auth is enabled, otherwise server might generate a random one
+  if (spawnEnv.SYNGRISI_AUTH === 'true' && !spawnEnv.SYNGRISI_API_KEY) {
+    spawnEnv.SYNGRISI_API_KEY = '123';
+  }
 
   const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || process.execPath;
 
@@ -173,11 +183,28 @@ export async function launchAppServer(
   let lastError: Error | null = null;
   let backend: Child | null = null;
   let backendLogs: () => string = () => '';
+  let exitInfo: RunningAppServer['exitInfo'] | undefined;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       backend = spawn(command, args, spawnOptions as any);
       backendLogs = startBackendLogCapture(backend);
+      backend.on('exit', (code, signal) => {
+        exitInfo = {
+          code,
+          signal,
+          message: `Backend exited (code=${code} signal=${signal})`,
+        };
+        backendLogger.error(`[app-server] ${exitInfo.message}`);
+      });
+      backend.on('error', (err) => {
+        exitInfo = {
+          code: null,
+          signal: null,
+          message: `Backend process error: ${String(err)}`,
+        };
+        backendLogger.error(`[app-server] ${exitInfo.message}`);
+      });
 
       if (!backend) throw new Error('Failed to spawn backend process');
 
@@ -225,6 +252,7 @@ export async function launchAppServer(
     baseURL,
     backendHost,
     serverPort: cidPort,
+    pid: backend.pid,
     config: {
       connectionString: spawnEnv.SYNGRISI_DB_URI ?? defaultConnectionString,
       defaultImagesPath: spawnEnv.SYNGRISI_IMAGES_PATH ?? defaultImagesPath,
@@ -232,6 +260,7 @@ export async function launchAppServer(
     stop: () => terminateProcess(backend!),
     getBackendLogs: backendLogs,
     getFrontendLogs: () => "",
+    exitInfo,
   };
 }
 
@@ -313,7 +342,7 @@ export function isServerRunning(port: number): Promise<boolean> {
   });
 }
 
-export async function ensureServerReady(port: number, timeoutMs = 30_000): Promise<void> {
+export async function ensureServerReady(port: number, timeoutMs = 60_000): Promise<void> {
   const host = process.env.E2E_BACKEND_HOST ?? env.E2E_BACKEND_HOST ?? '127.0.0.1';
   const baseUrl = `http://${host}:${port}`;
 
@@ -347,13 +376,46 @@ export async function waitForServerStop(cid?: number, timeoutMs = 25000): Promis
   // but for E2E standard runs:
   const port = envPort ? parseInt(envPort, 10) : 3002 + effectiveCid;
 
-  await waitFor(async () => !(await isServerRunning(port)), {
-    timeoutMs,
+  const startTs = Date.now();
+  let forcedKillAttempted = false;
+
+  await waitFor(async () => {
+    const running = await isServerRunning(port);
+    if (!running) return true;
+
+    // If graceful stop fails, attempt a one-time hard kill by port to unblock parallel workers
+    if (!forcedKillAttempted && Date.now() - startTs > 5000) {
+      forcedKillAttempted = true;
+      await forceKillByPort(port);
+    }
+
+    return false;
+  }, {
+    timeoutMs: timeoutMs + 5000,
     intervalMs: 200,
-    description: `server port ${port} to stop accepting connections`
+    description: `server port ${port} to stop accepting connections`,
   });
 
   backendLogger.info(`✓ Server stopped (port ${port} closed)`);
+}
+
+async function forceKillByPort(port: number): Promise<void> {
+  try {
+    const pidsRaw = execSync(`lsof -ti tcp:${port} || true`, { encoding: 'utf8' }).trim();
+    if (!pidsRaw) {
+      return;
+    }
+
+    const pids = pidsRaw.split(/\s+/).filter(Boolean);
+    if (pids.length === 0) {
+      return;
+    }
+
+    backendLogger.warn(`[app-server] Force killing processes on port ${port}: ${pids.join(', ')}`);
+    execSync(`kill -9 ${pids.join(' ')}`, { stdio: 'ignore' });
+  } catch (error) {
+    backendLogger.warn(`[app-server] Failed to force kill port ${port}: ${String(error)}`);
+  }
 }
 
 function startBackendLogCapture(child: Child): () => string {
@@ -386,7 +448,6 @@ async function terminateProcess(child: Child | undefined): Promise<void> {
 }
 
 export function stopServerProcess(): void {
-  const { execSync } = require('child_process');
   const cid = getCid();
 
   try {
@@ -401,7 +462,6 @@ export function stopServerProcess(): void {
 }
 
 export function stopAllServers(): void {
-  const { execSync } = require('child_process');
   try {
     if (env.DOCKER === '1') {
       execSync('docker-compose stop || true', { stdio: 'ignore' });
@@ -413,7 +473,7 @@ export function stopAllServers(): void {
   }
 }
 
-export async function findAvailablePort(preferred: number, maxAttempts = 10): Promise<number> {
+export async function findAvailablePort(preferred: number, maxAttempts = 20): Promise<number> {
   let port = preferred;
   for (let i = 0; i < maxAttempts; i++) {
     const free = !(await isServerRunning(port));

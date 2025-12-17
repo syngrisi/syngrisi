@@ -1,5 +1,5 @@
 @mode:serial
-@fast-server @env:SYNGRISI_AUTH=false
+@env:SYNGRISI_AUTH=false
 Feature: Logs Table
 
   Background:

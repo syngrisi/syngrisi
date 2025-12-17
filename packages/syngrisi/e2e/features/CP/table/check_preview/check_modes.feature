@@ -8,11 +8,11 @@ Feature: Checks Preview Modes
 
     Scenario: Checks Preview Modes
         Given I create "1" tests with:
-        """
+            """
           testName: "TestName"
           checks:
-              - checkName: CheckName
-        """
+              - {checkName: CheckName, filePath: files/A.png}
+            """
         When I go to "main" page
         When I unfold the test "TestName"
 
@@ -30,11 +30,11 @@ Feature: Checks Preview Modes
 
     Scenario: Checks Preview Sizes on Bounded mode
         Given I create "1" tests with:
-        """
+            """
           testName: "TestName"
           checks:
-              - checkName: CheckName
-        """
+              - {checkName: CheckName, filePath: files/A.png}
+            """
         When I go to "main" page
         When I unfold the test "TestName"
 

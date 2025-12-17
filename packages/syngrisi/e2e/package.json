@@ -49,6 +49,7 @@
   "dependencies": {
     "@cucumber/cucumber": "^12.3.0",
     "@modelcontextprotocol/sdk": "^1.21.1",
+    "@syngrisi/core-api": "file:../../core-api",
     "@syngrisi/wdio-sdk": "file:../../wdio-sdk",
     "@types/form-data": "^2.5.2",
     "@types/js-yaml": "^4.0.9",

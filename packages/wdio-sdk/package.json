@@ -39,14 +39,18 @@
   "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/wdio-sdk#readme",
   "dependencies": {
     "@syngrisi/core-api": "^3.1.1",
-    "@wdio/globals": "^9.17.0",
-    "@wdio/types": "^9.20.0",
     "form-data": "^4.0.5",
     "got-cjs": "^12.5.4",
     "loglevel": "^1.9.2",
     "zod": "^4.1.13"
   },
+  "peerDependencies": {
+    "@wdio/globals": "^9.17.0",
+    "@wdio/types": "^9.17.0"
+  },
   "devDependencies": {
+    "@wdio/globals": "^9.17.0",
+    "@wdio/types": "^9.17.0",
     "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.48.1",
     "@typescript-eslint/parser": "^8.48.1",
@@ -55,6 +59,8 @@
     "eslint": "^9.39.1",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-unicorn": "^62.0.0",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^6.1.2",
     "typescript": "^5.9.3",
     "vitest": "^4.0.15"
   },

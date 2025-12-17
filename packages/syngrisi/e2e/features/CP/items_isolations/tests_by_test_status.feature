@@ -9,46 +9,49 @@ Feature: Test Isolation by Test Status
   Scenario: Tests Isolation by Test Status
     # NEW
     Given I create "1" tests with:
-    """
+      """
       testName: TestStatus-new
       checks:
           - checkName: Check-new
-    """
+            filePath: files/A.png
+      """
 
     # PASSED
     Given I create "1" tests with:
-    """
+      """
       testName: TestStatus-passed-new
       checks:
           - checkName: Check-passed
-    """
+            filePath: files/A.png
+      """
     When I accept via http the 1st check with name "Check-passed"
 
     Given I create "1" tests with:
-    """
+      """
       testName: TestStatus-passed-passed
       checks:
           - checkName: Check-passed
-    """
+            filePath: files/A.png
+      """
     When I accept via http the 1st check with name "Check-passed"
 
     # FAILED
     Given I create "1" tests with:
-    """
+      """
       testName: TestStatus-failed-new
       checks:
           - checkName: Check-failed-baseline
             filePath: files/A.png
-    """
+      """
     When I accept via http the 1st check with name "Check-failed-baseline"
 
     Given I create "1" tests with:
-    """
+      """
       testName: TestStatus-failed
       checks:
           - checkName: Check-failed-baseline
             filePath: files/B.png
-    """
+      """
 
     When I refresh page
     # all tests

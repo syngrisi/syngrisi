@@ -8,30 +8,36 @@ Feature: Test Isolation by Suite
 
   Scenario: Tests Isolation by Suite
     Given I create "1" tests with:
-    """
+      """
       testName: TestSuite-1.1
       suiteName: Suite-1
       checks:
           - checkName: CheckSuite-1.1
+            filePath: files/A.png
           - checkName: CheckSuite-1.2
-    """
+            filePath: files/A.png
+      """
     Given I create "1" tests with:
-    """
+      """
       testName: TestSuite-1.2
       suiteName: Suite-1
       checks:
           - checkName: CheckSuite-1.3
+            filePath: files/A.png
           - checkName: CheckSuite-1.4
-    """
+            filePath: files/A.png
+      """
 
     Given I create "1" tests with:
-    """
+      """
       testName: TestSuite-2.1
       suiteName: Suite-2
       checks:
           - checkName: CheckSuite-2.1
+            filePath: files/A.png
           - checkName: CheckSuite-2.2
-    """
+            filePath: files/A.png
+      """
 
     When I refresh page
 

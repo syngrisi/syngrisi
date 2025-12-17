@@ -1,4 +1,4 @@
-@smoke @fast-server
+@smoke
 Feature: Pagination
 
   Background:

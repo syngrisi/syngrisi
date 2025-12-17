@@ -146,6 +146,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff }: Props) {
             >
                 <ActionIcon
                     data-check="remove-ignore-region"
+                    data-disabled={!visibleRegionRemoveButton ? "true" : undefined}
                     disabled={!visibleRegionRemoveButton}
                     onClick={() => mainView.removeActiveIgnoreRegions()}
                 >
@@ -178,6 +179,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff }: Props) {
                 <div>
                     <ActionIcon
                         data-check="add-ignore-region"
+                        data-disabled={((view === 'slider') || !baselineId) ? "true" : undefined}
                         disabled={(view === 'slider') || !baselineId}
                         onClick={() => {
                             // @ts-ignore - Sync window.mainView for E2E tests before calling method
@@ -224,6 +226,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff }: Props) {
                 <div>
                     <ActionIcon
                         data-check="auto-ignore-region"
+                        data-disabled={((view === 'slider') || !baselineId || !hasDiff) ? "true" : undefined}
                         disabled={(view === 'slider') || !baselineId || !hasDiff}
                         onClick={handleAutoRegion}
                     >
@@ -266,6 +269,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff }: Props) {
                 <div>
                     <ActionIcon
                         data-check="add-bound-region"
+                        data-disabled={((view === 'slider') || !baselineId || hasBoundRegion) ? "true" : undefined}
                         disabled={(view === 'slider') || !baselineId || hasBoundRegion}
                         onClick={() => mainView.addBoundingRegion('bound_rect')}
                     >
@@ -292,6 +296,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff }: Props) {
             >
                 <ActionIcon
                     data-check="save-ignore-region"
+                    data-disabled={(!hasAnyRegion && !isDirty) ? "true" : undefined}
                     disabled={!hasAnyRegion && !isDirty}
                     onClick={() => mainView.saveRegions(baselineId!)}
                 >
