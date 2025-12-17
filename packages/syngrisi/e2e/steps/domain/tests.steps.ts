@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import { env } from '@config';
 import type { AppServerFixture } from '@fixtures';
-import { isServerRunning } from '@utils/app-server';
+import { ensureServerReady, isServerRunning } from '@utils/app-server';
 import FormData from 'form-data';
 import { got } from 'got-cjs';
 import { SyngrisiDriver } from '@syngrisi/wdio-sdk';
@@ -233,22 +233,56 @@ async function createTestsWithParams(
         uuidv4();
 
       logger.info(`Starting test session for "${testName}"`);
-      const sessionData = await vDriver.startTestSession({
-        params: {
-          app: params.project || 'Test App',
-          test: testName,
-          run: params.run || params.runName || process.env.RUN_NAME || 'integration_run_name',
-          runident: resolvedRunIdent,
-          branch: params.branch || 'integration',
-          suite: params.suite || params.suiteName || 'Integration suite',
-          tags: params.tags || [],
-          os: params.os || 'macOS',
-          browserName: params.browserName || 'chrome',
-          browserVersion: params.browserVersion || '11',
-          browserFullVersion: params.browserFullVersion || '11.0.0.0',
-          viewport: params.viewport || '1366x768',
-        },
-      });
+
+      const sessionParams = {
+        app: params.project || 'Test App',
+        test: testName,
+        run: params.run || params.runName || process.env.RUN_NAME || 'integration_run_name',
+        runident: resolvedRunIdent,
+        branch: params.branch || 'integration',
+        suite: params.suite || params.suiteName || 'Integration suite',
+        tags: params.tags || [],
+        os: params.os || 'macOS',
+        browserName: params.browserName || 'chrome',
+        browserVersion: params.browserVersion || '11',
+        browserFullVersion: params.browserFullVersion || '11.0.0.0',
+        viewport: params.viewport || '1366x768',
+      };
+
+      const startSessionWithRecovery = async () => {
+        try {
+          return await vDriver.startTestSession({ params: sessionParams });
+        } catch (err: any) {
+          const message = err?.message || String(err);
+          const isConnRefused = message.includes('ECONNREFUSED') || message.includes('ERR_CONNECTION_REFUSED');
+          const isUnauthorized = message.includes('401') || message.includes('Unauthorized');
+
+          if (!isConnRefused && !isUnauthorized) {
+            throw err;
+          }
+
+          logger.warn(`startTestSession failed with ${isUnauthorized ? 'auth' : 'connection'} error, restarting server and retrying once. Error: ${message}`);
+          await appServer.restart(true);
+          if (appServer.serverPort) {
+            await ensureServerReady(appServer.serverPort);
+          }
+
+          // Recreate driver after restart to avoid stale baseURL
+          const baseURLAfterRestart = appServer.baseURL || `http://${env.E2E_BACKEND_HOST}:${appServer.serverPort || 3002}`;
+          const normalizedUrlAfterRestart = baseURLAfterRestart.endsWith('/') ? baseURLAfterRestart : `${baseURLAfterRestart}/`;
+          vDriver = new SyngrisiDriver({
+            url: normalizedUrlAfterRestart,
+            apiKey,
+          });
+          if (useSharedDriver) {
+            testData.set('vDriver', vDriver);
+          }
+
+          return await vDriver.startTestSession({ params: sessionParams });
+        }
+      };
+
+      const sessionData = await startSessionWithRecovery();
 
       const testId = (sessionData as any).id || (sessionData as any)._id;
       logger.info(`Test session started with ID: ${testId}`);

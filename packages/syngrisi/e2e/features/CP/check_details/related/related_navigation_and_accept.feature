@@ -10,7 +10,7 @@ Feature: Check details Related Checks - Navigation and Accept
     Scenario: Related - Navigation via Related Panel and Accept second Check
         When I set window size: "1440x900"
         Given I create "3" tests with:
-        """
+            """
           testName: TestName-$
           project: Project1
           branch: integration$
@@ -23,7 +23,7 @@ Feature: Check details Related Checks - Navigation and Accept
                 os: Windows$
                 viewport: 500x500
                 browserName: safari$
-        """
+            """
 
         When I go to "main" page
         When I unfold the test "TestName-2"
@@ -40,15 +40,15 @@ Feature: Check details Related Checks - Navigation and Accept
         Then the element with locator ".modal [data-test='check-accept-icon'] svg" should have has attribute "data-test-icon-type=outline"
 
         # accept
-        When I click element with locator ".modal button[data-test='check-accept-icon']"
+        When I click element with locator ".modal [data-test='check-accept-icon']"
         When I click element with locator "button[data-test='check-accept-icon-confirm']"
         When I wait for "1" seconds
 
         Then I expect via http 2st check filtered as "name=CheckName" matched:
-        """
+            """
         markedAs: accepted
         status: [new]
-        """
+            """
 
         When I wait until the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
         Then the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"

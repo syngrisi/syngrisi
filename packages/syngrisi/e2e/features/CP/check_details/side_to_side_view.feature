@@ -10,7 +10,7 @@ Feature: Side to side view
             """
             testName: TestName
             checks:
-            - checkName: CheckName
+            - {checkName: CheckName, filePath: files/A.png}
             filePath: files/A.png
             """
         When I accept via http the 1st check with name "CheckName"
@@ -26,10 +26,10 @@ Feature: Side to side view
         When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     Scenario: Divider in the center
-        When I wait 30 seconds for the element with locator "//div[normalize-space(text())='Slider']" to be visible
+        When I wait 30 seconds for the element with locator "[data-check='slider-view']" to be visible
         When I wait for "0.5" seconds
 
-        When I click element with locator "//div[normalize-space(text())='Slider']"
+        When I click element with locator "[data-check='slider-view']"
         When I wait for "0.5" seconds
 
         When I execute javascript code:

@@ -8,11 +8,11 @@ Feature: Bulk test Delete
 
     Scenario: Delete 2 tests
         Given I create "2" tests with:
-        """
+            """
           testName: TestName-$
           checks:
-              - checkName: CheckName
-        """
+              - {checkName: CheckName, filePath: files/A.png}
+            """
         When I go to "main" page
 
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible

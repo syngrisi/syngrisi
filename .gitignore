@@ -22,6 +22,12 @@ lerna-debug.log
 debug.html
 chrome
 ci-artifacts
+packages/syngrisi/logs/
+packages/syngrisi/e2e/logs/
+packages/syngrisi/e2e/support/mcp/logs/
+packages/syngrisi/e2e/*.log
+packages/syngrisi/e2e/merge_*.log
+
 
 # Testing & Coverage
 /coverage/

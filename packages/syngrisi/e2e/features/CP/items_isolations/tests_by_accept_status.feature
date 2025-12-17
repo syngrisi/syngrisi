@@ -9,29 +9,33 @@ Feature: Test Isolation by Accept Status
   Scenario: Tests Isolation by Accept Status
     # UNACCEPTED
     Given I create "1" tests with:
-    """
+      """
       testName: AcceptStatus-unaccepted
       checks:
           - checkName: Check-unaccepted
-    """
+            filePath: files/A.png
+      """
 
     # PARTIALLY
     Given I create "1" tests with:
-    """
+      """
       testName: AcceptStatus-partially
       checks:
           - checkName: Check-part1
+            filePath: files/A.png
           - checkName: Check-part2
-    """
+            filePath: files/A.png
+      """
     When I accept via http the 1st check with name "Check-part1"
 
     # ACCEPTED
     Given I create "1" tests with:
-    """
+      """
       testName: AcceptStatus-accepted
       checks:
           - checkName: Check-accepted
-    """
+            filePath: files/A.png
+      """
     When I accept via http the 1st check with name "Check-accepted"
 
     When I refresh page
@@ -57,7 +61,7 @@ Feature: Test Isolation by Accept Status
     When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-partially']" to be visible
     When I wait on element "[data-table-test-name='AcceptStatus-accepted']" to not be displayed
 
-   # ACCEPTED
+    # ACCEPTED
     When I wait 30 seconds for the element with locator "//li[contains(., 'Accepted')]" to be visible
     When I click element with locator "[data-testid='navbar-accept-status-accepted']"
     When I wait on element "[data-table-test-name='AcceptStatus-unaccepted']" to not be displayed

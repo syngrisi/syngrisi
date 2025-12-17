@@ -8,12 +8,13 @@ Feature: Test Isolation by Browser
 
   Scenario: Tests Isolation by Browser
     Given I create "2" tests with:
-    """
+      """
       testName: TestBrowser-$
       browserName: chrome-$
       checks:
           - checkName: Check-1
-    """
+            filePath: files/A.png
+      """
 
     When I refresh page
     # all tests

@@ -6,6 +6,11 @@
 - Always write comments and debug messages in your code in English.
 - Always use `yarn` instead of `npm` for package management commands in this monorepo.
 
+## Release Process
+
+- [Release Cycle Documentation](docs/RELEASE_CYCLE.md)
+
+
 ## E2E Testing Guides
 
 - [Run Tests Guide](packages/syngrisi/docs/agent/guides/run_test.md)

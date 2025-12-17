@@ -7,6 +7,8 @@ import { createLogger } from '@lib/logger';
 import type { RunningAppServer } from '@utils/app-server';
 import path from 'path';
 import { clearDatabase } from '@utils/db-cleanup';
+import fs from 'fs';
+import { ensureDirSync } from 'fs-extra';
 
 const reuseServerBetweenTests = env.E2E_REUSE_SERVER;
 const logger = createLogger('AppServer');
@@ -217,15 +219,6 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           serverInstances.delete(cid);
         }
 
-        // Also stop any process that might be running on the port (via pkill)
-        // BUT: Skip this if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
-        // to avoid killing servers from parallel tests
-        const currentWorkerIndex = parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
-        if (currentWorkerIndex < 100) {
-          const { stopServerProcess } = require('@utils/app-server');
-          stopServerProcess();
-        }
-
         logger.info(`Launching Syngrisi app server`);
         // Use current process.env for server restart (includes env variables set by "I set env variables:")
         const instance = await launchAppServer({
@@ -258,9 +251,10 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
       };
 
       if (isFastMode || isFastModeReuse) {
-        const preferredPort = 3002 + cid;
+        // Use wide, deterministic spacing to avoid port collisions across 15+ workers
+        const preferredPort = 3000 + cid * 50;
         const portFindStart = performance.now();
-        const workerPort = await findAvailablePort(preferredPort, 20);
+        const workerPort = await findAvailablePort(preferredPort, 200);
         timingLogger.info(`[timing] Port finding: ${Math.round(performance.now() - portFindStart)}ms`);
 
         const workerDbName = `SyngrisiDbTest${cid}`;
@@ -351,17 +345,13 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           // Need to start fresh server
           if (running) {
             const stopStart = performance.now();
-            logger.info(`${modeLabel}: stopping existing server on port ${workerPort} to ensure clean config`);
-            if (currentWorkerIndex < 100) {
-              stopServerProcess();
-            }
-            // Wait for server to actually stop to avoid race conditions (EADDRINUSE or connecting to old server)
+            logger.info(`${modeLabel}: waiting for existing server on port ${workerPort} to stop (no pkill to avoid cross-kill)`);
             await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
               timeoutMs: 25000,
               description: `Server stop on port ${workerPort}`,
             });
             serverInstances.delete(cid);
-            timingLogger.info(`[timing] Server stop: ${Math.round(performance.now() - stopStart)}ms`);
+            timingLogger.info(`[timing] Server stop wait: ${Math.round(performance.now() - stopStart)}ms`);
           }
 
           // Launch fresh instance
@@ -485,6 +475,16 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         await startServer();
       }
 
+      const writeBackendLog = (text: string) => {
+        try {
+          const outputDir = testInfo.outputDir;
+          ensureDirSync(outputDir);
+          fs.writeFileSync(path.join(outputDir, 'backend-logs.txt'), text, { encoding: 'utf8' });
+        } catch (err) {
+          logger.warn(`Failed to write backend logs: ${String(err)}`);
+        }
+      };
+
       try {
         const fixtureValue = serverFixtures.get(cid)!;
         await use(fixtureValue);
@@ -547,6 +547,19 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           serverInstances.delete(cid);
           serverFixtures.delete(cid);
           logger.info(`Server stopped`);
+        }
+        // Persist backend logs and exit info if available
+        const logFixture = serverFixtures.get(cid);
+        const backendLogs = logFixture?.getBackendLogs?.() || '';
+        const exitInfo = logFixture?.exitInfo;
+        if (backendLogs || exitInfo) {
+          const meta = logFixture?.pid ? `[pid=${logFixture.pid} port=${logFixture.serverPort}]\n` : '';
+          const logText = [
+            meta,
+            exitInfo ? `[exit] ${exitInfo.message}\n` : '',
+            backendLogs,
+          ].join('');
+          writeBackendLog(logText);
         }
         envKeysToReset.forEach((key) => {
           const initial = originalEnv[key];

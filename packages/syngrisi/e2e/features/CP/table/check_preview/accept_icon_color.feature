@@ -9,11 +9,11 @@ Feature: Check Preview - Accept Icons View
     @smoke
     Scenario: Accept Icons View
         Given I create "1" tests with:
-        """
+            """
           testName: TestName
           checks:
-              - checkName: CheckName
-        """
+              - {checkName: CheckName, filePath: files/A.png}
+            """
         When I go to "main" page
         When I unfold the test "TestName"
 
@@ -29,11 +29,11 @@ Feature: Check Preview - Accept Icons View
 
         # accepted in the previous check
         Given I create "1" tests with:
-        """
+            """
           testName: TestName
           checks:
-              - checkName: CheckName
-        """
+              - {checkName: CheckName, filePath: files/A.png}
+            """
 
         When I go to "main" page
         When I unfold the test "TestName"

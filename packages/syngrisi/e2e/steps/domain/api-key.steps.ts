@@ -21,7 +21,9 @@ When(
 
     const apiKey = apiKeyData.value;
     process.env.SYNGRISI_API_KEY = apiKey;
-    logger.info('API key set in config');
+    // Also store in testData so createTestsWithParams uses this key for the SDK
+    testData.set('explicitApiKey', apiKey);
+    logger.info('API key set in config and testData');
   }
 );
 
@@ -45,9 +47,9 @@ When(
     // Try to get API key from input element first (as in old framework: $('[data-test=api-key]').getValue())
     const apiKeyInput = page.locator('[data-test="api-key"]');
     const inputCount = await apiKeyInput.count();
-    
+
     let apiKey: string | null = null;
-    
+
     if (inputCount > 0) {
       try {
         const outerHTML = await apiKeyInput.first().evaluate((el: HTMLElement) => el.outerHTML);
@@ -76,11 +78,11 @@ When(
         logger.info('No API key locator candidates matched');
       }
     }
-    
+
     if (!apiKey) {
       // Fallback: request API key via HTTP using current session cookie (mirrors backend call triggered by UI)
       const cookies = await page.context().cookies();
-      const sessionCookie = cookies.find((cookie) => cookie.name === 'connect.sid');
+      const sessionCookie = cookies.find((cookie: { name: string; value: string }) => cookie.name === 'connect.sid');
       if (!sessionCookie) {
         throw new Error('API key not found on page and no session cookie available to fetch it');
       }
@@ -99,7 +101,7 @@ When(
       }
       logger.info('API key obtained via HTTP fallback');
     }
-    
+
     testData.set('apiKey', { value: apiKey });
     logger.info(`API key parsed and stored (length=${apiKey.length})`);
   }

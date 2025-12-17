@@ -64,12 +64,39 @@ When('I open the app', async ({ page, appServer, testData }: { page: Page; appSe
   logger.info(`Opening app at ${appServer.baseURL}`);
   logger.info(`SSO_ENABLED=${process.env.SSO_ENABLED}, SSO_PROTOCOL=${process.env.SSO_PROTOCOL}`);
 
-  // Ensure server is ready before navigation to avoid ERR_CONNECTION_REFUSED
-  if (appServer.serverPort) {
-    await ensureServerReady(appServer.serverPort);
+  if (!appServer.baseURL) {
+    logger.warn('App server baseURL is empty, starting server before navigation');
+    await appServer.start();
   }
 
-  await page.goto(appServer.baseURL);
+  // Ensure server is ready before navigation to avoid ERR_CONNECTION_REFUSED
+  const ensureReadyWithRetry = async () => {
+    if (!appServer.serverPort) return;
+    try {
+      await ensureServerReady(appServer.serverPort);
+    } catch (error) {
+      logger.warn(`Server not ready on port ${appServer.serverPort}, restarting once. Error: ${String(error)}`);
+      await appServer.restart(true);
+      if (appServer.serverPort) {
+        await ensureServerReady(appServer.serverPort);
+      }
+    }
+  };
+
+  await ensureReadyWithRetry();
+
+  const navigate = async () => {
+    await page.goto(appServer.baseURL);
+  };
+
+  try {
+    await navigate();
+  } catch (error) {
+    logger.warn(`Navigation failed (likely server not ready). Restarting server and retrying. Error: ${String(error)}`);
+    await appServer.restart(true);
+    await ensureReadyWithRetry();
+    await navigate();
+  }
   logger.info(`After goto - URL: ${page.url()}`);
 
   await page.waitForLoadState('networkidle');

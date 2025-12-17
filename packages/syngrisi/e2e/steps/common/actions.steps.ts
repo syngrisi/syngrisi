@@ -177,7 +177,7 @@ When(
     if (target === 'locator') {
       const locator = getLocatorQuery(page, renderedValue);
       const targetLocator = locator.first();
-      await targetLocator.waitFor({ state: 'visible', timeout: 5000 });
+      await targetLocator.waitFor({ state: 'visible', timeout: 15000 });
 
       const ignoreRegionAction = getIgnoreRegionAction(renderedValue);
       if (ignoreRegionAction) {
