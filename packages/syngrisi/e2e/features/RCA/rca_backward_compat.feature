@@ -37,7 +37,6 @@ Feature: RCA Backward Compatibility
 
     # Open RCA panel
     When I click element with locator "[data-test='rca-toggle-button']"
-    When I pause
 
     # Verify RCA panel shows error state (no DOM snapshot available)
     When I wait 10 seconds for the element with locator "[data-test='rca-panel']" to be visible

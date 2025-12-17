@@ -28,6 +28,27 @@ This monorepo uses **Changesets** for version management and automated releases 
    - Publishes packages to npm using OIDC (no token needed for `@syngrisi/*` packages)
    - Creates a GitHub Release with auto-generated notes
 
+## Quick Release (Skip CI Tests)
+
+If tests have already been run locally and you want to release quickly:
+
+1. Create and push changeset as above
+2. **Manually trigger** the Release workflow with skip option:
+   ```bash
+   gh workflow run release.yml -f skip_ci_check=true
+   ```
+3. Wait for PR to be created, then merge it
+4. **Trigger release again** after merge (CI will start on merge commit):
+   ```bash
+   gh workflow run release.yml -f skip_ci_check=true
+   ```
+5. Verify packages on NPM:
+   ```bash
+   npm view @syngrisi/syngrisi version
+   ```
+
+> **Warning**: Do NOT use `[skip ci]` in commit messages — this blocks ALL workflows including the release workflow!
+
 ## Version Types
 
 - **patch** (2.4.0 → 2.4.1): Bug fixes, CI improvements, documentation
@@ -50,7 +71,33 @@ Other published packages (require NPM_TOKEN for publishing):
 
 ## Troubleshooting
 
-If release fails:
-1. Check GitHub Actions logs for errors
-2. For OIDC issues with non-scoped packages, add `NPM_TOKEN` secret or rename to `@syngrisi/` scope
-3. Create GitHub Release manually if needed: `gh release create vX.Y.Z --generate-notes`
+### Release workflow not triggered
+- Check if commit message contains `[skip ci]` — this blocks all workflows
+- Manually trigger: `gh workflow run release.yml -f skip_ci_check=true`
+
+### CI running after merge (tests taking too long)
+- Cancel CI: `gh run cancel <run_id>`
+- Trigger release manually with skip: `gh workflow run release.yml -f skip_ci_check=true`
+
+### GitHub Release created as Draft
+- Publish manually: `gh release edit vX.Y.Z --draft=false`
+
+### No GitHub Release created
+- Create manually: `gh release create vX.Y.Z --generate-notes`
+
+### OIDC/NPM publishing issues
+- For non-scoped packages, add `NPM_TOKEN` secret
+- Or rename package to `@syngrisi/` scope
+
+### Verify release
+```bash
+# Check NPM versions
+npm view @syngrisi/syngrisi version
+npm view @syngrisi/playwright-sdk version
+
+# Check GitHub releases
+gh release list --limit 3
+
+# Check local version after pull
+git pull && cat packages/syngrisi/package.json | grep version
+```
