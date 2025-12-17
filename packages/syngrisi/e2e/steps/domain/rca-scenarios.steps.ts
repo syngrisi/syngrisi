@@ -205,11 +205,15 @@ async function createBaselineTest(
     const port = await startScenarioServer(scenarioPath);
     testData.set('rcaScenarioPort', port);
 
-    // For RCA tests: if collectDom is explicitly true, always collect DOM
-    // Skip only if collectDom is false OR if SYNGRISI_DISABLE_DOM_DATA is explicitly 'true'
-    const shouldCollectDom = collectDom;
+    // DOM collection logic:
+    // - If collectDom is false, don't collect
+    // - If collectDom is true, check SYNGRISI_DISABLE_DOM_DATA env var:
+    //   - If 'false', collect DOM (enabled)
+    //   - Otherwise (undefined or 'true'), don't collect (disabled by default)
+    const skipDomData = process.env.SYNGRISI_DISABLE_DOM_DATA !== 'false';
+    const shouldCollectDom = collectDom && !skipDomData;
 
-    logger.info(`Capturing baseline from scenario: ${scenarioPath}, collectDom: ${collectDom}`);
+    logger.info(`Capturing baseline from scenario: ${scenarioPath}, collectDom: ${collectDom}, skipDomData: ${skipDomData}, shouldCollectDom: ${shouldCollectDom}`);
     const url = `http://127.0.0.1:${port}/`;
     const { screenshot, domDump } = await capturePageData(url, shouldCollectDom);
     logger.info(`Captured ${shouldCollectDom ? 'with' : 'without'} DOM data`);
@@ -314,10 +318,11 @@ async function createActualCheck(
 
     const port = await startScenarioServer(scenarioPath);
 
-    // For RCA tests: if collectDom is explicitly true, always collect DOM
-    const shouldCollectDom = collectDom;
+    // DOM collection logic (same as createBaselineTest)
+    const skipDomData = process.env.SYNGRISI_DISABLE_DOM_DATA !== 'false';
+    const shouldCollectDom = collectDom && !skipDomData;
 
-    logger.info(`Capturing actual from scenario: ${scenarioPath}, collectDom: ${collectDom}`);
+    logger.info(`Capturing actual from scenario: ${scenarioPath}, collectDom: ${collectDom}, skipDomData: ${skipDomData}, shouldCollectDom: ${shouldCollectDom}`);
     const url = `http://127.0.0.1:${port}/`;
     const { screenshot, domDump } = await capturePageData(url, shouldCollectDom);
 
