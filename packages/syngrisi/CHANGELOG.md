@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.1.3
+
+### Patch Changes
+
+-   [`2f215f0`](https://github.com/syngrisi/syngrisi/commit/2f215f09911772bd4afafa37b46c2647118dca57) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Fix RCA tests DOM data collection and HTTP test user creation retry logic
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.1.3
+
 ## 3.1.2
 
 ### Patch Changes
