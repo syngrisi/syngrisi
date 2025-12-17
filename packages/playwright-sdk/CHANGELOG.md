@@ -1,5 +1,14 @@
 # @syngrisi/playwright-sdk
 
+## 3.1.2
+
+### Patch Changes
+
+-   [`8fcaf5d`](https://github.com/syngrisi/syngrisi/commit/8fcaf5d3f6e3a1533c6a9f949a1cc0924f2c76dd) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Various bug fixes, UI improvements, and documentation updates.
+
+-   Updated dependencies [[`8fcaf5d`](https://github.com/syngrisi/syngrisi/commit/8fcaf5d3f6e3a1533c6a9f949a1cc0924f2c76dd)]:
+    -   @syngrisi/core-api@3.1.2
+
 ## 3.1.1
 
 ### Patch Changes
