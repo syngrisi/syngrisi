@@ -1,13 +1,12 @@
+@smoke @fast-server
 Feature: Group by Navigation
     Check Breadcrumbs, Title and Url changes behaviour on grouping changes
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+        # Server is managed by @fast-server hook automatically
         When I open the app
         When I clear local storage
 
-    @smoke
     Scenario Outline:  Group by - <groupBy>
         When I go to "main" page
         # runs
@@ -20,7 +19,7 @@ Feature: Group by Navigation
         Then the title is "<title>"
 
         Examples:
-            | groupBy       | title            | href                                       |
+            | groupBy       | title            | href                                |
             | Runs          | By Runs          | /?groupBy=runs                      |
             | Suites        | By Suites        | /?groupBy=suites                    |
             | Browsers      | By Browser       | /?groupBy=test-distinct/browserName |

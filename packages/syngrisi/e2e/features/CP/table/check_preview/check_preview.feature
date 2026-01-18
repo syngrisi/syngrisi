@@ -1,3 +1,4 @@
+@fast-server
 Feature: Check Preview - Display and Icons
 
   Background:

@@ -80,8 +80,17 @@ async function capturePageData(url: string, collectDom: boolean = true): Promise
         // COLLECT_DOM_TREE_SCRIPT returns JSON string, parse it to object
         let domDump: object | null = null;
         if (collectDom) {
-            const domDumpStr = await page.evaluate(DOM_COLLECTOR_SCRIPT) as string;
-            domDump = JSON.parse(domDumpStr);
+            try {
+                const domDumpStr = await page.evaluate(DOM_COLLECTOR_SCRIPT) as string | undefined;
+                if (domDumpStr && typeof domDumpStr === 'string') {
+                    domDump = JSON.parse(domDumpStr);
+                } else {
+                    logger.warn(`DOM collector returned invalid data: ${typeof domDumpStr}`);
+                }
+            } catch (domError) {
+                logger.warn(`Failed to collect DOM data: ${domError}`);
+                // Continue without DOM data
+            }
         }
 
         return { screenshot, domDump };

@@ -14,3 +14,6 @@ export { default as ShareToken } from './ShareToken.model';
 export type { ShareTokenDocument } from './ShareToken.model';
 export { default as DomSnapshot } from './DomSnapshot.model';
 export type { DomSnapshotDocument } from './DomSnapshot.model';
+export { default as PluginSettings } from './PluginSettings.model';
+export type { PluginSettingsDocument, PluginSettingSchema, PluginSettingValue } from './PluginSettings.model';
+

@@ -440,8 +440,8 @@ When('I open the url {string}', async ({ page, testData, appServer }: { page: Pa
     await ensureServerReady(appServer.serverPort);
   }
 
-  // Use networkidle to ensure all network requests complete (React Query data loading)
-  await page.goto(parsedUrl, { waitUntil: 'networkidle' });
+  // Use domcontentloaded to avoid timeouts when background polling is active
+  await page.goto(parsedUrl, { waitUntil: 'domcontentloaded' });
 });
 
 When('I set window size: {string}', async ({ page }, viewport: string) => {

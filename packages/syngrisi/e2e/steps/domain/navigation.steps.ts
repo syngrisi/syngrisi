@@ -23,7 +23,9 @@ When('I go to {string} page', async ({ page, appServer }: { page: Page; appServe
     admin2: `${baseURL}/admin`,
     logs: `${baseURL}/admin/logs`,
     settings: `${baseURL}/admin/settings`,
+    plugins: `${baseURL}/admin/plugins`,
     "admin/settings": `${baseURL}/admin/settings`,
+    "admin/plugins": `${baseURL}/admin/plugins`,
   };
 
   const adminPages: Record<string, Record<string, string>> = {

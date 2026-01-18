@@ -4,6 +4,7 @@ import {
     IconUsers,
     IconSettings,
     IconArticle, IconListDetails,
+    IconPlugConnected,
 } from '@tabler/icons-react';
 import { createStyles } from '@mantine/styles';
 import { LinksGroup } from '@admin/components/Navbar/NavbarLinksGroup';
@@ -17,6 +18,7 @@ const navbarItems = [
         icon: IconListDetails,
         links: taskLinks,
     },
+    { label: 'Plugins', icon: IconPlugConnected, link: '/admin/plugins' },
     { label: 'Settings', icon: IconSettings, link: '/admin/settings' },
 ];
 const useStyles = createStyles((theme) => ({
