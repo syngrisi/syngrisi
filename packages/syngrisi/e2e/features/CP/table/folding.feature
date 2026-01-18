@@ -1,9 +1,8 @@
-@smoke
+@smoke @fast-server
 Feature: Folding
 
   Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
+    # Server is managed by @fast-server hook automatically
     When I open the app
     When I clear local storage
 

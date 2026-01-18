@@ -2,9 +2,9 @@
 Feature: Check details - Regions
 
    Background:
-      When I open the app
+з      When I open the app
       When I clear local storage
-      Given I start Server and start Driver
+      # Server is managed by @fast-server hook automatically
       # Create first check and accept it to establish baseline
       Given I create "1" tests with:
          """

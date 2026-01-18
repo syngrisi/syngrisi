@@ -7,8 +7,7 @@ Feature: RCA - No DOM Data Scenarios
             SYNGRISI_AUTH: "false"
             SYNGRISI_TEST_MODE: "true"
             """
-        Given I start Server and start Driver
-        And I clear database
+
 
     Scenario: RCA shows message when no DOM data available
         Given I create RCA test with "html-changes/base" as baseline without DOM data

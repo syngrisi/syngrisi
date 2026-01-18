@@ -45,6 +45,12 @@ export type AppServerFixture = {
   };
   getBackendLogs: () => string;
   getFrontendLogs: () => string;
+  pid?: number;
+  exitInfo?: {
+    code: number | null;
+    signal: NodeJS.Signals | null;
+    message: string;
+  };
   restart: (force?: boolean) => Promise<void>;
   start: () => Promise<void>;
   stop: () => Promise<void>;
@@ -252,7 +258,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
 
       if (isFastMode || isFastModeReuse) {
         // Use wide, deterministic spacing to avoid port collisions across 15+ workers
-        const preferredPort = 3000 + cid * 50;
+        const preferredPort = 5100 + cid * 50;
         const portFindStart = performance.now();
         const workerPort = await findAvailablePort(preferredPort, 200);
         timingLogger.info(`[timing] Port finding: ${Math.round(performance.now() - portFindStart)}ms`);

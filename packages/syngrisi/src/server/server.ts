@@ -11,6 +11,7 @@ import { runMigrations } from '@lib/migrations';
 import { env } from '@env';
 import { errMsg } from './utils';
 import { appSettings } from '@settings';
+import { initPlugins } from './plugins';
 
 const logMeta = { scope: 'entrypoint' };
 
@@ -25,6 +26,10 @@ connectDB().then(async () => {
     await createBasicUsers();
     await createInitialSettings();
     if (config.testMode) await createTestsUsers();
+
+    // Initialize plugin system
+    log.info('Initializing plugin system', logMeta);
+    await initPlugins();
 
     const server = app.listen(config.port, () => {
         log.info(
