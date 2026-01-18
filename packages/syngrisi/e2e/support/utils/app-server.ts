@@ -101,7 +101,7 @@ export async function launchAppServer(
 
   // Determine port priority: options.env > process.env > default calculation
   const envPort = additionalEnv?.SYNGRISI_APP_PORT ?? runtimeEnv.SYNGRISI_APP_PORT;
-  const cidPort = envPort ? parseInt(envPort, 10) : 3002 + cid;
+  const cidPort = envPort ? parseInt(envPort, 10) : 5100 + cid;
 
   const baseURL = `http://${backendHost}:${cidPort}`;
 
@@ -374,7 +374,7 @@ export async function waitForServerStop(cid?: number, timeoutMs = 25000): Promis
 
   // If we can't determine the exact port easily (complex env overrides), we might rely on pkill only,
   // but for E2E standard runs:
-  const port = envPort ? parseInt(envPort, 10) : 3002 + effectiveCid;
+  const port = envPort ? parseInt(envPort, 10) : 5100 + effectiveCid;
 
   const startTs = Date.now();
   let forcedKillAttempted = false;
