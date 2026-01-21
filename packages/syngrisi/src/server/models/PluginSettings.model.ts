@@ -14,7 +14,7 @@ export interface PluginSettingValue {
 }
 
 export interface PluginSettingsDocument extends Document {
-    /** Unique plugin identifier (e.g., 'jwt-auth') */
+    /** Unique plugin identifier (e.g., 'jwt-auth', 'custom-validator') */
     pluginName: string;
 
     /** Plugin display name for UI */
@@ -121,7 +121,7 @@ PluginSettingsSchema.statics.getEffectiveConfig = async function (
 ): Promise<{ config: Record<string, PluginSettingValue>; enabled: boolean }> {
     const doc = await this.findOne({ pluginName });
 
-    // Build env key from plugin name (e.g., 'jwt-auth' -> 'jwt_AUTH')
+    // Build env key from plugin name (e.g., 'jwt-auth' -> 'JWT_AUTH')
     const envPluginKey = pluginName.toUpperCase().replace(/-/g, '_');
 
     // Check if enabled (DB has priority over ENV)

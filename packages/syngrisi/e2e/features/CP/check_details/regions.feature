@@ -2,8 +2,8 @@
 Feature: Check details - Regions
 
    Background:
-з      When I open the app
-      When I clear local storage
+      When I open the app
+      # When I clear local storage
       # Server is managed by @fast-server hook automatically
       # Create first check and accept it to establish baseline
       Given I create "1" tests with:

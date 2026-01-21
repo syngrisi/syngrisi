@@ -261,7 +261,7 @@ export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: Ne
     };
 
     return async (req: Request, res: Response, next: NextFunction) => {
-        // Try plugin authentication first (e.g., jwt JWT)
+        // Try plugin authentication first (e.g., JWT tokens from external IdP)
         try {
             const pluginAuthResult = await executeAuthHook(req, res);
             if (pluginAuthResult) {
