@@ -152,6 +152,7 @@ export const ConfigSchema = z.object({
     url: z.string().min(1),
     apiKey: z.string().optional(),
     apiHash: z.string().min(1).optional(),
+    headers: z.record(z.string(), z.string()).optional(),
 })
 
 export type Config = z.infer<typeof ConfigSchema>;
@@ -159,6 +160,7 @@ export type Config = z.infer<typeof ConfigSchema>;
 export const ConstructorParamsSchema = z.object({
     url: z.string().min(1),
     apiKey: z.string().optional(),
+    headers: z.record(z.string(), z.string()).optional(),
 })
 
 export type ConstructorParam = z.infer<typeof ConstructorParamsSchema>;

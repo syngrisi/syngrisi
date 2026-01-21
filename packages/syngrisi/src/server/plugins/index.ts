@@ -40,23 +40,38 @@ export async function initPlugins(): Promise<void> {
 
     // Build plugin configurations from environment
     const pluginConfigs: Record<string, Record<string, unknown>> = {
-        'okta-auth': {
-            jwksUrl: env.OKTA_JWKS_URL || 'https://login.corp.mongodb.com/.well-known/jwks.json',
-            issuer: env.OKTA_ISSUER || 'login.corp.mongodb.com',
-            serviceUserRole: env.OKTA_SERVICE_USER_ROLE || 'service',
-            headerName: env.OKTA_AUTH_HEADER || 'x-jwt-internal-authorization',
-        },
         'jwt-auth': {
-            jwksUrl: process.env.SYNGRISI_PLUGIN_jwt_AUTH_JWKS_URL || 'https://login.corp.mongodb.com/.well-known/jwks.json',
-            issuer: process.env.SYNGRISI_PLUGIN_jwt_AUTH_ISSUER || 'login.corp.mongodb.com',
-            serviceUserRole: process.env.SYNGRISI_PLUGIN_jwt_AUTH_SERVICE_USER_ROLE || 'service',
-            headerName: process.env.SYNGRISI_PLUGIN_jwt_AUTH_HEADER_NAME || 'x-jwt-internal-authorization',
+            jwksUrl: process.env.SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL,
+            issuer: process.env.SYNGRISI_PLUGIN_JWT_AUTH_ISSUER,
+            serviceUserRole: process.env.SYNGRISI_PLUGIN_JWT_AUTH_SERVICE_USER_ROLE || 'user',
+            headerName: process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_NAME || 'Authorization',
         },
         'custom-check-validator': {
             mismatchThreshold: parseFloat(env.CHECK_MISMATCH_THRESHOLD || '0'),
             scriptPath: env.CHECK_VALIDATOR_SCRIPT,
         },
     };
+
+    // Validate configuration for enabled plugins
+    if (enabledPlugins.includes('jwt-auth')) {
+        const jwtConfig = pluginConfigs['jwt-auth'];
+        if (!jwtConfig.jwksUrl || !jwtConfig.issuer) {
+            throw new Error(
+                'Missing required configuration for "jwt-auth" plugin. ' +
+                'Please set SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL and SYNGRISI_PLUGIN_JWT_AUTH_ISSUER environment variables.'
+            );
+        }
+
+        // Validate JWKS URL format
+        try {
+            new URL(jwtConfig.jwksUrl as string);
+        } catch (error) {
+            throw new Error(
+                `Invalid JWKS URL for "jwt-auth" plugin: "${jwtConfig.jwksUrl}". ` +
+                'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL must be a valid URL.'
+            );
+        }
+    }
 
     await loadPlugins({
         pluginsDir: env.SYNGRISI_PLUGINS_DIR,

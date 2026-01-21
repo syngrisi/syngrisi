@@ -29,6 +29,9 @@ When I announce: "Welcome! We are now on the main dashboard, which provides a co
 # Announce: Feature Explanation
 When I announce: "Notice how the side-by-side comparison mode helps you effortlessly spot even the smallest pixel differences."
 
+# Show progress step (Corner Overlay)
+When I set demo step 1 of 5: "Explaining diff view"
+
 # Announce: Success & Value
 When I announce: "Fantastic! The baseline has been successfully updated, ensuring your future test runs are accurate and reliable."
 
@@ -36,7 +39,7 @@ When I announce: "Fantastic! The baseline has been successfully updated, ensurin
 When I announce: "By simply clicking this 'Details' button, you can explore the complete history and settings of the baseline."
 When I announce: "If you press the 'Accept' button here, the system will automatically update the golden master for future checks."
 
-# Highlight an element with animated border
+# Highlight an element with animated "Liquid Glass" border
 When I highlight element "[data-test='submit-button']"
 
 # Clear all highlights
@@ -45,36 +48,51 @@ When I clear highlight
 # End demo with confetti animation
 When I end the demo
 
-# Debug variant: announce and pause execution
+# Debug variant: announce and pause execution (Works only in ENABLE_DEMO_MODE=true)
 When I announce: "The setup is complete. Pausing now so you can inspect the current state." and PAUSE
 ```
 
 ## Running Demo Tests
 
-Demo tests are in a separate Playwright project (`demo`) and are excluded from regular test runs. Use these commands:
+Demo tests are in a separate Playwright project (`demo`) and are excluded from regular test runs.
+
+There are two main modes:
+
+1.  **Silent Mode (Default)**: Shows visual effects (highlights, banners), but skips voice narration and blocking pauses. Fast and good for CI/Debugging.
+2.  **Demo Mode**: Full experience with Voice Narration (TTS) and blocking pauses.
 
 ```bash
-# Run all demo tests (headed mode by default)
+# Silent Mode (Default) - Visuals only, no voice, no pauses
 npm run test:demo
 
-# Run specific demo test
+# Full Demo Mode - Voice + Pauses + Visuals
+export ENABLE_DEMO_MODE=true && npm run test:demo
+
+# Run specific demo test (Silent)
 npx bddgen && npx playwright test --project=demo --grep "Demo name" --workers=1
 
-# Skip demo steps for faster debugging (recommended during development)
-export SKIP_DEMO_TESTS=true && npx bddgen && npx playwright test --project=demo --grep "your_demo" --workers=1
+# Run specific demo test (Full Demo)
+export ENABLE_DEMO_MODE=true && npx bddgen && npx playwright test --project=demo --grep "Demo name" --workers=1
 
-# Run with full demo experience (for final verification)
-npx bddgen && npx playwright test --project=demo --grep "your_demo" --workers=1
+# Skip ALL demo steps (for pure logic testing)
+export SKIP_DEMO_STEPS=true && npx bddgen && npx playwright test --project=demo --grep "your_demo" --workers=1
 ```
 
-### Benefits of SKIP_DEMO_TESTS=true during development:
+### Modes Breakdown
+
+| Feature                           | Default (Silent) | ENABLE_DEMO_MODE=true | SKIP_DEMO_STEPS=true |
+| :-------------------------------- | :--------------- | :-------------------- | :------------------- |
+| **Visuals** (Highlights, Banners) | ✅ Shown         | ✅ Shown              | ❌ Skipped           |
+| **Voice** (TTS)                   | ❌ Skipped       | ✅ Enabled            | ❌ Skipped           |
+| **Pauses** (`...and PAUSE`)       | ❌ Skipped       | ✅ Enabled            | ❌ Skipped           |
+| **Confetti**                      | ✅ Shown         | ✅ Shown              | ❌ Skipped           |
+
+### Benefits of Silent Mode (Default) during development:
 
 -   **Faster iteration**: Skip text-to-speech announcements (which can take several seconds each)
 -   **Focus on logic**: Verify test flow and assertions without waiting for narration
--   **CI compatibility**: Run tests in environments where demo features are not available
--   **No code changes**: Keep all demo steps in the feature file without commenting/uncommenting
-
-By default, `SKIP_DEMO_TESTS` is `false`, so demo steps execute normally when not explicitly set.
+-   **CI compatibility**: Run tests in environments where audio is not available
+-   **Visual Verification**: Still verify that highlights and banners appear correctly
 
 ## Development Workflow
 
@@ -86,6 +104,7 @@ Write your scenario with all demo steps included from the start:
 @demo
 Scenario: Demo: My Feature
     When I go to "main" page
+    When I set demo step 1 of 3: "Introduction"
     When I announce: "Welcome to the feature demonstration."
     When I highlight element "[data-test='my-button']"
     When I click element with locator "[data-test='my-button']"
@@ -98,27 +117,22 @@ Scenario: Demo: My Feature
 
 ### 2. `Silent mode` for Debug & Test Phase
 
-Run with `SKIP_DEMO_TESTS=true` to quickly iterate:
+Run without extra flags to quickly iterate (Visuals ON, Voice OFF):
 
 ```bash
-# Fast iteration without narration
-export SKIP_DEMO_TESTS=true && npx bddgen && npx playwright test --project=demo --grep "my_demo" --workers=1
+# Fast iteration with visual confirmation
+npx bddgen && npx playwright test --project=demo --grep "my_demo" --workers=1
 ```
 
-This skips all `announce`, `highlight`, `clear highlight`, and `end the demo` steps, allowing you to focus on:
-
--   Selector accuracy
--   Timing issues
--   Test logic flow
--   Assertions
+This skips voice generation and blocking pauses but keeps highlights and banners, allowing you to verify the visual flow.
 
 ### 3. Final Verification Phase
 
-Run with full demo experience to verify narration and visual effects:
+Run with full demo experience to verify narration and timing:
 
 ```bash
-# Full demo mode with narration and animations (headed by default in demo project)
-npx bddgen && npx playwright test --project=demo --grep "my_demo" --workers=1
+# Full demo mode with narration
+export ENABLE_DEMO_MODE=true && npx bddgen && npx playwright test --project=demo --grep "my_demo" --workers=1
 ```
 
 Verify:
@@ -127,24 +141,6 @@ Verify:
 -   Element highlights appear on correct elements
 -   Transitions are smooth
 -   Confetti animation plays at the end
-
-## Pre-run Checklist
-
-1. **Debug run**: Set `SKIP_DEMO_TESTS=true` and run the scenario locally to ensure all selectors, actions, and assertions work correctly without narration:
-
-    ```bash
-    export SKIP_DEMO_TESTS=true && npx bddgen && npx playwright test --project=demo --grep "<Scenario name>" --workers=1
-    ```
-
-2. **Full demo run**: Run with `SKIP_DEMO_TESTS=false` (or omit the variable) to verify announcements, highlights, and animations work correctly (demo project runs headed by default):
-
-    ```bash
-    npx bddgen && npx playwright test --project=demo --grep "<Scenario name>" --workers=1
-    ```
-
-3. **Documentation**: When sharing the demo with users, provide both commands:
-    - **Silent Mode**: `export SKIP_DEMO_TESTS=true && yarn run test:demo`
-    - **Full demo mode**: `npm run test:demo`
 
 ## Critical Rules
 

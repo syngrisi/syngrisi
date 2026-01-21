@@ -86,10 +86,11 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_PLUGINS_DIR: str({ default: '' }),       // Directory for external plugins
 
     // Okta Auth Plugin
-    OKTA_JWKS_URL: str({ default: 'https://login.corp.mongodb.com/.well-known/jwks.json' }),
-    OKTA_ISSUER: str({ default: 'login.corp.mongodb.com' }),
-    OKTA_SERVICE_USER_ROLE: str({ choices: ['', 'user', 'admin', 'reviewer', 'service'], default: 'service' }),
-    OKTA_AUTH_HEADER: str({ default: 'x-jwt-internal-authorization' }),
+    // Deprecated: Use SYNGRISI_PLUGIN_JWT_AUTH_* variables instead
+    OKTA_JWKS_URL: str({ default: '' }),
+    OKTA_ISSUER: str({ default: '' }),
+    OKTA_SERVICE_USER_ROLE: str({ default: '' }),
+    OKTA_AUTH_HEADER: str({ default: '' }),
 
     // Custom Check Validator Plugin
     CHECK_MISMATCH_THRESHOLD: str({ default: '0' }),  // Mismatch % below which checks pass

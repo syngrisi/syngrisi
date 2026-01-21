@@ -110,6 +110,37 @@ export const updatePluginSettings = async (req: Request, res: Response): Promise
         const { pluginName } = req.params;
         const { enabled, settings, displayName, description, settingsSchema } = req.body;
 
+        // Validate jwt-auth configuration if being enabled or updated
+        if (pluginName === 'jwt-auth' && (enabled || settings)) {
+            const effectiveConfig = await PluginSettings.getEffectiveConfig(pluginName);
+            const newSettings = settings || effectiveConfig.config;
+
+            // Check for required fields
+            const jwksUrl = newSettings.jwksUrl?.value || settings?.jwksUrl;
+            const issuer = newSettings.issuer?.value || settings?.issuer;
+
+            if (enabled && (!jwksUrl || !issuer)) {
+                res.status(400).json({
+                    error: 'Missing required configuration for jwt-auth plugin',
+                    details: 'jwksUrl and issuer are required when enabling jwt-auth plugin'
+                });
+                return;
+            }
+
+            // Validate JWKS URL format if provided
+            if (jwksUrl) {
+                try {
+                    new URL(jwksUrl);
+                } catch (error) {
+                    res.status(400).json({
+                        error: 'Invalid JWKS URL format',
+                        details: `jwksUrl must be a valid URL: ${jwksUrl}`
+                    });
+                    return;
+                }
+            }
+        }
+
         const updates: Record<string, unknown> = {};
         if (enabled !== undefined) updates.enabled = enabled;
         if (settings !== undefined) updates.settings = settings;
