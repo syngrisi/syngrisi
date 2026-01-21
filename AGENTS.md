@@ -2,21 +2,28 @@
 
 ## Common rules
 
-- Answer in the language you are asked in.
-- Always write comments and debug messages in your code in English.
+-   Answer in the language you are asked in.
+-   Always write comments and debug messages in your code in English.
+
+## Design & Coding Principles
+
+-   не усложнять, без оверинжиниринга, но с сохранением требуемой функциональности
+-   решай проблемы самым простым способом
+-   используй и переиспользуй имеющиеся сущности и не создавай новых без особой на то необходимости
+-   доверяй фреймворкам, не делай ненужных слоев оберток
+-   не вводи слоев абстракции без необходимости
 
 ## Release Process
 
 See [Release Cycle Documentation](docs/RELEASE_CYCLE.md) for detailed instructions on versioning, changelogs, and publishing packages.
 
-
 ## E2E Testing Guides
 
-- [Run Tests Guide](packages/syngrisi/docs/agent/guides/run_test.md)
-- [Common Steps Cheatsheet](packages/syngrisi/docs/agent/guides/common_steps_cheatsheet.md)
-- [MCP Test Engine Usage](packages/syngrisi/docs/agent/guides/mcp_test_engine_using.md)
-- [Quick Test Generation](packages/syngrisi/docs/agent/guides/test-generate-quick.md)
-- [All Guides Index](packages/syngrisi/docs/agent/INDEX.md)
+-   [Run Tests Guide](packages/syngrisi/docs/agent/guides/run_test.md)
+-   [Common Steps Cheatsheet](packages/syngrisi/docs/agent/guides/common_steps_cheatsheet.md)
+-   [MCP Test Engine Usage](packages/syngrisi/docs/agent/guides/mcp_test_engine_using.md)
+-   [Quick Test Generation](packages/syngrisi/docs/agent/guides/test-generate-quick.md)
+-   [All Guides Index](packages/syngrisi/docs/agent/INDEX.md)
 
 ## Definition of Done (DoD) Checklist
 

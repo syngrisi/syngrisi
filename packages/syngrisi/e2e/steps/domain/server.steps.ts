@@ -1,4 +1,4 @@
-import { When, Given } from '@fixtures';
+import { When, Given, Then } from '@fixtures';
 import type { AppServerFixture } from '@fixtures';
 import { createLogger } from '@lib/logger';
 import * as yaml from 'yaml';
@@ -12,6 +12,8 @@ import type { TestStore } from '@fixtures';
 import * as path from 'path';
 import { execSync } from 'child_process';
 import * as fs from 'fs';
+import { requestWithSession } from '@utils/http-client';
+import { expect } from '@playwright/test';
 import { hasTag } from '@utils/common';
 import type { BddContext } from 'playwright-bdd/dist/runtime/bddContext';
 
@@ -268,3 +270,63 @@ When(
     resetTestCreationState(testData);
   }
 );
+
+let lastStartError: Error | null = null;
+
+When(
+  'I try to start Server',
+  async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
+    try {
+      if (appServer.baseURL) {
+        logger.info('Server is running, force restarting to apply new env variables');
+        await appServer.restart(true);
+      } else {
+        logger.info('Starting server...');
+        await appServer.start();
+      }
+      lastStartError = null;
+
+      // If successful, still update state as usual
+      restartAfterEnvSet.set(getCid(), false);
+      const syngrisiUrl = `${appServer.baseURL}/`;
+      testData.set('syngrisiUrl', syngrisiUrl);
+      resetTestCreationState(testData);
+    } catch (e) {
+      lastStartError = e as Error;
+      logger.info(`Expected server start failure: ${e}`);
+    }
+  }
+);
+
+Then('the server should fail to start', async () => {
+  if (!lastStartError) {
+    throw new Error('Server started successfully but was expected to fail');
+  }
+});
+
+Then('the error message should contain {string}', async ({ }, errorMessage: string) => {
+  if (!lastStartError) {
+    throw new Error('No error captured from server start');
+  }
+  if (!lastStartError.message.includes(errorMessage)) {
+    throw new Error(`Error message "${lastStartError.message}" does not contain "${errorMessage}"`);
+  }
+});
+
+Then('the server should start successfully', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
+  if (lastStartError) {
+    throw new Error(`Server failed to start: ${lastStartError}`);
+  }
+  // Verify it's actually running
+  expect(appServer.baseURL).toBeTruthy();
+
+  // Check if we can reach it
+  const response = await requestWithSession(`${appServer.baseURL}/v1/app/info`, testData, appServer);
+  expect(response.raw.statusCode).toBe(200);
+});
+
+Then('plugin {string} should be loaded', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, pluginName: string) => {
+  const response = await requestWithSession(`${appServer.baseURL}/v1/plugins/${pluginName}`, testData, appServer);
+  expect(response.raw.statusCode).toBe(200);
+  expect(response.json.loaded).toBe(true);
+});

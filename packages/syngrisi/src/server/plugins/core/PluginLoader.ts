@@ -73,9 +73,8 @@ async function loadBuiltinPlugins(
     configs: Record<string, Record<string, unknown>>
 ): Promise<void> {
     const builtinPlugins: Record<string, () => Promise<{ default: PluginExport }>> = {
-        'okta-auth': () => import('../builtin/okta-auth'),
-        'custom-check-validator': () => import('../builtin/custom-check-validator'),
         'jwt-auth': () => import('../builtin/jwt-auth'),
+        'custom-check-validator': () => import('../builtin/custom-check-validator'),
     };
 
     for (const pluginName of enabledPlugins) {
