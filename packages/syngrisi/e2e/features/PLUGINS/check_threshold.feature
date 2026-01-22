@@ -1,4 +1,4 @@
-@fast-server
+@fast-server @mode:serial
 Feature: Plugin System - Check Mismatch Threshold
 
   This feature tests the custom-check-validator plugin that allows

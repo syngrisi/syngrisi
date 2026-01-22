@@ -459,19 +459,20 @@ Then(
         await expect(panel).toBeVisible();
 
         const errorLocator = page.locator('[data-test="rca-error-message"]').first();
-        const panelText = (await panel.textContent()) || '';
-        const errorText = (await errorLocator.count()) > 0 ? (await errorLocator.textContent()) || '' : '';
-        const combinedText = `${panelText} ${errorText}`.trim();
-        logger.info(`RCA panel content: ${combinedText.substring(0, 200)}...`);
+        await expect.poll(async () => {
+            const panelText = (await panel.textContent()) || '';
+            const errorText = (await errorLocator.count()) > 0 ? (await errorLocator.textContent()) || '' : '';
+            const combinedText = `${panelText} ${errorText}`.trim();
+            // logger.info(`RCA panel content: ${combinedText.substring(0, 200)}...`);
 
-        const normalized = combinedText.toLowerCase();
-        const hasNoDomMessage = normalized.includes('no dom') ||
-            normalized.includes('not available') ||
-            normalized.includes('no data') ||
-            normalized.includes('dom snapshot') ||
-            normalized.includes('failed to fetch');
-
-        expect(hasNoDomMessage || normalized.includes('error')).toBeTruthy();
+            const normalized = combinedText.toLowerCase();
+            return normalized.includes('no dom') ||
+                normalized.includes('not available') ||
+                normalized.includes('no data') ||
+                normalized.includes('dom snapshot') ||
+                normalized.includes('failed to fetch') ||
+                normalized.includes('error');
+        }, { timeout: 10000 }).toBeTruthy();
     }
 );
 

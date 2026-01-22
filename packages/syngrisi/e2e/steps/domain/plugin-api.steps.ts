@@ -13,7 +13,7 @@ When(
     'I update plugin {string} settings via API:',
     async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, pluginName: string, json: string) => {
         const payload = JSON.parse(json);
-        const uri = `${appServer.baseURL}/v1/plugins/${pluginName}`;
+        const uri = `${appServer.baseURL}/v1/plugin-settings/${pluginName}`;
 
         logger.info(`Updating plugin ${pluginName} settings via PUT ${uri}`);
         logger.info(`Payload: ${json}`);

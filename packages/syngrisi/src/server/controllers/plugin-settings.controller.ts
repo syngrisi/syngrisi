@@ -233,12 +233,17 @@ export const registerPluginSchema = async (
                 }
             );
         } else {
+            // Check environment variable for initial enabled state
+            const envPluginKey = pluginName.toUpperCase().replace(/-/g, '_');
+            const envEnabledKey = `SYNGRISI_PLUGIN_${envPluginKey}_ENABLED`;
+            const initialEnabled = process.env[envEnabledKey]?.toLowerCase() === 'true';
+
             // Create new entry
             await PluginSettings.create({
                 pluginName,
                 displayName,
                 description,
-                enabled: false,
+                enabled: initialEnabled,
                 settings: {},
                 settingsSchema,
             });

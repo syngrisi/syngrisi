@@ -36,6 +36,7 @@ export interface RunningAppServer {
 export type LaunchAppServerOptions = {
   env?: Record<string, string>;
   cid?: number;
+  noRetry?: boolean; // Skip retry logic for validation tests that expect startup failure
 };
 
 function getCid(): number {
@@ -179,7 +180,8 @@ export async function launchAppServer(
   };
 
   // Retry logic for backend early exit (SIGINT during startup)
-  const maxRetries = 5;
+  // noRetry option disables retries for validation tests that expect startup failure
+  const maxRetries = options.noRetry ? 1 : 5;
   let lastError: Error | null = null;
   let backend: Child | null = null;
   let backendLogs: () => string = () => '';
@@ -434,7 +436,7 @@ function startBackendLogCapture(child: Child): () => string {
 }
 
 async function terminateProcess(child: Child | undefined): Promise<void> {
-  if (!child || child.killed) return;
+  if (!child || child.killed || child.exitCode !== null || child.signalCode !== null) return;
 
   child.kill("SIGTERM");
   const exit = once(child, "exit");

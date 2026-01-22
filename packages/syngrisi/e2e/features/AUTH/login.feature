@@ -57,7 +57,7 @@ Feature: Login
     When I login with user:"asd" password "PasswordInvEmail-567"
     Then the element with locator ".mantine-Input-wrapper + div.mantine-InputWrapper-error" should have contains text "Invalid email"
 
-  @flaky
+  @flaky @mode:serial
   Scenario: Redirect via origin url
     When I reload session
     When I open the url "/?groupBy=test-distinct%2FbrowserName"
