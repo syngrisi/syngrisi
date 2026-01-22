@@ -4,7 +4,7 @@ import { createLogger } from '@lib/logger';
 import * as yaml from 'yaml';
 import { env } from '@config';
 import { stopServerProcess, waitForServerStop } from '@utils/app-server';
-import { clearDatabase } from '@utils/db-cleanup';
+import { clearDatabase, clearPluginSettings } from '@utils/db-cleanup';
 import { resolveRepoRoot } from '@utils/fs';
 import { setSkipAutoStart } from '@fixtures';
 import { SyngrisiDriver } from '@syngrisi/wdio-sdk';
@@ -68,6 +68,7 @@ Given(
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
     // Always start server (even if it was stopped by "I clear Database and stop Server")
     logger.info('Starting server...');
+    lastStartError = null;
     await appServer.start();
     restartAfterEnvSet.set(getCid(), false);
 
@@ -101,6 +102,7 @@ Given(
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
     // Start server if not already running, or FORCE restart to apply new env variables
     // Force restart is necessary because env vars may have changed (e.g., SSO config)
+    lastStartError = null;
     if (appServer.baseURL) {
       logger.info('Server is running, force restarting to apply new env variables');
       await appServer.restart(true); // Force restart to apply new env
@@ -243,6 +245,13 @@ When(
 );
 
 When(
+  'I clear plugin {string} settings from database',
+  async ({ }, pluginName: string) => {
+    await clearPluginSettings(pluginName);
+  }
+);
+
+When(
   'I clear screenshots folder',
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
     logger.info('Clearing screenshots folder...');
@@ -278,11 +287,16 @@ When(
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
     try {
       if (appServer.baseURL) {
-        logger.info('Server is running, force restarting to apply new env variables');
-        await appServer.restart(true);
+        logger.info('Server is running, force restarting (no retry) to apply new env variables');
+        await appServer.restart(true, true); // noRetry: true for validation tests
       } else {
-        logger.info('Starting server...');
-        await appServer.start();
+        logger.info('Starting server (no retry mode for validation tests)...');
+        // Use startNoRetry if available (fails immediately on startup error)
+        if (appServer.startNoRetry) {
+          await appServer.startNoRetry();
+        } else {
+          await appServer.start();
+        }
       }
       lastStartError = null;
 
@@ -326,7 +340,7 @@ Then('the server should start successfully', async ({ appServer, testData }: { a
 });
 
 Then('plugin {string} should be loaded', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, pluginName: string) => {
-  const response = await requestWithSession(`${appServer.baseURL}/v1/plugins/${pluginName}`, testData, appServer);
+  const response = await requestWithSession(`${appServer.baseURL}/v1/plugin-settings/${pluginName}`, testData, appServer);
   expect(response.raw.statusCode).toBe(200);
-  expect(response.json.loaded).toBe(true);
+  expect(response.json.enabled).toBe(true);
 });
