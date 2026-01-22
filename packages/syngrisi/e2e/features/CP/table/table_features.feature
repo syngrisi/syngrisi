@@ -1,4 +1,4 @@
-@fast-server
+@fast-server @mode:serial
 Feature: Tests Table Features
 
   Background:

@@ -1,4 +1,4 @@
-@rca @fast-server @smoke
+@rca @fast-server @smoke @mode:serial
 Feature: RCA - No DOM Data Scenarios
 
     Background:
@@ -6,7 +6,11 @@ Feature: RCA - No DOM Data Scenarios
             """
             SYNGRISI_AUTH: "false"
             SYNGRISI_TEST_MODE: "true"
+            SYNGRISI_RCA: "true"
+            SYNGRISI_DISABLE_DOM_DATA: "true"
             """
+        Given I start Server and start Driver
+        And I clear database
 
 
     Scenario: RCA shows message when no DOM data available

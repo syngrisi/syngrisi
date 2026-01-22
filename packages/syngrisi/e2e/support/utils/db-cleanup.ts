@@ -149,3 +149,14 @@ export async function clearDatabase(
 
   await Promise.all(tasks);
 }
+
+export async function clearPluginSettings(pluginName: string): Promise<number> {
+  const cid = getCid();
+  const dbUri = resolveDbUri(cid);
+  const client = await getPooledClient(dbUri);
+  const db = client.db();
+  const collection = db.collection('vrsappsettings');
+  const result = await collection.deleteOne({ name: pluginName });
+  logger.info(`Cleared settings for plugin "${pluginName}". Deleted count: ${result.deletedCount}`);
+  return result.deletedCount;
+}

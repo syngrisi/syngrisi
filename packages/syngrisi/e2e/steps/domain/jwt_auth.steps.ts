@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import { test } from '../../support/fixtures';
 import { PlaywrightDriver } from '@syngrisi/playwright-sdk';
+import { MongoClient } from 'mongodb';
 
 const { Given, When, Then, After } = createBdd(test);
 
@@ -32,6 +33,9 @@ Given('I enable the "jwt-auth" plugin with the following config:', async ({ appS
 
     // Configure via Environment Variables (Robust against API crashes)
     process.env.SYNGRISI_PLUGINS_ENABLED = 'jwt-auth';
+    process.env.SYNGRISI_AUTH = 'true';
+    process.env.SYNGRISI_AUTH_OVERRIDE = 'true';
+    process.env.SYNGRISI_API_KEY = 'dummy-api-key';
 
     if (config.jwksUrl) process.env.SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL = config.jwksUrl;
     if (config.issuer) process.env.SYNGRISI_PLUGIN_JWT_AUTH_ISSUER = config.issuer;
@@ -43,9 +47,18 @@ Given('I enable the "jwt-auth" plugin with the following config:', async ({ appS
 
     console.log('Restarting server with new JWT Auth ENV configuration...');
     await appServer.restart(true);
+
+    // Wait for server to fully stabilize with JWT plugin
+    // This prevents "socket hang up" errors from happening when server isn't ready
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    console.log('Server restarted and ready with JWT Auth plugin');
 });
 
 When('I perform a visual check with a valid JWT token', async ({ page, appServer, mockJwks }) => {
+    // Reset state from previous tests
+    lastError = undefined;
+    checkResult = undefined;
+
     const payload = {
         sub: 'test-subject',
         cid: 'test-client-id',
@@ -102,6 +115,10 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
 });
 
 When('I perform a visual check with an invalid JWT token', async ({ page, appServer, mockJwks }) => {
+    // Reset state from previous tests
+    lastError = undefined;
+    checkResult = undefined;
+
     const payload = { sub: 'test-subject', client_id: 'test-client-id' };
     const token = await mockJwks.signInvalidToken(payload);
 
@@ -145,15 +162,29 @@ Then('the check should be accepted', async () => {
     expect(checkResult._id).toBeDefined();
 });
 
-Then('a user {string} should exist in the database', async ({ request, appServer }, username) => {
-    // Check via API
-    // Need admin access or the user itself. 
-    // Syngrisi usually allows get user by ID or username if admin.
-    const response = await request.get(`${appServer.baseURL}/v1/users/${username}`);
+Then('a user {string} should exist in the database', async ({ }, username) => {
+    // Determine CID and DB URI (consistent with db-cleanup.ts and app-server.ts)
+    const cid = process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
+    const dbUri = `mongodb://127.0.0.1/SyngrisiDbTest${cid}`;
 
-    expect(response.status()).toBe(200);
-    const user = await response.json();
-    expect(user.username).toBe(username);
+    const client = new MongoClient(dbUri);
+    try {
+        await client.connect();
+        const db = client.db();
+
+        // Find user by username
+        // Note: The username argument comes from feature file (e.g. "jwt-service:test-client-id")
+        const allUsers = await db.collection('vrsusers').find({}, { projection: { username: 1 } }).toArray();
+        console.log(`DEBUG: Users in DB (${db.databaseName}):`, allUsers.map(u => u.username).join(', '));
+
+        const user = await db.collection('vrsusers').findOne({ username: username });
+
+        expect(user, `User '${username}' should exist in database ${db.databaseName}`).not.toBeNull();
+        expect(user?.username).toBe(username);
+        console.log(`Verified user ${username} exists in DB`);
+    } finally {
+        await client.close();
+    }
 });
 
 Then('the check should be rejected with status {int}', async ({ }, statusCode) => {

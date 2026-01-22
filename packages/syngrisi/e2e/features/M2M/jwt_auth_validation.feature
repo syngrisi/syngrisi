@@ -1,4 +1,4 @@
-@m2m @jwt-auth @validation
+@m2m @jwt-auth @validation @mode:serial @no-app-start
 Feature: JWT Plugin Configuration Validation
 
     Scenario: Server should fail to start with missing JWKS URL
@@ -28,6 +28,7 @@ Feature: JWT Plugin Configuration Validation
         And the error message should contain "SYNGRISI_PLUGIN_JWT_AUTH_ISSUER"
 
     Scenario: Server should fail to start with invalid JWKS URL format
+        Given I clear plugin "jwt-auth" settings from database
         Given I set env variables:
             """
             SYNGRISI_AUTH: false
@@ -41,6 +42,7 @@ Feature: JWT Plugin Configuration Validation
         And the error message should contain "Invalid JWKS URL"
 
     Scenario: Runtime validation via Admin API - Missing JWKS URL
+        Given I clear plugin "jwt-auth" settings from database
         Given I set env variables:
             """
             SYNGRISI_AUTH: false
@@ -62,6 +64,7 @@ Feature: JWT Plugin Configuration Validation
         And the API response should contain "jwksUrl and issuer are required"
 
     Scenario: Runtime validation via Admin API - Invalid JWKS URL format
+        Given I clear plugin "jwt-auth" settings from database
         Given I set env variables:
             """
             SYNGRISI_AUTH: false
@@ -83,6 +86,7 @@ Feature: JWT Plugin Configuration Validation
         And the API response should contain "Invalid JWKS URL format"
 
     Scenario: Valid configuration should be accepted
+        Given I clear plugin "jwt-auth" settings from database
         Given I set env variables:
             """
             SYNGRISI_AUTH: false
@@ -90,6 +94,7 @@ Feature: JWT Plugin Configuration Validation
             SYNGRISI_PLUGINS_ENABLED: jwt-auth
             SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL: https://example.com/.well-known/jwks.json
             SYNGRISI_PLUGIN_JWT_AUTH_ISSUER: test-issuer
+            SYNGRISI_PLUGIN_JWT_AUTH_ENABLED: true
             """
         When I start Server
         Then the server should start successfully

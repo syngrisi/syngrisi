@@ -236,6 +236,23 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
         msgType: 'AUTH_API',
     };
     return async (req: Request, res: Response, next: NextFunction) => {
+        // Try plugin authentication first (e.g., JWT tokens)
+        try {
+            const pluginAuthResult = await executeAuthHook(req, res);
+            if (pluginAuthResult) {
+                if (pluginAuthResult.authenticated && pluginAuthResult.user) {
+                    req.user = pluginAuthResult.user;
+                    return next();
+                }
+                if (pluginAuthResult.authenticated === false) {
+                    log.info(`Plugin auth failed: ${pluginAuthResult.error}`, logOpts);
+                    return res.status(401).json({ error: pluginAuthResult.error || 'Plugin authentication failed' });
+                }
+            }
+        } catch (error) {
+            log.error(`Error in plugin auth: ${error}`, logOpts);
+        }
+
         const rawApiKey = req.headers.apikey ?? req.query.apikey;
         const result = await handleAPIAuth(rawApiKey);
         req.user = req.user || result.user;
@@ -244,8 +261,7 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
         }
         if (result.type !== 'success') {
             log.info(`${result.value} - ${req.originalUrl}`, logOpts);
-            res.status(result.status).json({ error: result.value });
-            return next(new Error(result.value));
+            return res.status(result.status).json({ error: result.value });
         }
         if ('apikey' in req.headers) {
             delete (req.headers as Record<string, unknown>).apikey;
@@ -272,8 +288,7 @@ export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: Ne
                 }
                 if (pluginAuthResult.authenticated === false) {
                     log.info(`Plugin auth failed: ${pluginAuthResult.error}`, logOpts);
-                    res.status(401).json({ error: pluginAuthResult.error || 'Plugin authentication failed' });
-                    return next(new Error(pluginAuthResult.error || 'Plugin authentication failed'));
+                    return res.status(401).json({ error: pluginAuthResult.error || 'Plugin authentication failed' });
                 }
             }
             // pluginAuthResult === null means skip plugin auth, try other methods
@@ -425,8 +440,7 @@ export function ensureLoggedInOrApiKeyOrShareToken(): (req: Request, res: Respon
 
         if (apiKeyResult.type !== 'success') {
             log.info(`Unauthorized - ${req.originalUrl}`, logOpts);
-            res.status(401).json({ error: `Unauthorized - ${req.originalUrl}` });
-            return next(new Error(`Unauthorized - ${req.originalUrl}`));
+            return res.status(401).json({ error: `Unauthorized - ${req.originalUrl}` });
         }
         if ('apikey' in req.headers) {
             delete (req.headers as Record<string, unknown>).apikey;

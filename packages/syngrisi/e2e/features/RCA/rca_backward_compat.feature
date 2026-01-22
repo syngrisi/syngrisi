@@ -1,4 +1,4 @@
-@fast-server @smoke
+@fast-server @smoke @mode:serial
 Feature: RCA Backward Compatibility
 
   Background:
