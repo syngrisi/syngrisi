@@ -155,8 +155,8 @@ export async function clearPluginSettings(pluginName: string): Promise<number> {
   const dbUri = resolveDbUri(cid);
   const client = await getPooledClient(dbUri);
   const db = client.db();
-  const collection = db.collection('vrsappsettings');
-  const result = await collection.deleteOne({ name: pluginName });
+  const collection = db.collection('vrspluginsettings');
+  const result = await collection.deleteOne({ pluginName });
   logger.info(`Cleared settings for plugin "${pluginName}". Deleted count: ${result.deletedCount}`);
   return result.deletedCount;
 }

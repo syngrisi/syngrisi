@@ -3,6 +3,10 @@ import { createBdd } from 'playwright-bdd';
 import { test } from '../../support/fixtures';
 import { PlaywrightDriver } from '@syngrisi/playwright-sdk';
 import { MongoClient } from 'mongodb';
+import fs from 'fs';
+import path from 'path';
+import { resolveRepoRoot } from '@utils/fs';
+import { clearPluginSettings } from '@utils/db-cleanup';
 
 const { Given, When, Then, After } = createBdd(test);
 
@@ -10,6 +14,23 @@ const { Given, When, Then, After } = createBdd(test);
 let driver: PlaywrightDriver;
 let checkResult: any;
 let lastError: any;
+let cachedImageBuffer: Buffer | null = null;
+
+const getSampleImageBuffer = (): Buffer => {
+    if (cachedImageBuffer) return cachedImageBuffer;
+    const repoRoot = resolveRepoRoot();
+    const imagePath = path.join(repoRoot, 'e2e', 'files', 'A.png');
+    cachedImageBuffer = fs.readFileSync(imagePath);
+    return cachedImageBuffer;
+};
+
+const getAuthHeaderName = (): string => {
+    return process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_NAME || 'Authorization';
+};
+
+const getAuthHeaderPrefix = (): string => {
+    return process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_PREFIX || 'Bearer ';
+};
 
 // Clean up environment variables after scenarios
 After(async () => {
@@ -31,8 +52,12 @@ Given('I enable the "jwt-auth" plugin with the following config:', async ({ appS
         config.jwksUrl = mockJwks.jwksUrl;
     }
 
+    // Ensure DB settings do not disable the plugin
+    await clearPluginSettings('jwt-auth');
+
     // Configure via Environment Variables (Robust against API crashes)
     process.env.SYNGRISI_PLUGINS_ENABLED = 'jwt-auth';
+    process.env.SYNGRISI_PLUGIN_JWT_AUTH_ENABLED = 'true';
     process.env.SYNGRISI_AUTH = 'true';
     process.env.SYNGRISI_AUTH_OVERRIDE = 'true';
     process.env.SYNGRISI_API_KEY = 'dummy-api-key';
@@ -60,7 +85,7 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
     checkResult = undefined;
 
     const payload = {
-        sub: 'test-subject',
+        sub: 'test-client-id',
         cid: 'test-client-id',
         client_id: 'test-client-id',
         scp: ['syngrisi:api:read', 'syngrisi:api:write']
@@ -70,16 +95,18 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
     console.log(`[DEBUG] appServer.baseURL: '${appServer.baseURL}'`);
 
     const normalizedURL = appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`;
-
-    // Hybrid Auth Verification: Set ENV token
-    // process.env.SYNGRISI_AUTH_TOKEN = token;
+    const headerName = getAuthHeaderName();
+    let headerPrefix = getAuthHeaderPrefix();
+    if (headerPrefix && !headerPrefix.endsWith(' ')) {
+        headerPrefix = `${headerPrefix} `;
+    }
 
     driver = new PlaywrightDriver({
         page,
         url: normalizedURL,
-        apiKey: 'dummy-api-key',
+        apiKey: '',
         headers: {
-            'Authorization': `Bearer ${token}`
+            [headerName]: `${headerPrefix}${token}`,
         }
     });
 
@@ -95,7 +122,7 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
             }
         });
 
-        const imageBuffer = Buffer.from('fake-image-data');
+        const imageBuffer = getSampleImageBuffer();
 
         checkResult = await driver.check({
             checkName: 'JWT Auth Check',
@@ -123,13 +150,18 @@ When('I perform a visual check with an invalid JWT token', async ({ page, appSer
     const token = await mockJwks.signInvalidToken(payload);
 
     const normalizedURL = appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`;
+    const headerName = getAuthHeaderName();
+    let headerPrefix = getAuthHeaderPrefix();
+    if (headerPrefix && !headerPrefix.endsWith(' ')) {
+        headerPrefix = `${headerPrefix} `;
+    }
 
     driver = new PlaywrightDriver({
         page,
         url: normalizedURL,
-        apiKey: 'dummy-api-key',
+        apiKey: '',
         headers: {
-            'Authorization': `Bearer ${token}`
+            [headerName]: `${headerPrefix}${token}`,
         }
     });
 
@@ -193,7 +225,11 @@ Then('the check should be rejected with status {int}', async ({ }, statusCode) =
         console.log('Actual error:', lastError);
     }
     expect(lastError).toBeDefined();
-    // Handle SDK error format
+    const responseStatus = lastError?.response?.statusCode || lastError?.statusCode;
+    if (responseStatus) {
+        expect(responseStatus).toBe(statusCode);
+        return;
+    }
     const errorMsg = lastError?.message || lastError?.toString() || '';
     expect(errorMsg).toContain(statusCode.toString());
 });

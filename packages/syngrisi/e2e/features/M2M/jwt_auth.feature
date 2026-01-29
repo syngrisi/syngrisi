@@ -11,7 +11,7 @@ Feature: JWT M2M Authentication
             | issuer          | e2e-test-issuer |
             | autoProvision   | true            |
             | serviceUserRole | user            |
-            | headerName      | Authorization   |
+            | headerName      | X-Kanopy-Internal-Authorization |
             | headerPrefix    | Bearer          |
 
         When I perform a visual check with a valid JWT token
@@ -23,6 +23,8 @@ Feature: JWT M2M Authentication
             | key     | value           |
             | jwksUrl | {mockJwksUrl}   |
             | issuer  | e2e-test-issuer |
+            | headerName | X-Kanopy-Internal-Authorization |
+            | headerPrefix | Bearer |
 
         When I perform a visual check with an invalid JWT token
         Then the check should be rejected with status 401
