@@ -5,10 +5,12 @@ Feature: Plugin System - Check Mismatch Threshold
   checks with mismatch percentage below a configured threshold to pass.
 
   Background:
+    Given I clear plugin "custom-check-validator" settings from database
     When I set env variables:
       """
       SYNGRISI_PLUGINS_ENABLED: custom-check-validator
       CHECK_MISMATCH_THRESHOLD: 0.5
+      SYNGRISI_PLUGIN_CUSTOM_CHECK_VALIDATOR_ENABLED: true
       """
 
   @smoke @plugin
