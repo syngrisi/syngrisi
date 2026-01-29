@@ -210,7 +210,9 @@ When(
       if (isPopoverButton) {
         await targetLocator.dispatchEvent('click');
       } else {
-        await targetLocator.click();
+        const tagName = await targetLocator.evaluate((el) => el.tagName.toLowerCase());
+        const noWaitAfter = tagName !== 'a';
+        await targetLocator.click({ timeout: 15000, noWaitAfter });
       }
       return;
     }
