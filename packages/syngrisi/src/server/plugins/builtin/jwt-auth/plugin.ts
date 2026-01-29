@@ -96,6 +96,14 @@ const SETTINGS_SCHEMA = [
         defaultValue: true,
         envVariable: 'SYNGRISI_PLUGIN_JWT_AUTH_AUTO_PROVISION',
     },
+    {
+        key: 'jwksCacheTtl',
+        label: 'JWKS Cache TTL (ms)',
+        description: 'Cache duration for JWKS keys in milliseconds',
+        type: 'number' as const,
+        defaultValue: 3600000,
+        envVariable: 'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_CACHE_TTL',
+    },
 ];
 
 /**
@@ -201,7 +209,18 @@ export function createJwtAuthPlugin(initialConfig: Partial<JwtAuthConfig> = {}):
                         // Not enforcing audience by default as per common M2M patterns
                     });
 
-                    const clientId = payload.sub as string;
+                    const clientId =
+                        (payload.sub as string | undefined) ||
+                        (payload.client_id as string | undefined) ||
+                        (payload.cid as string | undefined);
+
+                    if (!clientId) {
+                        logger.warn('JWT Auth: missing client identifier in token (sub/client_id/cid)', logOpts);
+                        return {
+                            authenticated: false,
+                            error: 'Token is missing client identifier',
+                        };
+                    }
                     const scopes = (payload.scp as string[]) || (payload.scope as string)?.split(' ') || [];
 
                     logger.info(`JWT Auth: validated token for client ${clientId}`, logOpts);
@@ -273,4 +292,3 @@ export function createJwtAuthPlugin(initialConfig: Partial<JwtAuthConfig> = {}):
 
 // Default export for plugin loader
 export default createJwtAuthPlugin;
-

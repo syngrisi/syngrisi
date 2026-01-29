@@ -9,6 +9,7 @@ import { config } from '@config';
 import { env } from '@/server/envConfig';
 import log from '@logger';
 import { loadPlugins, pluginManager, hookRegistry } from './core';
+import { PluginSettings } from '@models';
 import { buildPluginContext } from './sdk/context';
 import {
     PluginContext,
@@ -39,13 +40,33 @@ export async function initPlugins(): Promise<void> {
         : [];
 
     // Build plugin configurations from environment
+    const jwtPluginConfig: Record<string, unknown> = {
+        jwksUrl: process.env.SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL,
+        issuer: process.env.SYNGRISI_PLUGIN_JWT_AUTH_ISSUER,
+        serviceUserRole: process.env.SYNGRISI_PLUGIN_JWT_AUTH_SERVICE_USER_ROLE || 'user',
+        headerName: process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_NAME || 'Authorization',
+    };
+
+    const headerPrefix = process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_PREFIX;
+    if (headerPrefix !== undefined) {
+        jwtPluginConfig.headerPrefix = headerPrefix;
+    }
+
+    const autoProvisionRaw = process.env.SYNGRISI_PLUGIN_JWT_AUTH_AUTO_PROVISION;
+    if (autoProvisionRaw !== undefined) {
+        jwtPluginConfig.autoProvisionUsers = autoProvisionRaw.toLowerCase() === 'true';
+    }
+
+    const jwksCacheTtlRaw = process.env.SYNGRISI_PLUGIN_JWT_AUTH_JWKS_CACHE_TTL;
+    if (jwksCacheTtlRaw !== undefined) {
+        const parsedTtl = parseInt(jwksCacheTtlRaw, 10);
+        if (!Number.isNaN(parsedTtl)) {
+            jwtPluginConfig.jwksCacheTtl = parsedTtl;
+        }
+    }
+
     const pluginConfigs: Record<string, Record<string, unknown>> = {
-        'jwt-auth': {
-            jwksUrl: process.env.SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL,
-            issuer: process.env.SYNGRISI_PLUGIN_JWT_AUTH_ISSUER,
-            serviceUserRole: process.env.SYNGRISI_PLUGIN_JWT_AUTH_SERVICE_USER_ROLE || 'user',
-            headerName: process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_NAME || 'Authorization',
-        },
+        'jwt-auth': jwtPluginConfig,
         'custom-check-validator': {
             mismatchThreshold: parseFloat(env.CHECK_MISMATCH_THRESHOLD || '0'),
             scriptPath: env.CHECK_VALIDATOR_SCRIPT,
@@ -54,8 +75,21 @@ export async function initPlugins(): Promise<void> {
 
     // Validate configuration for enabled plugins
     if (enabledPlugins.includes('jwt-auth')) {
-        const jwtConfig = pluginConfigs['jwt-auth'];
-        if (!jwtConfig.jwksUrl || !jwtConfig.issuer) {
+        let jwksUrl = pluginConfigs['jwt-auth']?.jwksUrl as string | undefined;
+        let issuer = pluginConfigs['jwt-auth']?.issuer as string | undefined;
+
+        if (!jwksUrl || !issuer) {
+            try {
+                const dbSettings = await PluginSettings.findOne({ pluginName: 'jwt-auth' }).lean();
+                const dbConfig = dbSettings?.settings || {};
+                jwksUrl = jwksUrl || (dbConfig as Record<string, unknown>).jwksUrl as string | undefined;
+                issuer = issuer || (dbConfig as Record<string, unknown>).issuer as string | undefined;
+            } catch (error) {
+                log.debug(`Failed to read DB config for jwt-auth during startup validation: ${error}`, logOpts);
+            }
+        }
+
+        if (!jwksUrl || !issuer) {
             throw new Error(
                 'Missing required configuration for "jwt-auth" plugin. ' +
                 'Please set SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL and SYNGRISI_PLUGIN_JWT_AUTH_ISSUER environment variables.'
@@ -64,10 +98,10 @@ export async function initPlugins(): Promise<void> {
 
         // Validate JWKS URL format
         try {
-            new URL(jwtConfig.jwksUrl as string);
+            new URL(jwksUrl);
         } catch (error) {
             throw new Error(
-                `Invalid JWKS URL for "jwt-auth" plugin: "${jwtConfig.jwksUrl}". ` +
+                `Invalid JWKS URL for "jwt-auth" plugin: "${jwksUrl}". ` +
                 'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL must be a valid URL.'
             );
         }
