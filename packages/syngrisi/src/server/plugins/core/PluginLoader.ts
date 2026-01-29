@@ -85,7 +85,7 @@ async function loadBuiltinPlugins(
                 const { config, enabled } = await getEffectivePluginConfig(pluginName, envConfig);
 
                 // Skip if disabled in DB
-                if (!enabled && !enabledPlugins.includes(pluginName)) {
+                if (!enabled) {
                     log.info(`Plugin ${pluginName} is disabled, skipping`, logOpts);
                     continue;
                 }
@@ -201,4 +201,3 @@ export async function loadPlugins(config: PluginLoaderConfig = {}): Promise<void
 export function getPluginManager(): PluginManager {
     return pluginManager;
 }
-
