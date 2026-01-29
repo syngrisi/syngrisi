@@ -15,6 +15,7 @@ let driver: PlaywrightDriver;
 let checkResult: any;
 let lastError: any;
 let cachedImageBuffer: Buffer | null = null;
+let jwtEnvApplied = false;
 
 const getSampleImageBuffer = (): Buffer => {
     if (cachedImageBuffer) return cachedImageBuffer;
@@ -33,8 +34,12 @@ const getAuthHeaderPrefix = (): string => {
 };
 
 // Clean up environment variables after scenarios
-After(async () => {
+After(async ({ appServer }) => {
+    const shouldRestart = jwtEnvApplied;
+    jwtEnvApplied = false;
+
     delete process.env.SYNGRISI_PLUGINS_ENABLED;
+    delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_ENABLED;
     delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL;
     delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_ISSUER;
     delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_AUTO_PROVISION;
@@ -42,6 +47,15 @@ After(async () => {
     delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_NAME;
     delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_PREFIX;
     delete process.env.SYNGRISI_AUTH_TOKEN;
+    delete process.env.SYNGRISI_AUTH;
+    delete process.env.SYNGRISI_AUTH_OVERRIDE;
+    delete process.env.SYNGRISI_API_KEY;
+
+    if (shouldRestart) {
+        console.log('Restarting server to clear JWT Auth ENV configuration...');
+        await appServer.restart(true);
+        console.log('Server restarted and ready with default configuration');
+    }
 });
 
 Given('I enable the "jwt-auth" plugin with the following config:', async ({ appServer, mockJwks }, table) => {
@@ -69,6 +83,8 @@ Given('I enable the "jwt-auth" plugin with the following config:', async ({ appS
 
     if (config.headerName) process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_NAME = config.headerName;
     if (config.headerPrefix) process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_PREFIX = config.headerPrefix;
+
+    jwtEnvApplied = true;
 
     console.log('Restarting server with new JWT Auth ENV configuration...');
     await appServer.restart(true);
@@ -194,10 +210,9 @@ Then('the check should be accepted', async () => {
     expect(checkResult._id).toBeDefined();
 });
 
-Then('a user {string} should exist in the database', async ({ }, username) => {
-    // Determine CID and DB URI (consistent with db-cleanup.ts and app-server.ts)
-    const cid = process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
-    const dbUri = `mongodb://127.0.0.1/SyngrisiDbTest${cid}`;
+Then('a user {string} should exist in the database', async ({ appServer }, username) => {
+    // Prefer the actual server DB connection string to avoid worker index mismatches
+    const dbUri = appServer.config?.connectionString || `mongodb://127.0.0.1/SyngrisiDbTest${process.env.TEST_WORKER_INDEX || '0'}`;
 
     const client = new MongoClient(dbUri);
     try {

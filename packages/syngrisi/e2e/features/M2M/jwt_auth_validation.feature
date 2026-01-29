@@ -2,12 +2,14 @@
 Feature: JWT Plugin Configuration Validation
 
     Scenario: Server should fail to start with missing JWKS URL
+        Given I clear plugin "jwt-auth" settings from database
         Given I set env variables:
             """
             SYNGRISI_AUTH: false
             SYNGRISI_TEST_MODE: true
             SYNGRISI_PLUGINS_ENABLED: jwt-auth
             SYNGRISI_PLUGIN_JWT_AUTH_ISSUER: test-issuer
+            SYNGRISI_PLUGIN_JWT_AUTH_ENABLED: true
             """
         When I try to start Server
         Then the server should fail to start
@@ -15,12 +17,14 @@ Feature: JWT Plugin Configuration Validation
         And the error message should contain "SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL"
 
     Scenario: Server should fail to start with missing Issuer
+        Given I clear plugin "jwt-auth" settings from database
         Given I set env variables:
             """
             SYNGRISI_AUTH: false
             SYNGRISI_TEST_MODE: true
             SYNGRISI_PLUGINS_ENABLED: jwt-auth
             SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL: https://example.com/jwks.json
+            SYNGRISI_PLUGIN_JWT_AUTH_ENABLED: true
             """
         When I try to start Server
         Then the server should fail to start
@@ -36,6 +40,7 @@ Feature: JWT Plugin Configuration Validation
             SYNGRISI_PLUGINS_ENABLED: jwt-auth
             SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL: not-a-valid-url
             SYNGRISI_PLUGIN_JWT_AUTH_ISSUER: test-issuer
+            SYNGRISI_PLUGIN_JWT_AUTH_ENABLED: true
             """
         When I try to start Server
         Then the server should fail to start

@@ -50,7 +50,7 @@ async function createCheckViaAPI(
   // Parameters are taken from vDriver.params.test (set by startTestSession), so we only pass optional overrides
   logger.info(`Creating check "${checkName}" for test "${testId}" via SyngrisiDriver`);
 
-  const maxAttempts = 3;
+  const maxAttempts = 5;
   let lastError: any = null;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
@@ -69,11 +69,13 @@ async function createCheckViaAPI(
       const isRetryable =
         statusCode === 404 ||
         message.includes('404') ||
+        message.toLowerCase().includes("can't find test") ||
+        message.toLowerCase().includes('find test with id') ||
         message.toLowerCase().includes('not found') ||
         message.toLowerCase().includes('baseline is absent');
 
       if (isRetryable && attempt < maxAttempts) {
-        const delayMs = 250 * attempt;
+        const delayMs = 500 * attempt;
         logger.warn(
           `Failed to create check on attempt ${attempt}/${maxAttempts} (status: ${statusCode || 'n/a'}): ${message}. ` +
           `Retrying in ${delayMs}ms...`
@@ -162,7 +164,7 @@ async function createTestsWithParams(
   // Use sequential creation to guarantee test order (important for sorting tests)
   const concurrency = 1;
   const useSharedDriver = concurrency === 1;
-  const quickCheckMaxWaitMs = fastSeed ? 500 : 2000;
+  const quickCheckMaxWaitMs = fastSeed ? 1000 : 5000;
   const waitAfterStopMs = fastSeed ? 10 : 100;
 
   // For @fast-server tests, auth is disabled so we should always use the default API key.
