@@ -34,7 +34,7 @@ Feature: Test Auto Update
         """
         When I wait for "5" seconds
 
-        Then the element with locator "[data-test='table-refresh-icon-badge']" should have contains text "3"
+        When I wait until element "[data-test='table-refresh-icon-badge']" contains text "3"
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-before]" to be visible
 
         When I click element with locator "[aria-label='Refresh']"
