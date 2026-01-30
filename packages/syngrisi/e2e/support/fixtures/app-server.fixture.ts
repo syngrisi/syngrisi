@@ -143,6 +143,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         'SYNGRISI_PLUGIN_JWT_AUTH_HEADER_PREFIX',
         'SYNGRISI_PLUGIN_JWT_AUTH_AUTO_PROVISION',
         'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_CACHE_TTL',
+        'SYNGRISI_PLUGIN_JWT_AUTH_AUDIENCE',
+        'SYNGRISI_PLUGIN_JWT_AUTH_REQUIRED_SCOPES',
+        'SYNGRISI_PLUGIN_JWT_AUTH_ISSUER_MATCH',
       ];
       const originalEnv: Record<string, string | undefined> = {};
       envKeysToReset.forEach((key) => {

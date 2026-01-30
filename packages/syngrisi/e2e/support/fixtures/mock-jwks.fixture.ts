@@ -5,7 +5,7 @@ import { AddressInfo } from 'net';
 
 export type MockJwksFixture = {
     jwksUrl: string;
-    signToken: (payload: any, expiresIn?: string) => Promise<string>;
+    signToken: (payload: any, options?: { expiresIn?: string; issuer?: string; audience?: string }) => Promise<string>;
     signInvalidToken: (payload: any) => Promise<string>;
 };
 
@@ -41,13 +41,17 @@ export const mockJwksFixture = base.extend<{ mockJwks: MockJwksFixture }>({
         const jwksUrl = `http://localhost:${port}/.well-known/jwks.json`;
 
         // 4. Helper to sign tokens
-        const signToken = async (payload: any, expiresIn = '1h') => {
+        const signToken = async (
+            payload: any,
+            options: { expiresIn?: string; issuer?: string; audience?: string } = {},
+        ) => {
+            const { expiresIn = '1h', issuer = 'e2e-test-issuer', audience = 'syngrisi' } = options;
             return new jose.SignJWT(payload)
                 .setProtectedHeader({ alg: 'RS256', kid })
                 .setIssuedAt()
                 .setExpirationTime(expiresIn)
-                .setIssuer('e2e-test-issuer')
-                .setAudience('syngrisi')
+                .setIssuer(issuer)
+                .setAudience(audience)
                 .sign(privateKey);
         };
 

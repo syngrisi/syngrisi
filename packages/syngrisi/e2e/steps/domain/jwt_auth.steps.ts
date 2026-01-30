@@ -46,6 +46,9 @@ After(async ({ appServer }) => {
     delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_SERVICE_USER_ROLE;
     delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_NAME;
     delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_PREFIX;
+    delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_AUDIENCE;
+    delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_REQUIRED_SCOPES;
+    delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_ISSUER_MATCH;
     delete process.env.SYNGRISI_AUTH_TOKEN;
     delete process.env.SYNGRISI_AUTH;
     delete process.env.SYNGRISI_AUTH_OVERRIDE;
@@ -83,6 +86,9 @@ Given('I enable the "jwt-auth" plugin with the following config:', async ({ appS
 
     if (config.headerName) process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_NAME = config.headerName;
     if (config.headerPrefix) process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_PREFIX = config.headerPrefix;
+    if (config.audience) process.env.SYNGRISI_PLUGIN_JWT_AUTH_AUDIENCE = config.audience;
+    if (config.requiredScopes) process.env.SYNGRISI_PLUGIN_JWT_AUTH_REQUIRED_SCOPES = config.requiredScopes;
+    if (config.issuerMatch) process.env.SYNGRISI_PLUGIN_JWT_AUTH_ISSUER_MATCH = config.issuerMatch;
 
     jwtEnvApplied = true;
 
@@ -152,6 +158,307 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
         });
 
         await driver.stopTestSession();
+    } catch (e) {
+        lastError = e;
+    }
+});
+
+When('I perform a visual check with a valid JWT token with issuer {string}', async ({ page, appServer, mockJwks }, issuer: string) => {
+    lastError = undefined;
+    checkResult = undefined;
+
+    const payload = {
+        sub: 'test-client-id',
+        cid: 'test-client-id',
+        client_id: 'test-client-id',
+        scp: ['syngrisi:api:read', 'syngrisi:api:write']
+    };
+    const token = await mockJwks.signToken(payload, { issuer });
+
+    const normalizedURL = appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`;
+    const headerName = getAuthHeaderName();
+    let headerPrefix = getAuthHeaderPrefix();
+    if (headerPrefix && !headerPrefix.endsWith(' ')) {
+        headerPrefix = `${headerPrefix} `;
+    }
+
+    driver = new PlaywrightDriver({
+        page,
+        url: normalizedURL,
+        apiKey: '',
+        headers: {
+            [headerName]: `${headerPrefix}${token}`,
+        }
+    });
+
+    try {
+        await driver.startTestSession({
+            params: {
+                test: 'JWT Auth Test',
+                app: 'M2M App',
+                run: 'Run 1',
+                runident: 'run-1',
+                suite: 'M2M Suite',
+                branch: 'main',
+            }
+        });
+
+        const imageBuffer = getSampleImageBuffer();
+
+        checkResult = await driver.check({
+            checkName: 'JWT Auth Check',
+            imageBuffer,
+            params: {
+                viewport: '1200x800',
+                os: 'Linux',
+                browserName: 'chrome',
+                browserVersion: '100',
+            }
+        });
+
+        await driver.stopTestSession();
+    } catch (e) {
+        lastError = e;
+    }
+});
+
+When('I perform a visual check with a valid JWT token for client id {string}', async ({ page, appServer, mockJwks }, clientId: string) => {
+    lastError = undefined;
+    checkResult = undefined;
+
+    const payload = {
+        sub: clientId,
+        cid: clientId,
+        client_id: clientId,
+        scp: ['syngrisi:api:read', 'syngrisi:api:write']
+    };
+    const token = await mockJwks.signToken(payload);
+
+    const normalizedURL = appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`;
+    const headerName = getAuthHeaderName();
+    let headerPrefix = getAuthHeaderPrefix();
+    if (headerPrefix && !headerPrefix.endsWith(' ')) {
+        headerPrefix = `${headerPrefix} `;
+    }
+
+    driver = new PlaywrightDriver({
+        page,
+        url: normalizedURL,
+        apiKey: '',
+        headers: {
+            [headerName]: `${headerPrefix}${token}`,
+        }
+    });
+
+    try {
+        await driver.startTestSession({
+            params: {
+                test: 'JWT Auth Test',
+                app: 'M2M App',
+                run: 'Run 1',
+                runident: 'run-1',
+                suite: 'M2M Suite',
+                branch: 'main',
+            }
+        });
+
+        const imageBuffer = getSampleImageBuffer();
+
+        checkResult = await driver.check({
+            checkName: 'JWT Auth Check',
+            imageBuffer,
+            params: {
+                viewport: '1200x800',
+                os: 'Linux',
+                browserName: 'chrome',
+                browserVersion: '100',
+            }
+        });
+
+        await driver.stopTestSession();
+    } catch (e) {
+        lastError = e;
+    }
+});
+
+When('I perform a visual check with a valid JWT token without sub', async ({ page, appServer, mockJwks }) => {
+    lastError = undefined;
+    checkResult = undefined;
+
+    const payload = {
+        client_id: 'client-id-no-sub',
+        scp: ['syngrisi:api:read', 'syngrisi:api:write']
+    };
+    const token = await mockJwks.signToken(payload);
+
+    const normalizedURL = appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`;
+    const headerName = getAuthHeaderName();
+    let headerPrefix = getAuthHeaderPrefix();
+    if (headerPrefix && !headerPrefix.endsWith(' ')) {
+        headerPrefix = `${headerPrefix} `;
+    }
+
+    driver = new PlaywrightDriver({
+        page,
+        url: normalizedURL,
+        apiKey: '',
+        headers: {
+            [headerName]: `${headerPrefix}${token}`,
+        }
+    });
+
+    try {
+        await driver.startTestSession({
+            params: {
+                test: 'JWT Auth Test',
+                app: 'M2M App',
+                run: 'Run 1',
+                runident: 'run-1',
+                suite: 'M2M Suite',
+                branch: 'main',
+            }
+        });
+
+        const imageBuffer = getSampleImageBuffer();
+
+        checkResult = await driver.check({
+            checkName: 'JWT Auth Check',
+            imageBuffer,
+            params: {
+                viewport: '1200x800',
+                os: 'Linux',
+                browserName: 'chrome',
+                browserVersion: '100',
+            }
+        });
+
+        await driver.stopTestSession();
+    } catch (e) {
+        lastError = e;
+    }
+});
+
+When('I perform a visual check with a JWT token with invalid issuer', async ({ page, appServer, mockJwks }) => {
+    lastError = undefined;
+    checkResult = undefined;
+
+    const payload = {
+        sub: 'test-client-id',
+        scp: ['syngrisi:api:read']
+    };
+    const token = await mockJwks.signToken(payload, { issuer: 'wrong-issuer' });
+
+    const normalizedURL = appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`;
+    const headerName = getAuthHeaderName();
+    let headerPrefix = getAuthHeaderPrefix();
+    if (headerPrefix && !headerPrefix.endsWith(' ')) {
+        headerPrefix = `${headerPrefix} `;
+    }
+
+    driver = new PlaywrightDriver({
+        page,
+        url: normalizedURL,
+        apiKey: '',
+        headers: {
+            [headerName]: `${headerPrefix}${token}`,
+        }
+    });
+
+    try {
+        await driver.startTestSession({
+            params: {
+                test: 'JWT Auth Test',
+                app: 'M2M App',
+                run: 'Run 1',
+                runident: 'run-1',
+                suite: 'M2M Suite',
+                branch: 'main',
+            }
+        });
+    } catch (e) {
+        lastError = e;
+    }
+});
+
+When('I perform a visual check with a JWT token missing required scopes', async ({ page, appServer, mockJwks }) => {
+    lastError = undefined;
+    checkResult = undefined;
+
+    const payload = {
+        sub: 'test-client-id',
+        scp: ['syngrisi:api:read']
+    };
+    const token = await mockJwks.signToken(payload);
+
+    const normalizedURL = appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`;
+    const headerName = getAuthHeaderName();
+    let headerPrefix = getAuthHeaderPrefix();
+    if (headerPrefix && !headerPrefix.endsWith(' ')) {
+        headerPrefix = `${headerPrefix} `;
+    }
+
+    driver = new PlaywrightDriver({
+        page,
+        url: normalizedURL,
+        apiKey: '',
+        headers: {
+            [headerName]: `${headerPrefix}${token}`,
+        }
+    });
+
+    try {
+        await driver.startTestSession({
+            params: {
+                test: 'JWT Auth Test',
+                app: 'M2M App',
+                run: 'Run 1',
+                runident: 'run-1',
+                suite: 'M2M Suite',
+                branch: 'main',
+            }
+        });
+    } catch (e) {
+        lastError = e;
+    }
+});
+
+When('I perform a visual check with a JWT token with invalid audience', async ({ page, appServer, mockJwks }) => {
+    lastError = undefined;
+    checkResult = undefined;
+
+    const payload = {
+        sub: 'test-client-id',
+        scp: ['syngrisi:api:read']
+    };
+    const token = await mockJwks.signToken(payload, { audience: 'other-aud' });
+
+    const normalizedURL = appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`;
+    const headerName = getAuthHeaderName();
+    let headerPrefix = getAuthHeaderPrefix();
+    if (headerPrefix && !headerPrefix.endsWith(' ')) {
+        headerPrefix = `${headerPrefix} `;
+    }
+
+    driver = new PlaywrightDriver({
+        page,
+        url: normalizedURL,
+        apiKey: '',
+        headers: {
+            [headerName]: `${headerPrefix}${token}`,
+        }
+    });
+
+    try {
+        await driver.startTestSession({
+            params: {
+                test: 'JWT Auth Test',
+                app: 'M2M App',
+                run: 'Run 1',
+                runident: 'run-1',
+                suite: 'M2M Suite',
+                branch: 'main',
+            }
+        });
     } catch (e) {
         lastError = e;
     }
