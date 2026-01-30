@@ -1,5 +1,11 @@
-@sso-external @slow
+@sso-external @slow @no-app-start
 Feature: SSO Authentication with Logto
+  # -------------------------------------------------------------------------
+  # INFRASTRUCTURE TROUBLESHOOTING:
+  # See packages/syngrisi/e2e/docs/SSO_TROUBLESHOOTING.md for details on
+  # port mismatches, IPv6 issues, and container requirements.
+  # -------------------------------------------------------------------------
+  #
   # Real SSO tests using Logto containers
   # Requires Apple container CLI to be installed
   #
@@ -19,6 +25,8 @@ Feature: SSO Authentication with Logto
       """
       SYNGRISI_AUTH: true
       SYNGRISI_TEST_MODE: false
+      LOGTO_ENDPOINT: http://127.0.0.1:3001
+      SYNGRISI_APP_PORT: 3002
       """
     Given I start Server
 

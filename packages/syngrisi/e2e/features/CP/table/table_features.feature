@@ -28,6 +28,7 @@ Feature: Tests Table Features
 
 
     When I refresh page
+    When I wait for "2" seconds
     When I create "3" tests with:
       """
           testName: "TestName-after"

@@ -132,8 +132,17 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         'SSO_TOKEN_URL',
         'SSO_USERINFO_URL',
         'SSO_CALLBACK_URL',
-        'LOGTO_ENDPOINT',
         'LOGTO_ADMIN_ENDPOINT',
+        // Plugins
+        'SYNGRISI_PLUGINS_ENABLED',
+        'SYNGRISI_PLUGIN_JWT_AUTH_ENABLED',
+        'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL',
+        'SYNGRISI_PLUGIN_JWT_AUTH_ISSUER',
+        'SYNGRISI_PLUGIN_JWT_AUTH_SERVICE_USER_ROLE',
+        'SYNGRISI_PLUGIN_JWT_AUTH_HEADER_NAME',
+        'SYNGRISI_PLUGIN_JWT_AUTH_HEADER_PREFIX',
+        'SYNGRISI_PLUGIN_JWT_AUTH_AUTO_PROVISION',
+        'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_CACHE_TTL',
       ];
       const originalEnv: Record<string, string | undefined> = {};
       envKeysToReset.forEach((key) => {

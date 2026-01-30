@@ -433,17 +433,25 @@ When(/I open (?:url|site) "(.*)"/, async ({ page, testData }, url) => {
 
 When('I open the url {string}', async ({ page, testData, appServer }: { page: Page; testData: TestStore; appServer: AppServerFixture }, url: string) => {
   const parsedUrl = testData.renderTemplate(url);
-  logger.info(`Navigating to URL: ${parsedUrl}`);
+  let finalUrl = parsedUrl;
+
+  // If URL is relative and we have a custom server base URL (e.g. fast-server dynamic port), use it
+  if (parsedUrl.startsWith('/') && appServer.baseURL) {
+    // appServer.baseURL is like "http://localhost:5100" (no trailing slash)
+    finalUrl = `${appServer.baseURL}${parsedUrl}`;
+  }
+
+  logger.info(`Navigating to URL: ${finalUrl} (original: ${parsedUrl})`);
 
   // Ensure server is ready before navigation if it looks like an app URL
   // Check both full URL and relative paths (starting with /)
-  const isAppUrl = (appServer.baseURL && parsedUrl.startsWith(appServer.baseURL)) || parsedUrl.startsWith('/');
+  const isAppUrl = (appServer.baseURL && finalUrl.startsWith(appServer.baseURL)) || parsedUrl.startsWith('/');
   if (isAppUrl && appServer.serverPort) {
     await ensureServerReady(appServer.serverPort);
   }
 
   // Use domcontentloaded to avoid timeouts when background polling is active
-  await page.goto(parsedUrl, { waitUntil: 'domcontentloaded' });
+  await page.goto(finalUrl, { waitUntil: 'domcontentloaded' });
 });
 
 When('I set window size: {string}', async ({ page }, viewport: string) => {

@@ -34,7 +34,7 @@ Feature: SSO Common Scenarios and Edge Cases
     When I try to access SSO directly
     Then the current url contains "/auth"
 
-  @sso-external @slow
+  @sso-external @slow @no-app-start
   Scenario: Logout functionality clears session
     # Test that logout properly destroys the session
     # Requires Logto to be running (OAuth2 test)
@@ -43,6 +43,8 @@ Feature: SSO Common Scenarios and Edge Cases
       """
       SYNGRISI_AUTH: true
       SYNGRISI_TEST_MODE: false
+      LOGTO_ENDPOINT: http://127.0.0.1:3001
+      SYNGRISI_APP_PORT: 3002
       """
     Given I start Server
 
@@ -62,7 +64,7 @@ Feature: SSO Common Scenarios and Edge Cases
     # Verify session is destroyed - accessing app should redirect to login
     Then my session should be destroyed
 
-  @sso-external @slow
+  @sso-external @slow @no-app-start
   Scenario: OAuth Account Linking - existing local user
     # Test that existing local users are linked when they login via OAuth
     # with the same email
@@ -71,6 +73,8 @@ Feature: SSO Common Scenarios and Edge Cases
       """
       SYNGRISI_AUTH: true
       SYNGRISI_TEST_MODE: true
+      LOGTO_ENDPOINT: http://127.0.0.1:3001
+      SYNGRISI_APP_PORT: 3002
       """
     Given I start Server
 
@@ -91,7 +95,7 @@ Feature: SSO Common Scenarios and Edge Cases
     # The user's provider should be updated to 'oauth'
     Then the user "test@syngrisi.test" should have provider type "oauth"
 
-  @sso-external @slow
+  @sso-external @slow @no-app-start
   Scenario: OAuth User Creation - new user
     # Test that new users are created when they login via OAuth
     # with an email that doesn't exist in the database
@@ -100,6 +104,8 @@ Feature: SSO Common Scenarios and Edge Cases
       """
       SYNGRISI_AUTH: true
       SYNGRISI_TEST_MODE: true
+      LOGTO_ENDPOINT: http://127.0.0.1:3001
+      SYNGRISI_APP_PORT: 3002
       """
     Given I start Server
 
