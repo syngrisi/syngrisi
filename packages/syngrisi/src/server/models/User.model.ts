@@ -16,6 +16,7 @@ export interface UserDocument extends Document {
     password?: string;
     token?: string;
     apiKey?: string;
+    authSource?: 'local' | 'jwt' | 'ldap' | 'api';
     createdDate?: Date;
     updatedDate?: Date;
     expiration?: Date;
@@ -60,6 +61,11 @@ const UserSchema = new Schema<UserDocument>({
     },
     apiKey: {
         type: String,
+    },
+    authSource: {
+        type: String,
+        enum: ['local', 'jwt', 'ldap', 'api'],
+        default: 'local',
     },
     createdDate: {
         type: Date,
