@@ -30,6 +30,15 @@ interface JwtAuthConfig {
 
     /** Cache TTL for JWKS in milliseconds */
     jwksCacheTtl: number;
+
+    /** Optional audience(s) to validate */
+    audience?: string[] | string;
+
+    /** Optional required scopes */
+    requiredScopes?: string[] | string;
+
+    /** Issuer matching mode: strict (default) or host */
+    issuerMatch?: 'strict' | 'host';
 }
 
 const DEFAULT_CONFIG: JwtAuthConfig = {
@@ -40,6 +49,7 @@ const DEFAULT_CONFIG: JwtAuthConfig = {
     serviceUserRole: 'user',
     autoProvisionUsers: true,
     jwksCacheTtl: 3600000, // 1 hour
+    issuerMatch: 'strict',
 };
 
 const SETTINGS_SCHEMA = [
@@ -104,7 +114,53 @@ const SETTINGS_SCHEMA = [
         defaultValue: 3600000,
         envVariable: 'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_CACHE_TTL',
     },
+    {
+        key: 'audience',
+        label: 'Audience',
+        description: 'Expected audience claim(s). Comma- or space-separated.',
+        type: 'string' as const,
+        envVariable: 'SYNGRISI_PLUGIN_JWT_AUTH_AUDIENCE',
+    },
+    {
+        key: 'requiredScopes',
+        label: 'Required Scopes',
+        description: 'Required scopes. Comma- or space-separated.',
+        type: 'string' as const,
+        envVariable: 'SYNGRISI_PLUGIN_JWT_AUTH_REQUIRED_SCOPES',
+    },
+    {
+        key: 'issuerMatch',
+        label: 'Issuer Match Mode',
+        description: 'Strict requires exact issuer match. Host allows matching by hostname.',
+        type: 'select' as const,
+        defaultValue: 'strict',
+        envVariable: 'SYNGRISI_PLUGIN_JWT_AUTH_ISSUER_MATCH',
+        options: [
+            { value: 'strict', label: 'Strict' },
+            { value: 'host', label: 'Host' },
+        ],
+    },
 ];
+
+const parseList = (value?: string | string[]): string[] => {
+    if (!value) return [];
+    if (Array.isArray(value)) {
+        return value.map(v => String(v).trim()).filter(Boolean);
+    }
+    return value
+        .split(/[\s,]+/)
+        .map(v => v.trim())
+        .filter(Boolean);
+};
+
+const extractHost = (issuer: string): string | null => {
+    try {
+        const parsed = new URL(issuer);
+        return parsed.host;
+    } catch {
+        return null;
+    }
+};
 
 /**
  * Create JWT Auth Plugin
@@ -190,8 +246,13 @@ export function createJwtAuthPlugin(initialConfig: Partial<JwtAuthConfig> = {}):
 
                 // Extract token (remove prefix)
                 let token = authHeader;
-                if (config.headerPrefix && token.startsWith(config.headerPrefix)) {
-                    token = token.slice(config.headerPrefix.length);
+                if (config.headerPrefix) {
+                    const prefix = config.headerPrefix;
+                    if (token.startsWith(prefix)) {
+                        token = token.slice(prefix.length);
+                    } else if (token.toLowerCase().startsWith(prefix.toLowerCase())) {
+                        token = token.slice(prefix.length);
+                    }
                 }
                 token = token.trim();
 
@@ -203,11 +264,41 @@ export function createJwtAuthPlugin(initialConfig: Partial<JwtAuthConfig> = {}):
                 }
 
                 try {
-                    // Validate JWT
-                    const { payload } = await jose.jwtVerify(token, jwks, {
-                        issuer: config.issuer,
-                        // Not enforcing audience by default as per common M2M patterns
-                    });
+                    const expectedIssuers = parseList(config.issuer);
+                    const audiences = parseList(config.audience);
+                    const requiredScopes = parseList(config.requiredScopes);
+
+                    // Validate JWT signature and claims
+                    const verifyOptions: jose.JWTVerifyOptions = {};
+                    if (config.issuerMatch !== 'host') {
+                        verifyOptions.issuer = expectedIssuers.length > 1 ? expectedIssuers : expectedIssuers[0];
+                    }
+                    if (audiences.length > 0) {
+                        verifyOptions.audience = audiences.length > 1 ? audiences : audiences[0];
+                    }
+
+                    const { payload } = await jose.jwtVerify(token, jwks, verifyOptions);
+
+                    if (config.issuerMatch === 'host') {
+                        const tokenIssuer = payload.iss as string | undefined;
+                        if (!tokenIssuer) {
+                            return {
+                                authenticated: false,
+                                error: 'Token is missing issuer claim',
+                            };
+                        }
+                        const tokenHost = extractHost(tokenIssuer);
+                        const expectedHosts = expectedIssuers
+                            .map(issuer => extractHost(issuer) ?? issuer)
+                            .filter(Boolean);
+                        const matchesHost = expectedHosts.some(host => tokenHost ? tokenHost === host : tokenIssuer === host);
+                        if (!matchesHost) {
+                            return {
+                                authenticated: false,
+                                error: 'Token issuer does not match expected host',
+                            };
+                        }
+                    }
 
                     const clientId =
                         (payload.sub as string | undefined) ||
@@ -222,6 +313,17 @@ export function createJwtAuthPlugin(initialConfig: Partial<JwtAuthConfig> = {}):
                         };
                     }
                     const scopes = (payload.scp as string[]) || (payload.scope as string)?.split(' ') || [];
+
+                    if (requiredScopes.length > 0) {
+                        const scopeSet = new Set(scopes.map(scope => String(scope).trim()).filter(Boolean));
+                        const missing = requiredScopes.filter(scope => !scopeSet.has(scope));
+                        if (missing.length > 0) {
+                            return {
+                                authenticated: false,
+                                error: `Token missing required scopes: ${missing.join(', ')}`,
+                            };
+                        }
+                    }
 
                     logger.info(`JWT Auth: validated token for client ${clientId}`, logOpts);
 
