@@ -52,6 +52,21 @@ export async function initPlugins(): Promise<void> {
         jwtPluginConfig.headerPrefix = headerPrefix;
     }
 
+    const audience = process.env.SYNGRISI_PLUGIN_JWT_AUTH_AUDIENCE;
+    if (audience !== undefined) {
+        jwtPluginConfig.audience = audience;
+    }
+
+    const requiredScopes = process.env.SYNGRISI_PLUGIN_JWT_AUTH_REQUIRED_SCOPES;
+    if (requiredScopes !== undefined) {
+        jwtPluginConfig.requiredScopes = requiredScopes;
+    }
+
+    const issuerMatch = process.env.SYNGRISI_PLUGIN_JWT_AUTH_ISSUER_MATCH;
+    if (issuerMatch !== undefined) {
+        jwtPluginConfig.issuerMatch = issuerMatch;
+    }
+
     const autoProvisionRaw = process.env.SYNGRISI_PLUGIN_JWT_AUTH_AUTO_PROVISION;
     if (autoProvisionRaw !== undefined) {
         jwtPluginConfig.autoProvisionUsers = autoProvisionRaw.toLowerCase() === 'true';
