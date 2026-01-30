@@ -228,7 +228,12 @@ Then('a user {string} should exist in the database', async ({ appServer }, usern
 
         expect(user, `User '${username}' should exist in database ${db.databaseName}`).not.toBeNull();
         expect(user?.username).toBe(username);
-        console.log(`Verified user ${username} exists in DB`);
+
+        if (username.startsWith('jwt-service:')) {
+            expect(user?.authSource).toBe('jwt');
+        }
+
+        console.log(`Verified user ${username} exists in DB with authSource: ${user?.authSource}`);
     } finally {
         await client.close();
     }
