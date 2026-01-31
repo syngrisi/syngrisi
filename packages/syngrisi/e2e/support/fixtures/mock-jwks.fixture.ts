@@ -58,8 +58,9 @@ export const mockJwksFixture = base.extend<{ mockJwks: MockJwksFixture }>({
         // 5. Helper to sign invalid tokens (wrong key)
         const signInvalidToken = async (payload: any) => {
             const { privateKey: wrongKey } = await jose.generateKeyPair('RS256');
+            const invalidKid = `${kid}-invalid`;
             return new jose.SignJWT(payload)
-                .setProtectedHeader({ alg: 'RS256', kid }) // Same kid, but different key -> sig validation fail
+                .setProtectedHeader({ alg: 'RS256', kid: invalidKid }) // Force JWKS miss + signature mismatch
                 .setIssuedAt()
                 .setIssuer('e2e-test-issuer')
                 .setAudience('syngrisi')

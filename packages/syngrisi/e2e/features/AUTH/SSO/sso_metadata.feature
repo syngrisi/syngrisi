@@ -1,4 +1,4 @@
-@sso-metadata
+@sso-metadata @no-app-start
 Feature: SSO Metadata Endpoints
   # Tests for SAML metadata functionality:
   # - SP metadata endpoint for IdP configuration

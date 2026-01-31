@@ -8,6 +8,7 @@ Feature: JWT Plugin Configuration Validation
             SYNGRISI_AUTH: false
             SYNGRISI_TEST_MODE: true
             SYNGRISI_PLUGINS_ENABLED: jwt-auth
+            SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL: ""
             SYNGRISI_PLUGIN_JWT_AUTH_ISSUER: test-issuer
             SYNGRISI_PLUGIN_JWT_AUTH_ENABLED: true
             """
@@ -24,6 +25,7 @@ Feature: JWT Plugin Configuration Validation
             SYNGRISI_TEST_MODE: true
             SYNGRISI_PLUGINS_ENABLED: jwt-auth
             SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL: https://example.com/jwks.json
+            SYNGRISI_PLUGIN_JWT_AUTH_ISSUER: ""
             SYNGRISI_PLUGIN_JWT_AUTH_ENABLED: true
             """
         When I try to start Server

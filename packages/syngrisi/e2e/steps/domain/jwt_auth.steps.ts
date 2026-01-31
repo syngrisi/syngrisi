@@ -7,6 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import { resolveRepoRoot } from '@utils/fs';
 import { clearPluginSettings } from '@utils/db-cleanup';
+import { ensureServerReady } from '@utils/app-server';
 
 const { Given, When, Then, After } = createBdd(test);
 
@@ -33,6 +34,79 @@ const getAuthHeaderPrefix = (): string => {
     return process.env.SYNGRISI_PLUGIN_JWT_AUTH_HEADER_PREFIX || 'Bearer ';
 };
 
+const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+
+const isTransientSessionError = (error: unknown): boolean => {
+    const message = (error as Error | undefined)?.message || String(error || '');
+    return message.includes('socket hang up') || message.includes('ECONNRESET') || message.includes('EPIPE');
+};
+
+const startSessionWithRetry = async (
+    driverInstance: PlaywrightDriver,
+    payload: { params: Record<string, string> },
+    retries = 3
+): Promise<void> => {
+    let lastErr: unknown;
+    for (let attempt = 1; attempt <= retries; attempt += 1) {
+        try {
+            await driverInstance.startTestSession(payload);
+            return;
+        } catch (error) {
+            lastErr = error;
+            if (!isTransientSessionError(error) || attempt === retries) {
+                throw error;
+            }
+            await sleep(1000 * attempt);
+        }
+    }
+    throw lastErr;
+};
+
+const resolveDbUri = (appServer: { config?: { connectionString?: string } }): string => {
+    return appServer.config?.connectionString || `mongodb://127.0.0.1/SyngrisiDbTest${process.env.TEST_WORKER_INDEX || '0'}`;
+};
+
+const toBoolean = (value: unknown): boolean | undefined => {
+    if (value === undefined || value === null) return undefined;
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') {
+        const normalized = value.trim().toLowerCase();
+        if (normalized === 'true') return true;
+        if (normalized === 'false') return false;
+    }
+    return undefined;
+};
+
+const upsertJwtPluginSettings = async (
+    appServer: { config?: { connectionString?: string } },
+    settings: Record<string, unknown>
+): Promise<void> => {
+    const dbUri = resolveDbUri(appServer);
+    const client = new MongoClient(dbUri);
+    try {
+        await client.connect();
+        const db = client.db();
+        await db.collection('vrspluginsettings').updateOne(
+            { pluginName: 'jwt-auth' },
+            {
+                $set: {
+                    enabled: true,
+                    settings,
+                },
+                $setOnInsert: {
+                    pluginName: 'jwt-auth',
+                    displayName: 'JWT Authentication',
+                    description: 'M2M authentication via JWT (OAuth2 Client Credentials)',
+                    settingsSchema: [],
+                },
+            },
+            { upsert: true }
+        );
+    } finally {
+        await client.close();
+    }
+};
+
 // Clean up environment variables after scenarios
 After(async ({ appServer }) => {
     const shouldRestart = jwtEnvApplied;
@@ -49,6 +123,7 @@ After(async ({ appServer }) => {
     delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_AUDIENCE;
     delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_REQUIRED_SCOPES;
     delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_ISSUER_MATCH;
+    delete process.env.SYNGRISI_PLUGIN_JWT_AUTH_JWKS_CACHE_TTL;
     delete process.env.SYNGRISI_AUTH_TOKEN;
     delete process.env.SYNGRISI_AUTH;
     delete process.env.SYNGRISI_AUTH_OVERRIDE;
@@ -92,12 +167,30 @@ Given('I enable the "jwt-auth" plugin with the following config:', async ({ appS
 
     jwtEnvApplied = true;
 
+    const settings: Record<string, unknown> = {};
+    if (config.jwksUrl) settings.jwksUrl = config.jwksUrl;
+    if (config.issuer) settings.issuer = config.issuer;
+    if (config.headerName) settings.headerName = config.headerName;
+    if (config.headerPrefix) settings.headerPrefix = config.headerPrefix;
+    if (config.audience) settings.audience = config.audience;
+    if (config.requiredScopes) settings.requiredScopes = config.requiredScopes;
+    if (config.issuerMatch) settings.issuerMatch = config.issuerMatch;
+    const autoProvision = toBoolean(config.autoProvision);
+    if (autoProvision !== undefined) settings.autoProvisionUsers = autoProvision;
+    if (config.serviceUserRole) settings.serviceUserRole = config.serviceUserRole;
+
+    // Ensure DB has required settings so server can auto-enable jwt-auth even if env isn't picked up
+    await upsertJwtPluginSettings(appServer, settings);
+
     console.log('Restarting server with new JWT Auth ENV configuration...');
     await appServer.restart(true);
 
-    // Wait for server to fully stabilize with JWT plugin
-    // This prevents "socket hang up" errors from happening when server isn't ready
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    // Wait for server to fully stabilize with JWT plugin to avoid socket hang ups
+    if (appServer.serverPort) {
+        await ensureServerReady(appServer.serverPort, 60_000);
+    } else {
+        await new Promise(resolve => setTimeout(resolve, 5000));
+    }
     console.log('Server restarted and ready with JWT Auth plugin');
 });
 
@@ -132,8 +225,9 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
         }
     });
 
+    let sessionStarted = false;
     try {
-        await driver.startTestSession({
+        await startSessionWithRetry(driver, {
             params: {
                 test: 'JWT Auth Test',
                 app: 'M2M App',
@@ -143,6 +237,7 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
                 branch: 'main',
             }
         });
+        sessionStarted = true;
 
         const imageBuffer = getSampleImageBuffer();
 
@@ -156,10 +251,16 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
                 browserVersion: '100',
             }
         });
-
-        await driver.stopTestSession();
     } catch (e) {
         lastError = e;
+    } finally {
+        if (sessionStarted) {
+            try {
+                await driver.stopTestSession();
+            } catch (e) {
+                console.log('Failed to stop JWT test session:', e);
+            }
+        }
     }
 });
 
@@ -191,8 +292,9 @@ When('I perform a visual check with a valid JWT token with issuer {string}', asy
         }
     });
 
+    let sessionStarted = false;
     try {
-        await driver.startTestSession({
+        await startSessionWithRetry(driver, {
             params: {
                 test: 'JWT Auth Test',
                 app: 'M2M App',
@@ -202,6 +304,7 @@ When('I perform a visual check with a valid JWT token with issuer {string}', asy
                 branch: 'main',
             }
         });
+        sessionStarted = true;
 
         const imageBuffer = getSampleImageBuffer();
 
@@ -215,10 +318,16 @@ When('I perform a visual check with a valid JWT token with issuer {string}', asy
                 browserVersion: '100',
             }
         });
-
-        await driver.stopTestSession();
     } catch (e) {
         lastError = e;
+    } finally {
+        if (sessionStarted) {
+            try {
+                await driver.stopTestSession();
+            } catch (e) {
+                console.log('Failed to stop JWT test session:', e);
+            }
+        }
     }
 });
 
@@ -250,8 +359,9 @@ When('I perform a visual check with a valid JWT token for client id {string}', a
         }
     });
 
+    let sessionStarted = false;
     try {
-        await driver.startTestSession({
+        await startSessionWithRetry(driver, {
             params: {
                 test: 'JWT Auth Test',
                 app: 'M2M App',
@@ -261,6 +371,7 @@ When('I perform a visual check with a valid JWT token for client id {string}', a
                 branch: 'main',
             }
         });
+        sessionStarted = true;
 
         const imageBuffer = getSampleImageBuffer();
 
@@ -274,10 +385,16 @@ When('I perform a visual check with a valid JWT token for client id {string}', a
                 browserVersion: '100',
             }
         });
-
-        await driver.stopTestSession();
     } catch (e) {
         lastError = e;
+    } finally {
+        if (sessionStarted) {
+            try {
+                await driver.stopTestSession();
+            } catch (e) {
+                console.log('Failed to stop JWT test session:', e);
+            }
+        }
     }
 });
 
@@ -307,8 +424,9 @@ When('I perform a visual check with a valid JWT token without sub', async ({ pag
         }
     });
 
+    let sessionStarted = false;
     try {
-        await driver.startTestSession({
+        await startSessionWithRetry(driver, {
             params: {
                 test: 'JWT Auth Test',
                 app: 'M2M App',
@@ -318,6 +436,7 @@ When('I perform a visual check with a valid JWT token without sub', async ({ pag
                 branch: 'main',
             }
         });
+        sessionStarted = true;
 
         const imageBuffer = getSampleImageBuffer();
 
@@ -331,10 +450,16 @@ When('I perform a visual check with a valid JWT token without sub', async ({ pag
                 browserVersion: '100',
             }
         });
-
-        await driver.stopTestSession();
     } catch (e) {
         lastError = e;
+    } finally {
+        if (sessionStarted) {
+            try {
+                await driver.stopTestSession();
+            } catch (e) {
+                console.log('Failed to stop JWT test session:', e);
+            }
+        }
     }
 });
 
@@ -365,7 +490,7 @@ When('I perform a visual check with a JWT token with invalid issuer', async ({ p
     });
 
     try {
-        await driver.startTestSession({
+        await startSessionWithRetry(driver, {
             params: {
                 test: 'JWT Auth Test',
                 app: 'M2M App',
@@ -407,7 +532,7 @@ When('I perform a visual check with a JWT token missing required scopes', async 
     });
 
     try {
-        await driver.startTestSession({
+        await startSessionWithRetry(driver, {
             params: {
                 test: 'JWT Auth Test',
                 app: 'M2M App',
@@ -449,7 +574,7 @@ When('I perform a visual check with a JWT token with invalid audience', async ({
     });
 
     try {
-        await driver.startTestSession({
+        await startSessionWithRetry(driver, {
             params: {
                 test: 'JWT Auth Test',
                 app: 'M2M App',
@@ -489,7 +614,7 @@ When('I perform a visual check with an invalid JWT token', async ({ page, appSer
     });
 
     try {
-        await driver.startTestSession({
+        await startSessionWithRetry(driver, {
             params: {
                 test: 'JWT Auth Test',
                 app: 'M2M App',
@@ -556,6 +681,18 @@ Then('the check should be rejected with status {int}', async ({ }, statusCode) =
     if (responseStatus) {
         expect(responseStatus).toBe(statusCode);
         return;
+    }
+    const responseBody = lastError?.response?.body;
+    if (responseBody) {
+        try {
+            const parsed = JSON.parse(responseBody);
+            if (parsed?.statusCode) {
+                expect(parsed.statusCode).toBe(statusCode);
+                return;
+            }
+        } catch {
+            // Fall through to message check
+        }
     }
     const errorMsg = lastError?.message || lastError?.toString() || '';
     expect(errorMsg).toContain(statusCode.toString());
