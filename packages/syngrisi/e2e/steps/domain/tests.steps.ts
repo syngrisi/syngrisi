@@ -164,7 +164,7 @@ async function createTestsWithParams(
   // Use sequential creation to guarantee test order (important for sorting tests)
   const concurrency = 1;
   const useSharedDriver = concurrency === 1;
-  const quickCheckMaxWaitMs = fastSeed ? 1000 : 5000;
+  const quickCheckMaxWaitMs = fastSeed ? 1000 : 15000;
   const waitAfterStopMs = fastSeed ? 10 : 100;
 
   // For @fast-server tests, auth is disabled so we should always use the default API key.
@@ -187,18 +187,9 @@ async function createTestsWithParams(
         logger.info(`App server is not running on port ${serverPort}, starting before creating tests`);
         await appServer.start();
         serverWasStarted = true;
-        // Wait for server to be fully ready after startup using polling
+        // Wait for server to be fully ready after startup using API readiness
         logger.info('Waiting for server to be fully ready...');
-        const maxWaitMs = 10000;
-        const pollIntervalMs = 200;
-        const startTime = Date.now();
-        while (Date.now() - startTime < maxWaitMs) {
-          if (await isServerRunning(serverPort)) {
-            logger.info('Server is ready');
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
-        }
+        await ensureServerReady(serverPort, 60_000);
       }
 
       let vDriver = testData.get('vDriver') as SyngrisiDriver | undefined;
@@ -301,7 +292,7 @@ async function createTestsWithParams(
           const response = await got.get(`${appServer.baseURL}/v1/tests/${testId}`, {
             headers: { apikey: hashedApiKey },
             throwHttpErrors: false,
-            timeout: { request: 1000 },
+            timeout: { request: 2000 },
           });
           if (response.statusCode === 200) {
             testFound = true;
