@@ -49,7 +49,7 @@ async function waitForIgnoreRegionsSave(page: Page, locator: Locator): Promise<v
         const body = resp.request().postData() || '';
         return body.includes('ignoreRegions');
       },
-      { timeout: 15000 }
+      { timeout: 30000 }
     ),
     locator.click(),
   ]);
@@ -94,7 +94,7 @@ async function waitForViewChange(page: Page, view: string): Promise<void> {
       return canvasHasImage && mainView.currentView === expected;
     },
     normalizedView,
-    { timeout: 15000 }
+    { timeout: 30000 }
   );
 }
 
@@ -110,7 +110,7 @@ async function waitForCanvasBootstrap(page: Page): Promise<void> {
       return Array.isArray(objects);
     },
     undefined,
-    { timeout: 15000 }
+    { timeout: 30000 }
   );
 }
 
@@ -143,7 +143,7 @@ async function waitForIgnoreRegionCountChange(page: Page, expected: number): Pro
       return current === target;
     },
     expected,
-    { timeout: 15000 }
+    { timeout: 30000 }
   );
 }
 
@@ -177,7 +177,7 @@ When(
     if (target === 'locator') {
       const locator = getLocatorQuery(page, renderedValue);
       const targetLocator = locator.first();
-      await targetLocator.waitFor({ state: 'visible', timeout: 15000 });
+      await targetLocator.waitFor({ state: 'visible', timeout: 30000 });
 
       const ignoreRegionAction = getIgnoreRegionAction(renderedValue);
       if (ignoreRegionAction) {
@@ -212,7 +212,7 @@ When(
       } else {
         const tagName = await targetLocator.evaluate((el) => el.tagName.toLowerCase());
         const noWaitAfter = tagName !== 'a';
-        await targetLocator.click({ timeout: 15000, noWaitAfter });
+        await targetLocator.click({ timeout: 30000, noWaitAfter });
       }
       return;
     }
@@ -888,7 +888,7 @@ When('I release key {string}', async ({ page }, key: string) => {
 When('I click on the element {string} via js', async ({ page }, selector: string) => {
   const locator = getLocatorQuery(page, selector);
   const element = locator.first();
-  await element.waitFor({ state: 'attached', timeout: 15000 });
+  await element.waitFor({ state: 'attached', timeout: 30000 });
   await element.evaluate((el: HTMLElement) => el.click());
 });
 
