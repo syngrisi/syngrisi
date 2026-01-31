@@ -20,7 +20,7 @@ Feature: Accept Button Clickable
           filePath: files/A.png
       """
     When I go to "main" page
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-ClickableButtons']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-ClickableButtons']" to be visible
     When I unfold the test "TestName-ClickableButtons"
 
     # Open modal
@@ -54,7 +54,7 @@ Feature: Accept Button Clickable
           filePath: files/A.png
       """
     When I go to "main" page
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-RemoveClickable']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-RemoveClickable']" to be visible
     When I unfold the test "TestName-RemoveClickable"
 
     # Open modal

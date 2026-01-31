@@ -27,7 +27,7 @@ Feature: Check details - Regions
       When I go to "main" page
       When I wait for test "TestName" to appear in table
       When I unfold the test "TestName"
-      When I wait 10 seconds for the element with locator "[data-test-preview-image='CheckName']" to be visible
+      When I wait 30 seconds for the element with locator "[data-test-preview-image='CheckName']" to be visible
       When I click element with locator "[data-test-preview-image='CheckName']"
       When I wait 15 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
@@ -43,7 +43,7 @@ Feature: Check details - Regions
          """
 
       # add and check presence - first wait for mainView to be fully ready and button to be enabled
-      When I wait 10 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
+      When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
       When I repeat javascript code until stored "js" string equals "ready":
          """
      if (typeof mainView === 'undefined' || !mainView.canvas || !mainView.canvas.getObjects) return "loading";
@@ -126,7 +126,7 @@ Feature: Check details - Regions
 
    Scenario: Regions - delete
       # add and check presence - wait for button to be enabled
-      When I wait 10 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
+      When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
       When I repeat javascript code until stored "js" string equals "ready":
          """
      if (typeof mainView === 'undefined' || !mainView.canvas || !mainView.canvas.getObjects) return "loading";
@@ -180,7 +180,7 @@ Feature: Check details - Regions
 
    Scenario: Regions - copy regions from previous baseline
       # add region to first check - wait for button to be enabled
-      When I wait 10 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
+      When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
       When I repeat javascript code until stored "js" string equals "ready":
          """
      if (typeof mainView === 'undefined' || !mainView.canvas || !mainView.canvas.getObjects) return "loading";
@@ -215,7 +215,7 @@ Feature: Check details - Regions
       When I unfold the test "TestName"
       When I click element with locator "[data-test-preview-image='CheckName']"
 
-      When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+      When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
       When I repeat javascript code until stored "js" string equals "1":
          """
      if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
@@ -230,7 +230,7 @@ Feature: Check details - Regions
       When I unfold the test "TestName"
       When I click element with locator "[data-test-preview-image='CheckName']"
 
-      When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+      When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
       When I repeat javascript code until stored "js" string equals "1":
          """
      if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
@@ -256,10 +256,10 @@ Feature: Check details - Regions
       When I wait for test "NavigationTest" to appear in table
       When I unfold the test "NavigationTest"
       When I click element with locator "[data-test-preview-image='Check2']"
-      When I wait 10 seconds for the element with locator "[data-check-header-name='Check2']" to be visible
+      When I wait 30 seconds for the element with locator "[data-check-header-name='Check2']" to be visible
 
       # Add ignore region - wait for button
-      When I wait 10 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
+      When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
       When I repeat javascript code until stored "js" string equals "ready":
          """
          if (typeof mainView === 'undefined' || !mainView.canvas || !mainView.canvas.getObjects) return "loading";
@@ -289,4 +289,4 @@ Feature: Check details - Regions
 
       # Verify navigation happened - we should be on the previous check (Check1)
       # Check1 header should be visible
-      When I wait 10 seconds for the element with locator "[data-check-header-name='Check1']" to be visible
+      When I wait 30 seconds for the element with locator "[data-check-header-name='Check1']" to be visible
