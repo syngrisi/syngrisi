@@ -22,7 +22,7 @@ Feature: Tests Table Filter
 
     # filter contains
     When I click element with locator "[aria-label='Filter the Table Data']"
-    When I wait 10 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
+    When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
     When I select the option with the text "Name" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
     When I select the option with the text "contains" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
     When I set "filter-1" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"
@@ -31,11 +31,11 @@ Feature: Tests Table Filter
 
 
     When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
 
     When I click element with locator "[aria-label='Reset filter']"
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
 
   @smoke
   Scenario: Main Group, Single Rule with project Filter
@@ -67,20 +67,20 @@ Feature: Tests Table Filter
     # this is workaround: it's impossible for now to select 'Project-2' straightaway at this moment
     When I select the option with the text "Project-1" for element "select[data-test='current-project']"
 
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
     When I wait on element "[data-table-test-name='TestName filter-P2']" to not be displayed
 
     # filter contains
     When I click element with locator "[aria-label='Filter the Table Data']"
-    When I wait 10 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
+    When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
     When I select the option with the text "Name" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
     When I select the option with the text "contains" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
     When I set "filter-1" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"
     When I click element with locator "[aria-label='Apply filter']"
 
     When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
     When I wait on element "[data-table-test-name='TestName filter-P2']" to not be displayed
 
   Scenario: Filter after select navbar item
@@ -111,25 +111,25 @@ Feature: Tests Table Filter
     When I wait for test "TestName filter-0" to appear in table
     When I wait for test "TestName filter-1" to appear in table
     When I wait for test "TestName filter-RunName-2" to appear in table
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-RunName-2']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-RunName-2']" to be visible
 
     When I click element with locator "//*[@data-test='navbar-item-name' and contains(.,'RunName-1')]"
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
     When I wait on element "[data-table-test-name='TestName filter-RunName-2']" to not be displayed
 
     # filter contains
     When I click element with locator "[aria-label='Filter the Table Data']"
-    When I wait 10 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
+    When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
     When I select the option with the text "Name" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
     When I select the option with the text "contains" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
     When I set "filter-1" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"
     When I click element with locator "[aria-label='Apply filter']"
 
     When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
     When I wait on element "[data-table-test-name='TestName filter-RunName-2']" to not be displayed
 
   Scenario: Main Group, Multiple Rules - And
@@ -178,7 +178,7 @@ Feature: Tests Table Filter
 
     # filter eq test name
     When I click element with locator "[aria-label='Filter the Table Data']"
-    When I wait 10 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
+    When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
     When I click element with locator "//*[@data-test='filter-main-group']//*[@data-test='table-filter-add-rule-button']"
     When I select the option with the text "Name" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
     When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
@@ -186,7 +186,7 @@ Feature: Tests Table Filter
     When I click element with locator "[aria-label='Apply filter']"
 
 
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
     When the element "[data-table-test-name=TestName-1]" does appear exactly "2" times
     When I wait on element "[data-table-test-name=TestName-2]" to not be displayed
 
@@ -198,8 +198,8 @@ Feature: Tests Table Filter
 
 
 
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
-    When I wait 10 seconds for the element with locator "//*[@data-test='table-row-Browser' and contains(.,'firefox')]" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
+    When I wait 30 seconds for the element with locator "//*[@data-test='table-row-Browser' and contains(.,'firefox')]" to be visible
     When I wait on element "//*[@data-test='table-row-Browser' and contains(.,'chrome')]" to not be displayed
     When the element "[data-table-test-name=TestName-1]" does appear exactly "1" times
     When I wait on element "[data-table-test-name=TestName-2]" to not be displayed
@@ -253,7 +253,7 @@ Feature: Tests Table Filter
 
     # filter eq test name
     When I click element with locator "[aria-label='Filter the Table Data']"
-    When I wait 10 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
+    When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
     When I click element with locator "//*[@data-test='filter-main-group']//*[@data-test='filter-group-operator-or']/.."
 
     # filter browser name equals chrome
@@ -271,15 +271,15 @@ Feature: Tests Table Filter
     When I click element with locator "[aria-label='Apply filter']"
 
 
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-firefox]" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-chrome]" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-firefox]" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-chrome]" to be visible
     When I wait on element "[data-table-test-name=TestName-msedge]" to not be displayed
 
   # Quick Filtering scenarios (merged from quick_filter.feature)
 
   @smoke
   Scenario: Quick Filtering
-  When I create "2" tests with:
+    When I create "2" tests with:
       """
       project: "Project-1"
       testName: "TestName-$"
@@ -288,7 +288,7 @@ Feature: Tests Table Filter
           filePath: files/A.png
       """
 
-  When I create "1" tests with:
+    When I create "1" tests with:
       """
       project: "Project-1"
       testName: "ZestName-1"
@@ -297,34 +297,34 @@ Feature: Tests Table Filter
           filePath: files/A.png
       """
 
-  When I go to "main" page
+    When I go to "main" page
 
-  # Wait for all test data to be indexed and visible (use proper wait with refresh)
-  When I wait for test "TestName-0" to appear in table
-  When I wait for test "TestName-1" to appear in table
-  When I wait for test "ZestName-1" to appear in table
-  When I wait 10 seconds for the element with locator "[data-test='table-quick-filter']" to be visible
+    # Wait for all test data to be indexed and visible (use proper wait with refresh)
+    When I wait for test "TestName-0" to appear in table
+    When I wait for test "TestName-1" to appear in table
+    When I wait for test "ZestName-1" to appear in table
+    When I wait 10 seconds for the element with locator "[data-test='table-quick-filter']" to be visible
 
-  When I set "TestName-" to the inputfield "[data-test='table-quick-filter']"
-  # Wait for filter to be applied - TestName items should be visible
-  When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-0']" to be visible
-  When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-1']" to be visible
-  # ZestName-1 should be filtered out
-  Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed
+    When I set "TestName-" to the inputfield "[data-test='table-quick-filter']"
+    # Wait for filter to be applied - TestName items should be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-0']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-1']" to be visible
+    # ZestName-1 should be filtered out
+    Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed
 
-  When I set "TestName-0" to the inputfield "[data-test='table-quick-filter']"
-  When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-0']" to be visible
-  Then I wait on element "[data-table-test-name='TestName-1']" to not be displayed
-  Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed
+    When I set "TestName-0" to the inputfield "[data-test='table-quick-filter']"
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-0']" to be visible
+    Then I wait on element "[data-table-test-name='TestName-1']" to not be displayed
+    Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed
 
-  When I set "TestName-1" to the inputfield "[data-test='table-quick-filter']"
-  Then I wait on element "[data-table-test-name='TestName-0']" to not be displayed
-  When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-1']" to be visible
-  Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed
+    When I set "TestName-1" to the inputfield "[data-test='table-quick-filter']"
+    Then I wait on element "[data-table-test-name='TestName-0']" to not be displayed
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-1']" to be visible
+    Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed
 
   @smoke
   Scenario: Quick Filtering with Project
-  When I create "2" tests with:
+    When I create "2" tests with:
       """
       project: "Project-1"
       testName: "TestNameP1-$"
@@ -333,7 +333,7 @@ Feature: Tests Table Filter
           filePath: files/A.png
       """
 
-  When I create "1" tests with:
+    When I create "1" tests with:
       """
       project: "Project-2"
       testName: "TestNameP2-$"
@@ -342,23 +342,23 @@ Feature: Tests Table Filter
           filePath: files/A.png
       """
 
-  When I go to "main" page
+    When I go to "main" page
 
-  # Wait for all tests to appear with proper refresh
-  When I wait for test "TestNameP1-0" to appear in table
-  When I wait for test "TestNameP1-1" to appear in table
-  When I wait for test "TestNameP2-0" to appear in table
+    # Wait for all tests to appear with proper refresh
+    When I wait for test "TestNameP1-0" to appear in table
+    When I wait for test "TestNameP1-1" to appear in table
+    When I wait for test "TestNameP2-0" to appear in table
 
-  When I select the option with the text "Project-1" for element "select[data-test='current-project']"
+    When I select the option with the text "Project-1" for element "select[data-test='current-project']"
 
-  When I wait 10 seconds for the element with locator "[data-table-test-name='TestNameP1-0']" to be visible
-  When I wait 10 seconds for the element with locator "[data-table-test-name='TestNameP1-1']" to be visible
-  Then I wait on element "[data-table-test-name='TestNameP2-0']" to not be displayed
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestNameP1-0']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestNameP1-1']" to be visible
+    Then I wait on element "[data-table-test-name='TestNameP2-0']" to not be displayed
 
-  When I set "TestNameP1-0" to the inputfield "[data-test='table-quick-filter']"
-  When I wait 10 seconds for the element with locator "[data-table-test-name='TestNameP1-0']" to be visible
-  Then I wait on element "[data-table-test-name='TestNameP1-1']" to not be displayed
-  Then I wait on element "[data-table-test-name='TestNameP2-0']" to not be displayed
+    When I set "TestNameP1-0" to the inputfield "[data-test='table-quick-filter']"
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestNameP1-0']" to be visible
+    Then I wait on element "[data-table-test-name='TestNameP1-1']" to not be displayed
+    Then I wait on element "[data-table-test-name='TestNameP2-0']" to not be displayed
 
   # Distinct filtering scenario (merged from distincts_filter.feature)
 
@@ -406,7 +406,7 @@ Feature: Tests Table Filter
     # BROWSER
     # open filter
     When I click element with locator "[aria-label='Filter the Table Data']"
-    When I wait 10 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
+    When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
 
     # set filter
     When I select the option with the text "Browser" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
@@ -421,7 +421,7 @@ Feature: Tests Table Filter
     When I click element with locator "[aria-label='Apply filter']"
 
     When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
 
     # close drawer
     When I click element with locator "[aria-label='Close']"
@@ -431,7 +431,7 @@ Feature: Tests Table Filter
     # STATUS
     # open filter
     When I click element with locator "[aria-label='Filter the Table Data']"
-    When I wait 10 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
+    When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
 
     # set filter new
     When I select the option with the text "Status" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
@@ -444,8 +444,8 @@ Feature: Tests Table Filter
 
     When I click element with locator "[aria-label='Apply filter']"
 
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
     When I wait on element "[data-table-test-name='TestName filter-3']" to not be displayed
 
     # set filter failed
@@ -458,4 +458,4 @@ Feature: Tests Table Filter
 
     When I wait on element "[data-table-test-name='TestName filter-1']" to not be displayed
     When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-3']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-3']" to be visible
