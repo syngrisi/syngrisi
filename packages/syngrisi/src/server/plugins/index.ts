@@ -34,9 +34,13 @@ export * from './core';
 export async function initPlugins(): Promise<void> {
     log.info('Initializing plugin system...', logOpts);
 
-    // Parse enabled plugins from environment
-    const enabledPlugins = env.SYNGRISI_PLUGINS_ENABLED
-        ? env.SYNGRISI_PLUGINS_ENABLED.split(',').map(s => s.trim()).filter(Boolean)
+    // Parse enabled plugins from environment (prefer live process.env for test overrides)
+    const enabledPluginsRaw =
+        process.env.SYNGRISI_PLUGINS_ENABLED ??
+        env.SYNGRISI_PLUGINS_ENABLED ??
+        '';
+    const enabledPlugins = enabledPluginsRaw
+        ? enabledPluginsRaw.split(',').map(s => s.trim()).filter(Boolean)
         : [];
 
     // Build plugin configurations from environment
@@ -88,42 +92,62 @@ export async function initPlugins(): Promise<void> {
         },
     };
 
+    let jwtDbSettings: Record<string, unknown> | null = null;
+    let jwtDbEnabled: boolean | undefined;
+    try {
+        const dbSettings = await PluginSettings.findOne({ pluginName: 'jwt-auth' }).lean();
+        jwtDbSettings = dbSettings?.settings as Record<string, unknown> | undefined || null;
+        jwtDbEnabled = dbSettings?.enabled;
+    } catch (error) {
+        log.debug(`Failed to read DB config for jwt-auth during startup validation: ${error}`, logOpts);
+    }
+
+    // If DB explicitly enables jwt-auth and it has required settings, ensure it's in the enabled list
+    if (jwtDbEnabled === true && !enabledPlugins.includes('jwt-auth')) {
+        const dbJwksUrl = (jwtDbSettings as Record<string, unknown> | null)?.jwksUrl as string | undefined;
+        const dbIssuer = (jwtDbSettings as Record<string, unknown> | null)?.issuer as string | undefined;
+        if (dbJwksUrl && dbIssuer) {
+            enabledPlugins.push('jwt-auth');
+        } else {
+            log.warn('jwt-auth enabled in DB without required settings; skipping auto-enable', logOpts);
+        }
+    }
+
     // Validate configuration for enabled plugins
     if (enabledPlugins.includes('jwt-auth')) {
-        let jwksUrl = pluginConfigs['jwt-auth']?.jwksUrl as string | undefined;
-        let issuer = pluginConfigs['jwt-auth']?.issuer as string | undefined;
+        if (jwtDbEnabled === false) {
+            log.info('jwt-auth is disabled in DB; skipping startup validation', logOpts);
+        } else {
+            let jwksUrl = pluginConfigs['jwt-auth']?.jwksUrl as string | undefined;
+            let issuer = pluginConfigs['jwt-auth']?.issuer as string | undefined;
 
-        if (!jwksUrl || !issuer) {
-            try {
-                const dbSettings = await PluginSettings.findOne({ pluginName: 'jwt-auth' }).lean();
-                const dbConfig = dbSettings?.settings || {};
+            if (!jwksUrl || !issuer) {
+                const dbConfig = jwtDbSettings || {};
                 jwksUrl = jwksUrl || (dbConfig as Record<string, unknown>).jwksUrl as string | undefined;
                 issuer = issuer || (dbConfig as Record<string, unknown>).issuer as string | undefined;
-            } catch (error) {
-                log.debug(`Failed to read DB config for jwt-auth during startup validation: ${error}`, logOpts);
             }
-        }
 
-        if (!jwksUrl || !issuer) {
-            throw new Error(
-                'Missing required configuration for "jwt-auth" plugin. ' +
-                'Please set SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL and SYNGRISI_PLUGIN_JWT_AUTH_ISSUER environment variables.'
-            );
-        }
+            if (!jwksUrl || !issuer) {
+                throw new Error(
+                    'Missing required configuration for "jwt-auth" plugin. ' +
+                    'Please set SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL and SYNGRISI_PLUGIN_JWT_AUTH_ISSUER environment variables.'
+                );
+            }
 
-        // Validate JWKS URL format
-        try {
-            new URL(jwksUrl);
-        } catch (error) {
-            throw new Error(
-                `Invalid JWKS URL for "jwt-auth" plugin: "${jwksUrl}". ` +
-                'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL must be a valid URL.'
-            );
+            // Validate JWKS URL format
+            try {
+                new URL(jwksUrl);
+            } catch (error) {
+                throw new Error(
+                    `Invalid JWKS URL for "jwt-auth" plugin: "${jwksUrl}". ` +
+                    'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL must be a valid URL.'
+                );
+            }
         }
     }
 
     await loadPlugins({
-        pluginsDir: env.SYNGRISI_PLUGINS_DIR,
+        pluginsDir: process.env.SYNGRISI_PLUGINS_DIR || env.SYNGRISI_PLUGINS_DIR,
         enabledPlugins,
         pluginConfigs,
     });
