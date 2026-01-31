@@ -3,7 +3,7 @@ import type { AppServerFixture } from '@fixtures';
 import { createLogger } from '@lib/logger';
 import * as yaml from 'yaml';
 import { env } from '@config';
-import { stopServerProcess, waitForServerStop } from '@utils/app-server';
+import { stopServerProcess, waitForServerStop, ensureServerReady } from '@utils/app-server';
 import { clearDatabase, clearPluginSettings } from '@utils/db-cleanup';
 import { resolveRepoRoot } from '@utils/fs';
 import { setSkipAutoStart } from '@fixtures';
@@ -72,8 +72,12 @@ Given(
     await appServer.start();
     restartAfterEnvSet.set(getCid(), false);
 
-    // Wait a bit for server to be fully ready
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Wait for server to be fully ready to reduce flake
+    if (appServer.serverPort) {
+      await ensureServerReady(appServer.serverPort, 60_000);
+    } else {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
 
     // Set syngrisiUrl for template rendering (as in old tests)
     const syngrisiUrl = `${appServer.baseURL}/`;
@@ -111,6 +115,9 @@ Given(
       await appServer.start();
     }
     restartAfterEnvSet.set(getCid(), false);
+    if (appServer.serverPort) {
+      await ensureServerReady(appServer.serverPort, 60_000);
+    }
     // Set syngrisiUrl for template rendering (as in old tests)
     const syngrisiUrl = `${appServer.baseURL}/`;
     testData.set('syngrisiUrl', syngrisiUrl);
