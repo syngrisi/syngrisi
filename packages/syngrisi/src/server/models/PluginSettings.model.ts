@@ -137,6 +137,14 @@ PluginSettingsSchema.statics.getEffectiveConfig = async function (
     // Get schema from document or empty array
     const schema = doc?.settingsSchema || [];
 
+    // Fallback: if schema is empty but DB settings exist, return raw DB settings
+    if (schema.length === 0 && doc?.settings && Object.keys(doc.settings).length > 0) {
+        for (const [key, value] of Object.entries(doc.settings)) {
+            config[key] = { value, source: 'db' };
+        }
+        return { config, enabled };
+    }
+
     for (const field of schema) {
         const envKey = field.envVariable || `${envPrefix}${envPluginKey}_${field.key.toUpperCase()}`;
         const envValue = process.env[envKey];

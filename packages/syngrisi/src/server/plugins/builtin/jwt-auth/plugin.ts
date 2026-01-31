@@ -312,7 +312,21 @@ export function createJwtAuthPlugin(initialConfig: Partial<JwtAuthConfig> = {}):
                             error: 'Token is missing client identifier',
                         };
                     }
-                    const scopes = (payload.scp as string[]) || (payload.scope as string)?.split(' ') || [];
+                    const scp = (payload as Record<string, unknown>).scp;
+                    const scope = (payload as Record<string, unknown>).scope;
+                    let scopes: string[] = [];
+
+                    if (Array.isArray(scp)) {
+                        scopes = scp.map(value => String(value));
+                    } else if (typeof scp === 'string') {
+                        scopes = scp.split(' ');
+                    } else if (Array.isArray(scope)) {
+                        scopes = scope.map(value => String(value));
+                    } else if (typeof scope === 'string') {
+                        scopes = scope.split(' ');
+                    }
+
+                    scopes = scopes.map(value => value.trim()).filter(Boolean);
 
                     if (requiredScopes.length > 0) {
                         const scopeSet = new Set(scopes.map(scope => String(scope).trim()).filter(Boolean));

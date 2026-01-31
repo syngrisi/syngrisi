@@ -95,6 +95,9 @@ async function loadBuiltinPlugins(
                 await manager.loadPlugin(module.default, config);
             } catch (error) {
                 log.error(`Failed to load built-in plugin '${pluginName}': ${error}`, logOpts);
+                if (pluginName === 'jwt-auth') {
+                    throw error;
+                }
             }
         }
     }
