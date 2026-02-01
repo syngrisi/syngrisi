@@ -36,7 +36,8 @@ cleanup_containers() {
     log_info "Cleaning up old containers..."
     container delete -f "$POSTGRES_CONTAINER" 2>/dev/null || true
     container delete -f "$LOGTO_CONTAINER" 2>/dev/null || true
-    container network delete "$SSO_NETWORK" 2>/dev/null || true
+    container delete -f "$POSTGRES_CONTAINER" 2>/dev/null || true
+    container delete -f "$LOGTO_CONTAINER" 2>/dev/null || true
 }
 
 # Create network for SSO containers
@@ -125,7 +126,6 @@ start_postgres() {
 
     container run -d \
         --name "$POSTGRES_CONTAINER" \
-        --network "$SSO_NETWORK" \
         -p "${POSTGRES_PORT}:5432" \
         -e POSTGRES_USER=logto \
         -e POSTGRES_PASSWORD=logto \
@@ -139,7 +139,7 @@ start_postgres() {
 seed_database() {
     local db_host=$1
     local db_port=${2:-5432}
-    local db_url="postgres://logto:logto@${db_host}:${db_port}/logto"
+    local db_url="postgres://logto:logto@${db_host}:${db_port}/logto?ssl=false"
 
     log_info "Seeding Logto database..."
 
@@ -148,7 +148,6 @@ seed_database() {
     # Apple container requires --entrypoint to override the default command
     container run --rm \
         --name "logto-seed" \
-        --network "$SSO_NETWORK" \
         -e DB_URL="$db_url" \
         --entrypoint "npm" \
         ghcr.io/logto-io/logto:latest \
@@ -165,7 +164,7 @@ start_logto() {
     log_info "Starting Logto container with DB_URL pointing to $db_host:$db_port..."
 
     # Build the database URL
-    local db_url="postgres://logto:logto@${db_host}:${db_port}/logto"
+    local db_url="postgres://logto:logto@${db_host}:${db_port}/logto?ssl=false"
 
     # Start Logto container on the same network as Postgres
     # Note: Logto auto-seeds database on first run via default entrypoint
@@ -173,7 +172,6 @@ start_logto() {
     # External access is via LOGTO_ADMIN_PORT (3003)
     container run -d \
         --name "$LOGTO_CONTAINER" \
-        --network "$SSO_NETWORK" \
         -p "${LOGTO_PORT}:3001" \
         -p "${LOGTO_ADMIN_PORT}:3002" \
         -e DB_URL="$db_url" \
@@ -221,7 +219,7 @@ main() {
 
     check_container_cli
     cleanup_containers
-    create_network
+
 
     # Start Postgres
     start_postgres
@@ -238,17 +236,23 @@ main() {
     }
 
     # Get Postgres connection info
-    # Apple container does not support DNS resolution between containers yet
-    # So we use the IP address directly instead of hostname
-    DB_HOST=$(get_container_ip "$POSTGRES_CONTAINER")
-    DB_PORT="5432"
+    # Use Host Gateway IP to connect via mapped port (workaround for network isolation)
+    DB_HOST=$(container inspect "$POSTGRES_CONTAINER" | node -e "
+        const fs = require('fs');
+        const data = JSON.parse(fs.readFileSync(0, 'utf-8'));
+        const info = Array.isArray(data) ? data[0] : data;
+        if (info.networks && info.networks[0] && info.networks[0].gateway) {
+             console.log(info.networks[0].gateway);
+        }
+    " 2>/dev/null)
+    DB_PORT="$POSTGRES_PORT"
 
     if [ -z "$DB_HOST" ]; then
-        log_error "Failed to get Postgres container IP address"
+        log_error "Failed to get Postgres container Gateway IP address"
         exit 1
     fi
 
-    log_info "Postgres IP: $DB_HOST:$DB_PORT (via shared network)"
+    log_info "Postgres Gateway IP: $DB_HOST:$DB_PORT (via host mapping)"
 
     # Seed the database using Logto CLI
     seed_database "$DB_HOST" "$DB_PORT"

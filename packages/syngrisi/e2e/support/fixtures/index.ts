@@ -7,6 +7,8 @@ import { logAttachmentFixture } from './log-attachment.fixture';
 import { testEngineFixture } from './test-engine.fixture';
 import { ssoServerFixture } from './sso-server.fixture';
 
+import { mockJwksFixture } from './mock-jwks.fixture';
+
 // Import params
 import '@params';
 
@@ -18,6 +20,7 @@ export const test = mergeTests(
   logAttachmentFixture,
   testEngineFixture,
   ssoServerFixture,
+  mockJwksFixture
 );
 
 // Create BDD helpers with merged fixtures

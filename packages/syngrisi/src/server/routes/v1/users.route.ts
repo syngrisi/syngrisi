@@ -27,6 +27,7 @@ registry.registerPath({
 });
 
 router.get('/current',
+    ensureLoggedIn(),
     validateRequest(SkipValid, 'get, /v1/users/current'),
     usersController.current as Midleware);
 
@@ -68,7 +69,7 @@ registry.registerPath({
     path: '/v1/users/{userId}',
     summary: 'Retrieve user details by user ID.',
     tags: ['Users'],
-    request: {params: getByIdParamsSchema('userId')},
+    request: { params: getByIdParamsSchema('userId') },
     responses: createApiResponse(UserGetRespSchema, 'Success'),
 });
 

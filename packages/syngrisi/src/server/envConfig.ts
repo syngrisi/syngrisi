@@ -49,7 +49,7 @@ export const env = cleanEnv(process.env, {
 
     // Rate Limiting
     SYNGRISI_RATE_LIMIT_WINDOW_MS: num({ default: 15 * 60 * 1000 }), // 15 minutes
-    SYNGRISI_RATE_LIMIT_MAX: num({ default: 5000 }),
+    SYNGRISI_RATE_LIMIT_MAX: num({ default: 50000 }),
     SYNGRISI_AUTH_RATE_LIMIT_WINDOW_MS: num({ default: 15 * 60 * 1000 }), // 15 minutes
     SYNGRISI_AUTH_RATE_LIMIT_MAX: num({ default: 200 }),
     // Mongo tuneables for tests/CI flake reduction
@@ -80,4 +80,19 @@ export const env = cleanEnv(process.env, {
     SSO_DEFAULT_ROLE: str({ choices: ['', 'user', 'admin', 'reviewer'], default: 'reviewer' }),
     SSO_AUTO_CREATE_USERS: bool({ default: true }),
     SSO_ALLOW_ACCOUNT_LINKING: bool({ default: true }),
+
+    // Plugin System
+    SYNGRISI_PLUGINS_ENABLED: str({ default: '' }),  // Comma-separated list of enabled plugins
+    SYNGRISI_PLUGINS_DIR: str({ default: '' }),       // Directory for external plugins
+
+    // Okta Auth Plugin
+    // Deprecated: Use SYNGRISI_PLUGIN_JWT_AUTH_* variables instead
+    OKTA_JWKS_URL: str({ default: '' }),
+    OKTA_ISSUER: str({ default: '' }),
+    OKTA_SERVICE_USER_ROLE: str({ default: '' }),
+    OKTA_AUTH_HEADER: str({ default: '' }),
+
+    // Custom Check Validator Plugin
+    CHECK_MISMATCH_THRESHOLD: str({ default: '0' }),  // Mismatch % below which checks pass
+    CHECK_VALIDATOR_SCRIPT: str({ default: '' }),     // Path to custom validation script
 });

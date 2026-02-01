@@ -56,14 +56,14 @@ export class PlaywrightDriver {
      *   autoAccept: true // Automatically accept new baselines
      * });
      */
-    constructor({ page, url, apiKey, autoAccept }: Config) {
+    constructor({ page, url, apiKey, autoAccept, headers }: Config) {
         const pw = new PlaywrightEntities(page)
         this.page = pw.page
         this.browser = pw.browser
         this.browserName = pw.browserName
         this.viewport = pw.viewport
 
-        this.api = new SyngrisiApi({ url, apiKey })
+        this.api = new SyngrisiApi({ url, apiKey, headers })
         this.params = {
             test: {}
         }

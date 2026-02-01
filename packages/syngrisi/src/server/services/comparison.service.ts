@@ -12,6 +12,7 @@ import { CreateCheckParamsExtended } from '../../types/Check';
 import { createSnapshot } from './snapshot-file.service';
 import { errMsg, ApiError } from '@utils';
 import { HttpStatus } from '@utils';
+import { executeBeforeCompareHook, executeAfterCompareHook } from '../plugins';
 
 export interface CompareSnapshotsOptions {
     vShifting?: boolean;
@@ -136,6 +137,26 @@ export const compareCheck = async (
                 compareOptions.ignore = baseline.matchType || 'nothing';
             }
 
+            // Plugin hook: beforeCompare - allow plugins to skip or modify comparison
+            const checkContext = {
+                expectedSnapshot,
+                actualSnapshot,
+                checkParams: newCheckParams,
+                baseline: baseline || undefined,
+                compareOptions,
+            };
+
+            const beforeHookResult = await executeBeforeCompareHook(checkContext);
+            if ('skip' in beforeHookResult && beforeHookResult.skip) {
+                log.info(`Comparison skipped by plugin, using override result`, logOpts);
+                const overrideResult = beforeHookResult.result;
+                return {
+                    failReasons: overrideResult.failReasons || [],
+                    status: overrideResult.status,
+                    result: overrideResult.result || JSON.stringify({ pluginOverride: true }),
+                } as CompareResult;
+            }
+
             checkCompareResult = await compareSnapshots(expectedSnapshot, actualSnapshot, compareOptions);
             log.silly(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(checkCompareResult.dimensionDifference)}'`);
             log.silly(`dimensionDifference: '${JSON.stringify(checkCompareResult.dimensionDifference)}`);
@@ -215,5 +236,17 @@ export const compareCheck = async (
     if (compareResult.failReasons.length > 0) {
         compareResult.status = 'failed';
     }
-    return compareResult as CompareResult;
+
+    // Plugin hook: afterCompare - allow plugins to override the final result
+    const checkContextForAfterHook = {
+        expectedSnapshot,
+        actualSnapshot,
+        checkParams: newCheckParams,
+    };
+    const finalResult = await executeAfterCompareHook(
+        checkContextForAfterHook,
+        compareResult as CompareResult
+    );
+
+    return finalResult;
 };

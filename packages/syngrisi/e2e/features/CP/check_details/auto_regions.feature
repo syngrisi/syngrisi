@@ -160,6 +160,9 @@ Feature: Check details - Auto Regions from Diff
             0
             """
 
+        # Wait for canvas to fully stabilize
+        When I wait for "1" seconds
+
         # Create auto regions
         When I press the "r" key
 
@@ -169,6 +172,9 @@ Feature: Check details - Auto Regions from Diff
             if (typeof mainView === 'undefined' || !mainView.allRects) return "0";
             return mainView.allRects.length.toString();
             """
+
+        # Wait for regions to be fully rendered
+        When I wait for "0.5" seconds
 
         # Save regions (Alt+S)
         When I press "Alt+s"

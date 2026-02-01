@@ -71,7 +71,10 @@ function LogoutForm() {
         : {};
     const loading = logoutInfo.isLoading || userInfo.isLoading;
     const logoutOk = Boolean(logoutInfo.data?.ok);
-    const success = Boolean(logoutOk && userInfo.isSuccess && hasValidUserPayload && Object.keys(userPayload).length === 0);
+    
+    // If userInfo returns HTML (redirect to login), isJson is false, but that means we are logged out.
+    const isLoggedOut = !userInfo.data?.isJson || (hasValidUserPayload && Object.keys(userPayload).length === 0);
+    const success = Boolean(logoutOk && userInfo.isSuccess && isLoggedOut);
 
     const errorMessage = (() => {
         if (logoutInfo.data && !logoutInfo.data.isJson) {
@@ -81,6 +84,9 @@ function LogoutForm() {
             const message = (logoutInfo.data.data as { message?: string } | null)?.message;
             return message || `Logout failed with status ${logoutInfo.data.status}`;
         }
+        // If success is true (which includes non-json case for userInfo), we don't want an error message.
+        if (success) return undefined;
+
         if (userInfo.data && !userInfo.data.isJson) {
             return 'Unexpected response format while loading user info';
         }

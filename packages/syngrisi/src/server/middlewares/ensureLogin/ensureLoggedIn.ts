@@ -44,6 +44,7 @@ import { appSettings } from "@settings";
 import { env } from "@/server/envConfig";
 import { hashSync } from '@utils/hash';
 import * as shareService from '@services/share.service';
+import { executeAuthHook } from '../../plugins';
 
 export const normalizeIncomingApiKey = (rawKey: unknown): string | undefined => {
     if (Array.isArray(rawKey)) {
@@ -73,9 +74,16 @@ const handleBasicAuth = async (req: ExtRequest, retryCount = 0): Promise<any> =>
 
     const authEnabled = await AppSettings.isAuthEnabled();
 
-
+    log.debug(`handleBasicAuth: checking auth`, {
+        ...logOpts,
+        authEnabled,
+        isAuthenticated: req.isAuthenticated(),
+        hasUser: !!req.user,
+        username: req.user?.username,
+    });
 
     if (req.isAuthenticated()) {
+        log.debug(`handleBasicAuth: user already authenticated, returning success`, logOpts);
         return { type: 'success', status: 200 };
     }
     if (!authEnabled) {
@@ -97,27 +105,15 @@ const handleBasicAuth = async (req: ExtRequest, retryCount = 0): Promise<any> =>
             };
         }
 
-        const result = new Promise((resolve) => {
-            req.logIn(guest, (err: any) => {
-                if (err) {
-                    log.error(`cannot find guest user: '${err}'`, logOpts);
-                    resolve({
-                        type: 'redirect',
-                        status: 301,
-                        value: `/auth?=Error: cannot find guest user: ${err}`,
-                        user: null,
-                    });
-                } else {
-                    resolve({
-                        type: 'success',
-                        status: 200,
-                        value: '',
-                        user: guest,
-                    });
-                }
-            });
-        });
-        return result;
+        // When auth is disabled, bypass session-based login to avoid hanging on API requests
+        // that don't have an established session. Just set the user directly.
+        log.debug(`Auth disabled - setting Guest user directly (bypassing session login)`, logOpts);
+        return {
+            type: 'success',
+            status: 200,
+            value: '',
+            user: guest,
+        };
     }
 
     const result: any = {
@@ -240,6 +236,23 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
         msgType: 'AUTH_API',
     };
     return async (req: Request, res: Response, next: NextFunction) => {
+        // Try plugin authentication first (e.g., JWT tokens)
+        try {
+            const pluginAuthResult = await executeAuthHook(req, res);
+            if (pluginAuthResult) {
+                if (pluginAuthResult.authenticated && pluginAuthResult.user) {
+                    req.user = pluginAuthResult.user;
+                    return next();
+                }
+                if (pluginAuthResult.authenticated === false) {
+                    log.info(`Plugin auth failed: ${pluginAuthResult.error}`, logOpts);
+                    return res.status(401).json({ error: pluginAuthResult.error || 'Plugin authentication failed' });
+                }
+            }
+        } catch (error) {
+            log.error(`Error in plugin auth: ${error}`, logOpts);
+        }
+
         const rawApiKey = req.headers.apikey ?? req.query.apikey;
         const result = await handleAPIAuth(rawApiKey);
         req.user = req.user || result.user;
@@ -248,8 +261,7 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
         }
         if (result.type !== 'success') {
             log.info(`${result.value} - ${req.originalUrl}`, logOpts);
-            res.status(result.status).json({ error: result.value });
-            return next(new Error(result.value));
+            return res.status(result.status).json({ error: result.value });
         }
         if ('apikey' in req.headers) {
             delete (req.headers as Record<string, unknown>).apikey;
@@ -259,11 +271,34 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
 }
 
 export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+    const logOpts = {
+        scope: 'ensureLoggedInOrApiKey',
+        msgType: 'AUTH_API',
+    };
+
     return async (req: Request, res: Response, next: NextFunction) => {
+        // Try plugin authentication first (e.g., JWT tokens from external IdP)
+        try {
+            const pluginAuthResult = await executeAuthHook(req, res);
+            if (pluginAuthResult) {
+                if (pluginAuthResult.authenticated && pluginAuthResult.user) {
+                    log.debug(`Plugin auth succeeded for user: ${pluginAuthResult.user.username}`, logOpts);
+                    req.user = pluginAuthResult.user;
+                    return next();
+                }
+                if (pluginAuthResult.authenticated === false) {
+                    log.info(`Plugin auth failed: ${pluginAuthResult.error}`, logOpts);
+                    return res.status(401).json({ error: pluginAuthResult.error || 'Plugin authentication failed' });
+                }
+            }
+            // pluginAuthResult === null means skip plugin auth, try other methods
+        } catch (error) {
+            log.error(`Error in plugin auth: ${error}`, logOpts);
+            // Continue to regular auth on plugin error
+        }
 
         const basicAuthResult = await handleBasicAuth(req);
-
-
+        req.user = basicAuthResult.user || req.user;
 
         if (basicAuthResult.type === 'success') {
             return next();
@@ -390,6 +425,7 @@ export function ensureLoggedInOrApiKeyOrShareToken(): (req: Request, res: Respon
 
         // Try basic auth first
         const basicAuthResult = await handleBasicAuth(req);
+        req.user = basicAuthResult.user || req.user;
         if (basicAuthResult.type === 'success') {
             return next();
         }
@@ -404,8 +440,7 @@ export function ensureLoggedInOrApiKeyOrShareToken(): (req: Request, res: Respon
 
         if (apiKeyResult.type !== 'success') {
             log.info(`Unauthorized - ${req.originalUrl}`, logOpts);
-            res.status(401).json({ error: `Unauthorized - ${req.originalUrl}` });
-            return next(new Error(`Unauthorized - ${req.originalUrl}`));
+            return res.status(401).json({ error: `Unauthorized - ${req.originalUrl}` });
         }
         if ('apikey' in req.headers) {
             delete (req.headers as Record<string, unknown>).apikey;

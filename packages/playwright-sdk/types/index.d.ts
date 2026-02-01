@@ -11,6 +11,11 @@ export interface Config {
      * Can be overridden at check level.
      */
     autoAccept?: boolean
+    /**
+     * Custom HTTP headers to include in API requests.
+     * Useful for M2M authentication (e.g. Authorization header).
+     */
+    headers?: Record<string, string>
 }
 
 export interface SessionParams {

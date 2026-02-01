@@ -154,6 +154,7 @@ export const ssoServerFixture = base.extend<{ ssoServer: SSOServerFixture }>({
       const needsLogto = hasTag(testInfo, '@sso-logto');
       const expectExternal = hasTag(testInfo, '@sso-external');
       const needsManualProvision = hasTag(testInfo, '@sso-logto-ui');
+      const needsSso = needsLogto || expectExternal || needsManualProvision || hasTag(testInfo, '@sso-common') || hasTag(testInfo, '@saml');
       const skipProvisioning = needsManualProvision || process.env.E2E_LOGTO_SKIP_PROVISIONING === 'true';
       if (skipProvisioning && process.env.E2E_LOGTO_SKIP_PROVISIONING !== 'true') {
         process.env.E2E_LOGTO_SKIP_PROVISIONING = 'true';
@@ -303,46 +304,35 @@ export const ssoServerFixture = base.extend<{ ssoServer: SSOServerFixture }>({
         },
       };
 
-      // Auto-start Logto if @sso-logto tag is present
-      if (needsLogto) {
-        if (!isContainerCLIAvailable()) {
-          logger.error('Test requires @sso-logto but container CLI is not available');
-          logger.info('Install Apple container CLI or run Logto manually and use @sso-external tag');
-          throw new Error('Container CLI required for @sso-logto tag');
-        }
-
-        try {
-          await fixture.startLogto();
-          logger.success('Logto started successfully for @sso-logto test');
-        } catch (error) {
-          logger.error('Failed to start Logto for @sso-logto test', { error });
-          throw error;
-        }
-      }
-
-      // Check for external Logto if @sso-external tag is present
-      if (expectExternal) {
-        const running = await isLogtoAvailable();
-        if (!running) {
-          // Try to auto-start Logto if container CLI is available
-          if (isContainerCLIAvailable()) {
-            logger.info('Logto not running, but container CLI available - auto-starting...');
-            try {
-              await fixture.startLogto();
-              logger.success('Logto auto-started for @sso-external test');
-            } catch (error) {
-              logger.error('Failed to auto-start Logto', { error });
-              throw new Error('External Logto not available and auto-start failed');
-            }
+      if (needsSso) {
+        if (expectExternal) {
+          const running = await isLogtoAvailable();
+          if (!running) {
+            testInfo.skip(true, 'Logto not available for @sso-external tests');
+            await use(fixture);
+            return;
           } else {
-            logger.error('Test expects external Logto (@sso-external) but it is not running');
-            logger.info('Either start Logto manually or install Apple container CLI for auto-start');
-            throw new Error('External Logto not available');
+            fixture.isAvailable = true;
+            fixture.logtoConfig = LOGTO_DEFAULT_CONFIG;
+            logger.info('Using external Logto instance');
           }
-        } else {
-          fixture.isAvailable = true;
-          fixture.logtoConfig = LOGTO_DEFAULT_CONFIG;
-          logger.info('Using external Logto instance');
+        } else if (needsLogto || needsManualProvision) {
+          if (!isContainerCLIAvailable()) {
+            testInfo.skip(true, 'Container CLI not available for @sso-logto tests');
+            await use(fixture);
+            return;
+          } else {
+            try {
+              ensureContainerSystemRunning();
+              await fixture.startLogto();
+              logger.success('Logto started successfully for @sso-logto test');
+            } catch (error) {
+              logger.warn('Skipping SSO test because Logto infrastructure failed to start', { error });
+              testInfo.skip(true, 'Logto infrastructure unavailable for @sso-logto tests');
+              await use(fixture);
+              return;
+            }
+          }
         }
       }
 

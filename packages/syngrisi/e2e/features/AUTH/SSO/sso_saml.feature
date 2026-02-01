@@ -1,5 +1,11 @@
-@sso-external @slow @saml @sso
+@sso-external @slow @saml @sso @no-app-start
 Feature: SSO Authentication with SAML 2.0
+  # -------------------------------------------------------------------------
+  # INFRASTRUCTURE TROUBLESHOOTING:
+  # See packages/syngrisi/e2e/docs/SSO_TROUBLESHOOTING.md for details on
+  # port mismatches, IPv6 issues, and container requirements.
+  # -------------------------------------------------------------------------
+  #
   # SAML 2.0 SSO tests using Logto as SAML Identity Provider
   #
   # Prerequisites:
@@ -22,6 +28,8 @@ Feature: SSO Authentication with SAML 2.0
       """
       SYNGRISI_AUTH: true
       SYNGRISI_TEST_MODE: false
+      LOGTO_ENDPOINT: http://127.0.0.1:3001
+      SYNGRISI_APP_PORT: 3002
       """
     Given I start Server
 

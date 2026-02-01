@@ -1,4 +1,4 @@
-@fast-server
+@fast-server @mode:serial
 Feature: RCA (Root Cause Analysis) Panel
 
   Background:
