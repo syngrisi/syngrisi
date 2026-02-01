@@ -59,7 +59,7 @@ Increased the default `SYNGRISI_RATE_LIMIT_MAX` in `packages/syngrisi/src/server
 
 ### 2. Server Startup Validation - Missing JWKS URL
 
-**Status:** **VERIFIED / FLAKY ENVIRONMENT**
+**Status:** **FIXED**
 
 **Description:**
 The test case "Server should fail to start with missing JWKS URL" validates that the `jwt-auth` plugin prevents server startup if critical configuration is missing. The test failed because the server started successfully instead of crashing.
@@ -78,7 +78,8 @@ Error: Server started successfully but was expected to fail
     1.  The `initPlugins` function did not throw (validation passed).
     2.  The `jwt-auth` plugin was not considered "enabled" (missing from `enabledPlugins` array).
 *   The test sets `SYNGRISI_PLUGINS_ENABLED=jwt-auth` in the worker process.
-*   **Hypothesis:** There was likely an issue with environment variable propagation to the child server process spawned by `launchAppServer`, causing the plugin to be skipped entirely. Upon adding debug logs and rebuilding, the test passed, confirming the validation logic itself is correct.
+*   **Fix applied:** Ensure `clearPluginSettings()` uses the exact DB connection string from `appServer`, eliminating DB/CID mismatches during parallel runs.  
+    Files: `packages/syngrisi/e2e/support/utils/db-cleanup.ts`, `packages/syngrisi/e2e/steps/domain/server.steps.ts`, `packages/syngrisi/e2e/steps/domain/jwt_auth.steps.ts`
 
 ---
 
