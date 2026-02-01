@@ -75,10 +75,18 @@ class SyngrisiApi {
      * @returns {Record<string, string>} Headers object with apikey and x-syngrisi-sdk-version.
      */
     private get headers(): Record<string, string> {
-        return {
+        const headers: Record<string, string> = {
             apikey: this.config.apiHash!,
             'x-syngrisi-sdk-version': SDK_VERSION,
+            ...(this.config.headers || {}),
         }
+
+        // Hybrid Auth: Fallback to ENV variable if not explicitly set
+        if (!headers.Authorization && !headers.authorization && process.env.SYNGRISI_AUTH_TOKEN) {
+            headers.Authorization = `Bearer ${process.env.SYNGRISI_AUTH_TOKEN}`
+        }
+
+        return headers
     }
 
     /**

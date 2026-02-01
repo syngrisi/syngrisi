@@ -74,7 +74,7 @@ Feature: User roles
         When I wait 10 seconds for the element with locator "div[role='dialog'] button:has-text('Generate')" to be visible
         When I safely click element with locator "div[role='dialog'] button:has-text('Generate')"
         When I parse the API key
-        When I click element with locator "button=Close"
+        When I click element with locator "div[role='dialog'] button:has-text('Close')"
 
 
         # create checks
@@ -100,7 +100,7 @@ Feature: User roles
         When I wait 10 seconds for the element with locator "div[role='dialog'] button:has-text('Generate')" to be visible
         When I safely click element with locator "div[role='dialog'] button:has-text('Generate')"
         When I parse the API key
-        When I click element with locator "button=Close"
+        When I click element with locator "div[role='dialog'] button:has-text('Close')"
 
         # create checks
         When I set the API key in config
@@ -125,7 +125,7 @@ Feature: User roles
         When I wait 10 seconds for the element with locator "div[role='dialog'] button:has-text('Generate')" to be visible
         When I safely click element with locator "div[role='dialog'] button:has-text('Generate')"
         When I parse the API key
-        When I click element with locator "button=Close"
+        When I click element with locator "div[role='dialog'] button:has-text('Close')"
 
         # create checks
         When I set the API key in config

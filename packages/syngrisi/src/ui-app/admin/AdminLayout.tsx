@@ -8,6 +8,7 @@ import TaskWrapper from '@admin/components/Tasks/TaskWrapper';
 import AdminUsers from '@admin/components/Users/AdminUsers';
 import AdminSettings from '@admin/components/Settings/AdminSettings';
 import AdminLogs from '@admin/components/Logs/AdminLogs';
+import AdminPluginSettings from '@admin/components/PluginSettings/AdminPluginSettings';
 
 export default function AdminLayout() {
     return (
@@ -25,6 +26,7 @@ export default function AdminLayout() {
                     <Route path="" element={<AdminUsers />} />
                     <Route path="users" element={<AdminUsers />} />
                     <Route path="settings" element={<AdminSettings />} />
+                    <Route path="plugins" element={<AdminPluginSettings />} />
                     <Route path="logs" element={<AdminLogs />} />
                 </Routes>
                 <Routes>
@@ -36,3 +38,4 @@ export default function AdminLayout() {
         </AppShell>
     );
 }
+

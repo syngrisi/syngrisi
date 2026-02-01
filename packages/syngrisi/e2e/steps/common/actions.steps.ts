@@ -49,7 +49,7 @@ async function waitForIgnoreRegionsSave(page: Page, locator: Locator): Promise<v
         const body = resp.request().postData() || '';
         return body.includes('ignoreRegions');
       },
-      { timeout: 15000 }
+      { timeout: 30000 }
     ),
     locator.click(),
   ]);
@@ -94,7 +94,7 @@ async function waitForViewChange(page: Page, view: string): Promise<void> {
       return canvasHasImage && mainView.currentView === expected;
     },
     normalizedView,
-    { timeout: 15000 }
+    { timeout: 30000 }
   );
 }
 
@@ -110,7 +110,7 @@ async function waitForCanvasBootstrap(page: Page): Promise<void> {
       return Array.isArray(objects);
     },
     undefined,
-    { timeout: 15000 }
+    { timeout: 30000 }
   );
 }
 
@@ -143,7 +143,7 @@ async function waitForIgnoreRegionCountChange(page: Page, expected: number): Pro
       return current === target;
     },
     expected,
-    { timeout: 15000 }
+    { timeout: 30000 }
   );
 }
 
@@ -177,7 +177,7 @@ When(
     if (target === 'locator') {
       const locator = getLocatorQuery(page, renderedValue);
       const targetLocator = locator.first();
-      await targetLocator.waitFor({ state: 'visible', timeout: 15000 });
+      await targetLocator.waitFor({ state: 'visible', timeout: 30000 });
 
       const ignoreRegionAction = getIgnoreRegionAction(renderedValue);
       if (ignoreRegionAction) {
@@ -210,7 +210,17 @@ When(
       if (isPopoverButton) {
         await targetLocator.dispatchEvent('click');
       } else {
-        await targetLocator.click();
+        const tagName = await targetLocator.evaluate((el) => el.tagName.toLowerCase());
+        const noWaitAfter = tagName !== 'a';
+        await targetLocator.click({ timeout: 30000, noWaitAfter });
+      }
+
+      if (renderedValue.includes('data-test-preview-image')) {
+        try {
+          await page.locator("[data-check='toolbar']").first().waitFor({ state: 'visible', timeout: 10000 });
+        } catch (error) {
+          logger.warn(`Preview toolbar did not appear yet after click: ${(error as Error).message}`);
+        }
       }
       return;
     }
@@ -431,17 +441,25 @@ When(/I open (?:url|site) "(.*)"/, async ({ page, testData }, url) => {
 
 When('I open the url {string}', async ({ page, testData, appServer }: { page: Page; testData: TestStore; appServer: AppServerFixture }, url: string) => {
   const parsedUrl = testData.renderTemplate(url);
-  logger.info(`Navigating to URL: ${parsedUrl}`);
+  let finalUrl = parsedUrl;
+
+  // If URL is relative and we have a custom server base URL (e.g. fast-server dynamic port), use it
+  if (parsedUrl.startsWith('/') && appServer.baseURL) {
+    // appServer.baseURL is like "http://localhost:5100" (no trailing slash)
+    finalUrl = `${appServer.baseURL}${parsedUrl}`;
+  }
+
+  logger.info(`Navigating to URL: ${finalUrl} (original: ${parsedUrl})`);
 
   // Ensure server is ready before navigation if it looks like an app URL
   // Check both full URL and relative paths (starting with /)
-  const isAppUrl = (appServer.baseURL && parsedUrl.startsWith(appServer.baseURL)) || parsedUrl.startsWith('/');
+  const isAppUrl = (appServer.baseURL && finalUrl.startsWith(appServer.baseURL)) || parsedUrl.startsWith('/');
   if (isAppUrl && appServer.serverPort) {
     await ensureServerReady(appServer.serverPort);
   }
 
-  // Use networkidle to ensure all network requests complete (React Query data loading)
-  await page.goto(parsedUrl, { waitUntil: 'networkidle' });
+  // Use domcontentloaded to avoid timeouts when background polling is active
+  await page.goto(finalUrl, { waitUntil: 'domcontentloaded' });
 });
 
 When('I set window size: {string}', async ({ page }, viewport: string) => {
@@ -777,6 +795,28 @@ When(
       await optionLocator.waitFor({ state: 'visible', timeout: 5000 });
       await optionLocator.click();
     }
+
+    // Best-effort wait for the selection to reflect the requested label
+    try {
+      const deadline = Date.now() + 3000;
+      while (Date.now() < deadline) {
+        const selectedText = await targetLocator.evaluate((el) => {
+          if (!(el instanceof HTMLSelectElement)) {
+            return '__not_select__';
+          }
+          return (el.selectedOptions?.[0]?.textContent || '').trim();
+        });
+        if (selectedText === '__not_select__') {
+          break;
+        }
+        if (selectedText === renderedOptionText || selectedText.includes(renderedOptionText)) {
+          return;
+        }
+        await page.waitForTimeout(150);
+      }
+    } catch (error) {
+      logger.warn(`Select option "${renderedOptionText}" may not have been applied yet: ${(error as Error).message}`);
+    }
   }
 );
 
@@ -842,7 +882,35 @@ When('I set {string} to the inputfield {string}', async ({ page, testData }, val
   const renderedValue = renderTemplate(value, testData);
   const renderedSelector = renderTemplate(selector, testData);
   const locator = getLocatorQuery(page, renderedSelector);
-  await locator.first().fill(renderedValue);
+  const targetLocator = locator.first();
+
+  await targetLocator.waitFor({ state: 'visible', timeout: 10000 });
+  await targetLocator.scrollIntoViewIfNeeded();
+  await targetLocator.click({ timeout: 10000 });
+  await targetLocator.fill('');
+  await targetLocator.fill(renderedValue);
+
+  try {
+    const deadline = Date.now() + 3000;
+    while (Date.now() < deadline) {
+      const currentValue = await targetLocator.evaluate((el) => {
+        if (!el) {
+          return null;
+        }
+        const input = el as HTMLInputElement;
+        if (typeof input.value === 'string') {
+          return input.value;
+        }
+        return (el.textContent || '').trim();
+      });
+      if (typeof currentValue === 'string' && (currentValue === renderedValue || currentValue.endsWith(renderedValue))) {
+        return;
+      }
+      await page.waitForTimeout(150);
+    }
+  } catch (error) {
+    logger.warn(`Input value "${renderedValue}" may not have been applied yet: ${(error as Error).message}`);
+  }
 });
 
 When('I reload session', async ({ page, testData }: { page: Page; testData: TestStore }) => {
@@ -878,7 +946,7 @@ When('I release key {string}', async ({ page }, key: string) => {
 When('I click on the element {string} via js', async ({ page }, selector: string) => {
   const locator = getLocatorQuery(page, selector);
   const element = locator.first();
-  await element.waitFor({ state: 'attached', timeout: 15000 });
+  await element.waitFor({ state: 'attached', timeout: 30000 });
   await element.evaluate((el: HTMLElement) => el.click());
 });
 

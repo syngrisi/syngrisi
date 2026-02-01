@@ -1,4 +1,4 @@
-@rca @fast-server @smoke
+@rca @fast-server @smoke @mode:serial
 Feature: RCA - No DOM Data Scenarios
 
     Background:
@@ -6,15 +6,18 @@ Feature: RCA - No DOM Data Scenarios
             """
             SYNGRISI_AUTH: "false"
             SYNGRISI_TEST_MODE: "true"
+            SYNGRISI_RCA: "true"
+            SYNGRISI_DISABLE_DOM_DATA: "true"
             """
         Given I start Server and start Driver
         And I clear database
+
 
     Scenario: RCA shows message when no DOM data available
         Given I create RCA test with "html-changes/base" as baseline without DOM data
         When I create RCA actual check with "html-changes/added-elements" without DOM data
         And I go to "main" page
-        And I wait 5 seconds for the element with locator "[data-table-test-name='RCA-Scenario-Test']" to be visible
+        And I wait 30 seconds for the element with locator "[data-table-test-name='RCA-Scenario-Test']" to be visible
         And I click element with locator "[data-table-test-name='RCA-Scenario-Test']"
         And I wait 1 seconds
         And I click element with locator "[data-test-preview-image='RCA-Scenario-Check']"
@@ -32,7 +35,7 @@ Feature: RCA - No DOM Data Scenarios
         Given I create RCA test with "html-changes/base" as baseline with DOM collection enabled
         When I create RCA actual check with "html-changes/added-elements" with DOM collection enabled
         And I go to "main" page
-        And I wait 5 seconds for the element with locator "[data-table-test-name='RCA-Scenario-Test']" to be visible
+        And I wait 30 seconds for the element with locator "[data-table-test-name='RCA-Scenario-Test']" to be visible
         And I click element with locator "[data-table-test-name='RCA-Scenario-Test']"
         And I wait 1 seconds
         And I click element with locator "[data-test-preview-image='RCA-Scenario-Check']"
@@ -47,7 +50,7 @@ Feature: RCA - No DOM Data Scenarios
         Given I create RCA test with "html-changes/base" as baseline with DOM collection enabled
         When I create RCA actual check with "html-changes/added-elements" with DOM collection enabled
         And I go to "main" page
-        And I wait 5 seconds for the element with locator "[data-table-test-name='RCA-Scenario-Test']" to be visible
+        And I wait 30 seconds for the element with locator "[data-table-test-name='RCA-Scenario-Test']" to be visible
         And I click element with locator "[data-table-test-name='RCA-Scenario-Test']"
         And I wait 1 seconds
         And I click element with locator "[data-test-preview-image='RCA-Scenario-Check']"

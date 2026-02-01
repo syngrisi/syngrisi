@@ -1,4 +1,4 @@
-@cp @generated @smoke
+@cp @generated @smoke @mode:serial
 Feature: Share Check Feature
 
   Background:

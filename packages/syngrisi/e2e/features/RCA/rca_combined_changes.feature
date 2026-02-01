@@ -1,4 +1,4 @@
-@rca @fast-server
+@rca @fast-server @mode:serial
 Feature: RCA - Combined HTML and CSS Changes Detection
 
     Background:
