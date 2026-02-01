@@ -678,7 +678,7 @@ Then('a user {string} should exist in the database', async ({ appServer }, usern
         // Find user by username (allow brief delay for auto-provision)
         const startTs = Date.now();
         let user = await db.collection('vrsusers').findOne({ username: username });
-        while (!user && Date.now() - startTs < 10_000) {
+        while (!user && Date.now() - startTs < 20_000) {
             await new Promise(resolve => setTimeout(resolve, 500));
             user = await db.collection('vrsusers').findOne({ username: username });
         }

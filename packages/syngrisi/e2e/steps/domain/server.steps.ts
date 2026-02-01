@@ -298,6 +298,9 @@ When(
         logger.info('Server is running, force restarting (no retry) to apply new env variables');
         await appServer.restart(true, true); // noRetry: true for validation tests
       } else {
+        logger.info('Ensuring no stale server process is running before validation start');
+        stopServerProcess();
+        await waitForServerStop();
         logger.info('Starting server (no retry mode for validation tests)...');
         // Use startNoRetry if available (fails immediately on startup error)
         if (appServer.startNoRetry) {

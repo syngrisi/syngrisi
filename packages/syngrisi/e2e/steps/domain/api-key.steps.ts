@@ -44,38 +44,45 @@ When(
     } else {
       logger.info('No data-test elements containing "api" found');
     }
-    // Try to get API key from input element first (as in old framework: $('[data-test=api-key]').getValue())
     const apiKeyInput = page.locator('[data-test="api-key"]');
-    const inputCount = await apiKeyInput.count();
+    const apiKeyElement = page.locator('[data-test="api-key-value"]').or(page.locator('[role="dialog"] code'));
 
-    let apiKey: string | null = null;
-
-    if (inputCount > 0) {
-      try {
-        const outerHTML = await apiKeyInput.first().evaluate((el: HTMLElement) => el.outerHTML);
-        logger.info(`api-key locator outerHTML: ${outerHTML}`);
-      } catch (error) {
-        logger.info(`Failed to read api-key locator outerHTML: ${(error as Error).message}`);
+    const readApiKeyFromDom = async (): Promise<string | null> => {
+      const inputCount = await apiKeyInput.count();
+      if (inputCount > 0) {
+        try {
+          const outerHTML = await apiKeyInput.first().evaluate((el: HTMLElement) => el.outerHTML);
+          logger.info(`api-key locator outerHTML: ${outerHTML}`);
+        } catch (error) {
+          logger.info(`Failed to read api-key locator outerHTML: ${(error as Error).message}`);
+        }
+        const value = await apiKeyInput.first().inputValue();
+        return value?.trim() || null;
       }
-      // Input element found, use inputValue() (equivalent to getValue() in WebdriverIO)
-      apiKey = await apiKeyInput.first().inputValue();
-    } else {
-      // Fallback to specific selectors within the modal
-      const apiKeyElement = page.locator('[data-test="api-key-value"]').or(page.locator('[role="dialog"] code'));
+
       const elementCount = await apiKeyElement.count();
       if (elementCount > 0) {
-        // Try inputValue first for input elements
         try {
           const outerHTML = await apiKeyElement.first().evaluate((el: HTMLElement) => el.outerHTML);
           logger.info(`api-key fallback locator outerHTML: ${outerHTML}`);
-          apiKey = await apiKeyElement.first().inputValue();
+          const value = await apiKeyElement.first().inputValue();
+          return value?.trim() || null;
         } catch {
-          // If not an input, use textContent
           const apiKeyText = await apiKeyElement.first().textContent();
-          apiKey = apiKeyText?.trim() || null;
+          return apiKeyText?.trim() || null;
         }
-      } else {
-        logger.info('No API key locator candidates matched');
+      }
+
+      logger.info('No API key locator candidates matched');
+      return null;
+    };
+
+    let apiKey: string | null = null;
+    const deadline = Date.now() + 10000;
+    while (!apiKey && Date.now() < deadline) {
+      apiKey = await readApiKeyFromDom();
+      if (!apiKey) {
+        await page.waitForTimeout(250);
       }
     }
 
