@@ -38,7 +38,7 @@ const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(r
 
 const isTransientSessionError = (error: unknown): boolean => {
     const message = (error as Error | undefined)?.message || String(error || '');
-    return message.includes('socket hang up') || message.includes('ECONNRESET') || message.includes('EPIPE');
+    return message.includes('socket hang up') || message.includes('ECONNRESET') || message.includes('ECONNREFUSED') || message.includes('EPIPE');
 };
 
 const startSessionWithRetry = async (
@@ -64,6 +64,29 @@ const startSessionWithRetry = async (
 
 const resolveDbUri = (appServer: { config?: { connectionString?: string } }): string => {
     return appServer.config?.connectionString || `mongodb://127.0.0.1/SyngrisiDbTest${process.env.TEST_WORKER_INDEX || '0'}`;
+};
+
+const ensureGuestUserPresent = async (
+    appServer: { config?: { connectionString?: string }; restart: (force?: boolean) => Promise<void>; serverPort?: number }
+): Promise<void> => {
+    const dbUri = resolveDbUri(appServer);
+    const client = new MongoClient(dbUri);
+    try {
+        await client.connect();
+        const db = client.db();
+        const guest = await db.collection('vrsusers').findOne({ username: 'Guest' });
+        if (!guest) {
+            console.log('Guest user missing, restarting server to recreate default users...');
+            await appServer.restart(true);
+            if (appServer.serverPort) {
+                await ensureServerReady(appServer.serverPort, 60_000);
+            } else {
+                await new Promise(resolve => setTimeout(resolve, 5000));
+            }
+        }
+    } finally {
+        await client.close();
+    }
 };
 
 const toBoolean = (value: unknown): boolean | undefined => {
@@ -191,6 +214,7 @@ Given('I enable the "jwt-auth" plugin with the following config:', async ({ appS
     } else {
         await new Promise(resolve => setTimeout(resolve, 5000));
     }
+    await ensureGuestUserPresent(appServer);
     console.log('Server restarted and ready with JWT Auth plugin');
 });
 
@@ -651,12 +675,18 @@ Then('a user {string} should exist in the database', async ({ appServer }, usern
         await client.connect();
         const db = client.db();
 
-        // Find user by username
-        // Note: The username argument comes from feature file (e.g. "jwt-service:test-client-id")
-        const allUsers = await db.collection('vrsusers').find({}, { projection: { username: 1 } }).toArray();
-        console.log(`DEBUG: Users in DB (${db.databaseName}):`, allUsers.map(u => u.username).join(', '));
+        // Find user by username (allow brief delay for auto-provision)
+        const startTs = Date.now();
+        let user = await db.collection('vrsusers').findOne({ username: username });
+        while (!user && Date.now() - startTs < 10_000) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            user = await db.collection('vrsusers').findOne({ username: username });
+        }
 
-        const user = await db.collection('vrsusers').findOne({ username: username });
+        if (!user) {
+            const allUsers = await db.collection('vrsusers').find({}, { projection: { username: 1 } }).toArray();
+            console.log(`DEBUG: Users in DB (${db.databaseName}):`, allUsers.map(u => u.username).join(', '));
+        }
 
         expect(user, `User '${username}' should exist in database ${db.databaseName}`).not.toBeNull();
         expect(user?.username).toBe(username);
