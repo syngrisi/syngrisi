@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.1.4
+
+### Patch Changes
+
+-   [#10](https://github.com/syngrisi/syngrisi/pull/10) [`d18453e`](https://github.com/syngrisi/syngrisi/commit/d18453e3020216422c071612af4e7cf1a2eba79a) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Stabilize jwt-auth validation/startup and e2e auth flows.
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.1.4
+
 ## 3.1.3
 
 ### Patch Changes
