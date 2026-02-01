@@ -1,5 +1,11 @@
-@sso-logto @slow
+@sso-logto @slow @skip
 Feature: SSO Authentication with Logto configured via Admin UI
+  # -------------------------------------------------------------------------
+  # INFRASTRUCTURE TROUBLESHOOTING:
+  # See packages/syngrisi/e2e/docs/SSO_TROUBLESHOOTING.md for details on
+  # port mismatches, IPv6 issues, and container requirements.
+  # -------------------------------------------------------------------------
+  #
   # Full end-to-end SSO test that provisions Logto through the Admin UI (no API provisioning)
   # Requires Apple container CLI and a fresh Logto instance (skip provisioning handled by @sso-logto-ui)
 

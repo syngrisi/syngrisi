@@ -62,7 +62,7 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
             enabled: checkModalOpened,
             refetchInterval: (data) => {
                 const check = data?.results?.[0];
-                if (check && !check.diffId) {
+                if (check && !check.diffId && check.status[0] !== 'new' && check.status[0] !== 'passed') {
                     pollCountRef.current += 1;
                     const interval = Math.min(2000 * Math.pow(1.5, pollCountRef.current - 1), 10000);
                     return interval;

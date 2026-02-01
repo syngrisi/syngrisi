@@ -50,7 +50,7 @@ async function createCheckViaAPI(
   // Parameters are taken from vDriver.params.test (set by startTestSession), so we only pass optional overrides
   logger.info(`Creating check "${checkName}" for test "${testId}" via SyngrisiDriver`);
 
-  const maxAttempts = 3;
+  const maxAttempts = 5;
   let lastError: any = null;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
@@ -69,11 +69,13 @@ async function createCheckViaAPI(
       const isRetryable =
         statusCode === 404 ||
         message.includes('404') ||
+        message.toLowerCase().includes("can't find test") ||
+        message.toLowerCase().includes('find test with id') ||
         message.toLowerCase().includes('not found') ||
         message.toLowerCase().includes('baseline is absent');
 
       if (isRetryable && attempt < maxAttempts) {
-        const delayMs = 250 * attempt;
+        const delayMs = 500 * attempt;
         logger.warn(
           `Failed to create check on attempt ${attempt}/${maxAttempts} (status: ${statusCode || 'n/a'}): ${message}. ` +
           `Retrying in ${delayMs}ms...`
@@ -162,7 +164,7 @@ async function createTestsWithParams(
   // Use sequential creation to guarantee test order (important for sorting tests)
   const concurrency = 1;
   const useSharedDriver = concurrency === 1;
-  const quickCheckMaxWaitMs = fastSeed ? 500 : 2000;
+  const quickCheckMaxWaitMs = fastSeed ? 1000 : 2000;
   const waitAfterStopMs = fastSeed ? 10 : 100;
 
   // For @fast-server tests, auth is disabled so we should always use the default API key.
@@ -185,18 +187,9 @@ async function createTestsWithParams(
         logger.info(`App server is not running on port ${serverPort}, starting before creating tests`);
         await appServer.start();
         serverWasStarted = true;
-        // Wait for server to be fully ready after startup using polling
+        // Wait for server to be fully ready after startup using API readiness
         logger.info('Waiting for server to be fully ready...');
-        const maxWaitMs = 10000;
-        const pollIntervalMs = 200;
-        const startTime = Date.now();
-        while (Date.now() - startTime < maxWaitMs) {
-          if (await isServerRunning(serverPort)) {
-            logger.info('Server is ready');
-            break;
-          }
-          await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
-        }
+        await ensureServerReady(serverPort, 60_000);
       }
 
       let vDriver = testData.get('vDriver') as SyngrisiDriver | undefined;
@@ -296,14 +289,22 @@ async function createTestsWithParams(
 
       while (Date.now() - startTime < quickCheckMaxWaitMs) {
         try {
-          const response = await got.get(`${appServer.baseURL}/v1/tests/${testId}`, {
+          const baseFilter = encodeURIComponent(JSON.stringify({}));
+          const filter = encodeURIComponent(JSON.stringify({ _id: testId }));
+          const response = await got.get(
+            `${appServer.baseURL}/v1/tests?base_filter=${baseFilter}&filter=${filter}&limit=1`,
+            {
             headers: { apikey: hashedApiKey },
             throwHttpErrors: false,
-            timeout: { request: 1000 },
-          });
+            timeout: { request: 2000 },
+            }
+          );
           if (response.statusCode === 200) {
-            testFound = true;
-            break;
+            const body = JSON.parse(response.body);
+            if (Array.isArray(body?.results) && body.results.length > 0) {
+              testFound = true;
+              break;
+            }
           }
         } catch {
           // Ignore errors, keep trying

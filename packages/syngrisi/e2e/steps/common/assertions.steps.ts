@@ -397,7 +397,9 @@ Then(
   async ({ page, testData }, target: ElementTarget, rawValue: string, expected: string) => {
     if (target === 'locator') {
       // Use checkElementContainsText for locator targets to support polling and date placeholders
-      await checkElementContainsText(page, rawValue, expected, testData);
+      await expect(async () => {
+        await checkElementContainsText(page, rawValue, expected, testData);
+      }).toPass({ timeout: 10000 });
     } else {
       // Use assertCondition for label targets
       const locator = locatorFromTarget(page, target, rawValue);

@@ -1,4 +1,4 @@
-@sso-metadata
+@sso-metadata @no-app-start
 Feature: SSO Metadata Endpoints
   # Tests for SAML metadata functionality:
   # - SP metadata endpoint for IdP configuration
@@ -73,7 +73,7 @@ Feature: SSO Metadata Endpoints
     Then the response status should be 400
     And the response body should contain "not initialized"
 
-  @sso-external @slow @saml
+  @sso-external @slow @saml @no-app-start
   Scenario: SP Metadata endpoint with Logto SAML configuration
     # This test uses auto-provisioned SAML config from Logto
     # Logto must be running: ./support/sso/start-containers.sh
@@ -83,6 +83,7 @@ Feature: SSO Metadata Endpoints
       """
       SYNGRISI_AUTH: true
       SYNGRISI_TEST_MODE: false
+      SYNGRISI_APP_PORT: 3002
       """
     Given I start Server
 

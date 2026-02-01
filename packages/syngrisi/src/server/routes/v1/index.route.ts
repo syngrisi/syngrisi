@@ -14,6 +14,7 @@ import testDistinctRoute from './test_distinct.route';
 import tasksRoute from './tasks.route';
 import clientRoute from './client.route';
 import shareRoute from './share.route';
+import pluginSettingsRoute from './plugin-settings.route';
 
 const router = express.Router();
 
@@ -77,6 +78,10 @@ const defaultRoutes = [
     {
         path: '/share',
         route: shareRoute,
+    },
+    {
+        path: '/plugin-settings',
+        route: pluginSettingsRoute,
     },
 ];
 

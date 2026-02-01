@@ -1,22 +1,18 @@
+@fast-server
 Feature: Login
 
   Background:
-
     When I set env variables:
       """
-         SYNGRISI_TEST_MODE: "true"
-         SYNGRISI_AUTH: "false"
+      SYNGRISI_TEST_MODE: "true"
+      SYNGRISI_AUTH: "false"
       """
-    Given I start Server
     When I create via http test user
-    When I stop Server
     When I set env variables:
       """
-          SYNGRISI_TEST_MODE: "false"
-          SYNGRISI_AUTH: "true"
+      SYNGRISI_TEST_MODE: "false"
+      SYNGRISI_AUTH: "true"
       """
-
-    #         Given I start Server and start Driver
     When I reload session
 
   @smoke
@@ -33,15 +29,11 @@ Feature: Login
         "password": "Password-123"
       }
       """
-    # prepare servers
-    Given I stop Server
-
     When I set env variables:
       """
-    SYNGRISI_TEST_MODE: false
-    SYNGRISI_AUTH: true
+      SYNGRISI_TEST_MODE: false
+      SYNGRISI_AUTH: true
       """
-    #         Given I start Server and start Driver
 
     # login
     When I login with user:"j_doe@gmail.com" password "Password-123"
@@ -65,11 +57,8 @@ Feature: Login
     When I login with user:"asd" password "PasswordInvEmail-567"
     Then the element with locator ".mantine-Input-wrapper + div.mantine-InputWrapper-error" should have contains text "Invalid email"
 
-  @flaky
+  @flaky @mode:serial
   Scenario: Redirect via origin url
-    # Ensure server is running with auth enabled
-    Given I start Server
-    # Clear session after server is ready to ensure clean auth state
     When I reload session
     When I open the url "/?groupBy=test-distinct%2FbrowserName"
     Then the current url contains "/auth"

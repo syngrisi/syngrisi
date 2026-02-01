@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  logto-db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: logto
+      POSTGRES_PASSWORD: logto_password
+      POSTGRES_DB: logto
+    ports:
+      - "5433:5432" # Avoid conflict with default pg port
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U logto"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  logto:
+    image: svhd/logto:latest
+    depends_on:
+      logto-db:
+        condition: service_healthy
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+    environment:
+      # Database connection
+      DB_URL: postgres://logto:logto_password@logto-db:5432/logto
+      
+      # Admin credentials for initial setup override
+      # Note: Logto typically requires UI setup or API bootstrap. 
+      # We will use the 'endpoint' config for automation if supported 
+      # or standard CI bootstrapping env vars if available in the image.
+      # Using standard env vars for Logto < 1.0 (check latest docs if needed)
+      
+      # Mandatory keys (generate random strings for prod, fixed for test)
+      ENDPOINT: http://localhost:3001
+      ADMIN_ENDPOINT: http://localhost:3002
+      
+    entrypoint: ["sh", "-c", "npm run cli db seed -- --swe && npm start"]

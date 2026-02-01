@@ -36,6 +36,7 @@ export interface RunningAppServer {
 export type LaunchAppServerOptions = {
   env?: Record<string, string>;
   cid?: number;
+  noRetry?: boolean; // Skip retry logic for validation tests that expect startup failure
 };
 
 function getCid(): number {
@@ -101,7 +102,7 @@ export async function launchAppServer(
 
   // Determine port priority: options.env > process.env > default calculation
   const envPort = additionalEnv?.SYNGRISI_APP_PORT ?? runtimeEnv.SYNGRISI_APP_PORT;
-  const cidPort = envPort ? parseInt(envPort, 10) : 3002 + cid;
+  const cidPort = envPort ? parseInt(envPort, 10) : 5100 + cid;
 
   const baseURL = `http://${backendHost}:${cidPort}`;
 
@@ -179,7 +180,8 @@ export async function launchAppServer(
   };
 
   // Retry logic for backend early exit (SIGINT during startup)
-  const maxRetries = 5;
+  // noRetry option disables retries for validation tests that expect startup failure
+  const maxRetries = options.noRetry ? 1 : 5;
   let lastError: Error | null = null;
   let backend: Child | null = null;
   let backendLogs: () => string = () => '';
@@ -374,7 +376,7 @@ export async function waitForServerStop(cid?: number, timeoutMs = 25000): Promis
 
   // If we can't determine the exact port easily (complex env overrides), we might rely on pkill only,
   // but for E2E standard runs:
-  const port = envPort ? parseInt(envPort, 10) : 3002 + effectiveCid;
+  const port = envPort ? parseInt(envPort, 10) : 5100 + effectiveCid;
 
   const startTs = Date.now();
   let forcedKillAttempted = false;
@@ -434,7 +436,7 @@ function startBackendLogCapture(child: Child): () => string {
 }
 
 async function terminateProcess(child: Child | undefined): Promise<void> {
-  if (!child || child.killed) return;
+  if (!child || child.killed || child.exitCode !== null || child.signalCode !== null) return;
 
   child.kill("SIGTERM");
   const exit = once(child, "exit");

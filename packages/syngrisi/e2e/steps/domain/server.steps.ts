@@ -1,10 +1,10 @@
-import { When, Given } from '@fixtures';
+import { When, Given, Then } from '@fixtures';
 import type { AppServerFixture } from '@fixtures';
 import { createLogger } from '@lib/logger';
 import * as yaml from 'yaml';
 import { env } from '@config';
-import { stopServerProcess, waitForServerStop } from '@utils/app-server';
-import { clearDatabase } from '@utils/db-cleanup';
+import { stopServerProcess, waitForServerStop, ensureServerReady } from '@utils/app-server';
+import { clearDatabase, clearPluginSettings } from '@utils/db-cleanup';
 import { resolveRepoRoot } from '@utils/fs';
 import { setSkipAutoStart } from '@fixtures';
 import { SyngrisiDriver } from '@syngrisi/wdio-sdk';
@@ -12,6 +12,8 @@ import type { TestStore } from '@fixtures';
 import * as path from 'path';
 import { execSync } from 'child_process';
 import * as fs from 'fs';
+import { requestWithSession } from '@utils/http-client';
+import { expect } from '@playwright/test';
 import { hasTag } from '@utils/common';
 import type { BddContext } from 'playwright-bdd/dist/runtime/bddContext';
 
@@ -66,11 +68,16 @@ Given(
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
     // Always start server (even if it was stopped by "I clear Database and stop Server")
     logger.info('Starting server...');
+    lastStartError = null;
     await appServer.start();
     restartAfterEnvSet.set(getCid(), false);
 
-    // Wait a bit for server to be fully ready
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Wait for server to be fully ready to reduce flake
+    if (appServer.serverPort) {
+      await ensureServerReady(appServer.serverPort, 60_000);
+    } else {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
 
     // Set syngrisiUrl for template rendering (as in old tests)
     const syngrisiUrl = `${appServer.baseURL}/`;
@@ -99,6 +106,7 @@ Given(
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
     // Start server if not already running, or FORCE restart to apply new env variables
     // Force restart is necessary because env vars may have changed (e.g., SSO config)
+    lastStartError = null;
     if (appServer.baseURL) {
       logger.info('Server is running, force restarting to apply new env variables');
       await appServer.restart(true); // Force restart to apply new env
@@ -107,6 +115,9 @@ Given(
       await appServer.start();
     }
     restartAfterEnvSet.set(getCid(), false);
+    if (appServer.serverPort) {
+      await ensureServerReady(appServer.serverPort, 60_000);
+    }
     // Set syngrisiUrl for template rendering (as in old tests)
     const syngrisiUrl = `${appServer.baseURL}/`;
     testData.set('syngrisiUrl', syngrisiUrl);
@@ -241,6 +252,14 @@ When(
 );
 
 When(
+  'I clear plugin {string} settings from database',
+  async ({ appServer }: { appServer: AppServerFixture }, pluginName: string) => {
+    const dbUri = appServer.config?.connectionString;
+    await clearPluginSettings(pluginName, dbUri);
+  }
+);
+
+When(
   'I clear screenshots folder',
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
     logger.info('Clearing screenshots folder...');
@@ -268,3 +287,71 @@ When(
     resetTestCreationState(testData);
   }
 );
+
+let lastStartError: Error | null = null;
+
+When(
+  'I try to start Server',
+  async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
+    try {
+      if (appServer.baseURL) {
+        logger.info('Server is running, force restarting (no retry) to apply new env variables');
+        await appServer.restart(true, true); // noRetry: true for validation tests
+      } else {
+        logger.info('Ensuring no stale server process is running before validation start');
+        stopServerProcess();
+        await waitForServerStop();
+        logger.info('Starting server (no retry mode for validation tests)...');
+        // Use startNoRetry if available (fails immediately on startup error)
+        if (appServer.startNoRetry) {
+          await appServer.startNoRetry();
+        } else {
+          await appServer.start();
+        }
+      }
+      lastStartError = null;
+
+      // If successful, still update state as usual
+      restartAfterEnvSet.set(getCid(), false);
+      const syngrisiUrl = `${appServer.baseURL}/`;
+      testData.set('syngrisiUrl', syngrisiUrl);
+      resetTestCreationState(testData);
+    } catch (e) {
+      lastStartError = e as Error;
+      logger.info(`Expected server start failure: ${e}`);
+    }
+  }
+);
+
+Then('the server should fail to start', async () => {
+  if (!lastStartError) {
+    throw new Error('Server started successfully but was expected to fail');
+  }
+});
+
+Then('the error message should contain {string}', async ({ }, errorMessage: string) => {
+  if (!lastStartError) {
+    throw new Error('No error captured from server start');
+  }
+  if (!lastStartError.message.includes(errorMessage)) {
+    throw new Error(`Error message "${lastStartError.message}" does not contain "${errorMessage}"`);
+  }
+});
+
+Then('the server should start successfully', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
+  if (lastStartError) {
+    throw new Error(`Server failed to start: ${lastStartError}`);
+  }
+  // Verify it's actually running
+  expect(appServer.baseURL).toBeTruthy();
+
+  // Check if we can reach it
+  const response = await requestWithSession(`${appServer.baseURL}/v1/app/info`, testData, appServer);
+  expect(response.raw.statusCode).toBe(200);
+});
+
+Then('plugin {string} should be loaded', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, pluginName: string) => {
+  const response = await requestWithSession(`${appServer.baseURL}/v1/plugin-settings/${pluginName}`, testData, appServer);
+  expect(response.raw.statusCode).toBe(200);
+  expect(response.json.enabled).toBe(true);
+});

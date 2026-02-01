@@ -45,8 +45,15 @@ export type AppServerFixture = {
   };
   getBackendLogs: () => string;
   getFrontendLogs: () => string;
-  restart: (force?: boolean) => Promise<void>;
+  pid?: number;
+  exitInfo?: {
+    code: number | null;
+    signal: NodeJS.Signals | null;
+    message: string;
+  };
+  restart: (force?: boolean, noRetry?: boolean) => Promise<void>;
   start: () => Promise<void>;
+  startNoRetry?: () => Promise<void>; // Optional: For validation tests expecting startup failure
   stop: () => Promise<void>;
 };
 
@@ -65,7 +72,7 @@ function getFallbackConfig(): { connectionString: string; defaultImagesPath: str
     connectionString:
       process.env.SYNGRISI_DB_URI ||
       env.SYNGRISI_DB_URI ||
-      `mongodb://localhost/SyngrisiDbTest${cid}`,
+      `mongodb://127.0.0.1/SyngrisiDbTest${cid}`,
     defaultImagesPath:
       process.env.SYNGRISI_IMAGES_PATH ||
       env.SYNGRISI_IMAGES_PATH ||
@@ -125,8 +132,20 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         'SSO_TOKEN_URL',
         'SSO_USERINFO_URL',
         'SSO_CALLBACK_URL',
-        'LOGTO_ENDPOINT',
         'LOGTO_ADMIN_ENDPOINT',
+        // Plugins
+        'SYNGRISI_PLUGINS_ENABLED',
+        'SYNGRISI_PLUGIN_JWT_AUTH_ENABLED',
+        'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL',
+        'SYNGRISI_PLUGIN_JWT_AUTH_ISSUER',
+        'SYNGRISI_PLUGIN_JWT_AUTH_SERVICE_USER_ROLE',
+        'SYNGRISI_PLUGIN_JWT_AUTH_HEADER_NAME',
+        'SYNGRISI_PLUGIN_JWT_AUTH_HEADER_PREFIX',
+        'SYNGRISI_PLUGIN_JWT_AUTH_AUTO_PROVISION',
+        'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_CACHE_TTL',
+        'SYNGRISI_PLUGIN_JWT_AUTH_AUDIENCE',
+        'SYNGRISI_PLUGIN_JWT_AUTH_REQUIRED_SCOPES',
+        'SYNGRISI_PLUGIN_JWT_AUTH_ISSUER_MATCH',
       ];
       const originalEnv: Record<string, string | undefined> = {};
       envKeysToReset.forEach((key) => {
@@ -159,6 +178,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         start: async () => {
           logger.info(`Starting server...`);
         },
+        startNoRetry: async () => {
+          logger.info(`Starting server (no retry)...`);
+        },
         stop: async () => {
           logger.info(`Stopping server...`);
         },
@@ -185,7 +207,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         serverFixtures.set(cid, fixtureValue);
       };
 
-      const startServer = async (forceRestart = false) => {
+      const startServer = async (forceRestart = false, noRetry = false) => {
         // Reset skipAutoStart when explicitly starting server
         // This ensures server starts even after "I clear Database and stop Server" step
         skipAutoStartMap.set(cid, false);
@@ -207,9 +229,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
               logger.info(`Starting server...`);
               await startServer();
             };
-            fixtureValue.restart = async (force = false) => {
+            fixtureValue.restart = async (force = false, noRetryParam = false) => {
               logger.info(`Restarting server...`);
-              await startServer(force);
+              await startServer(force, noRetryParam);
             };
             serverFixtures.set(cid, fixtureValue);
             return;
@@ -219,10 +241,11 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           serverInstances.delete(cid);
         }
 
-        logger.info(`Launching Syngrisi app server`);
+        logger.info(`Launching Syngrisi app server${noRetry ? ' (noRetry mode)' : ''}`);
         // Use current process.env for server restart (includes env variables set by "I set env variables:")
         const instance = await launchAppServer({
           env: {},
+          noRetry, // Pass noRetry to skip retries for validation tests
         });
         serverInstances.set(cid, instance);
         lastKnownConfig = instance.config;
@@ -242,8 +265,47 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           logger.info(`Starting server...`);
           await startServer();
         };
+        fixtureValue.restart = async (force = false, noRetryParam = false) => {
+          logger.info(`Restarting server${noRetryParam ? ' (noRetry)' : ''}...`);
+          await startServer(force, noRetryParam);
+        };
+
+        serverFixtures.set(cid, fixtureValue);
+      };
+
+      // For validation tests that expect startup failure - no retry logic
+      const startServerNoRetry = async () => {
+        skipAutoStartMap.set(cid, false);
+
+        const existingInstance = serverInstances.get(cid);
+        if (existingInstance) {
+          logger.info(`Stopping existing server before restart (noRetry mode)`);
+          await existingInstance.stop();
+          serverInstances.delete(cid);
+        }
+
+        logger.info(`Launching Syngrisi app server (noRetry mode)`);
+        // Call with noRetry: true to fail immediately on startup error
+        const instance = await launchAppServer({
+          env: {},
+          noRetry: true,
+        });
+        serverInstances.set(cid, instance);
+        lastKnownConfig = instance.config;
+        logger.success(`Server launched successfully`);
+
+        fixtureValue.baseURL = instance.baseURL;
+        fixtureValue.backendHost = instance.backendHost;
+        fixtureValue.serverPort = instance.serverPort;
+        fixtureValue.config = lastKnownConfig;
+        fixtureValue.getBackendLogs = instance.getBackendLogs;
+        fixtureValue.getFrontendLogs = instance.getFrontendLogs;
+        fixtureValue.stop = stopServer;
+        fixtureValue.start = async () => {
+          await startServer();
+        };
+        fixtureValue.startNoRetry = startServerNoRetry;
         fixtureValue.restart = async (force = false) => {
-          logger.info(`Restarting server...`);
           await startServer(force);
         };
 
@@ -252,7 +314,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
 
       if (isFastMode || isFastModeReuse) {
         // Use wide, deterministic spacing to avoid port collisions across 15+ workers
-        const preferredPort = 3000 + cid * 50;
+        const preferredPort = 5100 + cid * 50;
         const portFindStart = performance.now();
         const workerPort = await findAvailablePort(preferredPort, 200);
         timingLogger.info(`[timing] Port finding: ${Math.round(performance.now() - portFindStart)}ms`);
@@ -302,7 +364,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         const currentWorkerIndex = parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
 
         // Define launchFreshInstance outside the if/else so it can be used by restart/start methods
-        const launchFreshInstance = async (useProcessEnvAuth = false) => {
+        const launchFreshInstance = async (useProcessEnvAuth = false, noRetry = false) => {
           // By default, fast-server mode disables auth to avoid race conditions
           // But if test explicitly sets SYNGRISI_AUTH via "I set env variables", respect it
           const envOverrides: Record<string, string> = {
@@ -318,6 +380,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           const instance = await launchAppServer({
             cid,
             env: envOverrides,
+            noRetry, // Pass noRetry to skip retries for validation tests
           });
           serverInstances.set(cid, instance);
           serverConfigMap.set(cid, getServerConfigHash());
@@ -365,8 +428,8 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           config: fixtureValue.config,
           getBackendLogs: fixtureValue.getBackendLogs,
           getFrontendLogs: fixtureValue.getFrontendLogs,
-          restart: async () => {
-            logger.info(`Fast mode restart: relaunching server on port ${workerPort} (using process.env)`);
+          restart: async (force = false, noRetry = false) => {
+            logger.info(`Fast mode restart: relaunching server on port ${workerPort}${noRetry ? ' (noRetry)' : ''}`);
             // Skip pkill if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
             if (currentWorkerIndex < 100) {
               stopServerProcess();
@@ -377,7 +440,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
               });
             }
             // Use process.env values since test may have set them via "I set env variables"
-            await launchFreshInstance(true);
+            await launchFreshInstance(true, noRetry);
           },
           start: async () => {
             logger.info(`Fast mode: restarting server to apply latest env on port ${workerPort} (using process.env)`);
@@ -424,6 +487,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           start: async () => {
             await startServer();
           },
+          startNoRetry: async () => {
+            await startServerNoRetry();
+          },
           stop: async () => {
             await stopServer();
           },
@@ -466,6 +532,10 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           start: async () => {
             logger.info(`Starting server...`);
             await startServer();
+          },
+          startNoRetry: async () => {
+            logger.info(`Starting server (no retry)...`);
+            await startServerNoRetry();
           },
           stop: async () => {
             await stopServer();

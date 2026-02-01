@@ -1,8 +1,8 @@
-@smoke @fast-server
+@smoke @fast-server @mode:serial
 Feature: CLI Tasks
 
   Background:
-    Given I start Server
+  # Server is managed by @fast-server hook automatically
 
   Scenario: CLI - Handle Database Consistency [statistics only]
     When I create "1" tests with params:
@@ -79,6 +79,11 @@ Feature: CLI Tasks
     Then I expect exact "1" snapshot files
 
   Scenario: CLI - Handle Old Checks [remove]
+    # Ensure clean state for this test
+    Given I stop Server
+    When I clear database
+    Given I start Server
+
     When I create "1" tests with:
       """
       testName: TestName
