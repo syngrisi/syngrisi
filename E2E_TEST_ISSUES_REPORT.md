@@ -78,8 +78,10 @@ Error: Server started successfully but was expected to fail
     1.  The `initPlugins` function did not throw (validation passed).
     2.  The `jwt-auth` plugin was not considered "enabled" (missing from `enabledPlugins` array).
 *   The test sets `SYNGRISI_PLUGINS_ENABLED=jwt-auth` in the worker process.
-*   **Fix applied:** Ensure `clearPluginSettings()` uses the exact DB connection string from `appServer`, eliminating DB/CID mismatches during parallel runs.  
-    Files: `packages/syngrisi/e2e/support/utils/db-cleanup.ts`, `packages/syngrisi/e2e/steps/domain/server.steps.ts`, `packages/syngrisi/e2e/steps/domain/jwt_auth.steps.ts`
+*   **Fixes applied:**
+    *   Ensure `clearPluginSettings()` uses the exact DB connection string from `appServer`, eliminating DB/CID mismatches during parallel runs.
+    *   Treat empty env values as authoritative (skip DB fallback) during startup validation to avoid false‑positive success when JWKS/Issuer are intentionally unset.
+    Files: `packages/syngrisi/e2e/support/utils/db-cleanup.ts`, `packages/syngrisi/e2e/steps/domain/server.steps.ts`, `packages/syngrisi/e2e/steps/domain/jwt_auth.steps.ts`, `packages/syngrisi/src/server/plugins/index.ts`
 
 ---
 

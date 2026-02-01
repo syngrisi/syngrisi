@@ -122,11 +122,17 @@ export async function initPlugins(): Promise<void> {
             let jwksUrl = pluginConfigs['jwt-auth']?.jwksUrl as string | undefined;
             let issuer = pluginConfigs['jwt-auth']?.issuer as string | undefined;
 
-            if (!jwksUrl || !issuer) {
-                const dbConfig = jwtDbSettings || {};
-                jwksUrl = jwksUrl || (dbConfig as Record<string, unknown>).jwksUrl as string | undefined;
-                issuer = issuer || (dbConfig as Record<string, unknown>).issuer as string | undefined;
+        if (!jwksUrl || !issuer) {
+            const dbConfig = jwtDbSettings || {};
+            const hasEnvJwks = Object.prototype.hasOwnProperty.call(process.env, 'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL');
+            const hasEnvIssuer = Object.prototype.hasOwnProperty.call(process.env, 'SYNGRISI_PLUGIN_JWT_AUTH_ISSUER');
+            if (!jwksUrl && !hasEnvJwks) {
+                jwksUrl = (dbConfig as Record<string, unknown>).jwksUrl as string | undefined;
             }
+            if (!issuer && !hasEnvIssuer) {
+                issuer = (dbConfig as Record<string, unknown>).issuer as string | undefined;
+            }
+        }
 
             if (!jwksUrl || !issuer) {
                 throw new Error(
