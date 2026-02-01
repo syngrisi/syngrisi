@@ -150,9 +150,9 @@ export async function clearDatabase(
   await Promise.all(tasks);
 }
 
-export async function clearPluginSettings(pluginName: string): Promise<number> {
+export async function clearPluginSettings(pluginName: string, dbUriOverride?: string): Promise<number> {
   const cid = getCid();
-  const dbUri = resolveDbUri(cid);
+  const dbUri = dbUriOverride || resolveDbUri(cid);
   const client = await getPooledClient(dbUri);
   const db = client.db();
   const collection = db.collection('vrspluginsettings');
