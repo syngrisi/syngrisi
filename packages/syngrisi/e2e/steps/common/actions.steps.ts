@@ -214,6 +214,14 @@ When(
         const noWaitAfter = tagName !== 'a';
         await targetLocator.click({ timeout: 30000, noWaitAfter });
       }
+
+      if (renderedValue.includes('data-test-preview-image')) {
+        try {
+          await page.locator("[data-check='toolbar']").first().waitFor({ state: 'visible', timeout: 10000 });
+        } catch (error) {
+          logger.warn(`Preview toolbar did not appear yet after click: ${(error as Error).message}`);
+        }
+      }
       return;
     }
 
@@ -787,6 +795,28 @@ When(
       await optionLocator.waitFor({ state: 'visible', timeout: 5000 });
       await optionLocator.click();
     }
+
+    // Best-effort wait for the selection to reflect the requested label
+    try {
+      const deadline = Date.now() + 3000;
+      while (Date.now() < deadline) {
+        const selectedText = await targetLocator.evaluate((el) => {
+          if (!(el instanceof HTMLSelectElement)) {
+            return '__not_select__';
+          }
+          return (el.selectedOptions?.[0]?.textContent || '').trim();
+        });
+        if (selectedText === '__not_select__') {
+          break;
+        }
+        if (selectedText === renderedOptionText || selectedText.includes(renderedOptionText)) {
+          return;
+        }
+        await page.waitForTimeout(150);
+      }
+    } catch (error) {
+      logger.warn(`Select option "${renderedOptionText}" may not have been applied yet: ${(error as Error).message}`);
+    }
   }
 );
 
@@ -852,7 +882,35 @@ When('I set {string} to the inputfield {string}', async ({ page, testData }, val
   const renderedValue = renderTemplate(value, testData);
   const renderedSelector = renderTemplate(selector, testData);
   const locator = getLocatorQuery(page, renderedSelector);
-  await locator.first().fill(renderedValue);
+  const targetLocator = locator.first();
+
+  await targetLocator.waitFor({ state: 'visible', timeout: 10000 });
+  await targetLocator.scrollIntoViewIfNeeded();
+  await targetLocator.click({ timeout: 10000 });
+  await targetLocator.fill('');
+  await targetLocator.fill(renderedValue);
+
+  try {
+    const deadline = Date.now() + 3000;
+    while (Date.now() < deadline) {
+      const currentValue = await targetLocator.evaluate((el) => {
+        if (!el) {
+          return null;
+        }
+        const input = el as HTMLInputElement;
+        if (typeof input.value === 'string') {
+          return input.value;
+        }
+        return (el.textContent || '').trim();
+      });
+      if (typeof currentValue === 'string' && (currentValue === renderedValue || currentValue.endsWith(renderedValue))) {
+        return;
+      }
+      await page.waitForTimeout(150);
+    }
+  } catch (error) {
+    logger.warn(`Input value "${renderedValue}" may not have been applied yet: ${(error as Error).message}`);
+  }
 });
 
 When('I reload session', async ({ page, testData }: { page: Page; testData: TestStore }) => {
