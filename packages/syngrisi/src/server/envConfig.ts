@@ -49,7 +49,7 @@ export const env = cleanEnv(process.env, {
 
     // Rate Limiting
     SYNGRISI_RATE_LIMIT_WINDOW_MS: num({ default: 15 * 60 * 1000 }), // 15 minutes
-    SYNGRISI_RATE_LIMIT_MAX: num({ default: 5000 }),
+    SYNGRISI_RATE_LIMIT_MAX: num({ default: 50000 }),
     SYNGRISI_AUTH_RATE_LIMIT_WINDOW_MS: num({ default: 15 * 60 * 1000 }), // 15 minutes
     SYNGRISI_AUTH_RATE_LIMIT_MAX: num({ default: 200 }),
     // Mongo tuneables for tests/CI flake reduction

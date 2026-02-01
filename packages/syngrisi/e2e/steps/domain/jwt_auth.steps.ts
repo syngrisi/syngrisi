@@ -145,7 +145,7 @@ Given('I enable the "jwt-auth" plugin with the following config:', async ({ appS
     }
 
     // Ensure DB settings do not disable the plugin
-    await clearPluginSettings('jwt-auth');
+    await clearPluginSettings('jwt-auth', appServer.config?.connectionString);
 
     // Configure via Environment Variables (Robust against API crashes)
     process.env.SYNGRISI_PLUGINS_ENABLED = 'jwt-auth';
