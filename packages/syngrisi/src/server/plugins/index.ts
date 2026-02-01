@@ -43,6 +43,7 @@ export async function initPlugins(): Promise<void> {
         ? enabledPluginsRaw.split(',').map(s => s.trim()).filter(Boolean)
         : [];
 
+
     // Build plugin configurations from environment
     const jwtPluginConfig: Record<string, unknown> = {
         jwksUrl: process.env.SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL,

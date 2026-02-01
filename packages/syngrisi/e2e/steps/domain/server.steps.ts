@@ -253,8 +253,9 @@ When(
 
 When(
   'I clear plugin {string} settings from database',
-  async ({ }, pluginName: string) => {
-    await clearPluginSettings(pluginName);
+  async ({ appServer }: { appServer: AppServerFixture }, pluginName: string) => {
+    const dbUri = appServer.config?.connectionString;
+    await clearPluginSettings(pluginName, dbUri);
   }
 );
 

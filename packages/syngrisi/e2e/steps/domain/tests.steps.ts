@@ -164,7 +164,7 @@ async function createTestsWithParams(
   // Use sequential creation to guarantee test order (important for sorting tests)
   const concurrency = 1;
   const useSharedDriver = concurrency === 1;
-  const quickCheckMaxWaitMs = fastSeed ? 1000 : 15000;
+  const quickCheckMaxWaitMs = fastSeed ? 1000 : 2000;
   const waitAfterStopMs = fastSeed ? 10 : 100;
 
   // For @fast-server tests, auth is disabled so we should always use the default API key.
@@ -289,14 +289,22 @@ async function createTestsWithParams(
 
       while (Date.now() - startTime < quickCheckMaxWaitMs) {
         try {
-          const response = await got.get(`${appServer.baseURL}/v1/tests/${testId}`, {
+          const baseFilter = encodeURIComponent(JSON.stringify({}));
+          const filter = encodeURIComponent(JSON.stringify({ _id: testId }));
+          const response = await got.get(
+            `${appServer.baseURL}/v1/tests?base_filter=${baseFilter}&filter=${filter}&limit=1`,
+            {
             headers: { apikey: hashedApiKey },
             throwHttpErrors: false,
             timeout: { request: 2000 },
-          });
+            }
+          );
           if (response.statusCode === 200) {
-            testFound = true;
-            break;
+            const body = JSON.parse(response.body);
+            if (Array.isArray(body?.results) && body.results.length > 0) {
+              testFound = true;
+              break;
+            }
           }
         } catch {
           // Ignore errors, keep trying
