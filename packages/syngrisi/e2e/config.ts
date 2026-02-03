@@ -71,6 +71,10 @@ export const env = cleanEnv(process.env, {
     default: true,
     desc: 'Keep Syngrisi server running between tests to reduce startup overhead'
   }),
+  E2E_FAST_SERVER_REUSE: bool({
+    default: false,
+    desc: 'Reuse fast-server instances between tests when @fast-server tag is used'
+  }),
   E2E_REUSE_LOGTO: str({
     default: 'true',
     desc: 'Keep Logto containers running between tests (set to "false" in CI for clean state)'

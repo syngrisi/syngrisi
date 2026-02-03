@@ -164,7 +164,7 @@ async function createTestsWithParams(
   // Use sequential creation to guarantee test order (important for sorting tests)
   const concurrency = 1;
   const useSharedDriver = concurrency === 1;
-  const quickCheckMaxWaitMs = fastSeed ? 1000 : 2000;
+  const quickCheckMaxWaitMs = fastSeed ? 1000 : 5000;
   const waitAfterStopMs = fastSeed ? 10 : 100;
 
   // For @fast-server tests, auth is disabled so we should always use the default API key.
@@ -551,6 +551,7 @@ When('I create {string} tests with params:', async (
 async function unfoldTestRow(page: Page, testName: string): Promise<void> {
   const selector = `[data-table-test-name="${testName}"], tr[data-row-name="${testName}"]`;
   logger.info(`Waiting for test "${testName}" to appear on the page using selector: ${selector}`);
+  const refreshButton = page.locator('[data-test="table-refresh-icon"]').first();
 
   // Helper to wait for element and verify it's connected (handles DOM detachment from React Query refetches)
   const waitForConnectedElement = async (retries = 3): Promise<{ candidate: Locator; tagName: string }> => {
@@ -560,6 +561,14 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
         // Use 'visible' instead of 'attached' to ensure element is stable and rendered
         await candidate.waitFor({ state: 'visible', timeout: 30000 });
       } catch (error) {
+        // Try a refresh once per attempt to pull latest rows
+        if (await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
+          logger.warn(`Test row not visible yet for "${testName}", clicking Refresh (attempt ${i + 1}/${retries})`);
+          await refreshButton.click();
+          await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => undefined);
+          await page.waitForTimeout(300);
+          continue;
+        }
         // Log available tests for debugging
         const availableTests = await page.locator('[data-row-name]').evaluateAll((els) =>
           els.map((el) => el.getAttribute('data-row-name')).filter(Boolean)
