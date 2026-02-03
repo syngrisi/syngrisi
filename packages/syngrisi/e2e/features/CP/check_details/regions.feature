@@ -216,6 +216,13 @@ Feature: Check details - Regions
       When I click element with locator "[data-test-preview-image='CheckName']"
 
       When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+      When I repeat javascript code until stored "js" string equals "ready":
+         """
+     if (typeof mainView === 'undefined' || !mainView.canvas || !mainView.canvas.getObjects) return "loading";
+     const btn = document.querySelector('[data-check="add-ignore-region"]');
+     if (btn && (btn.disabled || btn.hasAttribute('disabled'))) return "loading";
+     return "ready";
+         """
       When I repeat javascript code until stored "js" string equals "1":
          """
      if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
@@ -231,6 +238,13 @@ Feature: Check details - Regions
       When I click element with locator "[data-test-preview-image='CheckName']"
 
       When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+      When I repeat javascript code until stored "js" string equals "ready":
+         """
+     if (typeof mainView === 'undefined' || !mainView.canvas || !mainView.canvas.getObjects) return "loading";
+     const btn = document.querySelector('[data-check="add-ignore-region"]');
+     if (btn && (btn.disabled || btn.hasAttribute('disabled'))) return "loading";
+     return "ready";
+         """
       When I repeat javascript code until stored "js" string equals "1":
          """
      if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
