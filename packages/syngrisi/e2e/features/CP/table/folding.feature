@@ -106,6 +106,7 @@ Feature: Folding
     Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
     When I click element with locator "[data-test='table-select-all']"
+    When I wait for "1" seconds
     When I wait 30 seconds for the element with locator "[data-test='folding-table-items']" to be visible
 
     # unfold
