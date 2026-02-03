@@ -1,4 +1,4 @@
-@m2m @jwt-auth
+@m2m @jwt-auth @serial
 Feature: JWT M2M Authentication
 
     Background:

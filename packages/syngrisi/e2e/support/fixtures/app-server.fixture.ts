@@ -111,7 +111,8 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
 
       const cid = getCurrentCid();
       const isFastMode = hasTag(testInfo, '@fast-server');
-      const isFastModeReuse = hasTag(testInfo, '@fast-server-reuse');
+      const isFastModeReuse = hasTag(testInfo, '@fast-server-reuse')
+        || (isFastMode && env.E2E_FAST_SERVER_REUSE);
       const skipAppStart = hasTag(testInfo, '@no-app-start') || getSkipAutoStart();
       const fixtureStart = performance.now();
       const envKeysToReset = [

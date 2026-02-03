@@ -178,6 +178,7 @@ When(
       const locator = getLocatorQuery(page, renderedValue);
       const targetLocator = locator.first();
       await targetLocator.waitFor({ state: 'visible', timeout: 30000 });
+      await targetLocator.waitFor({ state: 'attached', timeout: 10000 });
 
       const ignoreRegionAction = getIgnoreRegionAction(renderedValue);
       if (ignoreRegionAction) {
@@ -775,6 +776,26 @@ When(
     // Extract index before passing to getLocatorQuery (it may strip the index)
     const nthMatch = renderedSelector.match(/\[(\d+)\]$/);
     const selectorWithoutIndex = renderedSelector.replace(/\[(\d+)\]$/, '');
+    const normalizedSelector = selectorWithoutIndex.toLowerCase();
+
+    if (
+      normalizedSelector.includes('navbar-group-by')
+      || normalizedSelector.includes('data-test=\"navbar-group-by\"')
+      || normalizedSelector.includes("data-test='navbar-group-by'")
+    ) {
+      await page.waitForSelector('[data-test-navbar-ready="true"]', { timeout: 15000 }).catch(() => undefined);
+    }
+
+    if (
+      normalizedSelector.includes('filter-main-group')
+      || normalizedSelector.includes('table-filter')
+      || normalizedSelector.includes('table-filter-column-name')
+      || normalizedSelector.includes('table-filter-operator')
+      || normalizedSelector.includes('table-filter-value')
+    ) {
+      await page.waitForSelector('[data-test="filter-main-group"]', { timeout: 15000 }).catch(() => undefined);
+    }
+
     const locator = getLocatorQuery(page, selectorWithoutIndex);
     const targetLocator = nthMatch
       ? locator.nth(parseInt(nthMatch[1], 10) - 1) // Convert 1-based to 0-based

@@ -81,6 +81,7 @@ const ensureFreshBuild = (): void => {
   };
 
   try {
+    const buildStart = Date.now();
     logger.info('Building @syngrisi/syngrisi before tests');
     const result = spawnSync(npmExecutable, ['run', 'build'], {
       cwd: syngrisiPackageDir,
@@ -93,6 +94,7 @@ const ensureFreshBuild = (): void => {
     if (result.status !== 0) {
       throw new Error(`npm run build exited with code ${result.status ?? 'unknown'}`);
     }
+    logger.info(`Build completed in ${Date.now() - buildStart}ms`);
   } catch (error) {
     logger.error('Failed to build @syngrisi/syngrisi package');
     throw error;
@@ -107,6 +109,7 @@ export default async function globalSetup(_config: FullConfig) {
   await ensureBaselinesTestDir();
 
   try {
+    const dbCleanupStart = Date.now();
     const client = new MongoClient('mongodb://localhost:27017');
     await client.connect();
     const admin = client.db().admin();
@@ -120,21 +123,26 @@ export default async function globalSetup(_config: FullConfig) {
     }
 
     await client.close();
+    logger.info(`Stray DB cleanup completed in ${Date.now() - dbCleanupStart}ms`);
   } catch (e) {
     logger.warn(`Failed to cleanup stray databases: ${(e as Error).message}`);
   }
 
   try {
+    const stopStart = Date.now();
     logger.info('Stopping any running syngrisi test servers');
     stopAllServers();
+    logger.info(`Server stop command completed in ${Date.now() - stopStart}ms`);
   } catch (e) {
     logger.warn(`Failed to stop running servers: ${(e as Error).message}`);
   }
 
   // Clear database for main worker (CID 0)
   try {
+    const clearStart = Date.now();
     logger.info('Clearing database for worker 0');
     await clearDatabase(0, false);
+    logger.info(`Worker 0 DB cleared in ${Date.now() - clearStart}ms`);
   } catch (error) {
     logger.warn(`Failed to clear database: ${(error as Error).message}`);
   }

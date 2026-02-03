@@ -78,7 +78,17 @@ export async function assertCondition(
 ): Promise<void> {
   if (condition in STATE_ASSERTIONS) {
     const handler = STATE_ASSERTIONS[condition as StateCondition];
-    await handler(locator.first(), options);
+    try {
+      await handler(locator.first(), options);
+    } catch (error) {
+      const page = (locator as any).page?.();
+      if (page) {
+        await page.waitForLoadState('networkidle', { timeout: 2000 }).catch(() => undefined);
+        await page.waitForTimeout(200);
+      }
+      const retryTimeout = Math.min(options?.timeout ?? 5000, 5000);
+      await handler(locator.first(), { timeout: retryTimeout });
+    }
     return;
   }
 

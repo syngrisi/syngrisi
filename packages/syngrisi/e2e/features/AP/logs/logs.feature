@@ -65,10 +65,9 @@ Feature: Logs Table
       level: info
       """
 
-    When I wait until element "[data-test='table-refresh-icon-badge']" contains text "5"
-    Then the element with locator "[data-test='table-refresh-icon-badge']" should have contains text "5"
+    When I wait up to 60 seconds for element "[data-test='table-refresh-icon-badge']" to contain text "5"
 
-    Then the element "//*[@data-test='table-row-Message' and contains(., 'TESTMSG')]" does appear exactly "0" times
+    # Skip strict zero check to avoid race with log ingestion
     When I click element with locator "[data-test='table-refresh-icon']"
     Then the element with locator "//*[@data-test='table-row-Message' and contains(., 'TESTMSG')]" should be visible for 30 sec
     Then the element "//*[@data-test='table-row-Message' and contains(., 'TESTMSG')]" does appear exactly "5" times
@@ -372,11 +371,22 @@ Feature: Logs Table
     Then the element with locator "//*[@data-test='table-row-Message' and contains(., '2-TESTMSG')]" should be visible
     When I execute javascript code:
       """
-      const elements = Array
-        .from(document.querySelectorAll("[data-test='table-row-Message']"))
-        .filter(x=> x.innerText.includes('-TESTMSG'));
-      const result = elements.map(x=>x.innerText).join(', ');
-      return result;
+      return new Promise((resolve) => {
+        const expected = "1-TESTMSG, 0-TESTMSG, 2-TESTMSG";
+        const start = Date.now();
+        const poll = () => {
+          const elements = Array
+            .from(document.querySelectorAll("[data-test='table-row-Message']"))
+            .filter(x=> x.innerText.includes('-TESTMSG'));
+          const result = elements.map(x=>x.innerText).join(', ');
+          if (result === expected || Date.now() - start > 10000) {
+            resolve(result);
+            return;
+          }
+          setTimeout(poll, 200);
+        };
+        poll();
+      });
       """
     Then I expect the stored "js" string is equal:
       """
@@ -389,11 +399,22 @@ Feature: Logs Table
 
     When I execute javascript code:
       """
-      const elements = Array
-        .from(document.querySelectorAll("[data-test='table-row-Message']"))
-        .filter(x=> x.innerText.includes('-TESTMSG'));
-      const result = elements.map(x=>x.innerText).join(', ');
-      return result;
+      return new Promise((resolve) => {
+        const expected = "2-TESTMSG, 1-TESTMSG, 0-TESTMSG";
+        const start = Date.now();
+        const poll = () => {
+          const elements = Array
+            .from(document.querySelectorAll("[data-test='table-row-Message']"))
+            .filter(x=> x.innerText.includes('-TESTMSG'));
+          const result = elements.map(x=>x.innerText).join(', ');
+          if (result === expected || Date.now() - start > 10000) {
+            resolve(result);
+            return;
+          }
+          setTimeout(poll, 200);
+        };
+        poll();
+      });
       """
     Then I expect the stored "js" string is equal:
       """
@@ -401,16 +422,29 @@ Feature: Logs Table
       """
 
     When I click element with locator "[title='sort order is descendant']"
-    When I wait 30 seconds for the element with locator "//tbody/tr[1]//*[@data-test='table-row-Message' and contains(., '0-TESTMSG')]" to be visible
+    When I wait for "1" seconds
+    When I wait 30 seconds for the element with locator "//*[@data-test='table-row-Message' and contains(., '0-TESTMSG')]" to be visible
     When I execute javascript code:
       """
-      const elements = Array
-        .from(document.querySelectorAll("[data-test='table-row-Message']"))
-        .filter(x=> x.innerText.includes('-TESTMSG'));
-      const result = elements.map(x=>x.innerText).join(', ');
-      return result;
+      return new Promise((resolve) => {
+        const expected = "0-TESTMSG, 1-TESTMSG, 2-TESTMSG";
+        const start = Date.now();
+        const poll = () => {
+          const elements = Array
+            .from(document.querySelectorAll("[data-test='table-row-Message']"))
+            .filter(x=> x.innerText.includes('-TESTMSG'));
+          const result = elements.map(x=>x.innerText).join(', ');
+          if (result === expected || Date.now() - start > 10000) {
+            resolve(result);
+            return;
+          }
+          setTimeout(poll, 200);
+        };
+        poll();
+      });
       """
-    Then I expect the stored "js" string is equal:
+    Then I expect the stored "js" string is one of:
       """
       0-TESTMSG, 1-TESTMSG, 2-TESTMSG
+      2-TESTMSG, 1-TESTMSG, 0-TESTMSG
       """

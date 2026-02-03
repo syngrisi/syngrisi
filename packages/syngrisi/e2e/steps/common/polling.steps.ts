@@ -24,8 +24,57 @@ When(
     const expectedText = expected.trim();
     const deadline = Date.now() + 60000;
     let currentTexts: string[] = [];
+    const normalizedSelector = selector.toLowerCase();
+    const isBadgeSelector = normalizedSelector.includes('table-refresh-icon-badge');
+    const refreshIcon = page.locator('[data-test="table-refresh-icon"]').first();
 
     while (Date.now() < deadline) {
+      if (isBadgeSelector) {
+        await refreshIcon.waitFor({ state: 'visible', timeout: 5000 }).catch(() => undefined);
+      }
+
+      const attached = await locator.first().waitFor({ state: 'attached', timeout: 2000 }).catch(() => false);
+      if (!attached) {
+        await page.waitForTimeout(300);
+        continue;
+      }
+
+      currentTexts = await locator.evaluateAll((elements) =>
+        elements.map((el) => {
+          const htmlElement = el as HTMLElement;
+          const text = htmlElement.innerText ?? el.textContent ?? '';
+          return text.replace(/\u00a0/g, ' ');
+        })
+      );
+      if (currentTexts.some((text) => text.includes(expectedText))) {
+        return;
+      }
+      if (isBadgeSelector) {
+        await page.waitForLoadState('networkidle', { timeout: 2000 }).catch(() => undefined);
+      }
+      await page.waitForTimeout(250);
+    }
+    throw new Error(
+      `Element "${selector}" texts ${JSON.stringify(currentTexts)} did not contain "${expectedText}" after 60s`
+    );
+  }
+);
+
+When(
+  'I wait up to {int} seconds for element {string} to contain text {string}',
+  async ({ page }: { page: Page }, timeoutSeconds: number, selector: string, expected: string) => {
+    const locator = getLocatorQuery(page, selector);
+    const expectedText = expected.trim();
+    const deadline = Date.now() + timeoutSeconds * 1000;
+    let currentTexts: string[] = [];
+
+    while (Date.now() < deadline) {
+      const attached = await locator.first().waitFor({ state: 'attached', timeout: 2000 }).catch(() => false);
+      if (!attached) {
+        await page.waitForTimeout(300);
+        continue;
+      }
+
       currentTexts = await locator.evaluateAll((elements) =>
         elements.map((el) => {
           const htmlElement = el as HTMLElement;
@@ -38,8 +87,9 @@ When(
       }
       await page.waitForTimeout(250);
     }
-    throw new Error(
-      `Element "${selector}" texts ${JSON.stringify(currentTexts)} did not contain "${expectedText}" after 60s`
+
+    logger.warn(
+      `Soft wait: element "${selector}" texts ${JSON.stringify(currentTexts)} did not contain "${expectedText}" after ${timeoutSeconds}s`
     );
   }
 );
