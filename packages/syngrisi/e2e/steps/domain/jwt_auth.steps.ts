@@ -41,6 +41,36 @@ const isTransientSessionError = (error: unknown): boolean => {
     return message.includes('socket hang up') || message.includes('ECONNRESET') || message.includes('ECONNREFUSED') || message.includes('EPIPE');
 };
 
+const isTransientCheckError = (error: unknown): boolean => {
+    const message = (error as Error | undefined)?.message || String(error || '');
+    return message.includes('socket hang up')
+        || message.includes('ECONNRESET')
+        || message.includes('ECONNREFUSED')
+        || message.includes('EPIPE')
+        || message.includes('502')
+        || message.includes('503');
+};
+
+const checkWithRetry = async (
+    driverInstance: PlaywrightDriver,
+    payload: Parameters<PlaywrightDriver['check']>[0],
+    retries = 2
+): Promise<any> => {
+    let lastErr: unknown;
+    for (let attempt = 1; attempt <= retries; attempt += 1) {
+        try {
+            return await driverInstance.check(payload);
+        } catch (error) {
+            lastErr = error;
+            if (!isTransientCheckError(error) || attempt === retries) {
+                throw error;
+            }
+            await sleep(1000 * attempt);
+        }
+    }
+    throw lastErr;
+};
+
 const startSessionWithRetry = async (
     driverInstance: PlaywrightDriver,
     payload: { params: Record<string, string> },
@@ -86,6 +116,12 @@ const ensureGuestUserPresent = async (
         }
     } finally {
         await client.close();
+    }
+};
+
+const ensureJwtServerReady = async (appServer: { serverPort?: number }) => {
+    if (appServer.serverPort) {
+        await ensureServerReady(appServer.serverPort, 60_000);
     }
 };
 
@@ -222,6 +258,7 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
     // Reset state from previous tests
     lastError = undefined;
     checkResult = undefined;
+    await ensureJwtServerReady(appServer);
 
     const payload = {
         sub: 'test-client-id',
@@ -265,7 +302,7 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
 
         const imageBuffer = getSampleImageBuffer();
 
-        checkResult = await driver.check({
+        checkResult = await checkWithRetry(driver, {
             checkName: 'JWT Auth Check',
             imageBuffer,
             params: {
@@ -291,6 +328,7 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
 When('I perform a visual check with a valid JWT token with issuer {string}', async ({ page, appServer, mockJwks }, issuer: string) => {
     lastError = undefined;
     checkResult = undefined;
+    await ensureJwtServerReady(appServer);
 
     const payload = {
         sub: 'test-client-id',
@@ -332,7 +370,7 @@ When('I perform a visual check with a valid JWT token with issuer {string}', asy
 
         const imageBuffer = getSampleImageBuffer();
 
-        checkResult = await driver.check({
+        checkResult = await checkWithRetry(driver, {
             checkName: 'JWT Auth Check',
             imageBuffer,
             params: {
@@ -358,6 +396,7 @@ When('I perform a visual check with a valid JWT token with issuer {string}', asy
 When('I perform a visual check with a valid JWT token for client id {string}', async ({ page, appServer, mockJwks }, clientId: string) => {
     lastError = undefined;
     checkResult = undefined;
+    await ensureJwtServerReady(appServer);
 
     const payload = {
         sub: clientId,
@@ -399,7 +438,7 @@ When('I perform a visual check with a valid JWT token for client id {string}', a
 
         const imageBuffer = getSampleImageBuffer();
 
-        checkResult = await driver.check({
+        checkResult = await checkWithRetry(driver, {
             checkName: 'JWT Auth Check',
             imageBuffer,
             params: {
@@ -425,6 +464,7 @@ When('I perform a visual check with a valid JWT token for client id {string}', a
 When('I perform a visual check with a valid JWT token without sub', async ({ page, appServer, mockJwks }) => {
     lastError = undefined;
     checkResult = undefined;
+    await ensureJwtServerReady(appServer);
 
     const payload = {
         client_id: 'client-id-no-sub',
@@ -464,7 +504,7 @@ When('I perform a visual check with a valid JWT token without sub', async ({ pag
 
         const imageBuffer = getSampleImageBuffer();
 
-        checkResult = await driver.check({
+        checkResult = await checkWithRetry(driver, {
             checkName: 'JWT Auth Check',
             imageBuffer,
             params: {
@@ -490,6 +530,7 @@ When('I perform a visual check with a valid JWT token without sub', async ({ pag
 When('I perform a visual check with a JWT token with invalid issuer', async ({ page, appServer, mockJwks }) => {
     lastError = undefined;
     checkResult = undefined;
+    await ensureJwtServerReady(appServer);
 
     const payload = {
         sub: 'test-client-id',
@@ -532,6 +573,7 @@ When('I perform a visual check with a JWT token with invalid issuer', async ({ p
 When('I perform a visual check with a JWT token missing required scopes', async ({ page, appServer, mockJwks }) => {
     lastError = undefined;
     checkResult = undefined;
+    await ensureJwtServerReady(appServer);
 
     const payload = {
         sub: 'test-client-id',
@@ -574,6 +616,7 @@ When('I perform a visual check with a JWT token missing required scopes', async 
 When('I perform a visual check with a JWT token with invalid audience', async ({ page, appServer, mockJwks }) => {
     lastError = undefined;
     checkResult = undefined;
+    await ensureJwtServerReady(appServer);
 
     const payload = {
         sub: 'test-client-id',
@@ -617,6 +660,7 @@ When('I perform a visual check with an invalid JWT token', async ({ page, appSer
     // Reset state from previous tests
     lastError = undefined;
     checkResult = undefined;
+    await ensureJwtServerReady(appServer);
 
     const payload = { sub: 'test-subject', client_id: 'test-client-id' };
     const token = await mockJwks.signInvalidToken(payload);

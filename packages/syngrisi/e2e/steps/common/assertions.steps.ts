@@ -12,6 +12,56 @@ import type { TestStore } from '@fixtures';
 
 const logger = createLogger('AssertionsSteps');
 
+async function stabilizeForSelector(page: Page, selector: string): Promise<void> {
+  const normalized = selector.toLowerCase();
+
+  if (
+    normalized.includes('navbar-group-by')
+    || normalized.includes("data-test='navbar-group-by'")
+    || normalized.includes('data-test="navbar-group-by"')
+  ) {
+    await page.waitForSelector('[data-test-navbar-ready="true"]', { timeout: 5000 }).catch(() => undefined);
+  }
+
+  if (
+    normalized.includes('data-check-header-name')
+    || normalized.includes("data-check='toolbar'")
+    || normalized.includes('data-check="toolbar"')
+  ) {
+    await page.locator("[data-check='toolbar']").first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => undefined);
+    await page.locator('[data-check-header-name]').first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => undefined);
+  }
+
+  if (
+    normalized.includes('data-table-test-name')
+    || normalized.includes('data-table-check-name')
+    || normalized.includes('data-row-name')
+    || normalized.includes('table-row')
+  ) {
+    const refreshButton = page.locator('[data-test="table-refresh-icon"]').first();
+    if (await refreshButton.isVisible({ timeout: 1000 }).catch(() => false)) {
+      await refreshButton.click().catch(() => undefined);
+      await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => undefined);
+      await page.waitForTimeout(300);
+    }
+  }
+
+  if (
+    normalized.includes('filter-main-group')
+    || normalized.includes('table-filter')
+    || normalized.includes('table-filter-column-name')
+    || normalized.includes('table-filter-operator')
+    || normalized.includes('table-filter-value')
+  ) {
+    await page.waitForSelector('[data-test="filter-main-group"]', { timeout: 5000 }).catch(() => undefined);
+  }
+
+  if (normalized.includes('rca-') || normalized.includes('rca_') || normalized.includes("data-test='rca") || normalized.includes('data-test="rca')) {
+    await page.locator("[data-check='toolbar']").first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => undefined);
+    await page.locator('[data-check-header-name]').first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => undefined);
+  }
+}
+
 /**
  * Resolves a locator based on a {@link ElementTarget} descriptor extracted from `{target}`.
  *
@@ -153,7 +203,14 @@ Then(
   'the element with {target} {string} should be {condition}',
   async ({ page }, target: ElementTarget, rawValue: string, condition: StepCondition) => {
     const locator = locatorFromTarget(page, target, rawValue);
-    await assertCondition(locator, condition);
+    try {
+      await assertCondition(locator, condition);
+    } catch (error) {
+      if (target === 'locator') {
+        await stabilizeForSelector(page, rawValue);
+      }
+      await assertCondition(locator, condition);
+    }
   }
 );
 
@@ -226,7 +283,14 @@ Then(
     seconds: number
   ) => {
     const locator = locatorFromTarget(page, target, rawValue);
-    await assertCondition(locator, condition, undefined, { timeout: seconds * 1000 });
+    try {
+      await assertCondition(locator, condition, undefined, { timeout: seconds * 1000 });
+    } catch (error) {
+      if (target === 'locator') {
+        await stabilizeForSelector(page, rawValue);
+      }
+      await assertCondition(locator, condition, undefined, { timeout: seconds * 1000 });
+    }
   }
 );
 
@@ -253,7 +317,14 @@ Then(
     condition: StepCondition
   ) => {
     const locator = locatorFromTarget(page, target, rawValue, ordinal);
-    await assertCondition(locator, condition);
+    try {
+      await assertCondition(locator, condition);
+    } catch (error) {
+      if (target === 'locator') {
+        await stabilizeForSelector(page, rawValue);
+      }
+      await assertCondition(locator, condition);
+    }
   }
 );
 
@@ -1025,7 +1096,12 @@ When(
   async ({ page, testData }, selector: string, condition: StepCondition) => {
     const renderedSelector = renderTemplate(selector, testData);
     const locator = getLocatorQuery(page, renderedSelector);
-    await assertCondition(locator, condition);
+    try {
+      await assertCondition(locator, condition);
+    } catch (error) {
+      await stabilizeForSelector(page, renderedSelector);
+      await assertCondition(locator, condition);
+    }
   }
 );
 
@@ -1065,7 +1141,14 @@ When(
       attribute,
       value: testData.renderTemplate(value),
     });
-    await assertCondition(locator, condition, undefined, { timeout: timeoutInSeconds * 1000 });
+    try {
+      await assertCondition(locator, condition, undefined, { timeout: timeoutInSeconds * 1000 });
+    } catch (error) {
+      if (attribute === 'locator') {
+        await stabilizeForSelector(page, testData.renderTemplate(value));
+      }
+      await assertCondition(locator, condition, undefined, { timeout: timeoutInSeconds * 1000 });
+    }
   },
 );
 

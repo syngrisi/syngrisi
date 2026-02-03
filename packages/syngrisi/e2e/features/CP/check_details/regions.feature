@@ -271,6 +271,13 @@ Feature: Check details - Regions
       # Add region (unsaved change)
       When I click element with locator "[data-check='add-ignore-region']"
 
+      # Verify dirty state (region count implies state) - wait for action to complete
+      When I repeat javascript code until stored "js" string equals "1":
+         """
+         if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
+         return (mainView.allRects.length.toString());
+         """
+
       # 1. Try to navigate to PREVIOUS check (Check1) -> Expect alert and Dismiss (Stay on page)
       # Note: Check2 is newer, so Check1 is the "previous" check
       When I prepare to dismiss confirmation dialog with text "You have unsaved changes"
