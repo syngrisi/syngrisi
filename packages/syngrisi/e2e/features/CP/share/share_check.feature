@@ -83,7 +83,9 @@ Feature: Share Check Feature
       """
     When I accept via http the 1st check with name "SharedCheck"
     When I go to "main" page
+    When I wait for test "ShareAccessTest" to appear in table
     When I unfold the test "ShareAccessTest"
+    When I wait for check "SharedCheck" to appear in collapsed row of test "ShareAccessTest"
     When I open the 1st check "SharedCheck"
 
     # Create share link while logged in

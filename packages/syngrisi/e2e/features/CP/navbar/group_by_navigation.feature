@@ -10,6 +10,7 @@ Feature: Group by Navigation
     Scenario Outline:  Group by - <groupBy>
         When I go to "main" page
         # runs
+        When I wait 10 seconds for the element with locator "select[data-test='navbar-group-by']" to be visible
         When I select the option with the text "<groupBy>" for element "select[data-test='navbar-group-by']"
         Then the element "(//*[@data-test='bread-crumbs']//a)[1]" matches the text "Test Results"
         Then the element with locator "(//*[@data-test='bread-crumbs']//a)[1]" should have has attribute "href=/"
