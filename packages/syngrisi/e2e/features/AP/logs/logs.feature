@@ -366,7 +366,7 @@ Feature: Logs Table
       level: info
       """
     When I go to "logs" page
-    When I wait 30 seconds for the element with locator "//*[@data-test='table-row-Message' and contains(., '0-TESTMSG')]" for 10000ms to be visible
+    When I wait 30 seconds for the element with locator "//*[@data-test='table-row-Message' and contains(., '0-TESTMSG')]" to be visible
     Then the element with locator "//*[@data-test='table-row-Message' and contains(., '1-TESTMSG')]" should be visible
     Then the element with locator "//*[@data-test='table-row-Message' and contains(., '2-TESTMSG')]" should be visible
     When I execute javascript code:
