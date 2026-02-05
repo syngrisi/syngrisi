@@ -189,6 +189,9 @@ Feature: Test Isolation by Filters
       """
 
     When I refresh page
+    When I wait for test "TestSuite-1.1" to appear in table
+    When I wait for test "TestSuite-1.2" to appear in table
+    When I wait for test "TestSuite-2.1" to appear in table
 
     # all tests
     When I wait 10 seconds for the element with locator "//div[contains(text(), 'TestSuite')]" to be visible

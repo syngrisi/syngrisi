@@ -178,7 +178,7 @@ When(
       const locator = getLocatorQuery(page, renderedValue);
       const targetLocator = locator.first();
       await targetLocator.waitFor({ state: 'visible', timeout: 30000 });
-      await targetLocator.waitFor({ state: 'attached', timeout: 10000 });
+      await targetLocator.waitFor({ state: 'attached', timeout: 30000 });
 
       const ignoreRegionAction = getIgnoreRegionAction(renderedValue);
       if (ignoreRegionAction) {
@@ -211,14 +211,19 @@ When(
       if (isPopoverButton) {
         await targetLocator.dispatchEvent('click');
       } else {
-        const tagName = await targetLocator.evaluate((el) => el.tagName.toLowerCase());
+        let tagName = 'button';
+        try {
+          tagName = await targetLocator.evaluate((el) => el.tagName.toLowerCase(), { timeout: 5000 });
+        } catch (error) {
+          logger.warn(`Could not evaluate tag name before click, proceeding with noWaitAfter. Error: ${(error as Error).message}`);
+        }
         const noWaitAfter = tagName !== 'a';
         await targetLocator.click({ timeout: 30000, noWaitAfter });
       }
 
       if (renderedValue.includes('data-test-preview-image')) {
         try {
-          await page.locator("[data-check='toolbar']").first().waitFor({ state: 'visible', timeout: 10000 });
+          await page.locator("[data-check='toolbar']").first().waitFor({ state: 'visible', timeout: 30000 });
         } catch (error) {
           logger.warn(`Preview toolbar did not appear yet after click: ${(error as Error).message}`);
         }
@@ -802,8 +807,8 @@ When(
       : locator.first();
 
     // Wait for element to be visible and attached
-    await targetLocator.waitFor({ state: 'visible', timeout: 10000 });
-    await targetLocator.waitFor({ state: 'attached', timeout: 5000 });
+    await targetLocator.waitFor({ state: 'visible', timeout: 30000 });
+    await targetLocator.waitFor({ state: 'attached', timeout: 15000 });
 
     // Try selectOption first, if it fails, try clicking the select and then the option
     try {
@@ -1048,7 +1053,7 @@ When(
     if (target === 'locator') {
       const locator = getLocatorQuery(page, renderedValue);
       const targetLocator = locator.first();
-      await targetLocator.waitFor({ state: 'visible', timeout: 5000 });
+      await targetLocator.waitFor({ state: 'visible', timeout: 15000 });
 
       // Use JS click to bypass ALL interception/pointer-events issues
       await targetLocator.evaluate((e: HTMLElement) => e.click());

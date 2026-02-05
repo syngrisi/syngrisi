@@ -5,7 +5,18 @@ Feature: Global Sharing Toggle
   So that I can control public access to the application data
 
   Background:
+    When I set env variables:
+      """
+          SYNGRISI_TEST_MODE: true
+          SYNGRISI_AUTH: true
+      """
     Given I start Server
+    When I wait for "5" seconds
+    When I create via http test user
+    When I login via http with user:"Test" password "123456aA-"
+    When I generate via http API key for the User
+    When I set the API key in config
+    When I start Driver
     And I create "1" tests with:
       """
           testName: ShareToggleTest
@@ -32,7 +43,9 @@ Feature: Global Sharing Toggle
     When I go to "main" page
     When I unfold the test "ShareToggleTest"
     When I wait on element "[data-check='CheckToToggle']" to be visible
+    When I wait 30 seconds for the element with locator "[data-test-preview-image='CheckToToggle']" to be visible
     When I click element with locator "[data-test-preview-image='CheckToToggle']"
+    When I wait 30 seconds for the element with locator "[data-check='toolbar']" to be visible
     When I wait on element "[data-check-header-name='CheckToToggle']" to be visible
 
     # Open menu
@@ -62,7 +75,9 @@ Feature: Global Sharing Toggle
     When I go to "main" page
     When I unfold the test "ShareToggleTest"
     When I wait on element "[data-check='CheckToToggle']" to be visible
+    When I wait 30 seconds for the element with locator "[data-test-preview-image='CheckToToggle']" to be visible
     When I click element with locator "[data-test-preview-image='CheckToToggle']"
+    When I wait 30 seconds for the element with locator "[data-check='toolbar']" to be visible
     When I wait on element "[data-check-header-name='CheckToToggle']" to be visible
 
     # Open menu

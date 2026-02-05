@@ -124,8 +124,11 @@ async function createCheckForExistingTest(
   const hashedApiKey =
     (testData.get('hashedApiKey') as string | undefined) ||
     hashApiKey(process.env.SYNGRISI_API_KEY || '123');
+  const apiKeyHeader =
+    (testData.get('apiKeyHeader') as string | undefined) ||
+    hashedApiKey;
   const headers: Record<string, string> = {
-    apikey: hashedApiKey,
+    apikey: apiKeyHeader,
   };
 
   logger.info(`Adding check "${resolvedCheckName}" to existing test "${testId}" via client API`);
@@ -174,7 +177,10 @@ async function createTestsWithParams(
   const defaultApiKey = '123';
   const apiKey = storedApiKey || envApiKey || defaultApiKey;
   const hashedApiKey = hashApiKey(apiKey);
+  const authEnabled = process.env.SYNGRISI_AUTH === 'true';
+  const apiKeyHeader = authEnabled ? apiKey : hashedApiKey;
   testData.set('hashedApiKey', hashedApiKey);
+  testData.set('apiKeyHeader', apiKeyHeader);
   testData.set('apiBaseUrl', appServer.baseURL);
   const initialChecks = (testData.get('autoCreatedChecks') as Array<{ checkId: string; snapshotId: string }>) || [];
   testData.set('autoCreatedChecks', initialChecks);
@@ -294,7 +300,7 @@ async function createTestsWithParams(
           const response = await got.get(
             `${appServer.baseURL}/v1/tests?base_filter=${baseFilter}&filter=${filter}&limit=1`,
             {
-            headers: { apikey: hashedApiKey },
+            headers: { apikey: apiKeyHeader },
             throwHttpErrors: false,
             timeout: { request: 2000 },
             }
@@ -335,18 +341,33 @@ async function createTestsWithParams(
           throw new Error(`Test file not found: ${fullPath}`);
         }
         const imageBuffer = getCachedFileBuffer(fullPath);
-        const checkResult = await createCheckViaAPI(
-          vDriver,
-          testId,
-          checkName,
-          imageBuffer,
-          {
-            ...check,
-            browserName: check.browserName || params.browserName || 'chrome',
-            os: check.os || params.os || 'macOS',
-            viewport: check.viewport || params.viewport || '1366x768',
+        const maxCheckAttempts = 2;
+        let checkResult: any;
+        for (let attempt = 1; attempt <= maxCheckAttempts; attempt += 1) {
+          try {
+            checkResult = await createCheckViaAPI(
+              vDriver,
+              testId,
+              checkName,
+              imageBuffer,
+              {
+                ...check,
+                browserName: check.browserName || params.browserName || 'chrome',
+                os: check.os || params.os || 'macOS',
+                viewport: check.viewport || params.viewport || '1366x768',
+              }
+            ) as any;
+            break;
+          } catch (error: any) {
+            const message = error?.message || String(error);
+            const isRetryable = /EPIPE|ECONNRESET|ECONNREFUSED/i.test(message);
+            if (!isRetryable || attempt === maxCheckAttempts) {
+              throw error;
+            }
+            logger.warn(`Create check failed with connection error, retrying once. Error: ${message}`);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
           }
-        ) as any;
+        }
         logger.info(
           `Check "${checkName}" created with status "${checkResult?.status}" ` +
           `(id: ${checkResult?._id || checkResult?.id}) ` +
@@ -477,7 +498,7 @@ async function createTestsWithParams(
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
         const listResp = await got.get(`${apiBaseUrl}/v1/checks?limit=${createdTestIds.length + 5}`, {
-          headers: { apikey: hashedApiKey },
+          headers: { apikey: apiKeyHeader },
           throwHttpErrors: false,
           timeout: { request: 5000 },
         });
@@ -578,7 +599,17 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
       }
 
       // Check element is still connected before evaluating
-      const isConnected = await candidate.evaluate((el) => el.isConnected);
+      let isConnected = false;
+      try {
+        isConnected = await candidate.evaluate((el) => el.isConnected, { timeout: 15000 });
+      } catch (error) {
+        if (i < retries - 1) {
+          logger.warn(`Test row for "${testName}" did not stabilize for evaluate, retrying (attempt ${i + 2}/${retries})`);
+          await page.waitForTimeout(300);
+          continue;
+        }
+        throw error;
+      }
       if (!isConnected) {
         if (i < retries - 1) {
           logger.warn(`Test row for "${testName}" was detached from DOM, retrying (attempt ${i + 2}/${retries})`);

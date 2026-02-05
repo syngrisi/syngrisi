@@ -269,6 +269,7 @@ Feature: Check details - Regions
       When I go to "main" page
       When I wait for test "NavigationTest" to appear in table
       When I unfold the test "NavigationTest"
+      When I wait for check "Check2" to appear in collapsed row of test "NavigationTest"
       When I click element with locator "[data-test-preview-image='Check2']"
       When I wait 30 seconds for the element with locator "[data-check-header-name='Check2']" to be visible
 

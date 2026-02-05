@@ -145,7 +145,9 @@ Feature: Share Check Feature
     When I accept via http the 1st check with name "CheckToShare"
     When I accept via http the 1st check with name "OtherCheck"
     When I go to "main" page
+    When I wait for test "ShareScopeTest" to appear in table
     When I unfold the test "ShareScopeTest"
+    When I wait for check "CheckToShare" to appear in collapsed row of test "ShareScopeTest"
     When I open the 1st check "CheckToShare"
 
     # Create share link
@@ -200,17 +202,22 @@ Feature: Share Check Feature
       const token = params.get('share');
       const headers = token ? { 'x-share-token': token, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
 
-      return fetch('/v1/checks', { headers })
+      const withTimeout = (promise, ms, label) => new Promise((resolve, reject) => {
+        const id = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+        promise.then((v) => { clearTimeout(id); resolve(v); }).catch((e) => { clearTimeout(id); reject(e); });
+      });
+
+      return withTimeout(fetch('/v1/checks', { headers }), 5000, 'Fetch checks')
         .then(res => res.json())
         .then(data => {
            const check = data.results.find(c => c.name === 'CheckToShare');
            if (!check) throw new Error('CheckToShare not found');
 
-           return fetch('/v1/checks/' + check._id, {
+           return withTimeout(fetch('/v1/checks/' + check._id, {
              method: 'PUT',
              headers: headers,
              body: JSON.stringify({ name: 'HackedName' })
-           });
+           }), 5000, 'Update check');
         })
         .then(res => {
           if (res.status === 200) throw new Error('Security Breach: Update operation succeeded! Status: ' + res.status);
