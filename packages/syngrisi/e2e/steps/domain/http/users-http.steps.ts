@@ -12,6 +12,7 @@ When(
   'I create via http test user',
   async ({ appServer }: { appServer: AppServerFixture }) => {
     const uri = `${appServer.baseURL}/v1/tasks/loadTestUser`;
+    const readinessUri = `${appServer.baseURL}/v1/app/info`;
     logger.info(`Creating test user via ${uri}`);
 
     // Retry logic to handle server not fully ready (returns HTML instead of JSON)
@@ -21,6 +22,11 @@ When(
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
+        // Ensure server is responding with JSON before calling loadTestUser
+        const readinessRes = await got.get(readinessUri, { timeout: { request: 10000 } });
+        if (readinessRes.body.trim().startsWith('<!doctype') || readinessRes.body.trim().startsWith('<html')) {
+          throw new Error('Server returned HTML instead of JSON (not ready yet)');
+        }
         const res = await got.get(uri, { timeout: { request: 10000 } });
         logger.info(`Response (attempt ${attempt}): ${res.body.substring(0, 100)}...`);
 
