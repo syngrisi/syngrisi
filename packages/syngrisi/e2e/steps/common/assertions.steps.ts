@@ -899,10 +899,14 @@ Then('the css attribute {string} from element {string} is {string}', async ({ pa
   const renderedExpected = renderTemplate(expected, testData);
   const locator = getLocatorQuery(page, renderedSelector);
 
-  // Wait for element to be visible before checking CSS (handles slow CI)
-  await locator.first().waitFor({ state: 'visible', timeout: 15000 });
-
   await expect(async () => {
+    // Element can be briefly detached during rerenders; retry until visible.
+    if (await locator.count() === 0) {
+      throw new Error(`Element not found for selector "${renderedSelector}"`);
+    }
+
+    await locator.first().waitFor({ state: 'visible', timeout: 5000 });
+
     // WebdriverIO's getCSSProperty for color properties returns attributeValue.value
     // We need to replicate this behavior exactly - get the computed style value
     let actualValue = await locator.first().evaluate((el, prop) => {
@@ -982,7 +986,7 @@ Then('the css attribute {string} from element {string} is {string}', async ({ pa
       // Use exact comparison as WebdriverIO does with toEqual
       expect(actualValue).toBe(expectedTrimmed);
     }
-  }).toPass({ timeout: 15000 });
+  }).toPass({ timeout: 30000 });
 });
 
 When('I wait on element {string} to exist', async ({ page }, selector: string) => {
