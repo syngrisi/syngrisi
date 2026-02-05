@@ -15,8 +15,8 @@ When(
     logger.info(`Creating test user via ${uri}`);
 
     // Retry logic to handle server not fully ready (returns HTML instead of JSON)
-    const maxRetries = 5;
-    const retryDelay = 2000;
+    const maxRetries = 10;
+    const retryDelay = 3000;
     let lastError: Error | null = null;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
