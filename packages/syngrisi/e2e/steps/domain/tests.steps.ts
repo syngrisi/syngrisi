@@ -606,7 +606,11 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
       // Check element is still connected before evaluating
       let isConnected = false;
       try {
-        isConnected = await candidate.evaluate((el) => el.isConnected, { timeout: 15000 });
+        await candidate.waitFor({ state: 'attached', timeout: 5000 });
+        if ((await candidate.count()) === 0) {
+          throw new Error('Test row locator resolved to zero elements');
+        }
+        isConnected = await candidate.evaluate((el) => el.isConnected, { timeout: 3000 });
       } catch (error) {
         if (i < retries - 1) {
           logger.warn(`Test row for "${testName}" did not stabilize for evaluate, retrying (attempt ${i + 2}/${retries})`);
