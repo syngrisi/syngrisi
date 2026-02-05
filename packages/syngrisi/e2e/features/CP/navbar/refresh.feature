@@ -17,6 +17,7 @@ Feature: Navbar Refresh
       """
 
     When I go to "main" page
+    When I wait for test "TestName-1" to appear in table
     When I wait 10 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
     When I wait 10 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]" to be visible
 
@@ -32,5 +33,5 @@ Feature: Navbar Refresh
     Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]" to not be displayed
 
     When I click element with locator "[data-test='navbar-icon-refresh']"
+    When I wait for test "TestName-2" to appear in table
     When I wait 10 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]" to be visible
-

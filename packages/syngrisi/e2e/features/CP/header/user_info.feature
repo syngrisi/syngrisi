@@ -35,13 +35,15 @@ Feature: User Information
 
   When I go to "main" page
 
+  When I wait 30 seconds for the element with locator "button[data-test='user-icon']" to be visible
   Then the element with locator "button[data-test='user-icon']" should have contains text "JD"
   When I click element with locator "button[data-test='user-icon']"
 
+  When I wait 30 seconds for the element with locator "[data-test='user-short-details']" to be visible
   Then the element with locator "[data-test='user-short-details']" should have contains text "John Doe"
   When I click element with locator "[aria-label='User Details']"
 
+  When I wait 30 seconds for the element with locator "[data-test=userinfo-username]" to be visible
   Then the element with locator "[data-test=userinfo-username]" should have contains text "user@gmail.com"
   Then the element with locator "[data-test=userinfo-role]" should have contains text "user"
   Then the element with locator "[data-test=userinfo-name]" should have contains text "John Doe"
-

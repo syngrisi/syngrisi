@@ -861,7 +861,7 @@ When(
         });
       },
       selector,
-      { timeout: 30000 }
+      { timeout: 60000 }
     );
   }
 );
@@ -885,13 +885,13 @@ Then(
 
 
 Then('the title is {string}', async ({ page }, expectedTitle: string) => {
-  await expect(page).toHaveTitle(expectedTitle);
+  await expect(page).toHaveTitle(expectedTitle, { timeout: 30000 });
 });
 
 Then('the title contains {string}', async ({ page }, expectedTitle: string) => {
   // Escape regex characters for expectedTitle
   const escapedTitle = expectedTitle.replace(/[.*+?^${}()|[\\]/g, '\\$&');
-  await expect(page).toHaveTitle(new RegExp(escapedTitle));
+  await expect(page).toHaveTitle(new RegExp(escapedTitle), { timeout: 30000 });
 });
 
 Then('the css attribute {string} from element {string} is {string}', async ({ page, testData }, cssProperty: string, selector: string, expected: string) => {

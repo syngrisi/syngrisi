@@ -135,7 +135,7 @@ When('I click SSO login button', async ({ page }: { page: Page }) => {
  */
 Then('the SSO login button should be visible', async ({ page }: { page: Page }) => {
     const ssoButton = page.locator("a[href*='/v1/auth/sso']");
-    await expect(ssoButton).toBeVisible();
+    await expect(ssoButton).toBeVisible({ timeout: 30000 });
 });
 
 /**

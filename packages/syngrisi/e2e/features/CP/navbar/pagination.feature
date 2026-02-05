@@ -17,6 +17,7 @@ Feature: Pagination
           checkName: Check - 1
       """
     When I go to "main" page
+    When I wait for test "TestName-Pagination-1-21" to appear in table
     # Wait for initial load with polling
     Then the element "[data-test*='navbar_item_']" should have exactly 20 items within 10 seconds
     # Scroll the navbar ScrollArea to bottom to trigger loading more
@@ -56,6 +57,7 @@ Feature: Pagination
 
     When I go to "main" page
     When I wait 10 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
+    When I wait 10 seconds for the element with locator "select[data-test='navbar-group-by']" to be visible
     When I select the option with the text "Suites" for element "select[data-test='navbar-group-by']"
     # Wait for initial load with polling
     Then the element "[data-test*='navbar_item_'][data-item-name*='SuiteName-Pagination-2-']" should have exactly 20 items within 15 seconds
