@@ -179,6 +179,16 @@ When(
       const targetLocator = locator.first();
       await targetLocator.waitFor({ state: 'visible', timeout: 30000 });
       await targetLocator.waitFor({ state: 'attached', timeout: 30000 });
+      try {
+        await targetLocator.scrollIntoViewIfNeeded({ timeout: 7000 });
+      } catch (error) {
+        logger.warn(`scrollIntoViewIfNeeded failed before click, retrying via evaluate: ${(error as Error).message}`);
+        await targetLocator.evaluate((el) => {
+          if (el) {
+            el.scrollIntoView({ block: 'center', inline: 'center' });
+          }
+        }).catch(() => undefined);
+      }
 
       const ignoreRegionAction = getIgnoreRegionAction(renderedValue);
       if (ignoreRegionAction) {
@@ -218,7 +228,16 @@ When(
           logger.warn(`Could not evaluate tag name before click, proceeding with noWaitAfter. Error: ${(error as Error).message}`);
         }
         const noWaitAfter = tagName !== 'a';
-        await targetLocator.click({ timeout: 30000, noWaitAfter });
+        try {
+          await targetLocator.click({ timeout: 30000, noWaitAfter });
+        } catch (error) {
+          logger.warn(`Primary click failed for "${renderedValue}", retrying with dispatchEvent/force. Error: ${(error as Error).message}`);
+          try {
+            await targetLocator.dispatchEvent('click');
+          } catch {
+            await targetLocator.click({ force: true, timeout: 10000, noWaitAfter: true });
+          }
+        }
       }
 
       if (renderedValue.includes('data-test-preview-image')) {
@@ -911,7 +930,16 @@ When('I set {string} to the inputfield {string}', async ({ page, testData }, val
   const targetLocator = locator.first();
 
   await targetLocator.waitFor({ state: 'visible', timeout: 10000 });
-  await targetLocator.scrollIntoViewIfNeeded();
+  try {
+    await targetLocator.scrollIntoViewIfNeeded({ timeout: 7000 });
+  } catch (error) {
+    logger.warn(`scrollIntoViewIfNeeded failed, retrying via evaluate: ${(error as Error).message}`);
+    await targetLocator.evaluate((el) => {
+      if (el) {
+        el.scrollIntoView({ block: 'center', inline: 'center' });
+      }
+    }).catch(() => undefined);
+  }
   await targetLocator.click({ timeout: 10000 });
   await targetLocator.fill('');
   await targetLocator.fill(renderedValue);

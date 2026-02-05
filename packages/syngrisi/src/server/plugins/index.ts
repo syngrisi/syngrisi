@@ -135,20 +135,22 @@ export async function initPlugins(): Promise<void> {
         }
 
             if (!jwksUrl || !issuer) {
-                throw new Error(
+                const errMsg =
                     'Missing required configuration for "jwt-auth" plugin. ' +
-                    'Please set SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL and SYNGRISI_PLUGIN_JWT_AUTH_ISSUER environment variables.'
-                );
+                    'Please set SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL and SYNGRISI_PLUGIN_JWT_AUTH_ISSUER environment variables.';
+                console.error(errMsg);
+                throw new Error(errMsg);
             }
 
             // Validate JWKS URL format
             try {
                 new URL(jwksUrl);
             } catch (error) {
-                throw new Error(
+                const errMsg =
                     `Invalid JWKS URL for "jwt-auth" plugin: "${jwksUrl}". ` +
-                    'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL must be a valid URL.'
-                );
+                    'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL must be a valid URL.';
+                console.error(errMsg);
+                throw new Error(errMsg);
             }
         }
     }

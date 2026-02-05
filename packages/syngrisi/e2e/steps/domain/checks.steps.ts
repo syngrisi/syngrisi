@@ -84,13 +84,22 @@ When('I open the {ordinal} check {string}', async ({ page }: { page: Page }, ord
   }
 
   await targetCheck.scrollIntoViewIfNeeded();
-  await targetCheck.click();
-
-  // Wait for modal to open and header to appear
-  // Reduced from 30s to 15s -> Increased back to 30s for stability
   const header = page.locator(`[data-check-header-name='${name}']`).first();
-  await header.waitFor({ state: 'visible', timeout: 30000 });
-  logger.info(`Opened ${ordinal + 1}st check: ${name}`);
+  const maxAttempts = 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    await targetCheck.click();
+    try {
+      await header.waitFor({ state: 'visible', timeout: 20000 });
+      logger.info(`Opened ${ordinal + 1}st check: ${name} (attempt ${attempt})`);
+      return;
+    } catch (error) {
+      if (attempt === maxAttempts) {
+        throw error;
+      }
+      logger.warn(`Check "${name}" did not open yet, retrying (attempt ${attempt}/${maxAttempts})`);
+      await page.waitForTimeout(500);
+    }
+  }
 });
 
 When('I delete the {string} check', async ({ page }: { page: Page }, checkName: string) => {
