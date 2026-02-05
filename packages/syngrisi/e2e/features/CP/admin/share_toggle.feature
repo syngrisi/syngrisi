@@ -8,11 +8,17 @@ Feature: Global Sharing Toggle
     When I set env variables:
       """
           SYNGRISI_TEST_MODE: true
+          SYNGRISI_AUTH: false
+      """
+    Given I start Server
+    When I create via http test user
+    Given I stop the Syngrisi server
+    When I set env variables:
+      """
+          SYNGRISI_TEST_MODE: true
           SYNGRISI_AUTH: true
       """
     Given I start Server
-    When I wait for "5" seconds
-    When I create via http test user
     When I login via http with user:"Test" password "123456aA-"
     When I generate via http API key for the User
     When I set the API key in config
