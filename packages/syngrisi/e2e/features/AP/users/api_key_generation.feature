@@ -52,6 +52,6 @@ Feature: API key generation
 
     # check tests
     When I open the app
+    When I wait for test "User test - 1" to appear in table
     When I wait 10 seconds for the element with locator "[data-table-test-creatorusername='user@gmail.com']" to be visible
     Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "1" times
-
