@@ -56,7 +56,9 @@ Feature: Check Details Navigation
             | T3-C1 |
 
         When I go to "main" page
+        When I wait for test "Test 3" to appear in table
         And I unfold the test "Test 3"
+        And I wait for check "T3-C1" to appear in collapsed row of test "Test 3"
         When I open the 1st check "T3-C1"
         Then I should see the check details for "T3-C1"
         And the "Previous Test" button should be "disabled"

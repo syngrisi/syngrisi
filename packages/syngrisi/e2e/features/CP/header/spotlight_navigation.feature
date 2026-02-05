@@ -33,9 +33,9 @@ Feature: Spotlight
     When I set "<keyword>" to the inputfield ".mantine-Spotlight-searchInput"
     And I press "Enter"
 
+    And I wait on element ".mantine-Spotlight-spotlight" to not be displayed
     Then the current url contains "<url>"
     And the title contains "<title>"
-    And I wait on element ".mantine-Spotlight-spotlight" to not be displayed
 
     Examples:
       | keyword | title    | url            |
@@ -62,4 +62,3 @@ Feature: Spotlight
     Then the css attribute "color" from element "[aria-label='Syngrisi']" is "rgba(255,255,255,1)"
     # logo container
     Then the css attribute "color" from element "[aria-label='Logo container']" is "rgba(193,194,197,1)"
-
