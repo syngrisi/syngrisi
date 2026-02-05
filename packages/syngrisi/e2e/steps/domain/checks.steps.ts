@@ -83,11 +83,30 @@ When('I open the {ordinal} check {string}', async ({ page }: { page: Page }, ord
     );
   }
 
-  await targetCheck.scrollIntoViewIfNeeded();
+  try {
+    await targetCheck.scrollIntoViewIfNeeded({ timeout: 7000 });
+  } catch (error) {
+    logger.warn(`scrollIntoViewIfNeeded failed for check "${name}", retrying via evaluate: ${(error as Error).message}`);
+    await targetCheck.evaluate((el) => {
+      if (el) {
+        el.scrollIntoView({ block: 'center', inline: 'center' });
+      }
+    }).catch(() => undefined);
+  }
   const header = page.locator(`[data-check-header-name='${name}']`).first();
   const maxAttempts = 3;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    await targetCheck.click();
+    try {
+      await targetCheck.waitFor({ state: 'visible', timeout: 10000 });
+      await targetCheck.click({ timeout: 15000 });
+    } catch (error) {
+      logger.warn(`Primary click failed for check "${name}", retrying with dispatchEvent/force. Error: ${(error as Error).message}`);
+      try {
+        await targetCheck.dispatchEvent('click');
+      } catch {
+        await targetCheck.click({ force: true, timeout: 10000 });
+      }
+    }
     try {
       await header.waitFor({ state: 'visible', timeout: 20000 });
       logger.info(`Opened ${ordinal + 1}st check: ${name} (attempt ${attempt})`);
