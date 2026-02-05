@@ -13,6 +13,10 @@ interface LoggerOptions {
     dbConnectionString: string;
 }
 function createWinstonLogger(opts: LoggerOptions): WinstonLogger {
+    if (env.SYNGRISI_DISABLE_LOGS) {
+        return winston.createLogger({ transports: [], silent: true });
+    }
+
     const transports: winston.transport[] = [
         new winston.transports.Console({
             level: logLevel || 'silly',

@@ -585,7 +585,12 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
         // Try a refresh once per attempt to pull latest rows
         if (await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
           logger.warn(`Test row not visible yet for "${testName}", clicking Refresh (attempt ${i + 1}/${retries})`);
-          await refreshButton.click();
+          try {
+            await refreshButton.click({ timeout: 7000 });
+          } catch (clickError) {
+            logger.warn(`Refresh click failed, retrying via dispatchEvent: ${String(clickError)}`);
+            await refreshButton.dispatchEvent('click');
+          }
           await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => undefined);
           await page.waitForTimeout(300);
           continue;
