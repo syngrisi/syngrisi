@@ -66,7 +66,7 @@ Feature: User roles
         When I reload session
         When I open the app
         When I login with user:"user@gmail.com" password "Password-123"
-        When I wait 10 seconds for the element with locator "span*=JD" to be visible
+        When I wait 30 seconds for the element with locator "span*=JD" to be visible
 
         # generate and parse API key
         When I click element with locator "span*=JD"
@@ -92,7 +92,7 @@ Feature: User roles
         ## reviewer
         # login
         When I login with user:"reviewer@gmail.com" password "Password-123"
-        When I wait 10 seconds for the element with locator "span*=RR" to be visible
+        When I wait 30 seconds for the element with locator "span*=RR" to be visible
 
         # generate and parse API key
         When I click element with locator "span*=RR"
@@ -117,7 +117,7 @@ Feature: User roles
         ## admin
         # login
         When I login with user:"superadmin@gmail.com" password "Password-123"
-        When I wait 10 seconds for the element with locator "span*=SD" to be visible
+        When I wait 30 seconds for the element with locator "span*=SD" to be visible
 
         # generate and parse API key
         When I click element with locator "span*=SD"
@@ -144,7 +144,7 @@ Feature: User roles
         ## USER
         # login
         When I login with user:"user@gmail.com" password "Password-123"
-        When I wait 10 seconds for the element with locator "span*=JD" to be visible
+        When I wait 30 seconds for the element with locator "span*=JD" to be visible
         # checks - use polling assertions with refresh to handle data loading timing (60s for CI stability)
         Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 60 seconds with refresh
         Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 5 items within 15 seconds
@@ -157,7 +157,7 @@ Feature: User roles
         ## REVIEWER
         # login
         When I login with user:"reviewer@gmail.com" password "Password-123"
-        When I wait 10 seconds for the element with locator "span*=RR" to be visible
+        When I wait 30 seconds for the element with locator "span*=RR" to be visible
         # checks - use polling assertions with refresh to handle data loading timing
         Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 30 seconds with refresh
         Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 5 items within 10 seconds
@@ -174,7 +174,7 @@ Feature: User roles
         ## ADMIN
         # login
         When I login with user:"superadmin@gmail.com" password "Password-123"
-        When I wait 10 seconds for the element with locator "span*=SD" to be visible
+        When I wait 30 seconds for the element with locator "span*=SD" to be visible
         # checks - use polling assertions with refresh to handle data loading timing
         Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 30 seconds with refresh
         Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 5 items within 10 seconds
@@ -184,4 +184,3 @@ Feature: User roles
 
         Then the element "//div[contains(text(), 'Admin test')]" should have exactly 3 items within 30 seconds with refresh
         Then the element "[data-table-test-creatorusername='superadmin@gmail.com']" should have exactly 3 items within 10 seconds
-

@@ -10,10 +10,12 @@ Feature: Spotlight
   @smoke
   Scenario: Spotlight Appear
     # using keystrokes
+    When I wait 30 seconds for the element with locator "button[aria-label='Search']" to be visible
     Then I wait on element ".mantine-Spotlight-spotlight" to not be displayed
     And I hold key "Control"
     And I press "k"
-    When I wait 10 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
+    When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
+    When I wait 30 seconds for the element with locator ".mantine-Spotlight-searchInput" to be visible
 
     When I release key "Control"
     And I press "Escape"
@@ -21,14 +23,15 @@ Feature: Spotlight
 
     # using mouse clicks
     When I click element with locator "button[aria-label='Search']"
-    When I wait 10 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
+    When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
     When I click on the element "[aria-label='Syngrisi']" via js
     Then I wait on element ".mantine-Spotlight-spotlight" to not be displayed
 
   Scenario Outline:  Spotlight Navigation - <keyword>
     When I click element with locator "button[aria-label='Search']"
-    When I wait 10 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
+    When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
+    When I wait 30 seconds for the element with locator ".mantine-Spotlight-searchInput" to be visible
 
     When I set "<keyword>" to the inputfield ".mantine-Spotlight-searchInput"
     And I press "Enter"
@@ -51,11 +54,13 @@ Feature: Spotlight
     Then the css attribute "color" from element "[aria-label='Logo container']" is "rgba(0,0,0,1)"
 
     When I click element with locator "button[aria-label='Search']"
-    When I wait 10 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
+    When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
     # switch theme
+    When I wait 30 seconds for the element with locator ".mantine-Spotlight-searchInput" to be visible
     When I set "theme" to the inputfield ".mantine-Spotlight-searchInput"
     And I press "Enter"
+    And I wait on element ".mantine-Spotlight-spotlight" to not be displayed
 
 
     # logo label

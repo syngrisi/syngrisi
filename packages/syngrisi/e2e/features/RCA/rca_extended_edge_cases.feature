@@ -14,9 +14,9 @@ Feature: RCA - Extended Edge Cases
         Given I create RCA test with "edge-cases/empty-body" as baseline
         When I create RCA actual check with "edge-cases/empty-body-modified"
         And I go to "main" page
-        And I wait 5 seconds for the element with locator "[data-table-test-name='RCA-Scenario-Test']" to be visible
+        And I wait for test "RCA-Scenario-Test" to appear in table
         And I click element with locator "[data-table-test-name='RCA-Scenario-Test']"
-        And I wait 1 seconds
+        And I wait on element "[data-test-preview-image='RCA-Scenario-Check']" to be visible
         And I click element with locator "[data-test-preview-image='RCA-Scenario-Check']"
         And I wait 2 seconds for the element with locator "[data-check='toolbar']" to be visible
         When I click element with locator "[data-test='rca-toggle-button']"
@@ -28,9 +28,9 @@ Feature: RCA - Extended Edge Cases
         Given I create RCA test with "edge-cases/deeply-nested" as baseline
         When I create RCA actual check with "edge-cases/deeply-nested-modified"
         And I go to "main" page
-        And I wait 5 seconds for the element with locator "[data-table-test-name='RCA-Scenario-Test']" to be visible
+        And I wait for test "RCA-Scenario-Test" to appear in table
         And I click element with locator "[data-table-test-name='RCA-Scenario-Test']"
-        And I wait 1 seconds
+        And I wait on element "[data-test-preview-image='RCA-Scenario-Check']" to be visible
         And I click element with locator "[data-test-preview-image='RCA-Scenario-Check']"
         And I wait 2 seconds for the element with locator "[data-check='toolbar']" to be visible
         When I click element with locator "[data-test='rca-toggle-button']"
@@ -43,9 +43,9 @@ Feature: RCA - Extended Edge Cases
         Given I create RCA test with "edge-cases/special-chars" as baseline
         When I create RCA actual check with "edge-cases/special-chars-modified"
         And I go to "main" page
-        And I wait 5 seconds for the element with locator "[data-table-test-name='RCA-Scenario-Test']" to be visible
+        And I wait for test "RCA-Scenario-Test" to appear in table
         And I click element with locator "[data-table-test-name='RCA-Scenario-Test']"
-        And I wait 1 seconds
+        And I wait on element "[data-test-preview-image='RCA-Scenario-Check']" to be visible
         And I click element with locator "[data-test-preview-image='RCA-Scenario-Check']"
         And I wait 2 seconds for the element with locator "[data-check='toolbar']" to be visible
         When I click element with locator "[data-test='rca-toggle-button']"
