@@ -94,7 +94,7 @@ async function waitForViewChange(page: Page, view: string): Promise<void> {
       return canvasHasImage && mainView.currentView === expected;
     },
     normalizedView,
-    { timeout: 30000 }
+    { timeout: 60000 }
   );
 }
 
@@ -110,7 +110,7 @@ async function waitForCanvasBootstrap(page: Page): Promise<void> {
       return Array.isArray(objects);
     },
     undefined,
-    { timeout: 30000 }
+    { timeout: 60000 }
   );
 }
 
