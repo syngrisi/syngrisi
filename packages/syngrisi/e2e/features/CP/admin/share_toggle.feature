@@ -15,7 +15,7 @@ Feature: Global Sharing Toggle
       """
     And I login with user:"Test" password "123456aA-"
     And I go to "admin/settings" page
-    And I wait 10 seconds for the element with locator "select[data-test='settings_value_share_enabled']" to be visible
+    And I wait on element "[data-test='settings_value_share_enabled']" to be visible
 
   Scenario: Admin can disable sharing
     # Disable Sharing using custom dropdown step
@@ -25,8 +25,8 @@ Feature: Global Sharing Toggle
 
     # Reload to confirm persistence
     When I refresh page
-    And I wait 10 seconds for the element with locator "select[data-test='settings_value_share_enabled']" to be visible
-    Then the element with locator "select[data-test='settings_value_share_enabled']" should have value "false"
+    And I wait on element "[data-test='settings_value_share_enabled']" to be visible
+    Then the element with locator "[data-test='settings_value_share_enabled']" should have value "false"
 
     # Verify Share Button is disabled in Check Details
     When I go to "main" page
@@ -55,8 +55,8 @@ Feature: Global Sharing Toggle
 
     # Reload to confirm persistence
     When I refresh page
-    And I wait 10 seconds for the element with locator "select[data-test='settings_value_share_enabled']" to be visible
-    Then the element with locator "select[data-test='settings_value_share_enabled']" should have value "true"
+    And I wait on element "[data-test='settings_value_share_enabled']" to be visible
+    Then the element with locator "[data-test='settings_value_share_enabled']" should have value "true"
 
     # Verify Share Button is enabled in Check Details
     When I go to "main" page

@@ -13,7 +13,7 @@
     "postinstall": "playwright install",
     "bddgen": "bddgen",
     "kill": "(pkill -9 -f syngrisi_test_server || true; pkill -9 -f playwright || true; pkill -9 -f chromium || true; sleep 3 && echo 'Killed all test processes') || true",
-    "test": "yarn kill && bddgen && run-s -c test:clean-blob test:parallel test:flaky test:combine-blob test:merge-reports test:stats; say 'all tests done'",
+    "test": "yarn kill && bddgen && bash -lc 'set +e; failed=0; yarn test:clean-blob || failed=1; yarn test:parallel || failed=1; yarn test:flaky || failed=1; yarn test:combine-blob || failed=1; yarn test:merge-reports || failed=1; yarn test:stats || failed=1; exit $failed'; say 'all tests done'",
     "test:clean-blob": "rm -rf reports/blob-parallel reports/blob-sso reports/blob-flaky reports/blob-combined reports/playwright-report reports/report.json",
     "test:parallel": "cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_BLOB_OUTPUT_DIR=reports/blob-parallel playwright test --project=chromium --grep-invert '@saml|@sso-external|@sso-logto|@flaky|@serial' --workers=6 --reporter=blob,list",
     "test:sso": "cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_BLOB_OUTPUT_DIR=reports/blob-sso playwright test --project=chromium --grep '@saml|@sso-external|@sso-logto' --grep-invert '@flaky' --workers=1 --reporter=blob,list",
