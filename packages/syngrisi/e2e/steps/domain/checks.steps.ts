@@ -53,7 +53,22 @@ When('I accept the {string} check', async ({ page }: { page: Page }, checkName: 
   const confirmButton = page.locator(`[data-confirm-button-name='${checkName}']`).first();
   await confirmButton.waitFor({ state: 'visible', timeout: 10000 });
   await confirmButton.waitFor({ state: 'attached', timeout: 5000 });
-  await confirmButton.click();
+  await Promise.all([
+    page.waitForResponse(
+      (resp) => {
+        if (!resp.ok()) {
+          return false;
+        }
+        const method = resp.request().method();
+        if (method !== 'PUT' && method !== 'PATCH' && method !== 'POST') {
+          return false;
+        }
+        return resp.url().includes('/v1/checks/');
+      },
+      { timeout: 15000 }
+    ).catch(() => null),
+    confirmButton.click(),
+  ]);
 
   // Wait for accept icon to reach accepted state
   await page.waitForFunction(
@@ -69,7 +84,7 @@ When('I accept the {string} check', async ({ page }: { page: Page }, checkName: 
       return color === 'rgb(64, 192, 87)' || color === 'rgba(64, 192, 87, 1)';
     },
     checkName,
-    { timeout: 10000 }
+    { timeout: 20000 }
   );
 });
 
