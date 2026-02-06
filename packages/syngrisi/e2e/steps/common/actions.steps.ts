@@ -51,7 +51,7 @@ async function waitForIgnoreRegionsSave(page: Page, locator: Locator): Promise<v
       },
       { timeout: 30000 }
     ),
-    locator.click(),
+    clickWithFallback(locator, true, 'save-ignore-region'),
   ]);
 
   await response.finished();
@@ -147,6 +147,19 @@ async function waitForIgnoreRegionCountChange(page: Page, expected: number): Pro
   );
 }
 
+async function clickWithFallback(locator: Locator, noWaitAfter: boolean, logContext: string): Promise<void> {
+  try {
+    await locator.click({ timeout: 30000, noWaitAfter });
+  } catch (error) {
+    logger.warn(`Primary click failed for "${logContext}", retrying with dispatchEvent/force. Error: ${(error as Error).message}`);
+    try {
+      await locator.dispatchEvent('click');
+    } catch {
+      await locator.click({ force: true, timeout: 30000, noWaitAfter: true });
+    }
+  }
+}
+
 /**
  * Step definition: `When I click element with {target} {string}`
  *
@@ -175,8 +188,7 @@ When(
     }
 
     if (target === 'locator') {
-      const locator = getLocatorQuery(page, renderedValue);
-      const targetLocator = locator.first();
+      const targetLocator = getLocatorQuery(page, renderedValue).first();
       await targetLocator.waitFor({ state: 'visible', timeout: 30000 });
       await targetLocator.waitFor({ state: 'attached', timeout: 30000 });
       try {
@@ -220,8 +232,39 @@ When(
 
       const isPreviewImage = renderedValue.includes('data-test-preview-image');
       if (isPreviewImage) {
-        await targetLocator.scrollIntoViewIfNeeded();
-        await targetLocator.waitFor({ state: 'visible', timeout: 30000 });
+        const toolbar = page.locator("[data-check='toolbar']").first();
+        const header = page.locator("[data-check-header-name]").first();
+        const maxAttempts = 3;
+
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+          const preview = getLocatorQuery(page, renderedValue).first();
+          await preview.waitFor({ state: 'visible', timeout: 30000 });
+          await preview.waitFor({ state: 'attached', timeout: 30000 });
+          await preview.scrollIntoViewIfNeeded().catch(async (error) => {
+            logger.warn(`Preview scroll failed on attempt ${attempt}/${maxAttempts}: ${(error as Error).message}`);
+            await preview.evaluate((el) => {
+              if (el) {
+                el.scrollIntoView({ block: 'center', inline: 'center' });
+              }
+            }).catch(() => undefined);
+          });
+
+          await clickWithFallback(preview, true, renderedValue);
+
+          try {
+            await Promise.race([
+              toolbar.waitFor({ state: 'visible', timeout: 15000 }),
+              header.waitFor({ state: 'visible', timeout: 15000 }),
+            ]);
+            return;
+          } catch (error) {
+            if (attempt === maxAttempts) {
+              throw error;
+            }
+            logger.warn(`Preview click did not open check on attempt ${attempt}/${maxAttempts}, retrying`);
+          }
+        }
+        return;
       }
 
       if (isPopoverButton) {
@@ -234,25 +277,7 @@ When(
           logger.warn(`Could not evaluate tag name before click, proceeding with noWaitAfter. Error: ${(error as Error).message}`);
         }
         const noWaitAfter = tagName !== 'a';
-        try {
-          await targetLocator.click({ timeout: 30000, noWaitAfter });
-        } catch (error) {
-          logger.warn(`Primary click failed for "${renderedValue}", retrying with dispatchEvent/force. Error: ${(error as Error).message}`);
-          try {
-            await targetLocator.dispatchEvent('click');
-          } catch {
-            await targetLocator.click({ force: true, timeout: 10000, noWaitAfter: true });
-          }
-        }
-      }
-
-      if (isPreviewImage) {
-        const toolbar = page.locator("[data-check='toolbar']").first();
-        const header = page.locator("[data-check-header-name]").first();
-        await Promise.race([
-          toolbar.waitFor({ state: 'visible', timeout: 30000 }),
-          header.waitFor({ state: 'visible', timeout: 30000 }),
-        ]);
+        await clickWithFallback(targetLocator, noWaitAfter, renderedValue);
       }
       return;
     }
