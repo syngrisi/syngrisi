@@ -6,6 +6,10 @@
 -   Always write comments and debug messages in your code in English.
 -   Always use `yarn` instead of `npm` for package management commands in this monorepo.
 
+## Test Request Convention
+
+If a user asks to run "syngrisi tests" or "e2e tests", treat that as running `yarn test` from `/Users/vsilakau/Projects/syngrisi/packages/syngrisi`.
+
 ## Design & Coding Principles
 
 -   не усложнять, без оверинжиниринга, но с сохранением требуемой функциональности

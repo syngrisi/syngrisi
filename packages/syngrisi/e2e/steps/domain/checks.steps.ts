@@ -1,8 +1,46 @@
 import { When } from '@fixtures';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { createLogger } from '@lib/logger';
 
 const logger = createLogger('ChecksSteps');
+
+async function resolveVisibleCheckAtOrdinal(
+  page: Page,
+  name: string,
+  ordinal: number,
+  timeoutMs = 15000
+): Promise<Locator> {
+  const allChecks = page.locator(`[data-test-preview-image='${name}']`);
+  const startTime = Date.now();
+  let lastVisibleCount = 0;
+  let lastTotalCount = 0;
+
+  while (Date.now() - startTime < timeoutMs) {
+    const totalCount = await allChecks.count();
+    lastTotalCount = totalCount;
+    let visibleCount = 0;
+
+    for (let i = 0; i < totalCount; i++) {
+      const check = allChecks.nth(i);
+      const isVisible = await check.isVisible().catch(() => false);
+      if (!isVisible) {
+        continue;
+      }
+      if (visibleCount === ordinal) {
+        return check;
+      }
+      visibleCount++;
+    }
+
+    lastVisibleCount = visibleCount;
+    await page.waitForTimeout(200);
+  }
+
+  throw new Error(
+    `Could not find visible check "${name}" at ordinal position ${ordinal}. ` +
+    `Found ${lastVisibleCount} visible checks out of ${lastTotalCount} total elements.`
+  );
+}
 
 When('I accept the {string} check', async ({ page }: { page: Page }, checkName: string) => {
   const icon = page.locator(`[data-test='check-accept-icon'][data-popover-icon-name='${checkName}']`).first();
@@ -15,7 +53,22 @@ When('I accept the {string} check', async ({ page }: { page: Page }, checkName: 
   const confirmButton = page.locator(`[data-confirm-button-name='${checkName}']`).first();
   await confirmButton.waitFor({ state: 'visible', timeout: 10000 });
   await confirmButton.waitFor({ state: 'attached', timeout: 5000 });
-  await confirmButton.click();
+  await Promise.all([
+    page.waitForResponse(
+      (resp) => {
+        if (!resp.ok()) {
+          return false;
+        }
+        const method = resp.request().method();
+        if (method !== 'PUT' && method !== 'PATCH' && method !== 'POST') {
+          return false;
+        }
+        return resp.url().includes('/v1/checks/');
+      },
+      { timeout: 15000 }
+    ).catch(() => null),
+    confirmButton.click(),
+  ]);
 
   // Wait for accept icon to reach accepted state
   await page.waitForFunction(
@@ -31,66 +84,81 @@ When('I accept the {string} check', async ({ page }: { page: Page }, checkName: 
       return color === 'rgb(64, 192, 87)' || color === 'rgba(64, 192, 87, 1)';
     },
     checkName,
-    { timeout: 10000 }
+    { timeout: 20000 }
   );
 });
 
 When('I open the {ordinal} check {string}', async ({ page }: { page: Page }, ordinal: number, name: string) => {
-  // Playwright BDD ordinal is 0-based for "1st" (0), "2nd" (1), etc.
-  // We need to find the Nth VISIBLE check preview, not just the Nth element in DOM order
-  // This is important because collapsed test rows have hidden check previews
-
   const allChecks = page.locator(`[data-test-preview-image='${name}']`);
-
-  // Wait for at least one to be attached
   await allChecks.first().waitFor({ state: 'attached', timeout: 10000 });
+  const header = page.locator(`[data-check-header-name='${name}']`).first();
+  const maxAttempts = 4;
 
-  // Find the visible check at the given ordinal position among visible checks only
-  let visibleCount = 0;
-  let targetCheck = null;
-  const maxWaitTime = 15000;
-  const startTime = Date.now();
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    let targetCheck: Locator;
+    try {
+      targetCheck = await resolveVisibleCheckAtOrdinal(page, name, ordinal, 15000);
+    } catch (error) {
+      if (attempt === maxAttempts) {
+        throw error;
+      }
+      logger.warn(`Could not resolve visible check "${name}" on attempt ${attempt}/${maxAttempts}, retrying`);
+      await page.waitForTimeout(500);
+      continue;
+    }
 
-  while (Date.now() - startTime < maxWaitTime) {
-    const count = await allChecks.count();
-    visibleCount = 0;
+    try {
+      await targetCheck.scrollIntoViewIfNeeded({ timeout: 7000 }).catch(async (error) => {
+        logger.warn(`scrollIntoViewIfNeeded failed for check "${name}": ${(error as Error).message}`);
+        await targetCheck.evaluate((el) => {
+          if (el) {
+            el.scrollIntoView({ block: 'center', inline: 'center' });
+          }
+        }).catch(() => undefined);
+      });
 
-    for (let i = 0; i < count; i++) {
-      const check = allChecks.nth(i);
-      const isVisible = await check.isVisible().catch(() => false);
-      if (isVisible) {
-        if (visibleCount === ordinal) {
-          targetCheck = check;
-          break;
+      await targetCheck.waitFor({ state: 'visible', timeout: 10000 });
+      await targetCheck.click({ timeout: 10000 });
+    } catch (error) {
+      logger.warn(`Primary click failed for check "${name}", retrying with dispatchEvent/force. Error: ${(error as Error).message}`);
+      let clicked = false;
+      try {
+        await targetCheck.dispatchEvent('click');
+        clicked = true;
+      } catch {
+        try {
+          await targetCheck.click({ force: true, timeout: 10000 });
+          clicked = true;
+        } catch (forceError) {
+          if (attempt === maxAttempts) {
+            throw forceError;
+          }
+          logger.warn(`Force click failed for check "${name}" on attempt ${attempt}/${maxAttempts}, retrying`);
+          await page.waitForTimeout(700);
+          continue;
         }
-        visibleCount++;
+      }
+
+      if (!clicked) {
+        if (attempt === maxAttempts) {
+          throw error;
+        }
+        await page.waitForTimeout(700);
+        continue;
       }
     }
-
-    if (targetCheck) {
-      break;
+    try {
+      await header.waitFor({ state: 'visible', timeout: 20000 });
+      logger.info(`Opened ${ordinal + 1}st check: ${name} (attempt ${attempt})`);
+      return;
+    } catch (error) {
+      if (attempt === maxAttempts) {
+        throw error;
+      }
+      logger.warn(`Check "${name}" did not open yet, retrying (attempt ${attempt}/${maxAttempts})`);
+      await page.waitForTimeout(700);
     }
-
-    // Wait a bit before retrying
-    await page.waitForTimeout(200);
   }
-
-  if (!targetCheck) {
-    const totalCount = await allChecks.count();
-    throw new Error(
-      `Could not find visible check "${name}" at ordinal position ${ordinal}. ` +
-      `Found ${visibleCount} visible checks out of ${totalCount} total elements.`
-    );
-  }
-
-  await targetCheck.scrollIntoViewIfNeeded();
-  await targetCheck.click();
-
-  // Wait for modal to open and header to appear
-  // Reduced from 30s to 15s
-  const header = page.locator(`[data-check-header-name='${name}']`).first();
-  await header.waitFor({ state: 'visible', timeout: 15000 });
-  logger.info(`Opened ${ordinal + 1}st check: ${name}`);
 });
 
 When('I delete the {string} check', async ({ page }: { page: Page }, checkName: string) => {

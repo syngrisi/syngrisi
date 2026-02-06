@@ -35,6 +35,7 @@ Feature: Test calculated fields
           viewport: "100x100"
       """
     When I go to "main" page
+    When I wait for test "TestName-Calculated-2" to appear in table
     When the element with locator "[data-row-name='TestName-Calculated-2'] [data-test='table-row-Viewport']" should have contains text "≠"
 
   Scenario: Same viewports - [new, new]

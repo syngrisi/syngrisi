@@ -127,7 +127,8 @@ Feature: Select Navbar Item
 
     When I go to "main" page
     When I wait 10 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
-    When I wait 10 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-Select-3-0')]" to be visible
+    When I wait for test "TestName-Select-3-0" to appear in table
+    When I wait for test "TestName-Select-3-1" to appear in table
 
     # select one
     When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-Select-3-0')]"
@@ -143,6 +144,7 @@ Feature: Select Navbar Item
     When I go to "main" page
     When I open the url "<js:url>"
 
+    When I wait for test "TestName-Select-3-0" to appear in table
     When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-Select-3-0]" to be visible
     When I wait on element "[data-table-test-name=TestName-Select-3-1]" to not be displayed
     # 0,0,0,0 kind of default value

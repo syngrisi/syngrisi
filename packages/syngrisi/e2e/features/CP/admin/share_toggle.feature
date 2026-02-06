@@ -5,7 +5,24 @@ Feature: Global Sharing Toggle
   So that I can control public access to the application data
 
   Background:
+    When I set env variables:
+      """
+          SYNGRISI_TEST_MODE: true
+          SYNGRISI_AUTH: false
+      """
     Given I start Server
+    When I create via http test user
+    Given I stop the Syngrisi server
+    When I set env variables:
+      """
+          SYNGRISI_TEST_MODE: true
+          SYNGRISI_AUTH: true
+      """
+    Given I start Server
+    When I login via http with user:"Test" password "123456aA-"
+    When I generate via http API key for the User
+    When I set the API key in config
+    When I start Driver
     And I create "1" tests with:
       """
           testName: ShareToggleTest
@@ -15,7 +32,7 @@ Feature: Global Sharing Toggle
       """
     And I login with user:"Test" password "123456aA-"
     And I go to "admin/settings" page
-    And I wait 10 seconds for the element with locator "select[data-test='settings_value_share_enabled']" to be visible
+    And I wait on element "[data-test='settings_value_share_enabled']" to be visible
 
   Scenario: Admin can disable sharing
     # Disable Sharing using custom dropdown step
@@ -25,14 +42,16 @@ Feature: Global Sharing Toggle
 
     # Reload to confirm persistence
     When I refresh page
-    And I wait 10 seconds for the element with locator "select[data-test='settings_value_share_enabled']" to be visible
-    Then the element with locator "select[data-test='settings_value_share_enabled']" should have value "false"
+    And I wait on element "[data-test='settings_value_share_enabled']" to be visible
+    Then the element with locator "[data-test='settings_value_share_enabled']" should have value "false"
 
     # Verify Share Button is disabled in Check Details
     When I go to "main" page
     When I unfold the test "ShareToggleTest"
     When I wait on element "[data-check='CheckToToggle']" to be visible
+    When I wait 30 seconds for the element with locator "[data-test-preview-image='CheckToToggle']" to be visible
     When I click element with locator "[data-test-preview-image='CheckToToggle']"
+    When I wait 30 seconds for the element with locator "[data-check='toolbar']" to be visible
     When I wait on element "[data-check-header-name='CheckToToggle']" to be visible
 
     # Open menu
@@ -55,14 +74,16 @@ Feature: Global Sharing Toggle
 
     # Reload to confirm persistence
     When I refresh page
-    And I wait 10 seconds for the element with locator "select[data-test='settings_value_share_enabled']" to be visible
-    Then the element with locator "select[data-test='settings_value_share_enabled']" should have value "true"
+    And I wait on element "[data-test='settings_value_share_enabled']" to be visible
+    Then the element with locator "[data-test='settings_value_share_enabled']" should have value "true"
 
     # Verify Share Button is enabled in Check Details
     When I go to "main" page
     When I unfold the test "ShareToggleTest"
     When I wait on element "[data-check='CheckToToggle']" to be visible
+    When I wait 30 seconds for the element with locator "[data-test-preview-image='CheckToToggle']" to be visible
     When I click element with locator "[data-test-preview-image='CheckToToggle']"
+    When I wait 30 seconds for the element with locator "[data-check='toolbar']" to be visible
     When I wait on element "[data-check-header-name='CheckToToggle']" to be visible
 
     # Open menu

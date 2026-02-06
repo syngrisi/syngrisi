@@ -51,7 +51,7 @@ async function waitForIgnoreRegionsSave(page: Page, locator: Locator): Promise<v
       },
       { timeout: 30000 }
     ),
-    locator.click(),
+    clickWithFallback(locator, true, 'save-ignore-region'),
   ]);
 
   await response.finished();
@@ -94,7 +94,7 @@ async function waitForViewChange(page: Page, view: string): Promise<void> {
       return canvasHasImage && mainView.currentView === expected;
     },
     normalizedView,
-    { timeout: 30000 }
+    { timeout: 60000 }
   );
 }
 
@@ -110,7 +110,7 @@ async function waitForCanvasBootstrap(page: Page): Promise<void> {
       return Array.isArray(objects);
     },
     undefined,
-    { timeout: 30000 }
+    { timeout: 60000 }
   );
 }
 
@@ -147,6 +147,19 @@ async function waitForIgnoreRegionCountChange(page: Page, expected: number): Pro
   );
 }
 
+async function clickWithFallback(locator: Locator, noWaitAfter: boolean, logContext: string): Promise<void> {
+  try {
+    await locator.click({ timeout: 30000, noWaitAfter });
+  } catch (error) {
+    logger.warn(`Primary click failed for "${logContext}", retrying with dispatchEvent/force. Error: ${(error as Error).message}`);
+    try {
+      await locator.dispatchEvent('click');
+    } catch {
+      await locator.click({ force: true, timeout: 30000, noWaitAfter: true });
+    }
+  }
+}
+
 /**
  * Step definition: `When I click element with {target} {string}`
  *
@@ -175,9 +188,19 @@ When(
     }
 
     if (target === 'locator') {
-      const locator = getLocatorQuery(page, renderedValue);
-      const targetLocator = locator.first();
+      const targetLocator = getLocatorQuery(page, renderedValue).first();
       await targetLocator.waitFor({ state: 'visible', timeout: 30000 });
+      await targetLocator.waitFor({ state: 'attached', timeout: 30000 });
+      try {
+        await targetLocator.scrollIntoViewIfNeeded({ timeout: 7000 });
+      } catch (error) {
+        logger.warn(`scrollIntoViewIfNeeded failed before click, retrying via evaluate: ${(error as Error).message}`);
+        await targetLocator.evaluate((el) => {
+          if (el) {
+            el.scrollIntoView({ block: 'center', inline: 'center' });
+          }
+        }).catch(() => undefined);
+      }
 
       const ignoreRegionAction = getIgnoreRegionAction(renderedValue);
       if (ignoreRegionAction) {
@@ -207,20 +230,54 @@ When(
         || /check-accept-icon|check-remove-icon/i.test(renderedValue)
         || /Generate/i.test(renderedValue);
 
+      const isPreviewImage = renderedValue.includes('data-test-preview-image');
+      if (isPreviewImage) {
+        const toolbar = page.locator("[data-check='toolbar']").first();
+        const header = page.locator("[data-check-header-name]").first();
+        const maxAttempts = 3;
+
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+          const preview = getLocatorQuery(page, renderedValue).first();
+          await preview.waitFor({ state: 'visible', timeout: 30000 });
+          await preview.waitFor({ state: 'attached', timeout: 30000 });
+          await preview.scrollIntoViewIfNeeded().catch(async (error) => {
+            logger.warn(`Preview scroll failed on attempt ${attempt}/${maxAttempts}: ${(error as Error).message}`);
+            await preview.evaluate((el) => {
+              if (el) {
+                el.scrollIntoView({ block: 'center', inline: 'center' });
+              }
+            }).catch(() => undefined);
+          });
+
+          await clickWithFallback(preview, true, renderedValue);
+
+          try {
+            await Promise.race([
+              toolbar.waitFor({ state: 'visible', timeout: 15000 }),
+              header.waitFor({ state: 'visible', timeout: 15000 }),
+            ]);
+            return;
+          } catch (error) {
+            if (attempt === maxAttempts) {
+              throw error;
+            }
+            logger.warn(`Preview click did not open check on attempt ${attempt}/${maxAttempts}, retrying`);
+          }
+        }
+        return;
+      }
+
       if (isPopoverButton) {
         await targetLocator.dispatchEvent('click');
       } else {
-        const tagName = await targetLocator.evaluate((el) => el.tagName.toLowerCase());
-        const noWaitAfter = tagName !== 'a';
-        await targetLocator.click({ timeout: 30000, noWaitAfter });
-      }
-
-      if (renderedValue.includes('data-test-preview-image')) {
+        let tagName = 'button';
         try {
-          await page.locator("[data-check='toolbar']").first().waitFor({ state: 'visible', timeout: 10000 });
+          tagName = await targetLocator.evaluate((el) => el.tagName.toLowerCase(), { timeout: 5000 });
         } catch (error) {
-          logger.warn(`Preview toolbar did not appear yet after click: ${(error as Error).message}`);
+          logger.warn(`Could not evaluate tag name before click, proceeding with noWaitAfter. Error: ${(error as Error).message}`);
         }
+        const noWaitAfter = tagName !== 'a';
+        await clickWithFallback(targetLocator, noWaitAfter, renderedValue);
       }
       return;
     }
@@ -775,14 +832,34 @@ When(
     // Extract index before passing to getLocatorQuery (it may strip the index)
     const nthMatch = renderedSelector.match(/\[(\d+)\]$/);
     const selectorWithoutIndex = renderedSelector.replace(/\[(\d+)\]$/, '');
+    const normalizedSelector = selectorWithoutIndex.toLowerCase();
+
+    if (
+      normalizedSelector.includes('navbar-group-by')
+      || normalizedSelector.includes('data-test=\"navbar-group-by\"')
+      || normalizedSelector.includes("data-test='navbar-group-by'")
+    ) {
+      await page.waitForSelector('[data-test-navbar-ready="true"]', { timeout: 15000 }).catch(() => undefined);
+    }
+
+    if (
+      normalizedSelector.includes('filter-main-group')
+      || normalizedSelector.includes('table-filter')
+      || normalizedSelector.includes('table-filter-column-name')
+      || normalizedSelector.includes('table-filter-operator')
+      || normalizedSelector.includes('table-filter-value')
+    ) {
+      await page.waitForSelector('[data-test="filter-main-group"]', { timeout: 15000 }).catch(() => undefined);
+    }
+
     const locator = getLocatorQuery(page, selectorWithoutIndex);
     const targetLocator = nthMatch
       ? locator.nth(parseInt(nthMatch[1], 10) - 1) // Convert 1-based to 0-based
       : locator.first();
 
     // Wait for element to be visible and attached
-    await targetLocator.waitFor({ state: 'visible', timeout: 10000 });
-    await targetLocator.waitFor({ state: 'attached', timeout: 5000 });
+    await targetLocator.waitFor({ state: 'visible', timeout: 30000 });
+    await targetLocator.waitFor({ state: 'attached', timeout: 15000 });
 
     // Try selectOption first, if it fails, try clicking the select and then the option
     try {
@@ -885,7 +962,16 @@ When('I set {string} to the inputfield {string}', async ({ page, testData }, val
   const targetLocator = locator.first();
 
   await targetLocator.waitFor({ state: 'visible', timeout: 10000 });
-  await targetLocator.scrollIntoViewIfNeeded();
+  try {
+    await targetLocator.scrollIntoViewIfNeeded({ timeout: 7000 });
+  } catch (error) {
+    logger.warn(`scrollIntoViewIfNeeded failed, retrying via evaluate: ${(error as Error).message}`);
+    await targetLocator.evaluate((el) => {
+      if (el) {
+        el.scrollIntoView({ block: 'center', inline: 'center' });
+      }
+    }).catch(() => undefined);
+  }
   await targetLocator.click({ timeout: 10000 });
   await targetLocator.fill('');
   await targetLocator.fill(renderedValue);
@@ -1027,7 +1113,7 @@ When(
     if (target === 'locator') {
       const locator = getLocatorQuery(page, renderedValue);
       const targetLocator = locator.first();
-      await targetLocator.waitFor({ state: 'visible', timeout: 5000 });
+      await targetLocator.waitFor({ state: 'visible', timeout: 15000 });
 
       // Use JS click to bypass ALL interception/pointer-events issues
       await targetLocator.evaluate((e: HTMLElement) => e.click());

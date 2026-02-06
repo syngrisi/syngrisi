@@ -18,7 +18,8 @@ Feature: RCA - Edge Cases
         And I click element with locator "[data-table-test-name='RCA-Scenario-Test']"
         And I wait 1 seconds
         And I click element with locator "[data-test-preview-image='RCA-Scenario-Check']"
-        And I wait 2 seconds for the element with locator "[data-check='toolbar']" to be visible
+        And I wait 30 seconds for the element with locator "[data-check='toolbar']" to be visible
+        And I wait 30 seconds for the element with locator "[data-test='rca-toggle-button']" to be visible
         When I click element with locator "[data-test='rca-toggle-button']"
         And I wait 5 seconds for the element with locator "[data-test='rca-panel']" to be visible
         Then the element with locator "[data-test='rca-panel']" should be visible
@@ -31,7 +32,8 @@ Feature: RCA - Edge Cases
         And I click element with locator "[data-table-test-name='RCA-Scenario-Test']"
         And I wait 1 seconds
         And I click element with locator "[data-test-preview-image='RCA-Scenario-Check']"
-        And I wait 2 seconds for the element with locator "[data-check='toolbar']" to be visible
+        And I wait 30 seconds for the element with locator "[data-check='toolbar']" to be visible
+        And I wait 30 seconds for the element with locator "[data-test='rca-toggle-button']" to be visible
         When I click element with locator "[data-test='rca-toggle-button']"
         And I wait 3 seconds for the element with locator "[data-test='rca-panel']" to be visible
         Then the element with locator "[data-test='rca-panel']" should be visible

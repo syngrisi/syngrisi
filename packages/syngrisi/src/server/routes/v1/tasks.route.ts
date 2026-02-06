@@ -3,6 +3,7 @@ import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import * as tasksController from '@controllers/tasks.controller';
 import { Midleware } from '@types';
 import { ensureLoggedIn } from '@middlewares/ensureLogin';
+import { appSettings } from '@settings';
 import { authorization } from '@middlewares';
 import { SkipValid } from '@schemas/SkipValid.schema';
 import { validateRequest } from '@utils/validateRequest';
@@ -117,7 +118,17 @@ registry.registerPath({
 
 router.get(
     '/loadTestUser',
-    ensureLoggedIn() as Midleware,
+    (async (req, res, next) => {
+        const authOverride = process.env.SYNGRISI_AUTH_OVERRIDE ?? process.env.SYNGRISI_AUTH;
+        if (authOverride === 'false') {
+            return next();
+        }
+        const authEnabled = await appSettings.isAuthEnabled();
+        if (!authEnabled) {
+            return next();
+        }
+        return ensureLoggedIn()(req, res, next);
+    }) as Midleware,
     validateRequest(SkipValid, 'get, /v1/tasks/loadTestUser'),
     tasksController.loadTestUser as Midleware
 );

@@ -19,6 +19,7 @@ Feature: Check Details - Initial image resize
     When I wait for test "TestName" to appear in table
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
+    When I wait 30 seconds for the element with locator "[data-check='toolbar']" to be visible
     When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
     When I execute javascript code:
       """
@@ -65,6 +66,7 @@ Feature: Check Details - Initial image resize
     When I wait for test "TestName" to appear in table
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
+    When I wait 30 seconds for the element with locator "[data-check='toolbar']" to be visible
     When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     # Debug: log actual values first
@@ -106,6 +108,7 @@ Feature: Check Details - Initial image resize
     When I wait for test "TestName" to appear in table
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
+    When I wait 30 seconds for the element with locator "[data-check='toolbar']" to be visible
     When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     # Very tall image should be centered horizontally
@@ -146,6 +149,7 @@ Feature: Check Details - Initial image resize
     When I wait for test "TestName" to appear in table
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
+    When I wait 30 seconds for the element with locator "[data-check='toolbar']" to be visible
     When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
     When I execute javascript code:
       """

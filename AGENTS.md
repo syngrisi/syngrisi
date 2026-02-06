@@ -17,6 +17,37 @@
 
 See [Release Cycle Documentation](docs/RELEASE_CYCLE.md) for detailed instructions on versioning, changelogs, and publishing packages.
 
+## 🚀 Quick E2E Test Examples
+
+> ⚠️ **Always run `npx bddgen` before running specific tests!**
+
+## Test Request Convention
+
+If a user asks to run "syngrisi tests" or "e2e tests", treat that as running `yarn test` from `/Users/vsilakau/Projects/syngrisi/packages/syngrisi`.
+
+### Run specific test (Fastest Dev Loop)
+```bash
+# Pattern: npx bddgen && yarn playwright test "path/to/feature" --grep "Scenario Name"
+npx bddgen && yarn playwright test "features/CP/check_details/regions.feature" --grep "Check Region"
+```
+
+### Run in Headed Mode (Debug)
+```bash
+npx bddgen && yarn playwright test "features/CP/check_details/regions.feature" --headed --workers=1
+```
+
+### Run Full Suite
+```bash
+yarn test
+```
+
+### Verify Fix (Stability Check)
+```bash
+npx bddgen && yarn playwright test "features/ticket-ID.feature" --workers=3 --repeat-each=4
+```
+
+See [packages/syngrisi/e2e/CLAUDE.md](packages/syngrisi/e2e/CLAUDE.md) for detailed commands.
+
 ## E2E Testing Guides
 
 -   [Run Tests Guide](packages/syngrisi/docs/agent/guides/run_test.md)

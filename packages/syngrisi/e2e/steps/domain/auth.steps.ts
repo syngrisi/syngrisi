@@ -18,6 +18,30 @@ When(
       }
 
       const loginUrl = `${appServer.baseURL}/auth`;
+      const waitForLoginInputs = async () => {
+        await page.locator('#email').waitFor({ state: 'visible', timeout: 5000 });
+        await page.locator('#password').waitFor({ state: 'visible', timeout: 5000 });
+      };
+
+      const fillWithRetry = async (selector: string, value: string, label: string) => {
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          try {
+            await page.locator(selector).fill(value, { timeout: 10000 });
+            return;
+          } catch (e) {
+            const errorMsg = (e as Error).message || '';
+            if (errorMsg.includes('Target page, context or browser has been closed')) {
+              throw e;
+            }
+            if (attempt < 2) {
+              logger.warn(`Failed to fill ${label}, retrying (attempt ${attempt + 1}/3)`);
+              await page.goto(loginUrl, { waitUntil: 'networkidle', timeout: 10000 });
+              await page.waitForTimeout(1000);
+              await waitForLoginInputs();
+            }
+          }
+        }
+      };
 
       // Wait for password field with retries (as in original)
       let passwordFieldFound = false;
@@ -51,13 +75,13 @@ When(
       const emailInput = page.locator('#email');
       // Only fill if login is provided (empty string means don't fill)
       if (login) {
-        await emailInput.fill(login);
+        await fillWithRetry('#email', login, 'email');
       }
 
       const passwordInput = page.locator('#password');
       // Only fill if password is provided (empty string means don't fill)
       if (password) {
-        await passwordInput.fill(password);
+        await fillWithRetry('#password', password, 'password');
       }
 
       // For empty credentials, don't submit - just wait to ensure page is loaded

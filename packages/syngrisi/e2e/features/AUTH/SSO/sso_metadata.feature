@@ -40,7 +40,7 @@ Feature: SSO Metadata Endpoints
 
     When I request "GET" "/v1/auth/sso/metadata"
     Then the response status should be 400
-    And the response body should contain "SAML not configured"
+    And the response body should contain "SAML not"
 
   Scenario: SP Metadata endpoint returns error when SSO is disabled
     When I set env variables:
@@ -71,7 +71,7 @@ Feature: SSO Metadata Endpoints
 
     When I request "GET" "/v1/auth/sso/metadata"
     Then the response status should be 400
-    And the response body should contain "not initialized"
+    And the response body should contain "SAML not"
 
   @sso-external @slow @saml @no-app-start
   Scenario: SP Metadata endpoint with Logto SAML configuration

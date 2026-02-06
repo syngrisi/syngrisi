@@ -31,7 +31,6 @@ Feature: Distinct filters functionality
 
         When I go to "main" page
 
-        # not accepted failed
         When I create "1" tests with:
          """
           project: "Project-1"
@@ -44,9 +43,9 @@ Feature: Distinct filters functionality
         """
         When I go to "main" page
 
-        When I wait for "1" seconds
-        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
-        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+        When I wait for test "TestName filter-0" to appear in table
+        When I wait for test "TestName filter-1" to appear in table
+        When I wait for test "TestName filter-3" to appear in table
 
         # BROWSER
         # open filter
@@ -56,11 +55,10 @@ Feature: Distinct filters functionality
         # set filter
         When I select the option with the text "Browser" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "contains" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
-        When I wait for "2" seconds
+        When I select the option with the text "safari-1" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']"
         Then the element with locator "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']" should have value "safari-1"
 
-        Then the element "(//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']//option)[1]" matches the text "safari-1"
-        Then the element "(//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']//option)[2]" matches the text "safari-0"
+        Then the element with locator "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']" should have value "safari-1"
 
         # apply filter
         When I click element with locator "[aria-label='Apply filter']"
@@ -81,7 +79,6 @@ Feature: Distinct filters functionality
         # set filter new
         When I select the option with the text "Status" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
-        When I wait for "2" seconds
         Then the element with locator "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']" should have value "New"
 
         Then the element "(//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']//option)[1]" matches the text "New"
@@ -97,7 +94,7 @@ Feature: Distinct filters functionality
         When I select the option with the text "Status" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
 
-        When I select dropdown option "Failed" by clicking div for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']"
+        When I select the option with the text "Failed" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']"
         Then the element with locator "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']" should have value "Failed"
         When I click element with locator "[aria-label='Apply filter']"
 

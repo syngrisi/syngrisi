@@ -196,17 +196,29 @@ export function createJwtAuthPlugin(initialConfig: Partial<JwtAuthConfig> = {}):
 
             // Validate required config - throw errors to prevent silent failures
             if (!config.jwksUrl) {
-                throw new Error(
-                    'JWT Auth: JWKS URL not configured. ' +
-                    'Set SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL environment variable or configure via Admin UI.'
-                );
+                const errMsg =
+                    'Missing required configuration for "jwt-auth" plugin. ' +
+                    'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL is required. ' +
+                    'Set SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL environment variable or configure via Admin UI.';
+                console.error(errMsg);
+                throw new Error(errMsg);
             }
 
             if (!config.issuer) {
-                throw new Error(
-                    'JWT Auth: Issuer not configured. ' +
-                    'Set SYNGRISI_PLUGIN_JWT_AUTH_ISSUER environment variable or configure via Admin UI.'
-                );
+                const errMsg =
+                    'Missing required configuration for "jwt-auth" plugin. ' +
+                    'SYNGRISI_PLUGIN_JWT_AUTH_ISSUER is required. ' +
+                    'Set SYNGRISI_PLUGIN_JWT_AUTH_ISSUER environment variable or configure via Admin UI.';
+                console.error(errMsg);
+                throw new Error(errMsg);
+            }
+
+            try {
+                new URL(config.jwksUrl);
+            } catch {
+                const errMsg = 'Invalid JWKS URL';
+                console.error(errMsg);
+                throw new Error(errMsg);
             }
 
             // Initialize JWKS client
@@ -217,7 +229,9 @@ export function createJwtAuthPlugin(initialConfig: Partial<JwtAuthConfig> = {}):
                 jwksInitialized = true;
                 logger.info(`JWT Auth plugin loaded. JWKS: ${config.jwksUrl}`, logOpts);
             } catch (error) {
-                throw new Error(`JWT Auth: Failed to initialize JWKS client: ${error}`);
+                const errMsg = `JWT Auth: Failed to initialize JWKS client: ${error}`;
+                console.error(errMsg);
+                throw new Error(errMsg);
             }
         },
 
