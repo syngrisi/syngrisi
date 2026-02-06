@@ -41,5 +41,5 @@ Feature: Test Auto Update
         When I click element with locator "[aria-label='Refresh']"
         When I wait for "1" seconds
         When I wait for "10" seconds
-        When I wait 30 seconds for the element with locator "[data-table-test-name=AutoUpdate-After]" for 10000ms to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name=AutoUpdate-After]" to be visible
         Then the element "[data-table-test-name=AutoUpdate-After]" does appear exactly "3" times

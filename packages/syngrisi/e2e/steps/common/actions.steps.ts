@@ -218,6 +218,12 @@ When(
         || /check-accept-icon|check-remove-icon/i.test(renderedValue)
         || /Generate/i.test(renderedValue);
 
+      const isPreviewImage = renderedValue.includes('data-test-preview-image');
+      if (isPreviewImage) {
+        await targetLocator.scrollIntoViewIfNeeded();
+        await targetLocator.waitFor({ state: 'visible', timeout: 30000 });
+      }
+
       if (isPopoverButton) {
         await targetLocator.dispatchEvent('click');
       } else {
@@ -240,12 +246,13 @@ When(
         }
       }
 
-      if (renderedValue.includes('data-test-preview-image')) {
-        try {
-          await page.locator("[data-check='toolbar']").first().waitFor({ state: 'visible', timeout: 30000 });
-        } catch (error) {
-          logger.warn(`Preview toolbar did not appear yet after click: ${(error as Error).message}`);
-        }
+      if (isPreviewImage) {
+        const toolbar = page.locator("[data-check='toolbar']").first();
+        const header = page.locator("[data-check-header-name]").first();
+        await Promise.race([
+          toolbar.waitFor({ state: 'visible', timeout: 30000 }),
+          header.waitFor({ state: 'visible', timeout: 30000 }),
+        ]);
       }
       return;
     }
