@@ -216,6 +216,13 @@ Feature: Check details - Regions
       When I click element with locator "[data-test-preview-image='CheckName']"
 
       When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+      When I repeat javascript code until stored "js" string equals "ready":
+         """
+     if (typeof mainView === 'undefined' || !mainView.canvas || !mainView.canvas.getObjects) return "loading";
+     const btn = document.querySelector('[data-check="add-ignore-region"]');
+     if (btn && (btn.disabled || btn.hasAttribute('disabled'))) return "loading";
+     return "ready";
+         """
       When I repeat javascript code until stored "js" string equals "1":
          """
      if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
@@ -231,6 +238,13 @@ Feature: Check details - Regions
       When I click element with locator "[data-test-preview-image='CheckName']"
 
       When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+      When I repeat javascript code until stored "js" string equals "ready":
+         """
+     if (typeof mainView === 'undefined' || !mainView.canvas || !mainView.canvas.getObjects) return "loading";
+     const btn = document.querySelector('[data-check="add-ignore-region"]');
+     if (btn && (btn.disabled || btn.hasAttribute('disabled'))) return "loading";
+     return "ready";
+         """
       When I repeat javascript code until stored "js" string equals "1":
          """
      if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
@@ -255,6 +269,7 @@ Feature: Check details - Regions
       When I go to "main" page
       When I wait for test "NavigationTest" to appear in table
       When I unfold the test "NavigationTest"
+      When I wait for check "Check2" to appear in collapsed row of test "NavigationTest"
       When I click element with locator "[data-test-preview-image='Check2']"
       When I wait 30 seconds for the element with locator "[data-check-header-name='Check2']" to be visible
 
@@ -270,6 +285,13 @@ Feature: Check details - Regions
 
       # Add region (unsaved change)
       When I click element with locator "[data-check='add-ignore-region']"
+
+      # Verify dirty state (region count implies state) - wait for action to complete
+      When I repeat javascript code until stored "js" string equals "1":
+         """
+         if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
+         return (mainView.allRects.length.toString());
+         """
 
       # 1. Try to navigate to PREVIOUS check (Check1) -> Expect alert and Dismiss (Stay on page)
       # Note: Check2 is newer, so Check1 is the "previous" check

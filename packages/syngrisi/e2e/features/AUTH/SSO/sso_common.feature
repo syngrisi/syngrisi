@@ -140,5 +140,6 @@ Feature: SSO Common Scenarios and Edge Cases
 
     When I reload session
     When I open the app
+    When I wait 10 seconds for the element with locator "[data-test='login-email-input']" to be visible
     Then the title is "Login Page"
     Then the SSO login button should be visible

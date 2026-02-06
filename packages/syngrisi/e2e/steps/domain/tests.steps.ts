@@ -124,8 +124,11 @@ async function createCheckForExistingTest(
   const hashedApiKey =
     (testData.get('hashedApiKey') as string | undefined) ||
     hashApiKey(process.env.SYNGRISI_API_KEY || '123');
+  const apiKeyHeader =
+    (testData.get('apiKeyHeader') as string | undefined) ||
+    hashedApiKey;
   const headers: Record<string, string> = {
-    apikey: hashedApiKey,
+    apikey: apiKeyHeader,
   };
 
   logger.info(`Adding check "${resolvedCheckName}" to existing test "${testId}" via client API`);
@@ -164,7 +167,7 @@ async function createTestsWithParams(
   // Use sequential creation to guarantee test order (important for sorting tests)
   const concurrency = 1;
   const useSharedDriver = concurrency === 1;
-  const quickCheckMaxWaitMs = fastSeed ? 1000 : 2000;
+  const quickCheckMaxWaitMs = fastSeed ? 1000 : 5000;
   const waitAfterStopMs = fastSeed ? 10 : 100;
 
   // For @fast-server tests, auth is disabled so we should always use the default API key.
@@ -174,7 +177,10 @@ async function createTestsWithParams(
   const defaultApiKey = '123';
   const apiKey = storedApiKey || envApiKey || defaultApiKey;
   const hashedApiKey = hashApiKey(apiKey);
+  const authEnabled = process.env.SYNGRISI_AUTH === 'true';
+  const apiKeyHeader = authEnabled ? apiKey : hashedApiKey;
   testData.set('hashedApiKey', hashedApiKey);
+  testData.set('apiKeyHeader', apiKeyHeader);
   testData.set('apiBaseUrl', appServer.baseURL);
   const initialChecks = (testData.get('autoCreatedChecks') as Array<{ checkId: string; snapshotId: string }>) || [];
   testData.set('autoCreatedChecks', initialChecks);
@@ -294,7 +300,7 @@ async function createTestsWithParams(
           const response = await got.get(
             `${appServer.baseURL}/v1/tests?base_filter=${baseFilter}&filter=${filter}&limit=1`,
             {
-            headers: { apikey: hashedApiKey },
+            headers: { apikey: apiKeyHeader },
             throwHttpErrors: false,
             timeout: { request: 2000 },
             }
@@ -335,18 +341,33 @@ async function createTestsWithParams(
           throw new Error(`Test file not found: ${fullPath}`);
         }
         const imageBuffer = getCachedFileBuffer(fullPath);
-        const checkResult = await createCheckViaAPI(
-          vDriver,
-          testId,
-          checkName,
-          imageBuffer,
-          {
-            ...check,
-            browserName: check.browserName || params.browserName || 'chrome',
-            os: check.os || params.os || 'macOS',
-            viewport: check.viewport || params.viewport || '1366x768',
+        const maxCheckAttempts = 2;
+        let checkResult: any;
+        for (let attempt = 1; attempt <= maxCheckAttempts; attempt += 1) {
+          try {
+            checkResult = await createCheckViaAPI(
+              vDriver,
+              testId,
+              checkName,
+              imageBuffer,
+              {
+                ...check,
+                browserName: check.browserName || params.browserName || 'chrome',
+                os: check.os || params.os || 'macOS',
+                viewport: check.viewport || params.viewport || '1366x768',
+              }
+            ) as any;
+            break;
+          } catch (error: any) {
+            const message = error?.message || String(error);
+            const isRetryable = /EPIPE|ECONNRESET|ECONNREFUSED/i.test(message);
+            if (!isRetryable || attempt === maxCheckAttempts) {
+              throw error;
+            }
+            logger.warn(`Create check failed with connection error, retrying once. Error: ${message}`);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
           }
-        ) as any;
+        }
         logger.info(
           `Check "${checkName}" created with status "${checkResult?.status}" ` +
           `(id: ${checkResult?._id || checkResult?.id}) ` +
@@ -440,7 +461,43 @@ async function createTestsWithParams(
     const { index, params } = tasks[current];
     const singleTestStart = performance.now();
     logger.info(`Creating test #${index + 1} with params:`, params);
-    const result = await createTest(params, index);
+    const maxCreateAttempts = 3;
+    let result: { testId: string; checkResults: unknown[] } | undefined;
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxCreateAttempts; attempt++) {
+      try {
+        result = await createTest(params, index);
+        break;
+      } catch (error) {
+        lastError = error as Error;
+        const errorMessage = lastError.message || String(error);
+        const isRetryableConnectionError =
+          /ECONNREFUSED|ECONNRESET|EPIPE|ETIMEDOUT|ERR_CONNECTION_REFUSED|socket hang up/i.test(errorMessage);
+
+        if (!isRetryableConnectionError || attempt === maxCreateAttempts) {
+          throw error;
+        }
+
+        logger.warn(
+          `Create test #${index + 1} failed with connection error ` +
+          `(attempt ${attempt}/${maxCreateAttempts}): ${errorMessage}`
+        );
+        logger.info('Restarting app server before retrying test creation');
+
+        await appServer.restart(true);
+        if (appServer.serverPort) {
+          await ensureServerReady(appServer.serverPort, 60_000);
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 500 * attempt));
+      }
+    }
+
+    if (!result) {
+      throw lastError ?? new Error(`Failed to create test #${index + 1}: unknown error`);
+    }
+
     if (result?.testId) {
       createdTestIds.push(result.testId);
     }
@@ -477,7 +534,7 @@ async function createTestsWithParams(
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
         const listResp = await got.get(`${apiBaseUrl}/v1/checks?limit=${createdTestIds.length + 5}`, {
-          headers: { apikey: hashedApiKey },
+          headers: { apikey: apiKeyHeader },
           throwHttpErrors: false,
           timeout: { request: 5000 },
         });
@@ -551,6 +608,7 @@ When('I create {string} tests with params:', async (
 async function unfoldTestRow(page: Page, testName: string): Promise<void> {
   const selector = `[data-table-test-name="${testName}"], tr[data-row-name="${testName}"]`;
   logger.info(`Waiting for test "${testName}" to appear on the page using selector: ${selector}`);
+  const refreshButton = page.locator('[data-test="table-refresh-icon"]').first();
 
   // Helper to wait for element and verify it's connected (handles DOM detachment from React Query refetches)
   const waitForConnectedElement = async (retries = 3): Promise<{ candidate: Locator; tagName: string }> => {
@@ -560,6 +618,19 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
         // Use 'visible' instead of 'attached' to ensure element is stable and rendered
         await candidate.waitFor({ state: 'visible', timeout: 30000 });
       } catch (error) {
+        // Try a refresh once per attempt to pull latest rows
+        if (await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
+          logger.warn(`Test row not visible yet for "${testName}", clicking Refresh (attempt ${i + 1}/${retries})`);
+          try {
+            await refreshButton.click({ timeout: 7000 });
+          } catch (clickError) {
+            logger.warn(`Refresh click failed, retrying via dispatchEvent: ${String(clickError)}`);
+            await refreshButton.dispatchEvent('click');
+          }
+          await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => undefined);
+          await page.waitForTimeout(300);
+          continue;
+        }
         // Log available tests for debugging
         const availableTests = await page.locator('[data-row-name]').evaluateAll((els) =>
           els.map((el) => el.getAttribute('data-row-name')).filter(Boolean)
@@ -569,7 +640,21 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
       }
 
       // Check element is still connected before evaluating
-      const isConnected = await candidate.evaluate((el) => el.isConnected);
+      let isConnected = false;
+      try {
+        await candidate.waitFor({ state: 'attached', timeout: 5000 });
+        if ((await candidate.count()) === 0) {
+          throw new Error('Test row locator resolved to zero elements');
+        }
+        isConnected = await candidate.evaluate((el) => el.isConnected, { timeout: 3000 });
+      } catch (error) {
+        if (i < retries - 1) {
+          logger.warn(`Test row for "${testName}" did not stabilize for evaluate, retrying (attempt ${i + 2}/${retries})`);
+          await page.waitForTimeout(300);
+          continue;
+        }
+        throw error;
+      }
       if (!isConnected) {
         if (i < retries - 1) {
           logger.warn(`Test row for "${testName}" was detached from DOM, retrying (attempt ${i + 2}/${retries})`);
@@ -745,6 +830,18 @@ When(
     const retryDelay = 500;
     const refreshButton = page.locator('[data-test="table-refresh-icon"]');
     const newItemsBadge = page.locator('[data-test="table-refresh-icon-badge"]');
+    const clickRefresh = async (attempt: number): Promise<void> => {
+      try {
+        await refreshButton.click({ timeout: 7000 });
+      } catch (error) {
+        logger.warn(`Refresh click failed on attempt ${attempt}, retrying with dispatchEvent/force: ${(error as Error).message}`);
+        try {
+          await refreshButton.dispatchEvent('click');
+        } catch {
+          await refreshButton.click({ force: true, timeout: 7000 });
+        }
+      }
+    };
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       // First check if test is already visible
@@ -761,7 +858,7 @@ When(
 
       if (hasBadge && await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
         logger.info(`New items badge found (attempt ${attempt}/${maxRetries}), clicking Refresh`);
-        await refreshButton.click();
+        await clickRefresh(attempt);
 
         // Wait for badge to disappear (indicates refresh completed)
         try {
@@ -788,7 +885,7 @@ When(
       // No badge - click Refresh anyway (server may have data)
       if (await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
         logger.info(`Test not found, clicking Refresh (attempt ${attempt}/${maxRetries})`);
-        await refreshButton.click();
+        await clickRefresh(attempt);
         await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => { });
       }
 

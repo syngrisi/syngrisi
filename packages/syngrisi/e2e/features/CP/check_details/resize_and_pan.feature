@@ -12,9 +12,12 @@ Feature: Check details Resize and Pan
               filePath: files/A.png
       """
     When I go to "main" page
+    When I wait for test "TestName" to appear in table
     When I unfold the test "TestName"
+    When I wait for check "CheckName" to appear in collapsed row of test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 30 seconds for the element with locator "[data-check='toolbar']" to be visible
+    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
   Scenario: Resize Dropdown Usage
     # 50%

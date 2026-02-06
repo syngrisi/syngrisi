@@ -197,7 +197,11 @@ export async function launchAppServer(
           signal,
           message: `Backend exited (code=${code} signal=${signal})`,
         };
-        backendLogger.error(`[app-server] ${exitInfo.message}`);
+        if (code === 0 && !signal) {
+          backendLogger.warn(`[app-server] ${exitInfo.message}`);
+        } else {
+          backendLogger.error(`[app-server] ${exitInfo.message}`);
+        }
       });
       backend.on('error', (err) => {
         exitInfo = {

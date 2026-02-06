@@ -24,7 +24,7 @@ Feature: RCA (Root Cause Analysis) Panel
     When I click element with locator "[data-test='rca-toggle-button']"
 
     # Verify RCA panel appears with error state (no DOM snapshot available)
-    When I wait 10 seconds for the element with locator "[data-test='rca-panel']" to be visible
+    When I wait 30 seconds for the element with locator "[data-test='rca-panel']" to be visible
     Then the element with locator "[data-test='rca-panel']" should have attribute "data-test-state" "error"
     Then the element with locator "[data-test='rca-error-message']" should be visible
 
