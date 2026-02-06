@@ -76,9 +76,11 @@ class SyngrisiApi {
      */
     private get headers(): Record<string, string> {
         const headers: Record<string, string> = {
-            apikey: this.config.apiHash!,
             'x-syngrisi-sdk-version': SDK_VERSION,
             ...(this.config.headers || {}),
+        }
+        if (this.config.apiKey) {
+            headers.apikey = this.config.apiHash!
         }
 
         // Hybrid Auth: Fallback to ENV variable if not explicitly set
@@ -321,9 +323,11 @@ class SyngrisiApi {
     }
 
     public async getIdent(): Promise<string[] | ErrorObject> {
-        const url = `${this.url('getIdent')}?apikey=${this.config.apiHash}`
+        const url = this.config.apiKey
+            ? `${this.url('getIdent')}?apikey=${this.config.apiHash}`
+            : `${this.url('getIdent')}`
         return this.requestWithRetry(
-            () => got(url).json() as Promise<string[]>,
+            () => got(url, { headers: this.headers }).json() as Promise<string[]>,
             'getIdent',
             '❌ Error getting ident data'
         )
@@ -350,10 +354,12 @@ class SyngrisiApi {
     public async getBaselines(params: BaselineParams): Promise<BaselineResponse | ErrorObject> {
         paramsGuard(params, 'getBaselines, params', BaselineParamsSchema)
         const filter = encodeURIComponent(JSON.stringify(params))
-        const url = `${this.url('baselines')}?filter=${filter}&apikey=${this.config.apiHash}`
+        const url = this.config.apiKey
+            ? `${this.url('baselines')}?filter=${filter}&apikey=${this.config.apiHash}`
+            : `${this.url('baselines')}?filter=${filter}`
 
         return this.requestWithRetry(
-            () => got(url).json() as Promise<BaselineResponse>,
+            () => got(url, { headers: this.headers }).json() as Promise<BaselineResponse>,
             'getBaselines',
             `❌ Error getting baselines, params: '${JSON.stringify(params)}' data`
         )
@@ -379,10 +385,12 @@ class SyngrisiApi {
     public async getSnapshots(params: Snapshot): Promise<SnapshotResponse | ErrorObject> {
         paramsGuard(params, 'getSnapshots, params', SnapshotSchema)
         const filter = encodeURIComponent(JSON.stringify(params))
-        const url = `${this.url('snapshots')}?filter=${filter}&apikey=${this.config.apiHash}`
+        const url = this.config.apiKey
+            ? `${this.url('snapshots')}?filter=${filter}&apikey=${this.config.apiHash}`
+            : `${this.url('snapshots')}?filter=${filter}`
 
         return this.requestWithRetry(
-            () => got.get(url).json() as Promise<SnapshotResponse>,
+            () => got.get(url, { headers: this.headers }).json() as Promise<SnapshotResponse>,
             'getSnapshots',
             `❌ Error getting snapshots, params: '${JSON.stringify(params)}' data`
         )
