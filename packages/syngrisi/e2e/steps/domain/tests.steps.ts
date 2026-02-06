@@ -461,7 +461,43 @@ async function createTestsWithParams(
     const { index, params } = tasks[current];
     const singleTestStart = performance.now();
     logger.info(`Creating test #${index + 1} with params:`, params);
-    const result = await createTest(params, index);
+    const maxCreateAttempts = 3;
+    let result: { testId: string; checkResults: unknown[] } | undefined;
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxCreateAttempts; attempt++) {
+      try {
+        result = await createTest(params, index);
+        break;
+      } catch (error) {
+        lastError = error as Error;
+        const errorMessage = lastError.message || String(error);
+        const isRetryableConnectionError =
+          /ECONNREFUSED|ECONNRESET|EPIPE|ETIMEDOUT|ERR_CONNECTION_REFUSED|socket hang up/i.test(errorMessage);
+
+        if (!isRetryableConnectionError || attempt === maxCreateAttempts) {
+          throw error;
+        }
+
+        logger.warn(
+          `Create test #${index + 1} failed with connection error ` +
+          `(attempt ${attempt}/${maxCreateAttempts}): ${errorMessage}`
+        );
+        logger.info('Restarting app server before retrying test creation');
+
+        await appServer.restart(true);
+        if (appServer.serverPort) {
+          await ensureServerReady(appServer.serverPort, 60_000);
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 500 * attempt));
+      }
+    }
+
+    if (!result) {
+      throw lastError ?? new Error(`Failed to create test #${index + 1}: unknown error`);
+    }
+
     if (result?.testId) {
       createdTestIds.push(result.testId);
     }
