@@ -1,5 +1,12 @@
 # @syngrisi/wdio-sdk
 
+## 3.1.5
+
+### Patch Changes
+
+-   Updated dependencies [[`def594c`](https://github.com/syngrisi/syngrisi/commit/def594c78cf5949daf1ebdf6305858b34f2fbaae)]:
+    -   @syngrisi/core-api@3.1.5
+
 ## 3.1.4
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.1.5
+
+### Patch Changes
+
+-   [`def594c`](https://github.com/syngrisi/syngrisi/commit/def594c78cf5949daf1ebdf6305858b34f2fbaae) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Stabilize JWT auth header handling and add M2M end-to-end coverage for client API endpoints.
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.1.5
+
 ## 3.1.4
 
 ### Patch Changes
