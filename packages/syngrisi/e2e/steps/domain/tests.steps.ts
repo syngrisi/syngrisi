@@ -830,6 +830,18 @@ When(
     const retryDelay = 500;
     const refreshButton = page.locator('[data-test="table-refresh-icon"]');
     const newItemsBadge = page.locator('[data-test="table-refresh-icon-badge"]');
+    const clickRefresh = async (attempt: number): Promise<void> => {
+      try {
+        await refreshButton.click({ timeout: 7000 });
+      } catch (error) {
+        logger.warn(`Refresh click failed on attempt ${attempt}, retrying with dispatchEvent/force: ${(error as Error).message}`);
+        try {
+          await refreshButton.dispatchEvent('click');
+        } catch {
+          await refreshButton.click({ force: true, timeout: 7000 });
+        }
+      }
+    };
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       // First check if test is already visible
@@ -846,7 +858,7 @@ When(
 
       if (hasBadge && await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
         logger.info(`New items badge found (attempt ${attempt}/${maxRetries}), clicking Refresh`);
-        await refreshButton.click();
+        await clickRefresh(attempt);
 
         // Wait for badge to disappear (indicates refresh completed)
         try {
@@ -873,7 +885,7 @@ When(
       // No badge - click Refresh anyway (server may have data)
       if (await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
         logger.info(`Test not found, clicking Refresh (attempt ${attempt}/${maxRetries})`);
-        await refreshButton.click();
+        await clickRefresh(attempt);
         await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => { });
       }
 
