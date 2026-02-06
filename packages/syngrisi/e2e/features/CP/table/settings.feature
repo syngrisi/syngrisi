@@ -60,9 +60,9 @@ Feature: Tests Table Settings
               checkName: Check - 1
         """
         When I go to "main" page
-        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" for 10000ms to be visible
-        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" for 10000ms to be visible
-        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-2]" for 10000ms to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-2]" to be visible
         When I execute javascript code:
             """
             const elements = Array
