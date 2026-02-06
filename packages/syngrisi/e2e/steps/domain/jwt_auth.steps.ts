@@ -14,6 +14,7 @@ const { Given, When, Then, After } = createBdd(test);
 // Store driver instance and check result between steps
 let driver: PlaywrightDriver;
 let checkResult: any;
+let baselinesResult: any;
 let lastError: any;
 let cachedImageBuffer: Buffer | null = null;
 let jwtEnvApplied = false;
@@ -258,6 +259,7 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
     // Reset state from previous tests
     lastError = undefined;
     checkResult = undefined;
+    baselinesResult = undefined;
     await ensureJwtServerReady(appServer);
 
     const payload = {
@@ -320,6 +322,85 @@ When('I perform a visual check with a valid JWT token', async ({ page, appServer
                 await driver.stopTestSession();
             } catch (e) {
                 console.log('Failed to stop JWT test session:', e);
+            }
+        }
+    }
+});
+
+When('I fetch baselines with a valid JWT token', async ({ page, appServer, mockJwks }) => {
+    lastError = undefined;
+    checkResult = undefined;
+    baselinesResult = undefined;
+    await ensureJwtServerReady(appServer);
+
+    const payload = {
+        sub: 'test-client-id',
+        cid: 'test-client-id',
+        client_id: 'test-client-id',
+        scp: ['syngrisi:api:read', 'syngrisi:api:write']
+    };
+    const token = await mockJwks.signToken(payload);
+
+    const normalizedURL = appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`;
+    const headerName = getAuthHeaderName();
+    let headerPrefix = getAuthHeaderPrefix();
+    if (headerPrefix && !headerPrefix.endsWith(' ')) {
+        headerPrefix = `${headerPrefix} `;
+    }
+
+    driver = new PlaywrightDriver({
+        page,
+        url: normalizedURL,
+        apiKey: '',
+        headers: {
+            [headerName]: `${headerPrefix}${token}`,
+        }
+    });
+
+    let sessionStarted = false;
+    try {
+        await startSessionWithRetry(driver, {
+            params: {
+                test: 'JWT Baselines Test',
+                app: 'M2M App',
+                run: 'Run baselines',
+                runident: 'run-baselines',
+                suite: 'M2M Suite',
+                branch: 'main',
+            }
+        });
+        sessionStarted = true;
+
+        const imageBuffer = getSampleImageBuffer();
+        checkResult = await checkWithRetry(driver, {
+            checkName: 'JWT Baselines Check',
+            imageBuffer,
+            params: {
+                viewport: '1200x800',
+                os: 'Linux',
+                browserName: 'chrome',
+                browserVersion: '100',
+            }
+        });
+
+        baselinesResult = await driver.getBaselines({
+            params: {
+                name: 'JWT Baselines Check',
+                viewport: '1200x800',
+                browserName: 'chrome',
+                os: 'Linux',
+                app: 'M2M App',
+                branch: 'main',
+            }
+        });
+    } catch (e) {
+        lastError = e;
+    } finally {
+        if (sessionStarted) {
+            try {
+                await driver.stopTestSession();
+            } catch (e) {
+                console.log('Failed to stop JWT baselines session:', e);
             }
         }
     }
@@ -708,6 +789,16 @@ Then('the check should be accepted', async () => {
     expect(lastError).toBeUndefined();
     expect(checkResult).toBeDefined();
     expect(checkResult._id).toBeDefined();
+});
+
+Then('baselines response should be returned', async () => {
+    if (lastError) {
+        console.log('LAST ERROR:', lastError);
+    }
+    expect(lastError).toBeUndefined();
+    expect(checkResult).toBeDefined();
+    expect(baselinesResult).toBeDefined();
+    expect(Array.isArray(baselinesResult.results)).toBe(true);
 });
 
 Then('a user {string} should exist in the database', async ({ appServer }, username) => {
