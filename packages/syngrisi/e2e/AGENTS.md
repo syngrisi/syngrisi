@@ -48,22 +48,6 @@ If a user asks to run "syngrisi tests" or "e2e tests", treat that as running `ya
 | `yarn test` | **Full Suite** (Parallel + SSO + Flaky) |
 | `yarn test:smoke` | Run smoke tests only |
 
-### 🔧 Running Specific Tests (Dev Loop)
-
-**Base Command Pattern:**
-
-```bash
-npx bddgen && yarn playwright test "features/path/to/test.feature" [flags]
-```
-
-**Flags & Options:**
-
-| Goal                       | Flags to append/modify                                        |
-| :------------------------- | :------------------------------------------------------------ |
-| **Filter by Scenario**     | `--grep "Scenario Name"`                                      |
-| **Debug Mode**             | `--headed --workers=1`                                        |
-| **Verify Fix (Stability)** | `--workers=3 --repeat-each=4` (Mandatory after fixing a test) |
-
 ## 🌍 Environment Variables
 
 -   `E2E_BASE_URL`: App URL (default: `http://localhost:3002`)
