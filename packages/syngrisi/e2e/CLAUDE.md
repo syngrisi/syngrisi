@@ -24,10 +24,13 @@ yarn test:demo
 npx bddgen && npx playwright test --project=chromium "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=2
 
 # Run in headed mode with single worker
-npx bddgen && npx playwright test --project=chromium "features/path/to/file.feature" --grep "Scenario name" --workers=1 --headed
+npx bddgen && npx playwright test --project=chromium "features/CHECKS_HANDLING/accept_by_user.feature" --workers=1 --headed
 
 # Verify test stability after fixing (REQUIRED)
-npx bddgen && npx playwright test --project=chromium "features/path/to/file.feature" --grep "Test name" --workers=3 --repeat-each=4
+npx bddgen && npx playwright test --project=chromium "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=3 --repeat-each=4
+
+# Run with Playwright Debugger
+PWDEBUG=1 npx bddgen && npx playwright test "features/CHECKS_HANDLING/accept_by_user.feature"
 
 # Run MCP test engine tests
 yarn test:mcp
@@ -104,7 +107,7 @@ Test tags:
 ### After Fixing Tests
 ALWAYS verify stability with concurrent execution:
 ```bash
-npx bddgen && npx playwright test "features/path/file.feature" --grep "Test name" --workers=3 --repeat-each=4
+npx bddgen && npx playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=3 --repeat-each=4
 ```
 
 ## Environment Variables

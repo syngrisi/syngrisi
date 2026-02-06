@@ -27,6 +27,7 @@ Feature: Image Preload on Test Expand
 
         # Expand test - this should trigger image loading (preview + preload)
         When I unfold the test "PreloadTest"
+        When I wait 30 seconds for the element with locator "[data-test-preview-image='Check1']" to be visible
 
 
 
