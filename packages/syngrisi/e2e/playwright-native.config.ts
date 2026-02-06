@@ -27,7 +27,7 @@ export const confObject = {
   use: {
     baseURL: env.E2E_BASE_URL,
     headless: !env.PLAYWRIGHT_HEADED,
-    trace: env.E2E_FORCE_TRACE ? 'on' : (env.CI ? 'on-first-retry' : 'on'),
+    trace: env.E2E_FORCE_TRACE ? 'on' : 'on-first-retry',
     actionTimeout: 7000,
     screenshot: 'only-on-failure'
   },

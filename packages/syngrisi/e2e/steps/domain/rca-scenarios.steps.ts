@@ -295,6 +295,39 @@ When(
     }
 );
 
+When(
+    'I wait for RCA data to be ready',
+    async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
+        const hashedApiKey = testData.get('hashedApiKey') as string;
+        const checkId = testData.get('rcaScenarioActualCheckId') as string;
+        if (!checkId) {
+            throw new Error('Missing rcaScenarioActualCheckId in test data');
+        }
+
+        const baseURL = appServer.baseURL;
+        const domUrl = `${baseURL}/v1/checks/${checkId}/dom`;
+        const maxRetries = 20;
+        const delayMs = 2000;
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            const response = await got.get(domUrl, {
+                headers: { apikey: hashedApiKey },
+                throwHttpErrors: false,
+            });
+
+            if (response.statusCode === 200) {
+                logger.info(`RCA DOM snapshot is ready after ${attempt} attempt(s)`);
+                return;
+            }
+
+            logger.warn(`RCA DOM snapshot not ready yet (status ${response.statusCode}), retrying...`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+
+        throw new Error(`RCA DOM snapshot not ready after ${maxRetries} attempts`);
+    }
+);
+
 async function createActualCheck(
     appServer: AppServerFixture,
     testData: TestStore,

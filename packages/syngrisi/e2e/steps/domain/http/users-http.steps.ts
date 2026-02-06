@@ -12,15 +12,22 @@ When(
   'I create via http test user',
   async ({ appServer }: { appServer: AppServerFixture }) => {
     const uri = `${appServer.baseURL}/v1/tasks/loadTestUser`;
+    const readinessUri = `${appServer.baseURL}/v1/tasks/status`;
     logger.info(`Creating test user via ${uri}`);
 
-    // Retry logic to handle server not fully ready (returns HTML instead of JSON)
-    const maxRetries = 5;
-    const retryDelay = 2000;
+    // Retry logic to handle server not fully ready (returns HTML instead of JSON).
+    // Use /v1/tasks/status for readiness because /v1/app/info may return login HTML when auth is enabled.
+    const maxRetries = 20;
+    const retryDelay = 3000;
     let lastError: Error | null = null;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
+        // Ensure server is responding with JSON before calling loadTestUser
+        const readinessRes = await got.get(readinessUri, { timeout: { request: 10000 } });
+        if (readinessRes.body.trim().startsWith('<!doctype') || readinessRes.body.trim().startsWith('<html')) {
+          throw new Error('Server returned HTML instead of JSON (not ready yet)');
+        }
         const res = await got.get(uri, { timeout: { request: 10000 } });
         logger.info(`Response (attempt ${attempt}): ${res.body.substring(0, 100)}...`);
 
@@ -60,6 +67,29 @@ When(
           await new Promise(resolve => setTimeout(resolve, retryDelay));
         }
       }
+    }
+
+    // Fallback for auth-enabled runs:
+    // in test mode the "Test" user is created during startup, so successful login
+    // means we can safely continue even if /v1/tasks/loadTestUser is protected.
+    try {
+      const loginUri = `${appServer.baseURL}/v1/auth/login`;
+      const loginRes = await got.post(loginUri, {
+        headers: createAuthHeaders(appServer, {
+          path: '/v1/auth/login',
+        }),
+        json: { username: 'Test', password: '123456aA-' },
+        timeout: { request: 10000 },
+      });
+
+      const setCookieHeader = loginRes.headers['set-cookie'];
+      if (setCookieHeader && setCookieHeader.length > 0) {
+        logger.warn('loadTestUser endpoint was not reachable, but fallback login for Test succeeded');
+        return;
+      }
+    } catch (fallbackError) {
+      const message = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
+      logger.warn(`Fallback login check failed: ${message}`);
     }
 
     // All retries exhausted

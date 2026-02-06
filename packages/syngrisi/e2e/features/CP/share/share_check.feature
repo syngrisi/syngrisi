@@ -36,8 +36,7 @@ Feature: Share Check Feature
       """
     When I go to "main" page
     When I unfold the test "ShareTest"
-    When I click element with locator "[data-test-preview-image='CheckToShare']"
-    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckToShare']" to be visible
+    When I open the 1st check "CheckToShare"
 
     # Open menu and click Share
     When I click element with locator "[data-test='check-details-menu']"
@@ -58,8 +57,7 @@ Feature: Share Check Feature
       """
     When I go to "main" page
     When I unfold the test "ShareLinkTest"
-    When I click element with locator "[data-test-preview-image='CheckForLink']"
-    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckForLink']" to be visible
+    When I open the 1st check "CheckForLink"
 
     # Open Share modal
     When I click element with locator "[data-test='check-details-menu']"
@@ -85,9 +83,10 @@ Feature: Share Check Feature
       """
     When I accept via http the 1st check with name "SharedCheck"
     When I go to "main" page
+    When I wait for test "ShareAccessTest" to appear in table
     When I unfold the test "ShareAccessTest"
-    When I click element with locator "[data-test-preview-image='SharedCheck']"
-    When I wait 10 seconds for the element with locator "[data-check-header-name='SharedCheck']" to be visible
+    When I wait for check "SharedCheck" to appear in collapsed row of test "ShareAccessTest"
+    When I open the 1st check "SharedCheck"
 
     # Create share link while logged in
     When I click element with locator "[data-test='check-details-menu']"
@@ -146,9 +145,10 @@ Feature: Share Check Feature
     When I accept via http the 1st check with name "CheckToShare"
     When I accept via http the 1st check with name "OtherCheck"
     When I go to "main" page
+    When I wait for test "ShareScopeTest" to appear in table
     When I unfold the test "ShareScopeTest"
-    When I click element with locator "[data-test-preview-image='CheckToShare']"
-    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckToShare']" to be visible
+    When I wait for check "CheckToShare" to appear in collapsed row of test "ShareScopeTest"
+    When I open the 1st check "CheckToShare"
 
     # Create share link
     When I click element with locator "[data-test='check-details-menu']"
@@ -202,17 +202,22 @@ Feature: Share Check Feature
       const token = params.get('share');
       const headers = token ? { 'x-share-token': token, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
 
-      return fetch('/v1/checks', { headers })
+      const withTimeout = (promise, ms, label) => new Promise((resolve, reject) => {
+        const id = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+        promise.then((v) => { clearTimeout(id); resolve(v); }).catch((e) => { clearTimeout(id); reject(e); });
+      });
+
+      return withTimeout(fetch('/v1/checks', { headers }), 5000, 'Fetch checks')
         .then(res => res.json())
         .then(data => {
            const check = data.results.find(c => c.name === 'CheckToShare');
            if (!check) throw new Error('CheckToShare not found');
 
-           return fetch('/v1/checks/' + check._id, {
+           return withTimeout(fetch('/v1/checks/' + check._id, {
              method: 'PUT',
              headers: headers,
              body: JSON.stringify({ name: 'HackedName' })
-           });
+           }), 5000, 'Update check');
         })
         .then(res => {
           if (res.status === 200) throw new Error('Security Breach: Update operation succeeded! Status: ' + res.status);
@@ -238,8 +243,7 @@ Feature: Share Check Feature
       """
     When I go to "main" page
     When I unfold the test "ShareInfoTest"
-    When I click element with locator "[data-test-preview-image='CheckInfo']"
-    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckInfo']" to be visible
+    When I open the 1st check "CheckInfo"
 
     # Create share link
     When I click element with locator "[data-test='check-details-menu']"
@@ -254,7 +258,18 @@ Feature: Share Check Feature
     # The code uses: <Text size="sm" color="dimmed">Created by ... on ...</Text>
     # And specifically: {token.createdByUsername} and {new Date(token.createdDate).toLocaleDateString()}
 
-    When I wait until element "body" contains text "Created by"
-    Then the element with locator "body" should have contains text "Created by"
-    Then the element with locator "body" should have contains text "Test"
+    When I wait 30 seconds for the element with locator "[data-test^='revoke-token-']" to be visible
+    When I execute javascript code:
+      """
+      const tokenRow = document.querySelector("[data-test^='revoke-token-']")?.closest('[role="group"], div');
+      return (tokenRow?.textContent || '').trim();
+      """
+    Then I expect the stored "js" string is contain:
+      """
+      Created by
+      """
+    Then I expect the stored "js" string is contain:
+      """
+      Test
+      """
 # "Test" is the username we logged in with

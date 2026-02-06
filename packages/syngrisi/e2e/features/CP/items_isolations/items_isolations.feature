@@ -33,8 +33,8 @@ Feature: Test Isolation by Filters
       """
     When I go to "main" page
 
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName Project-1']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName Project-2']" to be visible
+    When I wait for test "TestName Project-1" to appear in table
+    When I wait for test "TestName Project-2" to appear in table
 
     Then the element "[data-table-test-name='TestName Project-1']" does appear exactly "1" times
     Then the element "[data-table-test-name='TestName Project-2']" does appear exactly "1" times
@@ -42,12 +42,14 @@ Feature: Test Isolation by Filters
     When I select the option with the text "Project-1" for element "select[data-test='current-project']"
 
     When I wait 10 seconds for the element with locator "[data-table-test-name='TestName Project-1']" to be visible
+    When I wait on element "[data-table-test-name='TestName Project-2']" to not be displayed
     Then the element "[data-table-test-name='TestName Project-1']" does appear exactly "1" times
     Then the element "[data-table-test-name='TestName Project-2']" does appear exactly "0" times
 
     When I select the option with the text "Project-2" for element "select[data-test='current-project']"
 
     When I wait 10 seconds for the element with locator "[data-table-test-name='TestName Project-2']" to be visible
+    When I wait on element "[data-table-test-name='TestName Project-1']" to not be displayed
     Then the element "[data-table-test-name='TestName Project-1']" does appear exactly "0" times
     Then the element "[data-table-test-name='TestName Project-2']" does appear exactly "1" times
 
@@ -189,6 +191,9 @@ Feature: Test Isolation by Filters
       """
 
     When I refresh page
+    When I wait for test "TestSuite-1.1" to appear in table
+    When I wait for test "TestSuite-1.2" to appear in table
+    When I wait for test "TestSuite-2.1" to appear in table
 
     # all tests
     When I wait 10 seconds for the element with locator "//div[contains(text(), 'TestSuite')]" to be visible
