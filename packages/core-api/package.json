@@ -1,6 +1,6 @@
 {
   "name": "@syngrisi/core-api",
-  "version": "3.1.5",
+  "version": "3.1.6",
   "description": "Syngrisi Core JS client",
   "main": "dist/src/SyngrisiApi.js",
   "types": "dist/src/SyngrisiApi.d.ts",
