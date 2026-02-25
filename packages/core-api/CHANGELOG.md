@@ -1,5 +1,7 @@
 # @syngrisi/core-api
 
+## 3.1.6
+
 ## 3.1.5
 
 ### Patch Changes
