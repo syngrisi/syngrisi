@@ -1,8 +1,8 @@
 metadata:
   category: domain/app
-  generatedAt: '2025-12-15T16:33:36.411Z'
-  totalFiles: 21
-  totalSteps: 156
+  generatedAt: '2026-02-25T16:55:16.169Z'
+  totalFiles: 24
+  totalSteps: 194
   sourceFiles:
     - steps/domain/ai.steps.ts
     - steps/domain/api-key.steps.ts
@@ -11,14 +11,17 @@ metadata:
     - steps/domain/check-details.steps.ts
     - steps/domain/checks.steps.ts
     - steps/domain/cli-tasks.steps.ts
+    - steps/domain/client_api_endpoints.steps.ts
     - steps/domain/http/baselines-backend.steps.ts
     - steps/domain/http/checks-http.steps.ts
     - steps/domain/http/common-http-additional.steps.ts
     - steps/domain/http/common-http.steps.ts
     - steps/domain/http/logs-http.steps.ts
     - steps/domain/http/users-http.steps.ts
+    - steps/domain/jwt_auth.steps.ts
     - steps/domain/mcp.steps.ts
     - steps/domain/navigation.steps.ts
+    - steps/domain/plugin-api.steps.ts
     - steps/domain/rca-scenarios.steps.ts
     - steps/domain/rca.steps.ts
     - steps/domain/server.steps.ts
@@ -73,13 +76,13 @@ steps:
     line: 27
   - pattern: I parse the API key
     description: ''
-    line: 28
+    line: 30
   - pattern: I set the API key in config
     description: ''
     line: 14
   - pattern: I clear local storage
     description: ''
-    line: 83
+    line: 110
   - pattern: I open the app
     description: ''
     line: 63
@@ -91,7 +94,7 @@ steps:
     line: 10
   - pattern: I log out of the application
     description: ''
-    line: 151
+    line: 175
   - pattern: I login with user:{string} password {string}
     description: ''
     line: 9
@@ -112,25 +115,49 @@ steps:
     line: 141
   - pattern: I accept the {string} check
     description: ''
-    line: 7
+    line: 45
   - pattern: I delete check from modal
     description: |-
       Delete check from modal dialog.
       Uses the modal's remove icon and waits for DELETE API response.
       More stable than raw locator clicks due to API synchronization.
-    line: 172
+    line: 240
   - pattern: I delete the {string} check
     description: ''
-    line: 96
+    line: 164
   - pattern: I open the {ordinal} check {string}
     description: ''
-    line: 38
+    line: 91
   - pattern: I remove the {string} check
     description: ''
-    line: 131
+    line: 199
   - pattern: I run CLI task {string} with args {string}
     description: ''
     line: 11
+  - pattern: all client API endpoint calls should succeed
+    description: ''
+    line: 187
+  - pattern: I create a client check via API
+    description: ''
+    line: 81
+  - pattern: I fetch client baselines via API
+    description: ''
+    line: 123
+  - pattern: I fetch client ident via API
+    description: ''
+    line: 161
+  - pattern: I fetch client snapshots via API
+    description: ''
+    line: 144
+  - pattern: I prepare client API auth for local server
+    description: ''
+    line: 39
+  - pattern: I start a client session via API
+    description: ''
+    line: 50
+  - pattern: I stop the client session via API
+    description: ''
+    line: 173
   - pattern: I log via http user {string} info
     description: Step to log user info via HTTP API (replaces direct DB access)
     line: 974
@@ -334,13 +361,55 @@ steps:
     line: 11
   - pattern: 'I create via http user as:{string} with params:'
     description: ''
-    line: 114
+    line: 171
   - pattern: I generate via http API key for the User
     description: ''
-    line: 82
+    line: 139
   - pattern: I login via http with user:{string} password {string}
     description: ''
-    line: 43
+    line: 100
+  - pattern: a user {string} should exist in the database
+    description: ''
+    line: 804
+  - pattern: baselines response should be returned
+    description: ''
+    line: 794
+  - pattern: 'I enable the "jwt-auth" plugin with the following config:'
+    description: ''
+    line: 199
+  - pattern: I fetch baselines with a valid JWT token
+    description: ''
+    line: 330
+  - pattern: I perform a visual check with a JWT token missing required scopes
+    description: ''
+    line: 654
+  - pattern: I perform a visual check with a JWT token with invalid audience
+    description: ''
+    line: 697
+  - pattern: I perform a visual check with a JWT token with invalid issuer
+    description: ''
+    line: 611
+  - pattern: I perform a visual check with a valid JWT token
+    description: ''
+    line: 258
+  - pattern: I perform a visual check with a valid JWT token for client id {string}
+    description: ''
+    line: 477
+  - pattern: I perform a visual check with a valid JWT token with issuer {string}
+    description: ''
+    line: 409
+  - pattern: I perform a visual check with a valid JWT token without sub
+    description: ''
+    line: 545
+  - pattern: I perform a visual check with an invalid JWT token
+    description: ''
+    line: 740
+  - pattern: the check should be accepted
+    description: ''
+    line: 781
+  - pattern: the check should be rejected with status {int}
+    description: ''
+    line: 839
   - pattern: I find test {string} in the table, expand it, and open the first check {string}
     description: ''
     line: 25
@@ -355,118 +424,148 @@ steps:
     line: 12
   - pattern: I open the saved share URL
     description: Opens the previously saved share URL
-    line: 233
+    line: 235
   - pattern: I open the shared check URL
     description: |-
       Opens the shared check URL from the share input field (immediate - modal must be open)
       Gets the URL from [data-test="share-url-input"] input and navigates to it
-    line: 249
+    line: 251
   - pattern: I save the share URL
     description: Gets share URL from Share Check modal and stores it in testData
-    line: 192
+    line: 194
   - pattern: I wait for navbar filter to sync
     description: Navbar synchronization steps
-    line: 174
+    line: 176
   - pattern: I wait for navbar to be ready
     description: ''
-    line: 178
+    line: 180
   - pattern: I wait for table to stabilize
     description: ''
-    line: 182
+    line: 184
   - pattern: the current url contains {string}
     description: ''
-    line: 105
+    line: 107
+  - pattern: 'I update plugin {string} settings via API:'
+    description: ''
+    line: 12
+  - pattern: the API response should contain {string}
+    description: ''
+    line: 48
+  - pattern: the API response status should be {int}
+    description: ''
+    line: 40
   - pattern: I create RCA actual check with {string}
     description: ''
-    line: 323
+    line: 277
   - pattern: I create RCA actual check with {string} with DOM collection enabled
     description: ''
-    line: 337
+    line: 291
   - pattern: I create RCA actual check with {string} without DOM data
     description: ''
-    line: 330
+    line: 284
   - pattern: I create RCA test with {string} as baseline
     description: ''
-    line: 227
+    line: 179
   - pattern: I create RCA test with {string} as baseline with DOM collection enabled
     description: ''
-    line: 241
+    line: 193
   - pattern: I create RCA test with {string} as baseline without DOM data
     description: ''
-    line: 234
+    line: 186
+  - pattern: I wait for RCA data to be ready
+    description: ''
+    line: 298
   - pattern: the RCA panel should show added elements
     description: ''
-    line: 433
+    line: 420
   - pattern: the RCA panel should show changes summary
     description: ''
-    line: 524
+    line: 512
   - pattern: the RCA panel should show no DOM data message
     description: ''
-    line: 501
+    line: 488
   - pattern: the RCA panel should show removed elements
     description: ''
-    line: 450
+    line: 437
   - pattern: the RCA panel should show style changes
     description: ''
-    line: 484
+    line: 471
   - pattern: the RCA panel should show text changes
     description: ''
-    line: 467
+    line: 454
   - pattern: I create RCA demo actual check with DOM changes
     description: Accepts the baseline and creates actual check with broken state
-    line: 337
+    line: 271
   - pattern: I create RCA demo test with baseline DOM
     description: Creates a test with real screenshot and DOM from test app (normal state)
-    line: 263
+    line: 197
   - pattern: I take RCA debug screenshot {string}
     description: Step to take RCA debug screenshot
-    line: 428
+    line: 362
   - pattern: I clear database
     description: ''
-    line: 233
+    line: 244
   - pattern: I clear Database and stop Server
     description: ''
-    line: 166
+    line: 177
+  - pattern: I clear plugin {string} settings from database
+    description: ''
+    line: 254
   - pattern: I clear screenshots folder
     description: ''
-    line: 243
+    line: 262
   - pattern: 'I set env variables:'
     description: ''
-    line: 36
+    line: 38
   - pattern: I start Driver
     description: ''
-    line: 213
+    line: 224
   - pattern: I start Server
     description: ''
-    line: 97
+    line: 104
   - pattern: I start Server and start Driver
     description: ''
-    line: 64
+    line: 66
   - pattern: I stop Server
     description: ''
-    line: 142
+    line: 153
   - pattern: I stop the Syngrisi server
     description: ''
-    line: 118
+    line: 129
+  - pattern: I try to start Server
+    description: ''
+    line: 293
+  - pattern: plugin {string} should be loaded
+    description: ''
+    line: 353
+  - pattern: the error message should contain {string}
+    description: ''
+    line: 332
+  - pattern: the server should fail to start
+    description: ''
+    line: 326
+  - pattern: the server should start successfully
+    description: ''
+    line: 341
   - pattern: a new user {string} should be created with role {string}
     description: Verify user was created in database
-    line: 480
+    line: 620
   - pattern: I click SSO login button
     description: Click SSO login button
     line: 128
   - pattern: I complete Logto admin onboarding with username {string} email {string} and password {string}
     description: Complete first-time Logto admin onboarding or log in if admin already exists
-    line: 524
+    line: 664
   - pattern: I configure SAML SSO with auto-provisioned settings
     description: |-
       Configure SAML SSO with auto-provisioned settings
 
       Loads SAML configuration from provisioned-config.json
       SSO_CERT must be provided via environment variable
-    line: 308
+    line: 448
   - pattern: I configure SAML SSO with entry point {string} and issuer {string}
     description: Configure SAML SSO with explicit parameters
-    line: 347
+    line: 487
   - pattern: I configure SSO with client ID {string} and secret {string}
     description: |-
       Configure SSO with client credentials
@@ -476,21 +575,27 @@ steps:
     line: 93
   - pattern: I configure Syngrisi SSO env from created Logto app
     description: Configure Syngrisi SSO env vars from stored Logto app credentials
-    line: 748
+    line: 937
+  - pattern: I configure Syngrisi SSO env from provisioned Logto app
+    description: Configure Syngrisi SSO env vars from provisioned Logto app (provision-logto-api.sh)
+    line: 969
+  - pattern: I create first Logto admin with username {string} email {string} and password {string}
+    description: Create first Logto admin account (welcome screen)
+    line: 745
   - pattern: I create Logto OIDC application named {string} with redirect uri {string}
     description: Create OIDC application via Logto Admin UI and store client credentials
-    line: 605
+    line: 794
   - pattern: I create Logto user with username {string} email {string} and password {string}
     description: Create a test user via Logto Admin UI
-    line: 711
+    line: 900
   - pattern: I highlight the {string} field in Logto Admin
     description: Highlight an input field by name in Logto Admin for demo purposes
-    line: 866
+    line: 1088
   - pattern: I login to Logto Admin Console
     description: |-
       Login to Logto Admin Console
       Uses username/password authentication
-    line: 801
+    line: 1023
   - pattern: I login to Logto with email {string} and password {string}
     description: |-
       Fill Logto login form
@@ -499,35 +604,43 @@ steps:
       1. Enter email/username -> Submit
       2. Enter password -> Submit
     line: 156
+  - pattern: I login to Logto with provisioned user
+    description: |-
+      Login to Logto using provisioned test user on the current Logto page
+      (relies on SSO button redirect to preserve state)
+    line: 236
   - pattern: I login to Logto with username {string} and password {string}
     description: |-
       Fill Logto login form with username (single-page form)
 
       Note: When Logto is configured for username sign-in, it shows
       both username and password fields on the same page.
-    line: 189
+    line: 329
   - pattern: I login to SAML IdP with username {string} and password {string}
     description: |-
       Fill SAML IdP login form (generic - works with most SAML IdPs)
 
       This step handles login on a generic SAML Identity Provider
-    line: 374
+    line: 514
   - pattern: I navigate to Applications in Logto Admin
     description: Navigate to Applications section in Logto Admin Console
-    line: 833
+    line: 1055
   - pattern: I open Logto Admin Console
     description: |-
       Open Logto Admin Console
       Uses provisioned admin credentials from provisioned-config.json
-    line: 781
+    line: 1003
   - pattern: I open the SAML application in Logto Admin
     description: |-
       Open SAML application configuration in Logto Admin
       Uses the SAML app ID from provisioned config
-    line: 847
+    line: 1069
+  - pattern: I perform direct Logto SSO login with provisioned user
+    description: Directly perform Logto OAuth login using provisioned app and user
+    line: 190
   - pattern: I register in Logto with email {string} and password {string}
     description: Register a new user in Logto
-    line: 246
+    line: 386
   - pattern: I request {string} {string}
     description: ''
     line: 13
@@ -535,22 +648,27 @@ steps:
     description: |-
       Reset user's provider to 'local' for testing account linking
       This ensures test isolation when running multiple SSO provider tests
-    line: 500
+    line: 640
   - pattern: I scroll to {string} section in Logto Admin
     description: Scroll to show a specific section in Logto Admin for demo
-    line: 906
+    line: 1128
   - pattern: I should be authenticated via SSO
     description: Verify successful SSO authentication
-    line: 293
+    line: 433
   - pattern: I should be on Logto Admin Console
     description: Verify we are on Logto Admin Console
-    line: 894
+    line: 1116
   - pattern: I should be redirected back to the app
     description: Wait for redirect back to app after SSO login
-    line: 281
+    line: 421
   - pattern: I should be redirected to login page with error {string}
     description: Verify redirected to login page with error
-    line: 432
+    line: 572
+  - pattern: I show Logto admin application settings
+    description: |-
+      Optionally open Logto Admin console and show the Syngrisi application settings.
+      Skips entirely when SKIP_DEMO_TESTS=true to keep silent runs fast.
+    line: 290
   - pattern: I start Logto SSO infrastructure
     description: Start Logto SSO infrastructure
     line: 68
@@ -559,16 +677,16 @@ steps:
     line: 75
   - pattern: I try to access SSO directly
     description: Try to access SSO directly when disabled
-    line: 441
+    line: 581
   - pattern: Logto SSO should be available
     description: Verify Logto is running
     line: 82
   - pattern: my session should be destroyed
     description: Verify user session is destroyed after logout
-    line: 449
+    line: 589
   - pattern: SSO login should be disabled
     description: Verify SSO is disabled (no SSO button visible)
-    line: 424
+    line: 564
   - pattern: the response body should contain {string}
     description: ''
     line: 50
@@ -583,7 +701,7 @@ steps:
     line: 144
   - pattern: the user {string} should have provider type {string}
     description: Check user provider type in database (via API)
-    line: 461
+    line: 601
   - pattern: 'I expect the stored {string} string is contain:'
     description: ''
     line: 8
@@ -595,16 +713,19 @@ steps:
     line: 23
   - pattern: 'I expect the stored {string} string is not equal:'
     description: ''
+    line: 72
+  - pattern: 'I expect the stored {string} string is one of:'
+    description: ''
     line: 53
   - pattern: 'I create {string} tests with params:'
     description: ''
-    line: 508
+    line: 600
   - pattern: 'I create {string} tests with:'
     description: ''
-    line: 500
+    line: 592
   - pattern: I unfold the test {string}
     description: ''
-    line: 683
+    line: 803
   - pattern: I wait for check {string} to appear in collapsed row of test {string}
     description: |-
       Waits for a specific check to appear in the collapsed row of a test.
@@ -616,7 +737,7 @@ steps:
       ```gherkin
       When I wait for check "CheckName-1" to appear in collapsed row of test "TestName-1"
       ```
-    line: 800
+    line: 932
   - pattern: I wait for test {string} to appear in table
     description: |-
       Waits for a specific test row to appear in the table.
@@ -627,4 +748,4 @@ steps:
       ```gherkin
       When I wait for test "TestName-1" to appear in table
       ```
-    line: 703
+    line: 823
