@@ -1,5 +1,7 @@
 # wdio-cucumber-viewport-logger-service
 
+## 3.1.6
+
 ## 3.1.5
 
 ## 3.1.4
