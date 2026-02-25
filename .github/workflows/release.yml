@@ -114,7 +114,7 @@ jobs:
         if: steps.changesets.outputs.hasChangesets == 'false'
         id: version
         run: |
-          VERSION=$(node -p "require('./lerna.json').version")
+          VERSION=$(node -p "require('./packages/syngrisi/package.json').version")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
