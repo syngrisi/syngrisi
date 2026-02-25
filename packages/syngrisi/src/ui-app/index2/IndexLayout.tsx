@@ -14,6 +14,7 @@ export default function IndexLayout() {
     const { query } = useParams();
     const [breadCrumbs, setBreadCrumbs] = useState<any>([]);
     const [toolbar, setToolbar]: [any[], any] = useState([]);
+    const [navbarWidth, setNavbarWidth] = useState(350);
     const location = useLocation();
 
     if (query.share) {
@@ -33,10 +34,19 @@ export default function IndexLayout() {
     return (
         <AppShell
             padding={8}
-            navbar={<NavBarIndex setBreadCrumbs={setBreadCrumbs} />}
+            navbar={
+                <NavBarIndex
+                    setBreadCrumbs={setBreadCrumbs}
+                    navbarWidth={navbarWidth}
+                    setNavbarWidth={setNavbarWidth}
+                />
+            }
             header={<HeaderIndex breadCrumbs={breadCrumbs} toolbar={toolbar} />}
             styles={(theme) => ({
-                main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+                main: {
+                    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+                    paddingLeft: 8,
+                },
             })}
         >
             <main

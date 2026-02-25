@@ -60,9 +60,11 @@ const useStyles = createStyles((theme) => ({
 
 interface Props {
     setBreadCrumbs: any
+    navbarWidth: number
+    setNavbarWidth: React.Dispatch<React.SetStateAction<number>>
 }
 
-export default function NavbarIndex({ setBreadCrumbs }: Props) {
+export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidth }: Props) {
     const theme = useMantineTheme();
     const { classes } = useStyles();
     const { query, setQuery } = useParams();
@@ -72,7 +74,6 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
     const startWidthRef = useRef(0);
 
     const [groupByValue, setGroupByValue] = useState(query.groupBy || 'runs');
-    const [navbarWidth, setNavbarWidth] = useState(350);
     const [isResizing, setIsResizing] = useState(false);
     const activeItemsHandler = useNavbarActiveItems({ groupByValue, classes });
 
@@ -147,25 +148,22 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
     }, [isResizing]);
 
     return (
-        <Group position="apart" align="start" noWrap>
-            {
-                (
-                    <Navbar
-                        height="100%"
-                        width={{ sm: navbarWidth }}
-                        data-test="navbar-resizable-root"
-                        className={classes.navbar}
-                        pt={0}
-                        pr={2}
-                        pl={8}
-                        zIndex={10}
-                        styles={{
-                            root: {
-                                zIndex: 20,
-                                position: 'relative',
-                            },
-                        }}
-                    >
+        <Navbar
+            height="100%"
+            width={{ sm: navbarWidth }}
+            data-test="navbar-resizable-root"
+            className={classes.navbar}
+            pt={0}
+            pr={2}
+            pl={8}
+            zIndex={10}
+            styles={{
+                root: {
+                    zIndex: 20,
+                    position: 'relative',
+                },
+            }}
+        >
                         <Navbar.Section
                             grow
                             component={ScrollArea}
@@ -282,36 +280,33 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
                                 scrollRootRef={scrollViewportRef}
                             />
                         </Navbar.Section>
-                        <Box
-                            data-test="navbar-resize-handle"
-                            onMouseDown={(e: React.MouseEvent) => {
-                                e.preventDefault();
-                                setIsResizing(true);
-                                startXRef.current = e.clientX;
-                                startWidthRef.current = navbarWidth;
-                                document.body.style.userSelect = 'none';
-                                document.body.style.cursor = 'col-resize';
-                            }}
-                            style={{
-                                position: 'absolute',
-                                top: 0,
-                                right: -2,
-                                width: '6px',
-                                height: '100%',
-                                cursor: 'col-resize',
-                                zIndex: 30,
-                                backgroundColor: isResizing ? 'var(--mantine-color-blue-6)' : 'transparent',
-                                transition: 'background-color 0.2s',
-                            }}
-                            sx={{
-                                '&:hover': {
-                                    backgroundColor: 'var(--mantine-color-blue-5)',
-                                },
-                            }}
-                        />
-                    </Navbar>
-                )
-            }
-        </Group>
+            <Box
+                data-test="navbar-resize-handle"
+                onMouseDown={(e: React.MouseEvent) => {
+                    e.preventDefault();
+                    setIsResizing(true);
+                    startXRef.current = e.clientX;
+                    startWidthRef.current = navbarWidth;
+                    document.body.style.userSelect = 'none';
+                    document.body.style.cursor = 'col-resize';
+                }}
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: -2,
+                    width: '6px',
+                    height: '100%',
+                    cursor: 'col-resize',
+                    zIndex: 30,
+                    backgroundColor: isResizing ? 'var(--mantine-color-blue-6)' : 'transparent',
+                    transition: 'background-color 0.2s',
+                }}
+                sx={{
+                    '&:hover': {
+                        backgroundColor: 'var(--mantine-color-blue-5)',
+                    },
+                }}
+            />
+        </Navbar>
     );
 }

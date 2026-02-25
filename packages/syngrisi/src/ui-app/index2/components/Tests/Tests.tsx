@@ -158,7 +158,7 @@ export default function Tests({ updateToolbar }: Props) {
     }
 
     return (
-        <Group position="apart" align="start" noWrap>
+        <Group align="start" noWrap spacing={0} sx={{ width: '100%' }}>
             <TestsTable
                 updateToolbar={updateToolbar}
                 firstPageQuery={firstPageQuery}
