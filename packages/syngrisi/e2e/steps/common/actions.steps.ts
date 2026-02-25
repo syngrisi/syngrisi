@@ -1122,3 +1122,39 @@ When(
     throw new Error(`Unsupported target: ${target}`);
   }
 );
+
+/**
+ * Step definition: `When I drag the element with {target} {string} by offset {int}, {int}`
+ */
+When(
+  'I drag the element with {target} {string} by offset {int}, {int}',
+  async ({ page, testData }, target: ElementTarget, rawValue: string, xOffset: number, yOffset: number) => {
+    const renderedValue = renderTemplate(rawValue, testData);
+    let locator;
+
+    if (target === 'label') {
+      locator = getLabelLocator(page, renderedValue);
+    } else if (target === 'locator') {
+      locator = getLocatorQuery(page, renderedValue);
+    } else {
+      throw new Error(`Unsupported target: ${target}`);
+    }
+
+    const element = locator.first();
+    await element.waitFor({ state: 'visible', timeout: 5000 });
+
+    const box = await element.boundingBox();
+    if (!box) {
+      throw new Error(`Element ${rawValue} is not visible or has no bounding box`);
+    }
+
+    // Calculate the center of the element to start the drag
+    const x = box.x + box.width / 2;
+    const y = box.y + box.height / 2;
+
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x + xOffset, y + yOffset, { steps: 5 });
+    await page.mouse.up();
+  }
+);
