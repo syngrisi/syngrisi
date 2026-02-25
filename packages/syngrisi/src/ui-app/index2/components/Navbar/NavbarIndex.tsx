@@ -40,9 +40,8 @@ const useStyles = createStyles((theme) => ({
         display: 'block',
         textDecoration: 'none',
         color: theme.colorScheme === 'dark' ? theme.colors.red[0] : theme.black,
-        borderBottom: `1px solid ${
-            theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]
-        }`,
+        borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]
+            }`,
         '&:hover': {
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
             color: theme.colorScheme === 'dark' ? theme.white : theme.black,
@@ -160,126 +159,125 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
             styles={{
                 root: {
                     zIndex: 20,
-                    position: 'relative',
                 },
             }}
         >
-                        <Navbar.Section
-                            grow
-                            component={ScrollArea}
-                            viewportRef={scrollViewportRef}
-                            styles={{ scrollbar: { marginTop: '74px' } }}
-                            pr={12}
-                            pb={90}
-                            data-test="navbar-scroll-area"
+            <Navbar.Section
+                grow
+                component={ScrollArea}
+                viewportRef={scrollViewportRef}
+                styles={{ scrollbar: { marginTop: '74px' } }}
+                pr={12}
+                pb={90}
+                data-test="navbar-scroll-area"
+            >
+                <Group
+                    position="apart"
+                    align="end"
+                    sx={
+                        {
+                            width: '100%',
+                            position: 'sticky',
+                            top: 0,
+                            zIndex: 20,
+                            backgroundColor: theme.colorScheme === 'dark'
+                                ? theme.colors.dark[6]
+                                : theme.white,
+                        }
+                    }
+                >
+                    <NavbarGroupBySelect
+                        setBreadCrumbs={setBreadCrumbs}
+                        clearActiveItems={activeItemsHandler.clear}
+                        groupByValue={groupByValue}
+                        setGroupByValue={setGroupByValue}
+                    />
+
+                    <Group spacing={4}>
+                        <ActionIcon
+                            data-test="navbar-icon-open-filter"
+                            aria-label="Open filter"
+                            onClick={() => toggleOpenedFilter()}
+                            mb={4}
                         >
-                            <Group
-                                position="apart"
-                                align="end"
-                                sx={
-                                    {
-                                        width: '100%',
-                                        position: 'sticky',
-                                        top: 0,
-                                        zIndex: 20,
-                                        backgroundColor: theme.colorScheme === 'dark'
-                                            ? theme.colors.dark[6]
-                                            : theme.white,
-                                    }
-                                }
-                            >
-                                <NavbarGroupBySelect
-                                    setBreadCrumbs={setBreadCrumbs}
-                                    clearActiveItems={activeItemsHandler.clear}
-                                    groupByValue={groupByValue}
-                                    setGroupByValue={setGroupByValue}
-                                />
+                            <IconFilter stroke={1} />
+                        </ActionIcon>
+                        <ActionIcon
+                            data-test="navbar-icon-open-sort"
+                            aria-label="Open sort"
+                            onClick={() => toggleOpenedSort()}
+                            mb={4}
+                        >
+                            <IconArrowsSort stroke={1} />
+                        </ActionIcon>
 
-                                <Group spacing={4}>
-                                    <ActionIcon
-                                        data-test="navbar-icon-open-filter"
-                                        aria-label="Open filter"
-                                        onClick={() => toggleOpenedFilter()}
-                                        mb={4}
-                                    >
-                                        <IconFilter stroke={1} />
-                                    </ActionIcon>
-                                    <ActionIcon
-                                        data-test="navbar-icon-open-sort"
-                                        aria-label="Open sort"
-                                        onClick={() => toggleOpenedSort()}
-                                        mb={4}
-                                    >
-                                        <IconArrowsSort stroke={1} />
-                                    </ActionIcon>
+                        <ActionIcon
+                            data-test="navbar-icon-refresh"
+                            aria-label="Refresh"
+                            onClick={() => refreshIconClickHandler()}
+                            mb={4}
+                        >
+                            <IconRefresh stroke={1} />
+                        </ActionIcon>
+                    </Group>
+                </Group>
 
-                                    <ActionIcon
-                                        data-test="navbar-icon-refresh"
-                                        aria-label="Refresh"
-                                        onClick={() => refreshIconClickHandler()}
-                                        mb={4}
-                                    >
-                                        <IconRefresh stroke={1} />
-                                    </ActionIcon>
-                                </Group>
-                            </Group>
+                <Group sx={{ width: '100%' }}>
+                    <NavbarSort
+                        groupBy={groupByValue}
+                        toggleOpenedSort={toggleOpenedSort}
+                        openedSort={openedSort}
+                    />
+                </Group>
 
-                            <Group sx={{ width: '100%' }}>
-                                <NavbarSort
-                                    groupBy={groupByValue}
-                                    toggleOpenedSort={toggleOpenedSort}
-                                    openedSort={openedSort}
-                                />
-                            </Group>
+                <Group sx={{ width: '100%' }}>
+                    <NavbarFilter
+                        openedFilter={openedFilter}
+                        setQuickFilterObject={setQuickFilterObject}
+                        groupByValue={groupByValue}
+                        infinityQuery={infinityQuery}
+                        toggleOpenedFilter={toggleOpenedFilter}
+                    />
+                </Group>
 
-                            <Group sx={{ width: '100%' }}>
-                                <NavbarFilter
-                                    openedFilter={openedFilter}
-                                    setQuickFilterObject={setQuickFilterObject}
-                                    groupByValue={groupByValue}
-                                    infinityQuery={infinityQuery}
-                                    toggleOpenedFilter={toggleOpenedFilter}
-                                />
-                            </Group>
-
-                            {
-                                infinityQuery.status === 'loading'
-                                    ? (
-                                        <SkeletonWrapper
-                                            infinityQuery={null}
-                                            itemType={groupByValue}
-                                            num={20}
-                                            itemClass={classes.navbarItem}
-                                            scrollRootRef={scrollViewportRef}
-                                        />
-                                    )
-                                    : infinityQuery.status === 'error'
-                                        ? (<Text color="red">Error: {infinityQuery.error.message}</Text>)
-                                        : (
-                                            <List
-                                                size="md"
-                                                listStyleType="none"
-                                                sx={{ width: '100%' }}
-                                                styles={{ itemWrapper: { width: '100%' } }}
-                                                pt={4}
-                                                data-test-navbar-ready={!infinityQuery.isFetching ? 'true' : 'false'}
-                                            >
-                                                {/* eslint-disable-next-line max-len */}
-                                                <NavbarItems
-                                                    infinityQuery={infinityQuery}
-                                                    groupByValue={groupByValue}
-                                                    activeItemsHandler={activeItemsHandler}
-                                                />
-                                            </List>
-                                        )
-                            }
+                {
+                    infinityQuery.status === 'loading'
+                        ? (
                             <SkeletonWrapper
+                                infinityQuery={null}
                                 itemType={groupByValue}
-                                infinityQuery={infinityQuery}
+                                num={20}
                                 itemClass={classes.navbarItem}
                                 scrollRootRef={scrollViewportRef}
                             />
-                        </Navbar.Section>
+                        )
+                        : infinityQuery.status === 'error'
+                            ? (<Text color="red">Error: {infinityQuery.error.message}</Text>)
+                            : (
+                                <List
+                                    size="md"
+                                    listStyleType="none"
+                                    sx={{ width: '100%' }}
+                                    styles={{ itemWrapper: { width: '100%' } }}
+                                    pt={4}
+                                    data-test-navbar-ready={!infinityQuery.isFetching ? 'true' : 'false'}
+                                >
+                                    {/* eslint-disable-next-line max-len */}
+                                    <NavbarItems
+                                        infinityQuery={infinityQuery}
+                                        groupByValue={groupByValue}
+                                        activeItemsHandler={activeItemsHandler}
+                                    />
+                                </List>
+                            )
+                }
+                <SkeletonWrapper
+                    itemType={groupByValue}
+                    infinityQuery={infinityQuery}
+                    itemClass={classes.navbarItem}
+                    scrollRootRef={scrollViewportRef}
+                />
+            </Navbar.Section>
             <Box
                 data-test="navbar-resize-handle"
                 onMouseDown={(e: React.MouseEvent) => {
