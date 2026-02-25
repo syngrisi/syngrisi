@@ -1,6 +1,7 @@
 /* eslint-disable prefer-arrow-callback,indent,react/jsx-one-expression-per-line,no-nested-ternary */
 import {
     ActionIcon,
+    Box,
     Group,
     List,
     Navbar,
@@ -67,8 +68,12 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
     const { query, setQuery } = useParams();
 
     const scrollViewportRef = useRef<HTMLDivElement>(null);
+    const startXRef = useRef(0);
+    const startWidthRef = useRef(0);
 
     const [groupByValue, setGroupByValue] = useState(query.groupBy || 'runs');
+    const [navbarWidth, setNavbarWidth] = useState(350);
+    const [isResizing, setIsResizing] = useState(false);
     const activeItemsHandler = useNavbarActiveItems({ groupByValue, classes });
 
     const [quickFilterObject, setQuickFilterObject] = useState<{ [key: string]: any }>({});
@@ -115,13 +120,40 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
         activeItemsHandler.clear();
     };
 
+    useEffect(() => {
+        if (!isResizing) return undefined;
+
+        const onMouseMove = (e: MouseEvent) => {
+            const deltaX = e.clientX - startXRef.current;
+            const newWidth = startWidthRef.current + deltaX;
+            const minWidth = 260;
+            const maxWidth = Math.max(420, Math.floor(window.innerWidth * 0.6));
+            setNavbarWidth(Math.min(Math.max(newWidth, minWidth), maxWidth));
+        };
+
+        const onMouseUp = () => {
+            setIsResizing(false);
+            document.body.style.userSelect = '';
+            document.body.style.cursor = '';
+        };
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+
+        return () => {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+        };
+    }, [isResizing]);
+
     return (
         <Group position="apart" align="start" noWrap>
             {
                 (
                     <Navbar
                         height="100%"
-                        width={{ sm: 350 }}
+                        width={{ sm: navbarWidth }}
+                        data-test="navbar-resizable-root"
                         className={classes.navbar}
                         pt={0}
                         pr={2}
@@ -130,6 +162,7 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
                         styles={{
                             root: {
                                 zIndex: 20,
+                                position: 'relative',
                             },
                         }}
                     >
@@ -249,6 +282,33 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
                                 scrollRootRef={scrollViewportRef}
                             />
                         </Navbar.Section>
+                        <Box
+                            data-test="navbar-resize-handle"
+                            onMouseDown={(e: React.MouseEvent) => {
+                                e.preventDefault();
+                                setIsResizing(true);
+                                startXRef.current = e.clientX;
+                                startWidthRef.current = navbarWidth;
+                                document.body.style.userSelect = 'none';
+                                document.body.style.cursor = 'col-resize';
+                            }}
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                right: -2,
+                                width: '6px',
+                                height: '100%',
+                                cursor: 'col-resize',
+                                zIndex: 30,
+                                backgroundColor: isResizing ? 'var(--mantine-color-blue-6)' : 'transparent',
+                                transition: 'background-color 0.2s',
+                            }}
+                            sx={{
+                                '&:hover': {
+                                    backgroundColor: 'var(--mantine-color-blue-5)',
+                                },
+                            }}
+                        />
                     </Navbar>
                 )
             }

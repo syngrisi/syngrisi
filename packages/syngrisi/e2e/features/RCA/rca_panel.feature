@@ -115,3 +115,30 @@ Feature: RCA (Root Cause Analysis) Panel
 
     # Verify both modal and RCA panel are closed
     When I wait on element "[data-test='rca-panel']" to not exist
+
+  Scenario: Resize RCA panel via drag handle
+    Given I create "1" tests with:
+      """
+      testName: TestName-RCA-Resize
+      checks:
+        - checkName: CheckName-RCA-RS
+          filePath: files/A.png
+      """
+    When I go to "main" page
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-RCA-Resize']" to be visible
+    When I unfold the test "TestName-RCA-Resize"
+    When I open the 1st check "CheckName-RCA-RS"
+
+    # Open RCA panel
+    When I click element with locator "[data-test='rca-toggle-button']"
+    When I wait 10 seconds for the element with locator "[data-test='rca-panel']" to be visible
+    Then the css attribute "width" from element "[data-test='rca-panel-container']" is "500px"
+
+    # Drag the resize handle to the left (increase width by 300px)
+    When I drag the element with locator "[data-test='rca-panel-resize-handle']" by offset -300, 0
+    Then the css attribute "width" from element "[data-test='rca-panel-container']" is "800px"
+
+    # Drag excessively to the right to hit the minimum width constraint (300px)
+    When I drag the element with locator "[data-test='rca-panel-resize-handle']" by offset 1000, 0
+    Then the css attribute "width" from element "[data-test='rca-panel-container']" is "300px"
+    Then the element with locator "[data-test='rca-panel']" should be visible

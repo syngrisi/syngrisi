@@ -56,6 +56,12 @@ export function CheckDetails({
     const { classes } = useStyles();
     const [mainView, setMainView] = useState<MainView | null>(null);
     const [isDirty, setIsDirty] = useState(false);
+    
+    // RCA Panel Resizing State
+    const [rcaPanelWidth, setRcaPanelWidth] = useState(500);
+    const [isResizing, setIsResizing] = useState(false);
+    const startXRef = useRef(0);
+    const startWidthRef = useRef(0);
 
     const [relatedActiveCheckId, setRelatedActiveCheckId] = useState<string>(initCheckData._id);
     const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(relatedRendered);
@@ -506,7 +512,7 @@ export function CheckDetails({
         };
     }, [mainView]);
 
-    // Handle resize when RCA panel toggles
+    // Handle resize when RCA panel toggles or resizes
     useEffect(() => {
         if (!mainView || !canvasElementRef.current) return;
 
@@ -520,7 +526,37 @@ export function CheckDetails({
         }, 50);
 
         return () => clearTimeout(timer);
-    }, [mainView, rca.state.isPanelOpen]);
+    }, [mainView, rca.state.isPanelOpen, rcaPanelWidth]);
+
+    // Handle mouse events for resizing RCA Panel
+    useEffect(() => {
+        if (!isResizing) return;
+
+        const handleMouseMove = (e: MouseEvent) => {
+            // Calculate new width relative to right edge:
+            // Mouse moving to left (smaller clientX) -> wider panel
+            const deltaX = startXRef.current - e.clientX;
+            const newWidth = Math.max(300, startWidthRef.current + deltaX);
+            // Cap width to not cover the entire screen (e.g., leave 300px for canvas)
+            const maxWidth = window.innerWidth - 300;
+            setRcaPanelWidth(Math.min(newWidth, maxWidth));
+        };
+
+        const handleMouseUp = () => {
+            setIsResizing(false);
+            // Enable text selection and pointer events on canvas again
+            document.body.style.userSelect = '';
+            document.body.style.cursor = '';
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isResizing]);
 
     // Native window alert for closing tab/window
     useEffect(() => {
@@ -608,27 +644,56 @@ export function CheckDetails({
 
                         {/* RCA Panel - positioned as side panel */}
                         {rca.state.isPanelOpen && (
-                            <Box
-                                style={{
-                                    width: '500px',
-                                    flexShrink: 0,
-                                    borderLeft: '1px solid var(--mantine-color-dark-4)',
-                                    backgroundColor: 'var(--mantine-color-dark-7)',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    overflow: 'hidden',
-                                }}
-                            >
-                                <RCAPanel
-                                    isLoading={rca.state.isLoading}
-                                    error={rca.state.error}
-                                    diffResult={rca.state.diffResult}
-                                    selectedChange={rca.state.selectedChange}
-                                    selectedElement={rca.state.selectedElement}
-                                    onSelectChange={rca.selectChange}
-                                    onClose={rca.disable}
+                            <>
+                                {/* Resize Handle */}
+                                <Box
+                                    data-test="rca-panel-resize-handle"
+                                    onMouseDown={(e: React.MouseEvent) => {
+                                        e.preventDefault();
+                                        setIsResizing(true);
+                                        startXRef.current = e.clientX;
+                                        startWidthRef.current = rcaPanelWidth;
+                                        // Disable text selection and change cursor globally while dragging
+                                        document.body.style.userSelect = 'none';
+                                        document.body.style.cursor = 'col-resize';
+                                    }}
+                                    style={{
+                                        width: '4px',
+                                        cursor: 'col-resize',
+                                        backgroundColor: isResizing ? 'var(--mantine-color-blue-6)' : 'transparent',
+                                        borderLeft: '1px solid var(--mantine-color-dark-4)',
+                                        zIndex: 10,
+                                        transition: 'background-color 0.2s',
+                                        flexShrink: 0,
+                                    }}
+                                    sx={{
+                                        '&:hover': {
+                                            backgroundColor: 'var(--mantine-color-blue-5) !important',
+                                        },
+                                    }}
                                 />
-                            </Box>
+                                <Box
+                                    data-test="rca-panel-container"
+                                    style={{
+                                        width: `${rcaPanelWidth}px`,
+                                        flexShrink: 0,
+                                        backgroundColor: 'var(--mantine-color-dark-7)',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        overflow: 'hidden',
+                                    }}
+                                >
+                                    <RCAPanel
+                                        isLoading={rca.state.isLoading}
+                                        error={rca.state.error}
+                                        diffResult={rca.state.diffResult}
+                                        selectedChange={rca.state.selectedChange}
+                                        selectedElement={rca.state.selectedElement}
+                                        onSelectChange={rca.selectChange}
+                                        onClose={rca.disable}
+                                    />
+                                </Box>
+                            </>
                         )}
                     </Box>
                 </Group>

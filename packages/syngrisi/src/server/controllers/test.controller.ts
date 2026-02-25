@@ -3,6 +3,7 @@ import { pick, ApiError, catchAsync, deserializeIfJSON } from '@utils';
 import { testService } from '@services';
 import { Response } from "express";
 import { ExtRequest } from '@types';
+import { appSettings } from '@settings';
 
 const getTest = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = {
@@ -10,7 +11,13 @@ const getTest = catchAsync(async (req: ExtRequest, res: Response) => {
         ...deserializeIfJSON(String(req.query.filter)),
     };
 
-    if (req.user?.role === 'user') {
+    const isAuthEnabled = await appSettings.isAuthEnabled();
+    const shouldApplyCreatorFilter = req.user?.role === 'user'
+        && !req.isShareMode
+        && req.user?.username !== 'Guest'
+        && isAuthEnabled;
+
+    if (shouldApplyCreatorFilter) {
         filter.creatorUsername = req.user?.username;
     }
 
