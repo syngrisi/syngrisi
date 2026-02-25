@@ -1,8 +1,8 @@
 metadata:
   category: common/other
-  generatedAt: '2025-12-15T16:33:36.411Z'
+  generatedAt: '2026-02-25T16:55:16.169Z'
   totalFiles: 4
-  totalSteps: 19
+  totalSteps: 21
   sourceFiles:
     - steps/common/demo.steps.ts
     - steps/common/dialog.steps.ts
@@ -13,75 +13,38 @@ steps:
     description: |-
       Step definition: `When I announce: {string}`
 
-      Announces a phrase using text-to-speech with a visible banner overlay.
-      The banner is click-through (pointer-events: none) and disappears after speech completes.
-      Useful for highlighting key moments during feature demonstrations without blocking indefinitely.
-      This step is a no-op in CI environments or when SKIP_DEMO_STEPS=true.
-
-      @param phrase - The text to be spoken aloud and displayed
-
-      @example
-      ```gherkin
-      When I announce: "Now observe the drag and drop behavior"
-      ```
-    line: 194
+      Displays a banner with the text.
+      In Demo Mode: Speaks the text and waits for it to finish.
+      In Silent Mode: Skips speech, shows banner briefly.
+    line: 26
   - pattern: 'I announce: {string} and PAUSE'
     description: |-
       Step definition: `When I announce: {string} and PAUSE`
 
-      Announces a phrase using text-to-speech with a visible banner overlay, then pauses the Playwright runner.
-      The banner is click-through (pointer-events: none) and disappears after pause is released.
-      Useful for highlighting key moments during feature demonstrations with manual inspection.
-      This step is a no-op in CI environments or when SKIP_DEMO_STEPS=true.
-
-      @param phrase - The text to be spoken aloud and displayed before pausing
-
-      @example
-      ```gherkin
-      When I announce: "Task creation completed" and PAUSE
-      ```
-    line: 224
+      In Demo Mode: Speaks, shows banner, and PAUSES execution for manual inspection.
+      In Silent Mode: Acts like normal announce (skips pause).
+    line: 47
   - pattern: I clear highlight
-    description: |-
-      Step definition: `When I clear highlight`
-
-      Removes any active element highlight from the page.
-      This step is a no-op in CI environments or when SKIP_DEMO_STEPS=true.
-
-      @example
-      ```gherkin
-      When I clear highlight
-      ```
-    line: 272
+    description: 'Step definition: `When I clear highlight`'
+    line: 80
   - pattern: I end the demo
     description: |-
       Step definition: `When I end the demo`
 
-      Triggers a confetti animation on the page to celebrate the end of a demo.
-      This step is a no-op in CI environments or when SKIP_DEMO_STEPS=true.
-
-      @support/mcp/benchmark/.env.example
-      ```gherkin
-      When I end the demo
-      ```
-    line: 290
+      Shows confetti animation.
+    line: 100
   - pattern: I highlight element {string}
     description: |-
       Step definition: `When I highlight element {string}`
 
-      Highlights a DOM element with a bright pulsing animation.
-      The highlight persists until another element is highlighted or the highlight is cleared.
-      Useful for drawing attention to specific UI elements during demos.
-      This step is a no-op in CI environments or when SKIP_DEMO_STEPS=true.
+      Applies a "liquid glass" highlight effect to the element.
+    line: 72
+  - pattern: 'I set demo step {int} of {int}: {string}'
+    description: |-
+      Step definition: `When I set demo step {int} of {int}: {string}`
 
-      @param selector - CSS selector for the element to highlight
-
-      @example
-      ```gherkin
-      When I highlight element "[data-testid='submit-button']"
-      When I highlight element ".task-card"
-      ```
-    line: 254
+      Updates the progress overlay in the corner.
+    line: 90
   - pattern: I prepare to accept confirmation dialog with text {string}
     description: ''
     line: 7
@@ -111,16 +74,19 @@ steps:
     line: 14
   - pattern: 'I repeat javascript code until stored {string} string equals {string}:'
     description: ''
-    line: 47
+    line: 97
   - pattern: 'I repeat javascript code until stored {string} string matches {string}:'
     description: ''
-    line: 82
+    line: 132
   - pattern: I wait until element {string} contains text {string}
     description: ''
     line: 20
   - pattern: I wait until element {string} has attribute {string} with value {string}
     description: ''
-    line: 170
+    line: 220
   - pattern: I wait until the css attribute {string} from element {string} is {string}
     description: ''
-    line: 117
+    line: 167
+  - pattern: I wait up to {int} seconds for element {string} to contain text {string}
+    description: ''
+    line: 63
