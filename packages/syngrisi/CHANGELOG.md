@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.1.6
+
+### Patch Changes
+
+-   [`34aeba6`](https://github.com/syngrisi/syngrisi/commit/34aeba6aac794c4109daada6b310829e80863832) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Add navbar resize stability fixes, panel resizing support improvements, and sync MCP step definitions with updated E2E coverage.
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.1.6
+
 ## 3.1.5
 
 ### Patch Changes
