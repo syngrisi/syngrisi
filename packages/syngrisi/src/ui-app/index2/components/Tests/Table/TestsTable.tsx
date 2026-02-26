@@ -26,6 +26,7 @@ interface Props {
     visibleFields: any
     updateToolbar: any
     size?: string
+    navbarWidth?: number
 }
 
 export default function TestsTable(
@@ -35,6 +36,7 @@ export default function TestsTable(
         visibleFields,
         updateToolbar,
         size = '100%',
+        navbarWidth = 350,
     }: Props,
 ) {
     const { query } = useParams();
@@ -74,6 +76,22 @@ export default function TestsTable(
             32,
         );
     }, [selection.length]);
+
+    const resetHorizontalScroll = () => {
+        if (!viewportRef.current) {
+            return;
+        }
+        viewportRef.current.scrollLeft = 0;
+        requestAnimationFrame(() => {
+            if (viewportRef.current) {
+                viewportRef.current.scrollLeft = 0;
+            }
+        });
+    };
+
+    useEffect(() => {
+        resetHorizontalScroll();
+    }, [navbarWidth, size, visibleFields.join(',')]);
 
     return (
         <>
