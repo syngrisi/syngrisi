@@ -45,7 +45,6 @@ export default function IndexLayout() {
             styles={(theme) => ({
                 main: {
                     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
-                    paddingLeft: 8,
                 },
             })}
         >
@@ -54,7 +53,9 @@ export default function IndexLayout() {
                 aria-label="Test results content"
                 style={{ width: '100%' }}
             >
-                {isBaselinesPage ? <Baselines updateToolbar={updateToolbar} /> : <Tests updateToolbar={updateToolbar} />}
+                {isBaselinesPage
+                    ? <Baselines updateToolbar={updateToolbar} />
+                    : <Tests updateToolbar={updateToolbar} navbarWidth={navbarWidth} />}
             </main>
             <ReactQueryDevtools initialIsOpen={false} />
         </AppShell>
