@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.1.7
+
+### Patch Changes
+
+-   [`64bfad8`](https://github.com/syngrisi/syngrisi/commit/64bfad8c0c3735265995700b288f45a5f98e3a5b) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Update CP header checks, refine table/header behavior in UI, and refresh MCP step metadata for E2E coverage.
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.1.7
+
 ## 3.1.6
 
 ### Patch Changes
