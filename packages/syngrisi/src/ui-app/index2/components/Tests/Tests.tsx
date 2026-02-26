@@ -19,9 +19,10 @@ import { useParams } from '@hooks/useParams';
 
 interface Props {
     updateToolbar: any
+    navbarWidth: number
 }
 
-export default function Tests({ updateToolbar }: Props) {
+export default function Tests({ updateToolbar, navbarWidth }: Props) {
     const { query } = useParams();
 
     const theme = useMantineTheme();
@@ -165,6 +166,7 @@ export default function Tests({ updateToolbar }: Props) {
                 infinityQuery={infinityQuery}
                 visibleFields={visibleFields}
                 size={tableWidth}
+                navbarWidth={navbarWidth}
             />
 
             <Settings
