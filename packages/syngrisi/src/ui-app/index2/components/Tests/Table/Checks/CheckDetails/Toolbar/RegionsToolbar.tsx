@@ -12,10 +12,23 @@ import { MatchTypeSelector } from './MatchTypeSelector';
 interface Props {
     mainView: any
     baselineId: string
+    currentCheck?: any
+    checkQuery?: any
+    initialCheckId?: string
+    apikey?: string
     [key: string]: any
 }
 
-export function RegionsToolbar({ mainView, baselineId, view, hasDiff }: Props) {
+export function RegionsToolbar({
+    mainView,
+    baselineId,
+    view,
+    hasDiff,
+    currentCheck,
+    checkQuery,
+    initialCheckId,
+    apikey,
+}: Props) {
     const [visibleRegionRemoveButton, setVisibleRegionRemoveButton] = useState(false);
     const [hasBoundRegion, setHasBoundRegion] = useState(false);
     const [hasAnyRegion, setHasAnyRegion] = useState(false);
@@ -306,7 +319,14 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff }: Props) {
 
             <Divider orientation="vertical" />
 
-            <MatchTypeSelector baselineId={baselineId} />
+            <MatchTypeSelector
+                baselineId={baselineId}
+                checkId={currentCheck?._id}
+                currentCheck={currentCheck}
+                checkQuery={checkQuery}
+                initialCheckId={initialCheckId}
+                apikey={apikey}
+            />
         </>
     );
 }

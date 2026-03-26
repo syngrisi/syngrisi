@@ -21,6 +21,7 @@ export interface BaselineDocument extends Document {
     ignoreRegions?: string;
     boundRegions?: string;
     matchType?: 'antialiasing' | 'nothing' | 'colors';
+    toleranceThreshold?: number;
     meta?: Record<string, unknown>;
 }
 
@@ -85,6 +86,12 @@ const BaselineSchema: Schema<BaselineDocument> = new Schema({
     matchType: {
         type: String,
         enum: ['antialiasing', 'nothing', 'colors'],
+    },
+    toleranceThreshold: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 100,
     },
     meta: {
         type: Object,

@@ -23,6 +23,9 @@ export {
 // Bridge exports
 export { SdioSseBridge, runBridge } from './bridge';
 
+// Test engine CLI exports
+export { runTestEngineCli, HELP_TEXT as testEngineCliHelpText } from './test-engine';
+
 // Test fixture exports
 export { test, testEngineFixture, type TestEngineFixture } from './test-engine.fixture';
 

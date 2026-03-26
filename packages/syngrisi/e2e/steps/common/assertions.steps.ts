@@ -826,43 +826,13 @@ Then(
 When(
   'I wait on element {string} to not be displayed',
   async ({ page }, selector: string) => {
-    await page.waitForFunction(
-      (sel) => {
-        const getNodes = () => {
-          try {
-            return Array.from(document.querySelectorAll(sel));
-          } catch {
-            const iterator = document.evaluate(
-              sel,
-              document,
-              null,
-              XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-              null
-            );
-            const xpathNodes: Array<Node> = [];
-            for (let i = 0; i < iterator.snapshotLength; i += 1) {
-              const node = iterator.snapshotItem(i);
-              if (node) xpathNodes.push(node);
-            }
-            return xpathNodes;
-          }
-        };
-        const nodes = getNodes();
-        return nodes.every((node) => {
-          if (!(node instanceof HTMLElement)) return true;
-          const style = window.getComputedStyle(node);
-          return (
-            style.display === 'none'
-            || style.visibility === 'hidden'
-            || node.offsetParent === null
-            || node.clientWidth === 0
-            || node.clientHeight === 0
-          );
-        });
-      },
-      selector,
-      { timeout: 60000 }
-    );
+    const locator = getLocatorQuery(page, selector).first();
+    try {
+      await locator.waitFor({ state: 'hidden', timeout: 60000 });
+    } catch (error) {
+      await stabilizeForSelector(page, selector);
+      await locator.waitFor({ state: 'hidden', timeout: 60000 });
+    }
   }
 );
 

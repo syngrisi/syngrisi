@@ -12,12 +12,14 @@ import { getStatusMessage } from '@shared/utils/utils';
 interface Props {
     classes: any
     currentCheck: any
+    toleranceThreshold?: number
 }
 
 export function Header(
     {
         classes,
         currentCheck,
+        toleranceThreshold = 0,
     }: Props,
 ) {
     const theme = useMantineTheme();
@@ -125,6 +127,28 @@ export function Header(
                 noWrap
                 spacing="xs"
             >
+                {
+                    toleranceThreshold > 0 && (
+                        <Tooltip
+                            label={`Tolerance threshold enabled: ${Number(toleranceThreshold).toFixed(2)}%`}
+                            withinPortal
+                        >
+                            <Group
+                                spacing={6}
+                                noWrap
+                                data-check="tolerance-indicator"
+                            >
+                                <ActionIcon size={24} variant="filled" color="orange">
+                                    <Text size={11} weight={700}>%</Text>
+                                </ActionIcon>
+                                <Text size={12} color="orange">
+                                    Tol {Number(toleranceThreshold).toFixed(2)}%
+                                </Text>
+                            </Group>
+                        </Tooltip>
+                    )
+                }
+
                 <Tooltip
                     label={
                         currentCheck?.viewport

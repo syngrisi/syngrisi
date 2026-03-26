@@ -52,6 +52,10 @@ const BaselineGetSchema = z.object({
         description: 'Snapshot identifier for the baseline',
         example: '6651ec20917e9ce26f7c0849'
     }),
+    toleranceThreshold: z.number().min(0).max(100).openapi({
+        description: 'Mismatch tolerance threshold in percent. If diff is less than or equal to this value, check can pass.',
+        example: 0.6,
+    }).optional(),
     id: commonValidations.id,
 });
 
@@ -110,9 +114,12 @@ const BaselinePutSchema = z.object({
         description: 'Comparison mode: nothing (standard), antialiasing (auto-ignore), or colors (ignore color differences)',
         example: 'nothing'
     }).optional(),
+    toleranceThreshold: z.number().min(0).max(100).openapi({
+        description: 'Mismatch tolerance threshold in percent',
+        example: 0.6,
+    }).optional(),
 });
 
 
 
 export { BaselineGetSchema, BaselinePutSchema };
-

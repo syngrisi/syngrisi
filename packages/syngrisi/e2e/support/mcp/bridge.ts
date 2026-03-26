@@ -51,6 +51,7 @@ export class SdioSseBridge {
   private readonly input: Readable;
   private readonly output: Writable;
   private readonly logPrefix: string;
+  private readonly ignoreInputEnd: boolean;
 
   private child: ChildProcess | null = null;
   private client: Client | null = null;
@@ -77,6 +78,7 @@ export class SdioSseBridge {
     this.input = options.input;
     this.output = options.output;
     this.logPrefix = options.logPrefix ?? '[bridge]';
+    this.ignoreInputEnd = process.env.MCP_BRIDGE_IGNORE_STDIN_END === '1';
 
     this.closingPromise = new Promise<void>((resolve, reject) => {
       this.closingResolve = resolve;
@@ -129,11 +131,19 @@ export class SdioSseBridge {
   }
 
   private readonly handleSignal = (signal: NodeJS.Signals) => {
+    if (this.ignoreInputEnd && signal === 'SIGTERM') {
+      this.log('Received signal SIGTERM; ignoring because keepalive mode is enabled');
+      return;
+    }
     this.log(`Received signal ${signal}; stopping bridge`);
     void this.stop();
   };
 
   private readonly handleInputEnd = () => {
+    if (this.ignoreInputEnd) {
+      this.log('STDIN ended; ignoring because keepalive mode is enabled');
+      return;
+    }
     this.log('STDIN ended; stopping bridge');
     void this.stop();
   };
@@ -428,16 +438,14 @@ export class SdioSseBridge {
       extraEnv.MCP_IDLE_CHECK_INTERVAL_MS = process.env.MCP_IDLE_CHECK_INTERVAL_MS;
       this.log(`Adding to extraEnv: MCP_IDLE_CHECK_INTERVAL_MS=${extraEnv.MCP_IDLE_CHECK_INTERVAL_MS}`);
     }
-    // Pass headless mode - check env first, then options, default to true (headless)
-    // IMPORTANT: process.env.E2E_HEADLESS might be '0' or '1' or undefined.
-    // If it is defined, we should respect it.
-    // If it is undefined, we use the option passed to session_start_new.
-    // If that is also undefined, we default to '1' (headless).
+    // Pass headless mode - explicit session options must override ambient env.
+    // If no explicit option was provided, fall back to E2E_HEADLESS from env.
+    // If neither is set, default to headless.
     let headlessValue = '1';
-    if (process.env.E2E_HEADLESS !== undefined) {
-      headlessValue = process.env.E2E_HEADLESS;
-    } else if (options?.headless !== undefined) {
+    if (options?.headless !== undefined) {
       headlessValue = options.headless ? '1' : '0';
+    } else if (process.env.E2E_HEADLESS !== undefined) {
+      headlessValue = process.env.E2E_HEADLESS;
     }
 
     extraEnv.E2E_HEADLESS = headlessValue;

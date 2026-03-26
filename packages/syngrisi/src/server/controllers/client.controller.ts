@@ -74,6 +74,7 @@ const createCheck = catchAsync(async (req: ExtRequest, res: Response) => {
             files: req.files,
             domDump: params.domdump,
             vShifting: params.vShifting,
+            toleranceThreshold: params.toleranceThreshold,
         } as CreateCheckParams,
         test,
         suite,

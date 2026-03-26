@@ -35,6 +35,7 @@ const createCheckParams = (checkParam: CreateCheckParams, suite: SuiteDocument, 
     creatorUsername: currentUser.username,
     hashCode: checkParam.hashCode,
     failReasons: [],
+    toleranceThreshold: checkParam.toleranceThreshold,
 });
 
 import mongoose from 'mongoose';
@@ -143,6 +144,13 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
 
         log.info(`find a baseline for the check with identifier: '${JSON.stringify(checkIdent)}'`, logOpts);
         const storedBaseline = await BaselineService.getAcceptedBaseline(checkIdent);
+
+        if (typeof checkParam.toleranceThreshold === 'number' && storedBaseline) {
+            const normalizedThreshold = Math.max(0, Math.min(100, Number(checkParam.toleranceThreshold)));
+            storedBaseline.toleranceThreshold = normalizedThreshold;
+            await storedBaseline.save({ session });
+            log.debug(`Applied toleranceThreshold '${normalizedThreshold}' to baseline '${storedBaseline._id}' by createCheck request`, logOpts);
+        }
 
         const inspectBaselineResult = await BaselineService.inspectBaseline(newCheckParams, storedBaseline, checkIdent, actualSnapshot, logOpts);
         Object.assign(newCheckParams, inspectBaselineResult.inspectBaselineParams);

@@ -77,6 +77,14 @@ const remove = catchAsync(async (req: ExtRequest, res: Response) => {
     res.send(result);
 });
 
+const recompare = catchAsync(async (req: ExtRequest, res: Response) => {
+    const { id } = req.params;
+    if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Cannot recompare the check - Id not found');
+    if (!req.user) throw new ApiError(HttpStatus.UNAUTHORIZED, 'User not found');
+    const result = await checkService.recompare(id, req.user);
+    res.send(result);
+});
+
 const getDomSnapshot = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Check ID is required');
@@ -99,6 +107,7 @@ export {
     get,
     accept,
     remove,
+    recompare,
     update,
     getDomSnapshot,
 };

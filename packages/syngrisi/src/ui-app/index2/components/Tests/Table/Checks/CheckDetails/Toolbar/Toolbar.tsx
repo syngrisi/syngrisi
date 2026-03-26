@@ -195,7 +195,16 @@ export function Toolbar(
                     {
                         !isShareMode && (
                             <>
-                                <RegionsToolbar mainView={mainView} baselineId={baselineId} view={view} hasDiff={!!mainView?.diffImage} />
+                                <RegionsToolbar
+                                    mainView={mainView}
+                                    baselineId={baselineId}
+                                    view={view}
+                                    hasDiff={!!mainView?.diffImage}
+                                    currentCheck={curCheck}
+                                    checkQuery={checkQuery}
+                                    initialCheckId={initCheckData?._id}
+                                    apikey={apikey}
+                                />
                                 <Divider orientation="vertical" />
                             </>
                         )

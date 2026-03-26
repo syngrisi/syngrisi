@@ -21,7 +21,8 @@ export interface CreateCheckParams {
     result?: string,
     files?: { file: UploadedFile },
     hashCode: string,
-    vShifting?: boolean
+    vShifting?: boolean,
+    toleranceThreshold?: number,
 }
 
 export interface CreateCheckParamsExtended {
@@ -47,6 +48,7 @@ export interface CreateCheckParamsExtended {
     files?: { file: UploadedFile },
     hashCode: string,
     vShifting?: boolean,
+    toleranceThreshold?: number,
     baselineId?: string,
     markedAs?: string
     markedDate?: string,
