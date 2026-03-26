@@ -173,7 +173,11 @@ const ClientCreateCheckSchema = z.object({
     hashcode: z.string().openapi({
         description: 'Hash of the snapshot - In the first phase, only the hash is sent, in case the snapshot is already in the Syngrisi database',
         example: 'ef6ff7c6e6fd536de877c02cf61381e5a1111a24c9d21c1c2a0c0c06fdd2f01271da8880da80a1caa7c123ce3256068c40055753d70bd1dbc558d088f90cd398'
-    })
+    }),
+    toleranceThreshold: z.number().min(0).max(100).optional().openapi({
+        description: 'Mismatch tolerance threshold in percent to apply to baseline for this ident',
+        example: 0.6,
+    }),
 });
 
 // export type CreateCheckType = z.infer<typeof ClientCreateCheckSchema>;

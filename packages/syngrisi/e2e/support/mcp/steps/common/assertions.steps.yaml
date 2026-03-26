@@ -1,6 +1,6 @@
 metadata:
   category: common/assertions
-  generatedAt: '2026-02-26T09:20:07.217Z'
+  generatedAt: '2026-03-26T20:29:19.392Z'
   totalFiles: 1
   totalSteps: 61
   sourceFiles:
@@ -23,7 +23,7 @@ steps:
       ```gherkin
       When I wait 30 seconds for the element with locator "[data-test='table-row-Message']" for 10000ms to be visible
       ```
-    line: 1247
+    line: 1217
   - pattern: I wait {int} seconds for the {role} with {attribute} {string} to be {condition}
     description: |-
       Waits for an element to reach a specific state.
@@ -44,10 +44,10 @@ steps:
       ```gherkin
       When I wait 10 seconds for the element with locator "##flora-GridLayout" to be visible
       ```
-    line: 1132
+    line: 1102
   - pattern: I wait {int} seconds for the {role} with {attribute} {string} to exist
     description: ''
-    line: 1211
+    line: 1181
   - pattern: I wait {int} seconds for the {role} with {attribute} {string} to not be displayed
     description: |-
       Waits for an element to not be displayed (hidden) with a specified timeout.
@@ -62,25 +62,25 @@ steps:
       ```gherkin
       When I wait 30 seconds for the element with locator "[data-test='folding-table-items']" to not be displayed
       ```
-    line: 1173
+    line: 1143
   - pattern: I wait {int} seconds for the {role} with {attribute} {string} to not exist
     description: ''
-    line: 1192
+    line: 1162
   - pattern: I wait on element {string}
     description: ''
-    line: 1069
+    line: 1039
   - pattern: I wait on element {string} to be {condition}
     description: ''
-    line: 1098
+    line: 1068
   - pattern: I wait on element {string} to exist
     description: ''
-    line: 992
+    line: 962
   - pattern: I wait on element {string} to not be displayed
     description: ''
     line: 826
   - pattern: I wait on element {string} to not exist
     description: ''
-    line: 869
+    line: 839
   - pattern: the {ordinal} {role} {string} should be {condition}
     description: |-
       Step definition: `Then the {ordinal} {role} {string} should be {condition}`
@@ -229,7 +229,7 @@ steps:
       ```gherkin
       Then the button "Baselines" should not be visible
       ```
-    line: 1287
+    line: 1257
   - pattern: the cookie {string} should be present
     description: |-
       Step definition: `Then the cookie {string} should be present`
@@ -242,7 +242,7 @@ steps:
       ```gherkin
       Then the cookie "my_session_id" should be present
       ```
-    line: 1370
+    line: 1340
   - pattern: the cookie {string} should have value {string}
     description: |-
       Step definition: `Then the cookie {string} should have value {string}`
@@ -256,7 +256,7 @@ steps:
       ```gherkin
       Then the cookie "my_session_id" should have value "abc-123"
       ```
-    line: 1413
+    line: 1383
   - pattern: the cookie {string} should not be present
     description: |-
       Step definition: `Then the cookie {string} should not be present`
@@ -269,43 +269,43 @@ steps:
       ```gherkin
       Then the cookie "my_session_id" should not be present
       ```
-    line: 1391
+    line: 1361
   - pattern: the css attribute {string} from element {string} is {string}
     description: ''
-    line: 897
+    line: 867
   - pattern: the current url does not contain {string}
     description: ''
-    line: 1050
+    line: 1020
   - pattern: the element {string} contains HTML {string}
     description: ''
-    line: 1016
+    line: 986
   - pattern: the element {string} contains the text {string}
     description: ''
-    line: 998
+    line: 968
   - pattern: the element {string} does appear exactly {string} times
     description: ''
-    line: 1006
+    line: 976
   - pattern: the element {string} does not exist
     description: ''
-    line: 878
+    line: 848
   - pattern: the element {string} does not have attribute {string}
     description: ''
-    line: 1089
+    line: 1059
   - pattern: the element {string} does not have attribute {string} {string}
     description: ''
-    line: 1041
+    line: 1011
   - pattern: the element {string} does not have the class {string}
     description: ''
-    line: 1033
+    line: 1003
   - pattern: the element {string} has attribute {string}
     description: ''
-    line: 1078
+    line: 1048
   - pattern: the element {string} has attribute {string} {string}
     description: ''
     line: 802
   - pattern: the element {string} has the class {string}
     description: ''
-    line: 1025
+    line: 995
   - pattern: the element {string} matches the text {string}
     description: ''
     line: 672
@@ -323,7 +323,7 @@ steps:
       ```gherkin
       Then the element "[data-test*='navbar_item_']" should have at least 21 items within 10 seconds
       ```
-    line: 1437
+    line: 1407
   - pattern: the element {string} should have exactly {int} items within {int} seconds
     description: |-
       Step definition: `Then the element {string} should have exactly {int} items within {int} seconds`
@@ -338,7 +338,7 @@ steps:
       ```gherkin
       Then the element "[data-test*='navbar_item_']" should have exactly 22 items within 10 seconds
       ```
-    line: 1466
+    line: 1436
   - pattern: the element {string} should have exactly {int} items within {int} seconds with refresh
     description: |-
       Step definition: `Then the element {string} should have exactly {int} items within {int} seconds with refresh`
@@ -354,7 +354,7 @@ steps:
       ```gherkin
       Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 30 seconds with refresh
       ```
-    line: 1496
+    line: 1466
   - pattern: the element with {target} {string} should be {condition}
     description: |-
       Step definition: `Then the element with {target} {string} should be {condition}`
@@ -478,7 +478,7 @@ steps:
     line: 595
   - pattern: 'the HTML contains:'
     description: ''
-    line: 1060
+    line: 1030
   - pattern: the page should be visible
     description: |-
       Step definition: `Then the {role} {string} with aria-pressed {string} should be {condition}`
@@ -516,7 +516,7 @@ steps:
       ```gherkin
       Then the text "Welcome" should be visible
       ```
-    line: 1320
+    line: 1290
   - pattern: the text {string} should not be {condition}
     description: |-
       Step definition: `Then the text {string} should not be {condition}`
@@ -530,10 +530,10 @@ steps:
       ```gherkin
       Then the text "Error" should not be visible
       ```
-    line: 1342
+    line: 1312
   - pattern: the title contains {string}
     description: ''
-    line: 891
+    line: 861
   - pattern: the title is {string}
     description: ''
-    line: 887
+    line: 857

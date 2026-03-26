@@ -1,15 +1,22 @@
 /* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
-import { ActionIcon, Menu, Text, Tooltip, Group } from '@mantine/core';
+import { ActionIcon, Menu, Text, Tooltip, Group, NumberInput, Button, Stack, Divider } from '@mantine/core';
 import { IconAdjustments, IconCheck } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import config from '@config';
 import { successMsg, errorMsg } from '@shared/utils/utils';
 import { log } from '@shared/utils/Logger';
+import { ChecksService } from '@shared/services';
 
 interface Props {
     baselineId: string;
     initialMatchType?: string;
+    checkId?: string;
+    currentCheck?: any;
+    initialCheckId?: string;
+    apikey?: string;
+    checkQuery?: any;
 }
 
 type MatchType = 'nothing' | 'antialiasing' | 'colors';
@@ -32,33 +39,50 @@ const MATCH_TYPE_OPTIONS: { value: MatchType; label: string; description: string
     },
 ];
 
-async function updateMatchType(baselineId: string, matchType: MatchType): Promise<boolean> {
+type BaselineSettingsResponse = { matchType?: MatchType; toleranceThreshold?: number };
+
+const clampThreshold = (value: number): number => {
+    if (!Number.isFinite(value)) return 0;
+    const clamped = Math.max(0, Math.min(100, value));
+    return Number(clamped.toFixed(2));
+};
+
+const buildHeaders = (apikey?: string): Record<string, string> => {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (apikey) headers.apikey = apikey;
+    return headers;
+};
+
+async function updateBaselineSettings(
+    baselineId: string,
+    payload: { matchType: MatchType; toleranceThreshold: number },
+    apikey?: string
+): Promise<boolean> {
     try {
         const response = await fetch(`${config.baseUri}/v1/baselines/${baselineId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ matchType }),
+            headers: buildHeaders(apikey),
+            body: JSON.stringify(payload),
         });
 
         if (response.status === 200) {
-            log.debug(`Successfully updated match type to '${matchType}' for baseline ${baselineId}`);
-            successMsg({ message: `Match type set to: ${matchType}` });
+            log.debug(`Successfully updated baseline settings for baseline ${baselineId}`);
             return true;
         }
-        log.error(`Cannot update match type, status: ${response.status}`);
-        errorMsg({ error: 'Cannot update match type' });
+        log.error(`Cannot update baseline settings, status: ${response.status}`);
+        errorMsg({ error: 'Cannot update baseline settings' });
         return false;
     } catch (e) {
-        log.error(`Cannot update match type: ${e}`);
-        errorMsg({ error: 'Cannot update match type' });
+        log.error(`Cannot update baseline settings: ${e}`);
+        errorMsg({ error: 'Cannot update baseline settings' });
         return false;
     }
 }
 
-async function fetchBaseline(baselineId: string): Promise<{ matchType?: MatchType } | null> {
+async function fetchBaseline(baselineId: string, apikey?: string): Promise<BaselineSettingsResponse | null> {
     try {
         const url = `${config.baseUri}/v1/baselines?filter={"_id":"${baselineId}"}`;
-        const response = await fetch(url);
+        const response = await fetch(url, { headers: apikey ? { apikey } : {} });
         if (response.status === 200) {
             const data = await response.json();
             return data.results?.[0] || null;
@@ -70,25 +94,68 @@ async function fetchBaseline(baselineId: string): Promise<{ matchType?: MatchTyp
     }
 }
 
-export function MatchTypeSelector({ baselineId, initialMatchType }: Props) {
+export function MatchTypeSelector({
+    baselineId,
+    initialMatchType,
+    checkId,
+    currentCheck,
+    initialCheckId,
+    apikey,
+    checkQuery,
+}: Props) {
+    const queryClient = useQueryClient();
     const [matchType, setMatchType] = useState<MatchType>(initialMatchType as MatchType || 'nothing');
+    const [toleranceThreshold, setToleranceThreshold] = useState<number>(0);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (baselineId && !initialMatchType) {
-            fetchBaseline(baselineId).then((baseline) => {
+            fetchBaseline(baselineId, apikey).then((baseline) => {
                 if (baseline?.matchType) {
                     setMatchType(baseline.matchType);
                 }
+                setToleranceThreshold(clampThreshold(Number(baseline?.toleranceThreshold || 0)));
             });
         }
-    }, [baselineId, initialMatchType]);
+    }, [baselineId, initialMatchType, apikey]);
 
-    const handleSelect = async (value: MatchType) => {
+    const handleAutoCalc = () => {
+        const rawMismatch = Number(currentCheck?.parsedResult?.rawMisMatchPercentage);
+        if (!Number.isFinite(rawMismatch)) {
+            errorMsg({ error: 'Cannot auto-calculate tolerance: mismatch value is missing' });
+            return;
+        }
+        setToleranceThreshold(clampThreshold(rawMismatch + 0.01));
+    };
+
+    const handleSave = async () => {
+        if (!baselineId) return;
         setLoading(true);
-        const success = await updateMatchType(baselineId, value);
+        const success = await updateBaselineSettings(
+            baselineId,
+            {
+                matchType,
+                toleranceThreshold: clampThreshold(toleranceThreshold),
+            },
+            apikey,
+        );
+
         if (success) {
-            setMatchType(value);
+            successMsg({ message: `Baseline settings updated` });
+            if (checkId) {
+                try {
+                    await ChecksService.recompareCheck({ id: checkId, apikey });
+                    successMsg({ message: 'Check was re-compared with current baseline settings' });
+                } catch (e) {
+                    log.error(`Cannot recompare check: ${e}`);
+                    errorMsg({ error: 'Cannot recompare check after updating baseline settings' });
+                }
+            }
+            await queryClient.invalidateQueries({ queryKey: ['baseline_by_snapshot_id'] });
+            await queryClient.invalidateQueries({ queryKey: ['check_for_modal', checkId] });
+            await queryClient.invalidateQueries({ queryKey: ['preview_checks'] });
+            await queryClient.refetchQueries({ queryKey: ['related_checks_infinity_pages', initialCheckId || checkId] });
+            if (checkQuery) checkQuery.refetch();
         }
         setLoading(false);
     };
@@ -121,7 +188,7 @@ export function MatchTypeSelector({ baselineId, initialMatchType }: Props) {
                     <Menu.Item
                         key={option.value}
                         icon={matchType === option.value ? <IconCheck size={14} /> : null}
-                        onClick={() => handleSelect(option.value)}
+                        onClick={() => setMatchType(option.value)}
                     >
                         <Text size="sm" weight={matchType === option.value ? 600 : 400}>
                             {option.label}
@@ -131,6 +198,37 @@ export function MatchTypeSelector({ baselineId, initialMatchType }: Props) {
                         </Text>
                     </Menu.Item>
                 ))}
+                <Divider my="xs" />
+                <Stack spacing="xs" px="xs" pb="xs">
+                    <Text size="xs" color="dimmed">Tolerance threshold (%)</Text>
+                    <NumberInput
+                        data-check="tolerance-threshold-input"
+                        value={toleranceThreshold}
+                        onChange={(value) => setToleranceThreshold(clampThreshold(Number(value || 0)))}
+                        min={0}
+                        max={100}
+                        step={0.01}
+                        precision={2}
+                    />
+                    <Group grow>
+                        <Button
+                            size="xs"
+                            variant="default"
+                            onClick={handleAutoCalc}
+                            data-check="tolerance-auto-calc"
+                        >
+                            Auto-calc
+                        </Button>
+                        <Button
+                            size="xs"
+                            onClick={handleSave}
+                            loading={loading}
+                            data-check="tolerance-save"
+                        >
+                            Save
+                        </Button>
+                    </Group>
+                </Stack>
             </Menu.Dropdown>
         </Menu>
     );
