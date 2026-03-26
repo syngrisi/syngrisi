@@ -81,6 +81,22 @@ router.put(
 );
 
 registry.registerPath({
+    method: 'post',
+    path: '/v1/checks/{id}/recompare',
+    summary: "Recompare a check by ID with current baseline settings",
+    tags: ['Checks'],
+    request: commonValidations.paramsId,
+    responses: createApiResponse(CheckGetSchema, 'Success'),
+});
+
+router.post(
+    '/:id/recompare',
+    ensureLoggedInOrApiKey(),
+    validateRequest(getByIdParamsSchema(), 'post, /v1/checks/{id}/recompare'),
+    checkController.recompare as Midleware
+);
+
+registry.registerPath({
     method: 'get',
     path: '/v1/checks/{id}/dom',
     summary: "Get DOM snapshot for a check (for RCA feature)",

@@ -4,6 +4,7 @@ import {
     Suite,
     Baseline,
     CheckDocument,
+    Snapshot,
 } from '@models';
 
 import { Types, Schema } from 'mongoose';
@@ -15,6 +16,8 @@ import log from '@lib/logger';
 import { BaselineDocument } from '@models/Baseline.model';
 import { LogOpts, RequestUser } from '@root/src/types';
 import { webhookService } from './webhook.service';
+import { compareCheck } from './comparison.service';
+import { CreateCheckParamsExtended } from '../../types/Check';
 
 async function calculateTestStatus(testId: string): Promise<string> {
     const checksInTest = await Check.find({ test: testId });
@@ -49,6 +52,7 @@ export interface baselineParamsType extends Document {
     ignoreRegions?: string;
     boundRegions?: string;
     matchType?: 'antialiasing' | 'nothing' | 'colors';
+    toleranceThreshold?: number;
     meta?: object;
     actualSnapshotId: Schema.Types.ObjectId;
     markedDate: Date;
@@ -80,9 +84,13 @@ async function createNewBaseline(params: baselineParamsType): Promise<BaselineDo
     const lastBaseline = await Baseline.findOne(identFields).sort({ createdDate: -1 }).exec();
     const filter = { ...identFields, snapshootId: params.actualSnapshotId };
 
-    const baselineParams = lastBaseline?.ignoreRegions
-        ? { ...identFields, ignoreRegions: lastBaseline.ignoreRegions }
-        : identFields;
+    const baselineParams: Record<string, unknown> = { ...identFields };
+    if (lastBaseline?.ignoreRegions) {
+        baselineParams.ignoreRegions = lastBaseline.ignoreRegions;
+    }
+    if (typeof lastBaseline?.toleranceThreshold === 'number') {
+        baselineParams.toleranceThreshold = lastBaseline.toleranceThreshold;
+    }
 
     const update = {
         $setOnInsert: {
@@ -479,6 +487,102 @@ const update = async (id: string, opts: Partial<CheckDocument>, user: string): P
     return check;
 };
 
+const recompare = async (id: string, user: RequestUser): Promise<Record<string, unknown>> => {
+    const logOpts: LogOpts = {
+        scope: 'recompareCheck',
+        itemType: 'check',
+        ref: id,
+        user: user?.username,
+        msgType: 'COMPARE',
+    };
+
+    const check = await Check.findById(id).exec();
+    if (!check) throw new Error(`cannot find check with id: ${id}`);
+
+    if (!check.baselineId) {
+        throw new Error(`cannot recompare check '${id}': baselineId is empty`);
+    }
+    if (!check.actualSnapshotId) {
+        throw new Error(`cannot recompare check '${id}': actualSnapshotId is empty`);
+    }
+
+    const baselineSnapshot = await Snapshot.findById(check.baselineId).exec();
+    if (!baselineSnapshot) {
+        throw new Error(`cannot recompare check '${id}': baseline snapshot '${check.baselineId}' not found`);
+    }
+
+    const actualSnapshot = await Snapshot.findById(check.actualSnapshotId).exec();
+    if (!actualSnapshot) {
+        throw new Error(`cannot recompare check '${id}': actual snapshot '${check.actualSnapshotId}' not found`);
+    }
+
+    const oldDiffId = check.diffId ? check.diffId.toString() : null;
+
+    const checkParamsForCompare: CreateCheckParamsExtended = {
+        test: check.test.toString(),
+        name: check.name,
+        status: 'pending',
+        viewport: check.viewport || '',
+        browserName: check.browserName || '',
+        browserVersion: check.browserVersion || '',
+        browserFullVersion: check.browserFullVersion || '',
+        os: check.os || '',
+        updatedDate: Date.now(),
+        suite: check.suite.toString(),
+        app: check.app.toString(),
+        branch: check.branch || '',
+        run: check.run ? check.run.toString() : '',
+        creatorId: check.creatorId ? check.creatorId.toString() : user._id.toString(),
+        creatorUsername: check.creatorUsername || user.username,
+        failReasons: [],
+        actualSnapshotId: check.actualSnapshotId.toString(),
+        hashCode: '',
+    };
+
+    const compareResult = await compareCheck(
+        baselineSnapshot,
+        actualSnapshot,
+        checkParamsForCompare,
+        false,
+        user,
+    );
+
+    check.status = [compareResult.status as ('new' | 'pending' | 'approved' | 'running' | 'passed' | 'failed' | 'aborted' | 'blinking')];
+    check.result = compareResult.result;
+    check.failReasons = compareResult.failReasons;
+    check.updatedDate = new Date();
+
+    if (compareResult.diffId) {
+        check.diffId = new Types.ObjectId(compareResult.diffId);
+    } else {
+        check.diffId = undefined;
+    }
+
+    await check.save();
+
+    const test = await Test.findById(check.test).exec();
+    if (test) {
+        const testCalculatedStatus = await calculateTestStatus(String(check.test));
+        const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
+        test.status = testCalculatedStatus;
+        test.markedAs = testCalculatedAcceptedStatus;
+        test.updatedDate = new Date();
+        await test.save();
+        await Suite.findByIdAndUpdate(check.suite, { updatedDate: Date.now() });
+    }
+
+    const newDiffId = check.diffId ? check.diffId.toString() : null;
+    if (oldDiffId && oldDiffId !== newDiffId) {
+        snapshotService.remove(oldDiffId).catch((e) => {
+            log.warn(`failed to remove old diff snapshot '${oldDiffId}': ${String(e)}`, logOpts);
+        });
+    }
+
+    const [enrichedCheck] = await enrichChecksWithCurrentAcceptance([check]);
+    webhookService.triggerWebhooks('check.updated', enrichedCheck).catch((e) => log.error(`Webhook error: ${e}`));
+    return enrichedCheck;
+};
+
 const createCheckDocument = async (checkParams: any, session?: any): Promise<CheckDocument> => {
     const [check] = await Check.create([checkParams], { session });
     webhookService.triggerWebhooks('check.created', check).catch((e) => log.error(`Webhook error: ${e}`));
@@ -489,6 +593,7 @@ export {
     accept,
     remove,
     update,
+    recompare,
     enrichChecksWithCurrentAcceptance,
     createCheckDocument,
 };

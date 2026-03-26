@@ -29,4 +29,18 @@ export const ChecksService = {
         );
         return resp.json();
     },
+
+    async recompareCheck({ id, apikey }: { id: string, apikey?: string }) {
+        const headers: Record<string, string> = {};
+        if (apikey) {
+            headers.apikey = apikey;
+        }
+        const resp = await http.post(
+            `${config.baseUri}/v1/checks/${id}/recompare`,
+            {},
+            { headers },
+            'ChecksService.recompareCheck'
+        );
+        return resp.json();
+    },
 };

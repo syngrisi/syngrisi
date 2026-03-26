@@ -20,6 +20,12 @@ export interface CompareSnapshotsOptions {
     ignoredBoxes?: any[];
 }
 
+export const isWithinToleranceThreshold = (rawMismatch: number, threshold: number) => {
+    if (!Number.isFinite(rawMismatch) || !Number.isFinite(threshold)) return false;
+    const normalizedThreshold = Math.max(0, Math.min(100, threshold));
+    return rawMismatch > 0 && rawMismatch <= normalizedThreshold;
+};
+
 export const compareSnapshots = async (baselineSnapshot: SnapshotDocument, actual: SnapshotDocument, opts: CompareSnapshotsOptions = {}) => {
     const logOpts = {
         scope: 'compareSnapshots',
@@ -137,6 +143,8 @@ export const compareCheck = async (
                 compareOptions.ignore = baseline.matchType || 'nothing';
             }
 
+            const toleranceThreshold = Math.max(0, Math.min(100, Number(baseline?.toleranceThreshold || 0)));
+
             // Plugin hook: beforeCompare - allow plugins to skip or modify comparison
             const checkContext = {
                 expectedSnapshot,
@@ -196,13 +204,20 @@ export const compareCheck = async (
                 }
             }
 
-            if (areSnapshotsDifferent(checkCompareResult) || areSnapshotsWrongDimensions(checkCompareResult)) {
+            const rawMismatch = Number(checkCompareResult.rawMisMatchPercentage || 0);
+            const mismatchWithinTolerance = isWithinToleranceThreshold(rawMismatch, toleranceThreshold);
+
+            if (mismatchWithinTolerance) {
+                log.debug(`mismatch '${rawMismatch}' is within tolerance '${toleranceThreshold}', mark check as passed`, logOpts);
+            }
+
+            if ((areSnapshotsDifferent(checkCompareResult) && !mismatchWithinTolerance) || areSnapshotsWrongDimensions(checkCompareResult)) {
                 let logMsg;
                 if (areSnapshotsWrongDimensions(checkCompareResult)) {
                     logMsg = 'snapshots have different dimensions';
                     compareResult.failReasons.push('wrong_dimensions');
                 }
-                if (areSnapshotsDifferent(checkCompareResult)) {
+                if (areSnapshotsDifferent(checkCompareResult) && !mismatchWithinTolerance) {
                     logMsg = 'snapshots have differences';
                     compareResult.failReasons.push('different_images');
                 }
@@ -222,6 +237,8 @@ export const compareCheck = async (
                 compareResult.status = 'passed';
             }
 
+            (checkCompareResult as unknown as Record<string, unknown>).appliedToleranceThreshold = toleranceThreshold;
+            (checkCompareResult as unknown as Record<string, unknown>).passedByTolerance = mismatchWithinTolerance;
             checkCompareResult.totalCheckHandleTime = process.hrtime(executionTimer).toString();
             compareResult.result = JSON.stringify(checkCompareResult, null, '\t');
         } catch (e: unknown) {
