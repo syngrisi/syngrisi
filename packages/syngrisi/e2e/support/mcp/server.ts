@@ -231,6 +231,8 @@ export async function startMcpServer({
 
   const stepDefinitionsJson = getStepDefinitions();
   let llmStepDefinitionsParsed: Data = safeJsonParse<Data>(stepDefinitionsJson, { files: [] });
+  let cachedStepDefinitionsJson = '';
+  let cachedStepDefinitionFiles: string[] = [];
 
   const StepFinder = await initializeStepFinder();
   const stepFinder = new StepFinder(bddConfig);
@@ -285,13 +287,19 @@ export async function startMcpServer({
   const stepExecuteBatchTool = await createStepExecutorBatchTool(stepExecutorDependencies);
 
   async function refreshStepDefinitions(): Promise<string[]> {
-    logger.info(formatArgs('🏗️ Regenerating step definition cache...'));
     const latestJson = getStepDefinitions();
+    if (latestJson === cachedStepDefinitionsJson && cachedStepDefinitionFiles.length > 0) {
+      logger.info(formatArgs(`📚 Step definitions cache unchanged. Reusing ${cachedStepDefinitionFiles.length} files`));
+      return cachedStepDefinitionFiles;
+    }
+
+    logger.info(formatArgs('🏗️ Regenerating step definition cache...'));
     llmStepDefinitionsParsed = safeJsonParse<Data>(latestJson, { files: [] });
     stepExecutorDependencies.llmStepDefinitionsParsed = llmStepDefinitionsParsed;
-    const createdFiles = await saveStepDefinitionsToFile(llmStepDefinitionsParsed);
-    logger.info(formatArgs(`📚 Step definitions cache rebuilt. Created ${createdFiles.length} files`));
-    return createdFiles;
+    cachedStepDefinitionFiles = await saveStepDefinitionsToFile(llmStepDefinitionsParsed);
+    cachedStepDefinitionsJson = latestJson;
+    logger.info(formatArgs(`📚 Step definitions cache rebuilt. Created ${cachedStepDefinitionFiles.length} files`));
+    return cachedStepDefinitionFiles;
   }
 
   await refreshStepDefinitions();
