@@ -2,6 +2,42 @@
 
 MCP lives in `packages/syngrisi/e2e/support/mcp`. It wraps the Syngrisi Playwright BDD stack as an MCP server/bridge so agents can run steps. Always start a session first, then execute steps.
 
+## Preferred validation strategy for `test-engine`
+
+For `support/mcp/test-engine*`, prefer:
+
+- integration tests for CLI/session lifecycle
+- transport tests for bridge/server behavior
+- headed or headless e2e/manual smoke flows for real browser validation
+
+Do not add unit tests for the orchestration layer by default. This area is valuable only when the full flow works across separate process invocations, state cache, bridge reconnect, and explicit shutdown.
+
+If a helper ever becomes genuinely isolated and hard to validate through integration tests, a small unit test is still acceptable, but that is the exception, not the default.
+
+## Canonical manual headed flow
+
+Use this as the default debugging sequence:
+
+```bash
+cd /Users/a1/Project/syngrisi/packages/syngrisi/e2e
+npx bddgen
+yarn kill
+export SYSTEM_THREAD=manual-browser
+npx tsx support/mcp/test-engine-cli.ts start manual-browser --headed
+npx tsx support/mcp/test-engine-cli.ts step "I go to \"main\" page"
+npx tsx support/mcp/test-engine-cli.ts status
+npx tsx support/mcp/test-engine-cli.ts shutdown
+```
+
+Treat `start` as a one-time session bootstrap. Every later `step`, `status`, `tools`, `clear`, or `shutdown` call should be a separate CLI invocation targeting the same resolved agent id.
+
+Important runtime caveats:
+
+- Serialize commands per `SYSTEM_THREAD`; do not run multiple `step` invocations in parallel against the same session.
+- `status` reflects daemon/cache state, not a full guarantee that the underlying bridge session is still attached.
+- If real steps start failing with `Session not started` while `status` still looks healthy, discard the session and restart from `yarn kill` plus fresh `start`.
+- If a regular UI step times out and the next call reports `No active session found`, treat the whole session as broken.
+
 ## Start the MCP server (Playwright-backed)
 - Headed, keep-alive (good for debugging):  
   ```bash

@@ -34,12 +34,18 @@ export function Header(
     );
 
     return (
-        <Group position="apart" sx={{ width: '98%' }} data-check-header-name={currentCheck.name} data-check-header-ready={currentCheck.name && currentCheck.status ? 'true' : 'false'} noWrap>
+        <Group
+            position="apart"
+            sx={{ width: 'calc(100% - 56px)', minWidth: 0 }}
+            data-check-header-name={currentCheck.name}
+            data-check-header-ready={currentCheck.name && currentCheck.status ? 'true' : 'false'}
+            noWrap
+        >
             <Group
                 position="left"
                 align="center"
                 spacing="xs"
-                sx={{ position: 'relative' }}
+                sx={{ position: 'relative', flex: 1, minWidth: 0 }}
                 noWrap
                 data-test="full-check-path"
             >
@@ -66,6 +72,7 @@ export function Header(
                 <Group
                     noWrap
                     spacing={0}
+                    sx={{ minWidth: 0, flex: 1 }}
                 >
                     <Tooltip
                         withinPortal
@@ -73,7 +80,8 @@ export function Header(
                     >
                         <Text
                             data-check="app-name"
-                            sx={{ flexShrink: 1 }}
+                            size="sm"
+                            sx={{ flexShrink: 1, minWidth: 0 }}
                             className={classes.checkPathFragment}
                         >
                             {currentCheck?.app?.name}
@@ -85,7 +93,8 @@ export function Header(
                     >
                         <Text
                             data-check="suite-name"
-                            sx={{ flexShrink: 500 }}
+                            size="sm"
+                            sx={{ flexShrink: 500, minWidth: 0 }}
                             className={classes.checkPathFragment}
                         >
                             &nbsp;/&nbsp;
@@ -98,7 +107,8 @@ export function Header(
                     >
                         <Text
                             data-check="test-name"
-                            sx={{ flexShrink: 5 }}
+                            size="sm"
+                            sx={{ flexShrink: 5, minWidth: 0 }}
                             className={classes.checkPathFragment}
                         >
                             &nbsp;/&nbsp;
@@ -112,9 +122,10 @@ export function Header(
                     >
                         <Text
                             data-check="check-name"
-                            sx={{ flexShrink: 1 }}
+                            size={14}
+                            sx={{ flexShrink: 1, minWidth: 0 }}
                             lineClamp={1}
-                        // className={classes.checkPathFragment}
+                            className={classes.checkPathFragment}
                         >
                             &nbsp;/&nbsp;
                             {currentCheck.name || textLoader}
@@ -126,6 +137,7 @@ export function Header(
             <Group
                 noWrap
                 spacing="xs"
+                sx={{ flexShrink: 0 }}
             >
                 {
                     toleranceThreshold > 0 && (

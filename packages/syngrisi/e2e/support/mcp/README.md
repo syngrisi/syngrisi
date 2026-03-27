@@ -41,6 +41,26 @@ The server uses dynamic port allocation (port 0), letting the OS assign a free p
 
 These commands are especially useful for quote-heavy steps such as `I create "1" tests with:` and for YAML payloads used in env/bootstrap flows.
 
+Canonical manual headed flow:
+
+```bash
+cd packages/syngrisi/e2e
+npx bddgen
+yarn kill
+export SYSTEM_THREAD=manual-browser
+npx tsx support/mcp/test-engine-cli.ts start manual-browser --headed
+npx tsx support/mcp/test-engine-cli.ts step "I go to \"main\" page"
+npx tsx support/mcp/test-engine-cli.ts status
+npx tsx support/mcp/test-engine-cli.ts shutdown
+```
+
+Operational caveats for the current session-aware CLI:
+
+- Serialize commands for a given `SYSTEM_THREAD`; concurrent `step` calls can mix stdout and screenshot artifacts.
+- `status` is a cache/daemon view and can be greener than the real bridge session.
+- If a real step fails with `Session not started` after a successful `start`, restart from `yarn kill` and a fresh `start`.
+- If a timed-out step is followed by `No active session found`, assume the session continuity is gone and bootstrap again.
+
 Step definitions are loaded dynamically from `packages/syngrisi/e2e/steps/**` and `support/mcp/sd/**`. They are regenerated each time you start a new session—after editing any step definitions, restart the session so clients discover the updated catalogue.
 
 The generated step definitions are organized into categorized YAML files stored in `support/mcp/steps/` (diagnostics, common interactions, assertions, domain-specific steps, etc.). Each YAML file includes metadata (category, generation timestamp, step count, source files) and properly formatted step definitions with descriptions and line numbers.
@@ -90,6 +110,18 @@ Run the transport tests after changing the harness:
 ```bash
 timeout 180s bash -lc 'cd packages/syngrisi/e2e && E2E_HEADLESS=1 playwright test --config support/mcp/playwright.config.ts support/mcp/test'
 ```
+
+## Testing policy for `test-engine`
+
+For `support/mcp/test-engine*`, the default strategy is integration and e2e coverage, not unit coverage.
+
+- Prefer CLI/session lifecycle specs such as [support/mcp/test/mcp-test-engine-cli.spec.ts](/Users/a1/Project/syngrisi/packages/syngrisi/e2e/support/mcp/test/mcp-test-engine-cli.spec.ts)
+- Prefer transport-level specs for bridge/server behavior
+- Prefer real headed/headless smoke flows when changing session reuse, attach, shutdown, or browser lifecycle
+
+Do not add unit tests for the orchestration layer by default. The important contract here is multi-process behavior: session resolution, local state reuse, daemon lifecycle, bridge reconnect, and explicit shutdown.
+
+If a helper becomes small, isolated, and materially cheaper to validate with a unit test than via integration, that is acceptable, but it should be a narrow exception.
 
 ### Real scenario ordering
 

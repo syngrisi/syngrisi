@@ -1,14 +1,27 @@
 import { promises as fs } from 'node:fs';
 import { spawn } from 'node:child_process';
+import http from 'node:http';
 import path from 'node:path';
 import process from 'node:process';
 import readline from 'node:readline/promises';
-import type { Readable, Writable } from 'node:stream';
+import { Writable } from 'node:stream';
+import type { Readable } from 'node:stream';
 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 import { e2eRoot, mcpRoot } from './config';
+import { resolveAgentIdentity, type ResolvedAgentIdentity, isProcessAlive } from './test-engine-agent-resolver';
+import {
+  getAllSessionStates,
+  getTestEngineStatePath,
+  readSessionState,
+  removeSessionState,
+  updateSessionActivity,
+  waitForSessionStateReady,
+  writeSessionState,
+  type TestEngineSessionState,
+} from './test-engine-state';
 import { simpleTokenSearch } from './utils/simpleTokenSearch';
 import type { StepExecutorParams } from './utils/stepExecutor';
 import type { Data } from './utils/types';
@@ -19,20 +32,27 @@ const BRIDGE_ENTRY = path.join(mcpRoot, 'bridge-cli.ts');
 const TSX_DIST_ROOT = path.join(e2eRoot, 'node_modules', 'tsx', 'dist');
 const TSX_PREFLIGHT = path.join(TSX_DIST_ROOT, 'preflight.cjs');
 const TSX_LOADER = `file://${path.join(TSX_DIST_ROOT, 'loader.mjs')}`;
+const LOCALHOST = '127.0.0.1';
+const DAEMON_START_TIMEOUT_MS = 120_000;
+const DAEMON_REQUEST_TIMEOUT_MS = 180_000;
 
 const HELP_TEXT = [
   'Syngrisi MCP Test Engine CLI',
   '',
   'Usage:',
-  '  npx tsx support/mcp/test-engine-cli.ts',
   '  npx tsx support/mcp/test-engine-cli.ts help',
-  '  npx tsx support/mcp/test-engine-cli.ts --interactive-after-commands --command "start demo --headed"',
-  '  npx tsx support/mcp/test-engine-cli.ts --command "start demo" --command "step \"I test\"" --command "shutdown"',
+  '  npx tsx support/mcp/test-engine-cli.ts start demo --headed [--system-thread <id>]',
+  '  npx tsx support/mcp/test-engine-cli.ts step "I test" [--system-thread <id>]',
+  '  npx tsx support/mcp/test-engine-cli.ts batch "I test" "I get current URL" [--system-thread <id>]',
+  '  npx tsx support/mcp/test-engine-cli.ts status [--system-thread <id>]',
+  '  npx tsx support/mcp/test-engine-cli.ts shutdown [--system-thread <id>]',
   '',
   'Commands:',
   '  help',
   '  start <sessionName> [--headed]',
   '  attach',
+  '  status',
+  '  resolve',
   '  tools',
   '  step <stepText> [--docstring <text>] [--docstring-json <json>] [--docstring-base64 <base64>]',
   '  step-json <json>',
@@ -41,15 +61,16 @@ const HELP_TEXT = [
   '  steps find <query>',
   '  clear',
   '  shutdown',
-  '  exit',
+  '',
+  'Global options:',
+  '  --system-thread <id>  Override SYSTEM_THREAD / PID heuristic lookup.',
   '',
   'Rules of thumb:',
-  '  - Start or attach first.',
+  '  - Use start once; every next CLI call reuses the same session via local state.',
   '  - Use step for single actions and diagnostics.',
   '  - Use batch only for 2 or more sequential steps.',
-  '  - With --command, CLI stays non-interactive by default.',
-  '  - Use --interactive-after-commands to force mcp> prompt after commands.',
-  '  - Use attach to connect to a debug MCP server recorded in logs/ports.',
+  '  - Use attach to connect the daemon to an existing debug MCP session.',
+  '  - Use shutdown only when you explicitly want to close the session.',
 ].join('\n');
 
 const TOOL_TIMEOUTS = {
@@ -66,9 +87,11 @@ type CommandExecutionResult = {
 type ParsedCliArgs = {
   commands: string[];
   showHelp: boolean;
-  interactiveAfterCommands: boolean;
-  daemonized: boolean;
+  daemonServer: boolean;
+  daemonAttach: boolean;
+  daemonHeaded: boolean;
   statusFile: string | null;
+  agentId: string | null;
 };
 
 type TestEngineCliOptions = {
@@ -77,122 +100,34 @@ type TestEngineCliOptions = {
   stderr?: Writable;
 };
 
-const getCommandName = (command: string): string | null => {
-  try {
-    const [name] = tokenizeCommand(command);
-    return name ?? null;
-  } catch {
-    return null;
-  }
+type DaemonCommandResponse = {
+  ok: boolean;
+  shouldExit: boolean;
+  stdout: string;
+  stderr: string;
 };
 
-const isHeadedStartCommand = (command: string): boolean => {
-  try {
-    const [name, ...args] = tokenizeCommand(command);
-    return name === 'start' && args.includes('--headed');
-  } catch {
-    return false;
-  }
+type DaemonStatusResponse = {
+  ok: boolean;
+  state: TestEngineSessionState | null;
 };
 
-const shouldKeepBridgeAliveAfterCommands = (parsed: ParsedCliArgs): boolean => {
-  if (parsed.interactiveAfterCommands) {
-    return false;
+class BufferingWritable extends Writable {
+  private readonly chunks: string[] = [];
+
+  override _write(chunk: Buffer | string, _encoding: BufferEncoding, callback: (error?: Error | null) => void) {
+    this.chunks.push(typeof chunk === 'string' ? chunk : chunk.toString('utf8'));
+    callback();
   }
 
-  const hasHeadedStart = parsed.commands.some(isHeadedStartCommand);
-  if (!hasHeadedStart) {
-    return false;
+  clear() {
+    this.chunks.length = 0;
   }
 
-  return !parsed.commands.some((command) => {
-    const name = getCommandName(command);
-    return name === 'shutdown' || name === 'exit' || name === 'quit';
-  });
-};
-
-const shouldDetachIntoBackground = (parsed: ParsedCliArgs): boolean => {
-  return shouldKeepBridgeAliveAfterCommands(parsed) && !parsed.daemonized;
-};
-
-const writeDetachedStatus = async (
-  statusFile: string | null,
-  payload: { ok: boolean; pid?: number; error?: string },
-): Promise<void> => {
-  if (!statusFile) {
-    return;
+  readText(): string {
+    return this.chunks.join('');
   }
-
-  await fs.mkdir(path.dirname(statusFile), { recursive: true });
-  await fs.writeFile(statusFile, JSON.stringify(payload), 'utf8');
-};
-
-const waitForDetachedStatus = async (
-  statusFile: string,
-  timeoutMs = 30_000,
-): Promise<{ ok: boolean; pid?: number; error?: string }> => {
-  const startedAt = Date.now();
-
-  while (Date.now() - startedAt < timeoutMs) {
-    try {
-      const raw = await fs.readFile(statusFile, 'utf8');
-      return JSON.parse(raw) as { ok: boolean; pid?: number; error?: string };
-    } catch {
-      await new Promise((resolve) => setTimeout(resolve, 250));
-    }
-  }
-
-  throw new Error(`Timed out waiting for detached session status at ${statusFile}`);
-};
-
-const spawnDetachedCli = async (argv: string[]): Promise<number> => {
-  const statusFile = path.join(
-    e2eRoot,
-    'support',
-    'mcp',
-    'logs',
-    `detached-status-${Date.now()}-${process.pid}.json`,
-  );
-
-  const child = spawn(
-    process.execPath,
-    [
-      '--require',
-      TSX_PREFLIGHT,
-      '--import',
-      TSX_LOADER,
-      path.join('support', 'mcp', 'test-engine-cli.ts'),
-      '--daemonized',
-      '--status-file',
-      statusFile,
-      ...argv,
-    ],
-    {
-      cwd: e2eRoot,
-      env: {
-        ...(process.env as Record<string, string>),
-        MCP_BRIDGE_IGNORE_STDIN_END: '1',
-      },
-      detached: true,
-      stdio: 'ignore',
-    },
-  );
-
-  child.unref();
-
-  try {
-    const status = await waitForDetachedStatus(statusFile);
-    if (!status.ok) {
-      writeLine(process.stderr, status.error ?? 'Detached browser session failed to start.');
-      return 1;
-    }
-
-    writeLine(process.stdout, `Detached browser session started in background (PID ${status.pid ?? 'unknown'}).`);
-    return 0;
-  } finally {
-    await fs.rm(statusFile, { force: true }).catch(() => undefined);
-  }
-};
+}
 
 const writeLine = (stream: Writable, message: string = '') => {
   stream.write(`${message}\n`);
@@ -258,7 +193,7 @@ const tokenizeCommand = (line: string): string[] => {
       continue;
     }
 
-    if (/\s/.test(char)) {
+    if (/\s/u.test(char)) {
       if (current) {
         tokens.push(current);
         current = '';
@@ -284,28 +219,49 @@ const tokenizeCommand = (line: string): string[] => {
   return tokens;
 };
 
+const quoteCommandToken = (value: string): string => {
+  if (!/[\s"]/u.test(value)) {
+    return value;
+  }
+  return `"${value.replace(/\\/gu, '\\\\').replace(/"/gu, '\\"')}"`;
+};
+
+const parseCommandLine = (line: string): string[] => {
+  const trimmed = line.trim();
+  if (trimmed.startsWith('step-json ')) {
+    return ['step-json', trimmed.slice('step-json '.length)];
+  }
+  if (trimmed.startsWith('batch-json ')) {
+    return ['batch-json', trimmed.slice('batch-json '.length)];
+  }
+  return tokenizeCommand(trimmed);
+};
+
 const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   const commands: string[] = [];
   let showHelp = false;
-  let interactiveAfterCommands = false;
-  let daemonized = false;
+  let daemonServer = false;
+  let daemonAttach = false;
+  let daemonHeaded = false;
   let statusFile: string | null = null;
+  let agentId: string | null = null;
   const passthroughTokens: string[] = [];
 
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
+
     if (token === '--help' || token === '-h') {
       showHelp = true;
       continue;
     }
 
-    if (token === '--interactive-after-commands') {
-      interactiveAfterCommands = true;
+    if (token === '--daemon-server') {
+      daemonServer = true;
       continue;
     }
 
-    if (token === '--daemonized') {
-      daemonized = true;
+    if (token === '--daemon-attach') {
+      daemonAttach = true;
       continue;
     }
 
@@ -315,6 +271,16 @@ const parseCliArgs = (argv: string[]): ParsedCliArgs => {
         throw new Error('Missing value after --status-file.');
       }
       statusFile = value;
+      index += 1;
+      continue;
+    }
+
+    if (token === '--system-thread') {
+      const value = argv[index + 1];
+      if (!value) {
+        throw new Error('Missing value after --system-thread.');
+      }
+      agentId = value;
       index += 1;
       continue;
     }
@@ -329,19 +295,42 @@ const parseCliArgs = (argv: string[]): ParsedCliArgs => {
       continue;
     }
 
+    if (daemonServer && token === '--headed') {
+      daemonHeaded = true;
+      continue;
+    }
+
     passthroughTokens.push(token);
   }
 
   if (passthroughTokens.length > 0) {
-    commands.push(passthroughTokens.map((token) => (token.includes(' ') ? `"${token}"` : token)).join(' '));
+    commands.push(passthroughTokens.map((token) => quoteCommandToken(token)).join(' '));
   }
 
-  return { commands, showHelp, interactiveAfterCommands, daemonized, statusFile };
+  return {
+    commands,
+    showHelp,
+    daemonServer,
+    daemonAttach,
+    daemonHeaded,
+    statusFile,
+    agentId,
+  };
+};
+
+const parseStructuredJson = (raw: string): unknown => {
+  const parsed = JSON.parse(raw) as unknown;
+  if (typeof parsed === 'string') {
+    const trimmed = parsed.trim();
+    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+      return JSON.parse(trimmed) as unknown;
+    }
+  }
+  return parsed;
 };
 
 const parseStepJsonInput = (raw: string): StepExecutorParams => {
-  const parsed = JSON.parse(raw) as string | StepExecutorParams;
-
+  const parsed = parseStructuredJson(raw) as string | StepExecutorParams;
   if (typeof parsed === 'string') {
     return { stepText: parsed };
   }
@@ -357,8 +346,7 @@ const parseStepJsonInput = (raw: string): StepExecutorParams => {
 };
 
 const parseBatchJsonInput = (raw: string): StepExecutorParams[] => {
-  const parsed = JSON.parse(raw) as Array<string | StepExecutorParams>;
-
+  const parsed = parseStructuredJson(raw) as Array<string | StepExecutorParams>;
   if (!Array.isArray(parsed) || parsed.length < 2) {
     throw new Error('batch-json expects a JSON array with at least 2 items.');
   }
@@ -401,6 +389,134 @@ const loadLiveStepDefinitions = (): Data => {
   return JSON.parse(raw) as Data;
 };
 
+const parseGlobalAgentId = (tokens: string[]): { tokens: string[]; agentId: string | null } => {
+  const stripped: string[] = [];
+  let agentId: string | null = null;
+
+  for (let index = 0; index < tokens.length; index += 1) {
+    const token = tokens[index];
+    if (token === '--system-thread') {
+      const value = tokens[index + 1];
+      if (!value) {
+        throw new Error('Missing value after --system-thread.');
+      }
+      agentId = value;
+      index += 1;
+      continue;
+    }
+    stripped.push(token);
+  }
+
+  return { tokens: stripped, agentId };
+};
+
+const validateCommandUsage = (command: string, args: string[]) => {
+  if (command === 'batch' && args.length < 2) {
+    throw new Error('batch requires at least 2 steps.');
+  }
+  if (command === 'step-json' && args.length !== 1) {
+    throw new Error('step-json expects exactly 1 JSON argument.');
+  }
+  if (command === 'batch-json' && args.length !== 1) {
+    throw new Error('batch-json expects exactly 1 JSON argument.');
+  }
+};
+
+const parseSessionMetadata = (stdout: string): Pick<TestEngineSessionState, 'sessionId' | 'logFile'> => {
+  const sessionIdMatch = stdout.match(/with ID ([^\s.]+)/u);
+  const logFileMatch = stdout.match(/Logs at ([^\s]+\.jsonl)/u);
+  return {
+    ...(sessionIdMatch?.[1] ? { sessionId: sessionIdMatch[1] } : {}),
+    ...(logFileMatch?.[1] ? { logFile: logFileMatch[1] } : {}),
+  };
+};
+
+const stripLeadingSuccessLine = (stdout: string): string => {
+  const trimmed = stdout.trim();
+  if (!trimmed) {
+    return '';
+  }
+
+  return trimmed.replace(/^Status:\s+Success\s*/u, '').trim();
+};
+
+const normalizeStartupDetails = (stdout: string): string => {
+  const stripped = stripLeadingSuccessLine(stdout);
+  if (!stripped) {
+    return '';
+  }
+
+  const [summary] = stripped.split(/\nAvailable test steps\b/iu, 1);
+  return (summary ?? '').trim();
+};
+
+const formatResolvedIdentity = (identity: ResolvedAgentIdentity): string[] => {
+  const lines = [
+    `System thread: ${identity.agentId}`,
+    `Resolved via: ${identity.source}`,
+  ];
+  if (identity.warning) {
+    lines.push(`Warning: ${identity.warning}`);
+  }
+  return lines;
+};
+
+const fetchJson = async <T>(
+  url: string,
+  options: {
+    method?: 'GET' | 'POST';
+    body?: unknown;
+    timeoutMs?: number;
+  } = {},
+): Promise<T> => {
+  const timeoutMs = options.timeoutMs ?? DAEMON_REQUEST_TIMEOUT_MS;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        method: options.method ?? 'GET',
+        headers: options.body !== undefined ? { 'content-type': 'application/json' } : undefined,
+        body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+        signal: controller.signal,
+      });
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error(`Daemon request timed out after ${timeoutMs}ms: ${url}`);
+      }
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to reach session daemon at ${url}: ${message}`);
+    }
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error(`Daemon request failed: HTTP ${response.status}${text ? ` - ${text}` : ''}`);
+    }
+
+    return await response.json() as T;
+  } finally {
+    clearTimeout(timeout);
+  }
+};
+
+const isStateReachable = async (state: TestEngineSessionState): Promise<boolean> => {
+  if (!(await isProcessAlive(state.daemonPid))) {
+    return false;
+  }
+
+  try {
+    const response = await fetchJson<DaemonStatusResponse>(
+      `http://${LOCALHOST}:${state.daemonPort}/status`,
+      { timeoutMs: 3000 },
+    );
+    return Boolean(response.ok);
+  } catch {
+    return false;
+  }
+};
+
 class TestEngineCliRuntime {
   private readonly stdin: Readable;
   private readonly stdout: Writable;
@@ -408,9 +524,6 @@ class TestEngineCliRuntime {
   private client: Client | null = null;
   private transport: StdioClientTransport | null = null;
   private bridgeStderr = '';
-  private connected = false;
-  private startedHeadedSession = false;
-  private readonly keepBridgeAlive: boolean;
 
   constructor(options: TestEngineCliOptions, runtimeOptions: { keepBridgeAlive?: boolean } = {}) {
     this.stdin = options.stdin ?? process.stdin;
@@ -419,33 +532,24 @@ class TestEngineCliRuntime {
     this.keepBridgeAlive = runtimeOptions.keepBridgeAlive ?? false;
   }
 
+  private readonly keepBridgeAlive: boolean;
+
   async close(): Promise<void> {
     const transport = this.transport;
     const client = this.client;
 
     this.transport = null;
     this.client = null;
-    this.connected = false;
 
     await Promise.allSettled([
       (async () => {
-        if (!client) {
-          return;
-        }
-        try {
-          await client.close();
-        } catch {
-          // ignore close errors
+        if (client) {
+          await client.close().catch(() => undefined);
         }
       })(),
       (async () => {
-        if (!transport) {
-          return;
-        }
-        try {
-          await transport.close();
-        } catch {
-          // ignore close errors
+        if (transport) {
+          await transport.close().catch(() => undefined);
         }
       })(),
     ]);
@@ -474,19 +578,13 @@ class TestEngineCliRuntime {
     });
 
     const client = new Client(
-      {
-        name: 'syngrisi-mcp-test-engine-cli',
-        version: '0.0.0',
-      },
-      {
-        capabilities: {},
-      },
+      { name: 'syngrisi-mcp-test-engine-cli', version: '0.0.0' },
+      { capabilities: {} },
     );
 
     await client.connect(transport);
     this.transport = transport;
     this.client = client;
-    this.connected = true;
     return client;
   }
 
@@ -551,31 +649,29 @@ class TestEngineCliRuntime {
     );
 
     let result: Awaited<ReturnType<typeof startSession>> | null = null;
-
     for (let attempt = 1; attempt <= 3; attempt += 1) {
       await client.callTool({ name: 'sessions_clear', arguments: {} }, undefined, { timeout: TOOL_TIMEOUTS.execute });
       result = await startSession();
 
       const text = extractContentText(result);
       const isError = Boolean(result && typeof result === 'object' && 'isError' in result && (result as { isError?: boolean }).isError);
-      const isTransientStartError = isError && (
-        text.includes('ERR_CONNECTION_REFUSED')
-        || text.includes('Request timed out')
-        || text.includes('Connection closed')
+      const transient = isError && (
+        text.includes('ERR_CONNECTION_REFUSED') ||
+        text.includes('Request timed out') ||
+        text.includes('Connection closed')
       );
 
-      if (!isTransientStartError || attempt === 3) {
+      if (!transient || attempt === 3) {
         break;
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 2_000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     }
 
     if (!result) {
       throw new Error('Failed to start MCP session: no result returned.');
     }
 
-    this.startedHeadedSession = headed;
     return this.printToolResult(result);
   }
 
@@ -658,10 +754,7 @@ class TestEngineCliRuntime {
     }
 
     const result = await client.callTool(
-      {
-        name: 'step_execute_single',
-        arguments: argumentsPayload,
-      },
+      { name: 'step_execute_single', arguments: argumentsPayload },
       undefined,
       { timeout: TOOL_TIMEOUTS.execute },
     );
@@ -673,9 +766,7 @@ class TestEngineCliRuntime {
     if (args.length !== 1) {
       throw new Error('step-json expects exactly 1 JSON argument.');
     }
-
-    const step = parseStepJsonInput(args[0]);
-    return this.executeStructuredStep(step);
+    return this.executeStructuredStep(parseStepJsonInput(args[0]));
   }
 
   private async runBatch(args: string[]): Promise<boolean> {
@@ -685,12 +776,7 @@ class TestEngineCliRuntime {
 
     const client = await this.ensureConnected();
     const result = await client.callTool(
-      {
-        name: 'step_execute_many',
-        arguments: {
-          steps: args,
-        },
-      },
+      { name: 'step_execute_many', arguments: { steps: args } },
       undefined,
       { timeout: TOOL_TIMEOUTS.execute },
     );
@@ -706,10 +792,7 @@ class TestEngineCliRuntime {
     const steps = parseBatchJsonInput(args[0]);
     const client = await this.ensureConnected();
     const result = await client.callTool(
-      {
-        name: 'step_execute_many',
-        arguments: { steps },
-      },
+      { name: 'step_execute_many', arguments: { steps } },
       undefined,
       { timeout: TOOL_TIMEOUTS.execute },
     );
@@ -725,14 +808,10 @@ class TestEngineCliRuntime {
     }
 
     const result = await client.callTool(
-      {
-        name: 'step_execute_single',
-        arguments: argumentsPayload,
-      },
+      { name: 'step_execute_single', arguments: argumentsPayload },
       undefined,
       { timeout: TOOL_TIMEOUTS.execute },
     );
-
     return this.printToolResult(result);
   }
 
@@ -747,8 +826,7 @@ class TestEngineCliRuntime {
       throw new Error('steps find requires a query.');
     }
 
-    const stepDefinitions = loadLiveStepDefinitions();
-    this.printSuccess(formatStepSearchResults(query, stepDefinitions));
+    this.printSuccess(formatStepSearchResults(query, loadLiveStepDefinitions()));
     return true;
   }
 
@@ -764,10 +842,7 @@ class TestEngineCliRuntime {
 
   private async runShutdown(): Promise<boolean> {
     const client = await this.ensureConnected();
-    await client.notification({
-      method: 'notifications/shutdown',
-      params: {},
-    });
+    await client.notification({ method: 'notifications/shutdown', params: {} });
     this.printSuccess('Shutdown notification sent.');
     return true;
   }
@@ -834,7 +909,6 @@ class TestEngineCliRuntime {
 
   async runInteractive(): Promise<number> {
     const isTTY = 'isTTY' in this.stdin && Boolean(this.stdin.isTTY);
-
     if (!isTTY) {
       this.printSuccess('Session is running. Press Ctrl+C to stop.');
       return new Promise<number>((resolve) => {
@@ -858,7 +932,6 @@ class TestEngineCliRuntime {
     });
 
     let exitCode = 0;
-
     try {
       while (true) {
         const line = await rl.question('mcp> ');
@@ -876,79 +949,451 @@ class TestEngineCliRuntime {
 
     return exitCode;
   }
-
-  async runPassiveHold(): Promise<number> {
-    this.printSuccess('Session is running without interactive prompt. Press Ctrl+C to stop.');
-    return new Promise<number>((resolve) => {
-      const keepAlive = setInterval(() => {}, 60_000);
-      const onSignal = () => {
-        clearInterval(keepAlive);
-        resolve(0);
-      };
-      process.once('SIGINT', onSignal);
-      process.once('SIGTERM', onSignal);
-    });
-  }
-
-  shouldHoldAfterCommands(): boolean {
-    return this.connected && this.startedHeadedSession;
-  }
 }
 
-export const runTestEngineCli = async (argv: string[], options: TestEngineCliOptions = {}): Promise<number> => {
-  const parsed = parseCliArgs(argv);
-
-  if (shouldDetachIntoBackground(parsed)) {
-    return spawnDetachedCli(argv);
+const cleanUpStaleState = async (state: TestEngineSessionState | null): Promise<boolean> => {
+  if (!state) {
+    return false;
   }
+  const alive = await isStateReachable(state);
+  if (alive) {
+    return true;
+  }
+  await removeSessionState(state.agentId);
+  return false;
+};
 
-  const runtime = new TestEngineCliRuntime(options, {
-    keepBridgeAlive: shouldKeepBridgeAliveAfterCommands(parsed),
-  });
+const startDaemonProcess = async (
+  identity: ResolvedAgentIdentity,
+  sessionName: string,
+  headed: boolean,
+  attachMode: boolean,
+): Promise<{ state: TestEngineSessionState; startupStdout: string }> => {
+  const statusFile = path.join(e2eRoot, 'support', 'mcp', 'logs', `daemon-status-${Date.now()}-${process.pid}.json`);
+  const child = spawn(
+    process.execPath,
+    [
+      '--require',
+      TSX_PREFLIGHT,
+      '--import',
+      TSX_LOADER,
+      path.join('support', 'mcp', 'test-engine-cli.ts'),
+      '--daemon-server',
+      '--status-file',
+      statusFile,
+      '--system-thread',
+      identity.agentId,
+      ...(attachMode ? ['--daemon-attach'] : []),
+      ...(headed ? ['--headed'] : []),
+      ...(attachMode ? [] : [sessionName]),
+    ],
+    {
+      cwd: e2eRoot,
+      env: {
+        ...(process.env as Record<string, string>),
+        MCP_BRIDGE_IGNORE_STDIN_END: '1',
+      },
+      detached: true,
+      stdio: 'ignore',
+    },
+  );
+
+  child.unref();
 
   try {
-    if (parsed.showHelp && parsed.commands.length === 0) {
-      writeLine(options.stdout ?? process.stdout, HELP_TEXT);
-      return 0;
-    }
-
-    if (parsed.commands.length > 0) {
-      let shouldExit = false;
-      for (const command of parsed.commands) {
-        const result = await runtime.executeLine(command, { interactive: false });
-        if (!result.ok) {
-          return 1;
-        }
-        if (result.shouldExit) {
-          shouldExit = true;
-          break;
-        }
-      }
-      if (shouldExit) {
-        return 0;
-      }
-
-      if (parsed.interactiveAfterCommands) {
-        return runtime.runInteractive();
-      }
-
-      if (runtime.shouldHoldAfterCommands()) {
-        await writeDetachedStatus(parsed.statusFile, { ok: true, pid: process.pid });
-        return runtime.runPassiveHold();
-      }
-
-      await writeDetachedStatus(parsed.statusFile, { ok: true, pid: process.pid });
-      return 0;
-    }
-
-    return runtime.runInteractive();
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    await writeDetachedStatus(parsed.statusFile, { ok: false, error: message });
-    throw error;
+    const state = await waitForSessionStateReady(identity.agentId, DAEMON_START_TIMEOUT_MS);
+    const startupStdout = await fs.readFile(statusFile, 'utf8').catch(() => '');
+    const parsed = startupStdout ? JSON.parse(startupStdout) as { startupStdout?: string } : {};
+    return { state, startupStdout: parsed.startupStdout ?? '' };
   } finally {
-    await runtime.close();
+    await fs.rm(statusFile, { force: true }).catch(() => undefined);
   }
 };
 
-export { HELP_TEXT, tokenizeCommand, parseCliArgs, extractContentText };
+const ensureActiveState = async (agentId: string): Promise<TestEngineSessionState> => {
+  const state = await readSessionState(agentId);
+  if (!state) {
+    throw new Error(`No active session found for agent "${agentId}". Run start first.`);
+  }
+  const alive = await cleanUpStaleState(state);
+  if (!alive) {
+    throw new Error(`No active session found for agent "${agentId}". Run start first.`);
+  }
+  return (await readSessionState(agentId)) ?? state;
+};
+
+const sendDaemonCommand = async (state: TestEngineSessionState, command: string): Promise<DaemonCommandResponse> => {
+  let response: DaemonCommandResponse;
+  try {
+    response = await fetchJson<DaemonCommandResponse>(
+      `http://${LOCALHOST}:${state.daemonPort}/command`,
+      {
+        method: 'POST',
+        body: { command },
+      },
+    );
+  } catch (error) {
+    const alive = await cleanUpStaleState(state);
+    const message = error instanceof Error ? error.message : String(error);
+    if (!alive) {
+      throw new Error(
+        `Session daemon for agent "${state.agentId}" is no longer reachable. Run start again. Last error: ${message}`,
+      );
+    }
+    throw new Error(`Failed to execute "${command}" for agent "${state.agentId}": ${message}`);
+  }
+
+  if (response.ok) {
+    await updateSessionActivity(state.agentId);
+  }
+
+  return response;
+};
+
+const printDaemonResponse = (streams: { stdout: Writable; stderr: Writable }, response: DaemonCommandResponse): boolean => {
+  if (response.stdout.trim()) {
+    streams.stdout.write(response.stdout);
+    if (!response.stdout.endsWith('\n')) {
+      streams.stdout.write('\n');
+    }
+  }
+  if (response.stderr.trim()) {
+    streams.stderr.write(response.stderr);
+    if (!response.stderr.endsWith('\n')) {
+      streams.stderr.write('\n');
+    }
+  }
+  return response.ok;
+};
+
+const formatStateSummary = (identity: ResolvedAgentIdentity, state: TestEngineSessionState | null): string => {
+  const lines = formatResolvedIdentity(identity);
+  lines.push(`State file: ${getTestEngineStatePath(identity.agentId)}`);
+  if (!state) {
+    lines.push('Has active session: no');
+    return lines.join('\n');
+  }
+
+  lines.push('Has active session: yes');
+  lines.push(`Session name: ${state.sessionName}`);
+  lines.push(`Daemon PID: ${state.daemonPid}`);
+  lines.push(`Daemon port: ${state.daemonPort}`);
+  lines.push(`Mode: ${state.mode}`);
+  lines.push(`Headed: ${state.headed ? 'yes' : 'no'}`);
+  lines.push(`Started at: ${state.startedAt}`);
+  lines.push(`Last activity: ${state.lastActivity}`);
+  if (state.sessionId) {
+    lines.push(`Session ID: ${state.sessionId}`);
+  }
+  if (state.logFile) {
+    lines.push(`Log file: ${state.logFile}`);
+  }
+  if (state.initError) {
+    lines.push(`Init error: ${state.initError}`);
+  }
+  return lines.join('\n');
+};
+
+const formatSessionStartSummary = (
+  identity: ResolvedAgentIdentity,
+  state: TestEngineSessionState,
+  reused: boolean,
+): string => {
+  const lines = [
+    ...formatResolvedIdentity(identity),
+    'Status: Success',
+    `Reused: ${reused ? 'yes' : 'no'}`,
+    `Session name: ${state.sessionName}`,
+    `Daemon PID: ${state.daemonPid}`,
+    `Daemon port: ${state.daemonPort}`,
+  ];
+  if (state.sessionId) {
+    lines.push(`Session ID: ${state.sessionId}`);
+  }
+  if (state.logFile) {
+    lines.push(`Log file: ${state.logFile}`);
+  }
+  return lines.join('\n');
+};
+
+const resolveIdentityForCommand = async (
+  explicitAgentId: string | null,
+  fallbackAgentId: string | null,
+): Promise<ResolvedAgentIdentity> => resolveAgentIdentity({
+  envAgentId: explicitAgentId ?? fallbackAgentId ?? undefined,
+});
+
+const handleDirectCommand = async (
+  commandLine: string,
+  streams: { stdout: Writable; stderr: Writable },
+  fallbackAgentId: string | null,
+): Promise<{ ok: boolean; resolvedAgentId: string | null }> => {
+  const tokens = parseCommandLine(commandLine);
+  if (tokens.length === 0) {
+    return { ok: true, resolvedAgentId: fallbackAgentId };
+  }
+
+  const [command, ...rest] = tokens;
+  const { tokens: strippedArgs, agentId: explicitAgentId } = parseGlobalAgentId(rest);
+  validateCommandUsage(command, strippedArgs);
+
+  if (command === 'help') {
+    writeLine(streams.stdout, HELP_TEXT);
+    return { ok: true, resolvedAgentId: fallbackAgentId };
+  }
+
+  if (command === 'steps') {
+    const runtime = new TestEngineCliRuntime({ stdout: streams.stdout, stderr: streams.stderr });
+    try {
+      const result = await runtime.executeTokens([command, ...strippedArgs], { interactive: false });
+      return { ok: result.ok, resolvedAgentId: fallbackAgentId };
+    } finally {
+      await runtime.close();
+    }
+  }
+
+  const identity = await resolveIdentityForCommand(explicitAgentId, fallbackAgentId);
+
+  if (command === 'status' || command === 'resolve') {
+    const state = await readSessionState(identity.agentId);
+    const alive = await cleanUpStaleState(state);
+    const refreshed = alive ? await readSessionState(identity.agentId) : null;
+    writeLine(streams.stdout, formatStateSummary(identity, refreshed));
+    return { ok: true, resolvedAgentId: identity.agentId };
+  }
+
+  if (command === 'start') {
+    let headed = false;
+    const sessionNameTokens: string[] = [];
+    for (const token of strippedArgs) {
+      if (token === '--headed') {
+        headed = true;
+        continue;
+      }
+      sessionNameTokens.push(token);
+    }
+
+    const sessionName = sessionNameTokens.join(' ').trim();
+    if (!sessionName) {
+      throw new Error('start requires a session name.');
+    }
+
+    const existingState = await readSessionState(identity.agentId);
+    if (await cleanUpStaleState(existingState)) {
+      const activeState = await ensureActiveState(identity.agentId);
+      writeLine(streams.stdout, formatSessionStartSummary(identity, activeState, true));
+      return { ok: true, resolvedAgentId: identity.agentId };
+    }
+
+    const { state, startupStdout } = await startDaemonProcess(identity, sessionName, headed, false);
+    writeLine(streams.stdout, formatSessionStartSummary(identity, state, false));
+    const startupDetails = normalizeStartupDetails(startupStdout);
+    if (startupDetails) {
+      writeLine(streams.stdout, startupDetails);
+    }
+    return { ok: true, resolvedAgentId: identity.agentId };
+  }
+
+  if (command === 'attach') {
+    const existingState = await readSessionState(identity.agentId);
+    if (await cleanUpStaleState(existingState)) {
+      const activeState = await ensureActiveState(identity.agentId);
+      writeLine(streams.stdout, formatSessionStartSummary(identity, activeState, true));
+      return { ok: true, resolvedAgentId: identity.agentId };
+    }
+
+    const { state, startupStdout } = await startDaemonProcess(identity, `attached-${identity.agentId}`, false, true);
+    writeLine(streams.stdout, formatSessionStartSummary(identity, state, false));
+    const startupDetails = normalizeStartupDetails(startupStdout);
+    if (startupDetails) {
+      writeLine(streams.stdout, startupDetails);
+    }
+    return { ok: true, resolvedAgentId: identity.agentId };
+  }
+
+  const state = await ensureActiveState(identity.agentId);
+  const daemonCommand = command === 'step-json' || command === 'batch-json'
+    ? `${command} ${strippedArgs[0] ?? ''}`.trimEnd()
+    : [command, ...strippedArgs.map(quoteCommandToken)].join(' ');
+  const response = await sendDaemonCommand(state, daemonCommand);
+  const ok = printDaemonResponse(streams, response);
+  return { ok, resolvedAgentId: identity.agentId };
+};
+
+const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
+  if (!parsed.agentId) {
+    throw new Error('Daemon server requires --system-thread.');
+  }
+
+  const initialCommand = parsed.daemonAttach
+    ? 'attach'
+    : (() => {
+      const [sessionName] = parsed.commands;
+      if (!sessionName) {
+        throw new Error('Daemon start requires a session name.');
+      }
+      return `start ${quoteCommandToken(sessionName)}${parsed.daemonHeaded ? ' --headed' : ''}`;
+    })();
+
+  const stdoutBuffer = new BufferingWritable();
+  const stderrBuffer = new BufferingWritable();
+  const runtime = new TestEngineCliRuntime({ stdout: stdoutBuffer, stderr: stderrBuffer }, { keepBridgeAlive: true });
+  let currentState: TestEngineSessionState = {
+    agentId: parsed.agentId,
+    sessionName: parsed.daemonAttach ? `attached-${parsed.agentId}` : parsed.commands[0] ?? `agent-${parsed.agentId}`,
+    daemonPid: process.pid,
+    daemonPort: 0,
+    headed: parsed.daemonHeaded,
+    mode: parsed.daemonAttach ? 'attach' : 'start',
+    startedAt: new Date().toISOString(),
+    lastActivity: new Date().toISOString(),
+    initializing: true,
+  };
+
+  const server = http.createServer(async (request, response) => {
+    const sendJson = (status: number, payload: unknown) => {
+      response.statusCode = status;
+      response.setHeader('content-type', 'application/json');
+      response.end(JSON.stringify(payload));
+    };
+
+    try {
+      if (request.method === 'GET' && request.url === '/status') {
+        sendJson(200, { ok: true, state: currentState } satisfies DaemonStatusResponse);
+        return;
+      }
+
+      if (request.method === 'POST' && request.url === '/command') {
+        let body = '';
+        for await (const chunk of request) {
+          body += typeof chunk === 'string' ? chunk : chunk.toString('utf8');
+        }
+
+        const payload = JSON.parse(body || '{}') as { command?: string };
+        if (!payload.command?.trim()) {
+          sendJson(400, { ok: false, shouldExit: false, stdout: '', stderr: 'Missing command.' } satisfies DaemonCommandResponse);
+          return;
+        }
+
+        stdoutBuffer.clear();
+        stderrBuffer.clear();
+        const result = await runtime.executeLine(payload.command, { interactive: false });
+        const commandResponse: DaemonCommandResponse = {
+          ok: result.ok,
+          shouldExit: result.shouldExit,
+          stdout: stdoutBuffer.readText(),
+          stderr: stderrBuffer.readText(),
+        };
+
+        currentState.lastActivity = new Date().toISOString();
+        await writeSessionState(parsed.agentId, currentState);
+        sendJson(200, commandResponse);
+
+        if (payload.command.trim().startsWith('shutdown') || result.shouldExit) {
+          setImmediate(async () => {
+            await removeSessionState(parsed.agentId!);
+            await runtime.close();
+            await new Promise<void>((resolve) => server.close(() => resolve()));
+            process.exit(0);
+          });
+        }
+        return;
+      }
+
+      sendJson(404, { ok: false, error: 'Not found' });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      sendJson(500, { ok: false, error: message });
+    }
+  });
+
+  try {
+    await new Promise<void>((resolve, reject) => {
+      server.listen(0, LOCALHOST, () => resolve());
+      server.once('error', reject);
+    });
+    const address = server.address();
+    if (!address || typeof address === 'string') {
+      throw new Error('Failed to determine daemon port.');
+    }
+
+    currentState.daemonPort = address.port;
+    await writeSessionState(parsed.agentId, currentState);
+
+    stdoutBuffer.clear();
+    stderrBuffer.clear();
+    const result = await runtime.executeLine(initialCommand, { interactive: false });
+    const stdoutText = stdoutBuffer.readText();
+    const stderrText = stderrBuffer.readText();
+
+    if (!result.ok) {
+      currentState.initializing = false;
+      currentState.initError = stderrText || stdoutText || 'Failed to initialize session daemon.';
+      await writeSessionState(parsed.agentId, currentState);
+      throw new Error(currentState.initError);
+    }
+
+    currentState = {
+      ...currentState,
+      ...parseSessionMetadata(stdoutText),
+      initializing: false,
+      initError: undefined,
+      lastActivity: new Date().toISOString(),
+    };
+    await writeSessionState(parsed.agentId, currentState);
+
+    if (parsed.statusFile) {
+      await fs.mkdir(path.dirname(parsed.statusFile), { recursive: true });
+      await fs.writeFile(
+        parsed.statusFile,
+        JSON.stringify({ ok: true, pid: process.pid, startupStdout: stdoutText }),
+        'utf8',
+      );
+    }
+
+    await new Promise<void>((resolve) => {
+      server.on('close', () => resolve());
+    });
+    return 0;
+  } catch (error) {
+    if (parsed.statusFile) {
+      await fs.mkdir(path.dirname(parsed.statusFile), { recursive: true });
+      const message = error instanceof Error ? error.message : String(error);
+      await fs.writeFile(parsed.statusFile, JSON.stringify({ ok: false, error: message }), 'utf8');
+    }
+    throw error;
+  } finally {
+    await runtime.close();
+    if (currentState.initError) {
+      await removeSessionState(parsed.agentId).catch(() => undefined);
+    }
+  }
+};
+
+export const runTestEngineCli = async (argv: string[], options: TestEngineCliOptions = {}): Promise<number> => {
+  const parsed = parseCliArgs(argv);
+  const stdout = options.stdout ?? process.stdout;
+  const stderr = options.stderr ?? process.stderr;
+
+  if (parsed.daemonServer) {
+    return runDaemonServer(parsed);
+  }
+
+  if (parsed.showHelp || parsed.commands.length === 0) {
+    writeLine(stdout, HELP_TEXT);
+    return 0;
+  }
+
+  let fallbackAgentId: string | null = parsed.agentId;
+  for (const command of parsed.commands) {
+    const result = await handleDirectCommand(command, { stdout, stderr }, fallbackAgentId);
+    if (!result.ok) {
+      return 1;
+    }
+    fallbackAgentId = result.resolvedAgentId;
+  }
+
+  return 0;
+};
+
+export { HELP_TEXT, tokenizeCommand, parseCliArgs, extractContentText, getAllSessionStates, getTestEngineStatePath, parseCommandLine };
