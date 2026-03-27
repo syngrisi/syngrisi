@@ -58,7 +58,11 @@ export type AppServerFixture = {
 };
 
 // Helpers to get per-worker CID
-const getCurrentCid = (): number => (process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_WORKER_INDEX || '0', 10));
+const getCurrentCid = (): number => (
+  process.env.DOCKER === '1'
+    ? 100
+    : parseInt(process.env.SYNGRISI_TEST_CID || process.env.TEST_WORKER_INDEX || '0', 10)
+);
 
 // Store server instances per CID to avoid cross-worker interference
 const serverInstances = new Map<number, RunningAppServer>();
@@ -101,7 +105,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
       // This ensures proper isolation between parallel workers
       // BUT: Don't override if already set to a high value (100+) - this means we're in a
       // spawned subprocess that needs its own unique isolation
-      const existingWorkerIndex = parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
+      const existingWorkerIndex = getCurrentCid();
       if (existingWorkerIndex < 100) {
         process.env.TEST_WORKER_INDEX = String(testInfo.parallelIndex);
       }
@@ -196,7 +200,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         }
         // Also stop via pkill to ensure process is killed
         // BUT: Skip pkill if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
-        const currentWorkerIndex = parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
+        const currentWorkerIndex = getCurrentCid();
         if (currentWorkerIndex < 100) {
           const { stopServerProcess } = require('@utils/app-server');
           stopServerProcess();
@@ -217,7 +221,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         const existingInstance = serverInstances.get(cid);
         if (existingInstance) {
           // Only reuse if explicitly allowing reuse AND not forcing a restart
-          if (reuseServerBetweenTests && !forceRestart) {
+          if (reuseServerBetweenTests && !forceRestart && await isServerRunning(existingInstance.serverPort)) {
             logger.info(`Reusing existing server (port ${existingInstance.serverPort})`);
             fixtureValue.baseURL = existingInstance.baseURL;
             fixtureValue.backendHost = existingInstance.backendHost;
@@ -236,6 +240,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
             };
             serverFixtures.set(cid, fixtureValue);
             return;
+          }
+          if (reuseServerBetweenTests && !forceRestart) {
+            logger.warn(`Skipping reuse for stale server instance on port ${existingInstance.serverPort}`);
           }
           logger.info(`Stopping existing server before restart`);
           await existingInstance.stop();
@@ -362,7 +369,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           existingConfig &&
           configsMatch(currentConfig, existingConfig);
 
-        const currentWorkerIndex = parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
+        const currentWorkerIndex = getCurrentCid();
 
         // Define launchFreshInstance outside the if/else so it can be used by restart/start methods
         const launchFreshInstance = async (useProcessEnvAuth = false, noRetry = false) => {

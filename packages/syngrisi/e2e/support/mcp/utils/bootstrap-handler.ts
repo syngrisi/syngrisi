@@ -3,7 +3,6 @@ import {
   CallToolRequestSchema,
   CallToolResultSchema,
   ListToolsRequestSchema,
-  ListToolsResultSchema,
   type Notification,
 } from '@modelcontextprotocol/sdk/types.js';
 
@@ -20,6 +19,10 @@ type BootstrapHandlerOptions = {
   onShutdown: () => void;
 };
 
+function normalizeToolDefinitions(tools: readonly unknown[]) {
+  return tools.map((tool) => JSON.parse(JSON.stringify(tool)));
+}
+
 export class BootstrapHandler {
   private readonly server: Server;
   private readonly handleSessionStart: SessionStartHandler;
@@ -35,7 +38,7 @@ export class BootstrapHandler {
 
   activate(): void {
     this.server.setRequestHandler(ListToolsRequestSchema, async () => {
-      return ListToolsResultSchema.parse({ tools: bootstrapToolDefinitions });
+      return { tools: normalizeToolDefinitions(bootstrapToolDefinitions) } as any;
     });
 
     this.server.setRequestHandler(CallToolRequestSchema, async (args) => {

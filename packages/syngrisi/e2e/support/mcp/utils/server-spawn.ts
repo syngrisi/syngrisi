@@ -44,8 +44,21 @@ export async function spawnMcpServer(options: SpawnServerOptions): Promise<Spawn
     E2E_HEADLESS: process.env.E2E_HEADLESS || '0',
     // Override TEST_WORKER_INDEX to ensure unique port allocation
     TEST_WORKER_INDEX: String(uniqueWorkerIndex),
+    SYNGRISI_TEST_CID: String(uniqueWorkerIndex),
     ...(extraEnv ?? {}),
   };
+
+  delete env.NODE_OPTIONS;
+  delete env.PW_TEST_SOURCE_TRANSFORM;
+  delete env.PW_TEST_SOURCE_TRANSFORM_SCOPE;
+  delete env.PLAYWRIGHT_JSON_OUTPUT_NAME;
+  delete env.PLAYWRIGHT_JUNIT_OUTPUT_NAME;
+  delete env.PW_TEST_HTML_REPORT_OPEN;
+  delete env.SYNGRISI_APP_PORT;
+  delete env.SYNGRISI_DB_URI;
+  delete env.SYNGRISI_IMAGES_PATH;
+
+  env.SYNGRISI_APP_PORT = String(5100 + uniqueWorkerIndex);
 
   // Debug: log idle timeout env vars
   if (env.MCP_IDLE_TIMEOUT_MS || env.MCP_IDLE_CHECK_INTERVAL_MS) {

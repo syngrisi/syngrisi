@@ -1,6 +1,6 @@
 metadata:
   category: domain/app
-  generatedAt: '2026-03-26T20:29:19.392Z'
+  generatedAt: '2026-03-27T06:28:30.180Z'
   totalFiles: 24
   totalSteps: 194
   sourceFiles:
@@ -121,7 +121,7 @@ steps:
       Delete check from modal dialog.
       Uses the modal's remove icon and waits for DELETE API response.
       More stable than raw locator clicks due to API synchronization.
-    line: 240
+    line: 245
   - pattern: I delete the {string} check
     description: ''
     line: 164
@@ -277,19 +277,19 @@ steps:
     line: 20
   - pattern: I accept via SDK the {ordinal} check with name {string}
     description: ''
-    line: 273
+    line: 306
   - pattern: 'I check image with path: {string} as {string}'
     description: ''
-    line: 98
+    line: 131
   - pattern: 'I check image with path: {string} as {string} and suppress exceptions'
     description: ''
-    line: 154
+    line: 187
   - pattern: 'I update via http check with params:'
     description: ''
-    line: 216
+    line: 249
   - pattern: 'I update via http last {string} checks with params:'
     description: ''
-    line: 241
+    line: 274
   - pattern: 'I create via http log with params:'
     description: ''
     line: 199
@@ -424,12 +424,12 @@ steps:
     line: 12
   - pattern: I open the saved share URL
     description: Opens the previously saved share URL
-    line: 235
+    line: 247
   - pattern: I open the shared check URL
     description: |-
       Opens the shared check URL from the share input field (immediate - modal must be open)
       Gets the URL from [data-test="share-url-input"] input and navigates to it
-    line: 251
+    line: 263
   - pattern: I save the share URL
     description: Gets share URL from Share Check modal and stores it in testData
     line: 194
@@ -537,7 +537,7 @@ steps:
     line: 293
   - pattern: plugin {string} should be loaded
     description: ''
-    line: 353
+    line: 360
   - pattern: the error message should contain {string}
     description: ''
     line: 332
@@ -546,7 +546,7 @@ steps:
     line: 326
   - pattern: the server should start successfully
     description: ''
-    line: 341
+    line: 348
   - pattern: a new user {string} should be created with role {string}
     description: Verify user was created in database
     line: 620
@@ -719,13 +719,13 @@ steps:
     line: 53
   - pattern: 'I create {string} tests with params:'
     description: ''
-    line: 600
+    line: 603
   - pattern: 'I create {string} tests with:'
     description: ''
-    line: 592
+    line: 595
   - pattern: I unfold the test {string}
     description: ''
-    line: 803
+    line: 806
   - pattern: I wait for check {string} to appear in collapsed row of test {string}
     description: |-
       Waits for a specific check to appear in the collapsed row of a test.
@@ -737,7 +737,7 @@ steps:
       ```gherkin
       When I wait for check "CheckName-1" to appear in collapsed row of test "TestName-1"
       ```
-    line: 932
+    line: 935
   - pattern: I wait for test {string} to appear in table
     description: |-
       Waits for a specific test row to appear in the table.
@@ -748,4 +748,4 @@ steps:
       ```gherkin
       When I wait for test "TestName-1" to appear in table
       ```
-    line: 823
+    line: 826

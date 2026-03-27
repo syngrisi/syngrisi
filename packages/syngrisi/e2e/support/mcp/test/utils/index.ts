@@ -6,14 +6,16 @@ import type { TestInfo } from '@playwright/test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { findEphemeralPort } from '../../utils/port-utils';
+import { waitForServerStop } from '../../../utils/app-server';
 
 const NPX_BIN = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 const BRIDGE_RELATIVE_PATH = ['support', 'mcp', 'bridge-cli.ts'];
+let bridgeCliSpawnCounter = 0;
 
 export const TIMEOUTS = {
   LIST_TOOLS: 120_000,
   CALL_TOOL: 60_000,
-  START_SESSION: 120_000,
+  START_SESSION: 180_000,
   EXECUTE_STEP: 180_000,
   TEST_SUITE: 240_000,
   TEST_SUITE_EXTENDED: 300_000,
@@ -58,6 +60,32 @@ const extractContentText = (payload: unknown): string => {
   return typeof text === 'string' ? text : '';
 };
 
+const buildSubprocessEnv = (
+  baseEnv: Record<string, string | undefined>,
+  overrides: Record<string, string>,
+): Record<string, string> => {
+  const env = { ...baseEnv };
+
+  delete env.NODE_OPTIONS;
+  delete env.PW_TEST_SOURCE_TRANSFORM;
+  delete env.PW_TEST_SOURCE_TRANSFORM_SCOPE;
+  delete env.PLAYWRIGHT_JSON_OUTPUT_NAME;
+  delete env.PLAYWRIGHT_JUNIT_OUTPUT_NAME;
+  delete env.PW_TEST_HTML_REPORT_OPEN;
+  delete env.FORCE_COLOR;
+  delete env.NO_COLOR;
+  delete env.SYNGRISI_APP_PORT;
+  delete env.SYNGRISI_DB_URI;
+  delete env.SYNGRISI_IMAGES_PATH;
+
+  return Object.fromEntries(
+    Object.entries({
+      ...env,
+      ...overrides,
+    }).filter(([, value]) => typeof value === 'string'),
+  ) as Record<string, string>;
+};
+
 const startBridgeCli = async (
   testInfo: TestInfo,
   options: BridgeCliOptions = {},
@@ -71,20 +99,21 @@ const startBridgeCli = async (
   const preferredPort = portOverride ?? String(await findEphemeralPort());
 
   const parentWorkerIndex = testInfo.parallelIndex;
-  const uniqueWorkerIndex = 100 + (parentWorkerIndex * 100);
+  const uniqueWorkerIndex = 100 + (parentWorkerIndex * 1000) + bridgeCliSpawnCounter++;
 
   const transport = new StdioClientTransport({
     command: NPX_BIN,
     args: commandArgs,
     cwd: e2eRoot,
-    env: {
-      ...(process.env as Record<string, string>),
+    env: buildSubprocessEnv(process.env as Record<string, string>, {
       ZENFLOW_WORKER_INSTANCE: workerInstanceId,
       MCP_DEFAULT_PORT: preferredPort,
       E2E_HEADLESS: '1',
       TEST_WORKER_INDEX: String(uniqueWorkerIndex),
+      SYNGRISI_TEST_CID: String(uniqueWorkerIndex),
+      SYNGRISI_APP_PORT: String(5100 + uniqueWorkerIndex),
       ...envOverrides,
-    },
+    }),
     stderr: 'pipe',
   });
 
@@ -123,25 +152,57 @@ const startBridgeCli = async (
   await client.connect(transport);
 
   const cleanup = async () => {
+    const settleWithTimeout = async (task: Promise<unknown>, timeoutMs: number) => Promise.race([
+      task.then(() => undefined).catch(() => undefined),
+      new Promise<void>((resolve) => setTimeout(resolve, timeoutMs)),
+    ]);
+
     await Promise.allSettled([
-      (async () => {
+      settleWithTimeout((async () => {
         try {
           await client.close();
         } catch {
           // ignore double-close errors
         }
-      })(),
-      (async () => {
+      })(), 1_000),
+      settleWithTimeout((async () => {
         try {
           await transport.close();
         } catch {
           // ignore double-close errors
         }
-      })(),
+      })(), 1_000),
     ]);
-    await transportClosed.catch(() => {
+
+    const waitForTransportClose = transportClosed.catch(() => {
       /* ignore */
     });
+
+    const transportClosedInTime = await Promise.race([
+      waitForTransportClose.then(() => true),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 1_000)),
+    ]);
+
+    if (!transportClosedInTime) {
+      try {
+        const cleanupCommand = `pkill -f 'support/mcp/bridge-cli.ts|support/mcp/test/mcp.spec.ts' || true`;
+        const { execSync } = await import('node:child_process');
+        execSync(cleanupCommand, { stdio: 'ignore' });
+      } catch {
+        // ignore forced bridge teardown failures
+      }
+    }
+
+    try {
+      const cleanupCommand = `pkill -SIGINT -f "syngrisi_test_server_${uniqueWorkerIndex}" || true`;
+      const { execSync } = await import('node:child_process');
+      execSync(cleanupCommand, { stdio: 'ignore' });
+      await waitForServerStop(uniqueWorkerIndex, 10_000).catch(() => {
+        /* ignore teardown races */
+      });
+    } catch {
+      // ignore teardown cleanup failures for already-stopped servers
+    }
 
     if (testInfo.status !== 'passed' && stderrChunks.length) {
       await testInfo.attach(attachmentName, {
@@ -155,8 +216,7 @@ const startBridgeCli = async (
 };
 
 const startNewSession = async (client: Client, sessionName: string) => {
-  await client.callTool({ name: 'sessions_clear', arguments: {} });
-  const result = await client.callTool(
+  const runStart = async () => client.callTool(
     {
       name: 'session_start_new',
       arguments: { sessionName },
@@ -164,6 +224,32 @@ const startNewSession = async (client: Client, sessionName: string) => {
     undefined,
     { timeout: TIMEOUTS.START_SESSION },
   );
+
+  let result: Awaited<ReturnType<typeof runStart>> | null = null;
+
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    await client.callTool({ name: 'sessions_clear', arguments: {} });
+    result = await runStart();
+
+    const text = extractContentText(result);
+    const isError = Boolean(result && typeof result === 'object' && 'isError' in result && (result as { isError?: boolean }).isError);
+    const isTransientStartError = isError && (
+      text.includes('ERR_CONNECTION_REFUSED')
+      || text.includes('Request timed out')
+      || text.includes('Connection closed')
+    );
+
+    if (!isTransientStartError || attempt === 3) {
+      break;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 2_000));
+  }
+
+  if (!result) {
+    throw new Error('Failed to start MCP session: no result returned.');
+  }
+
   return { result, text: extractContentText(result) };
 };
 

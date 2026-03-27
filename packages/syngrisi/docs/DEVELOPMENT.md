@@ -56,3 +56,79 @@ To add or modify test users, edit:
 `packages/syngrisi/src/seeds/testUsers.json`
 
 The server will create new users from this file upon restart if they don't exist in the database.
+
+---
+
+## Baseline Tolerance Threshold
+
+Syngrisi supports `toleranceThreshold` as a percent value on a specific baseline.
+
+### Behavior
+
+- `0` means disabled.
+- Allowed range: `0..100`.
+- If `rawMisMatchPercentage <= toleranceThreshold`, the check is stored as `passed`.
+- `wrong_dimensions` still forces `failed`, even if the threshold is high.
+- The real mismatch value is still stored in `check.result`.
+- When a new baseline is accepted for the same ident, the previous baseline's `toleranceThreshold` is inherited.
+
+### UI
+
+In Check Details, open the same dropdown that contains `Auto-ignore Mode`.
+
+From there you can:
+
+- edit `Tolerance threshold (%)` manually
+- use `Auto-calc` to set `threshold = currentDiff + 0.01`
+- save and immediately re-compare the current check
+
+If a threshold is active, the check header shows a dedicated tolerance indicator.
+If a check passed because of tolerance, the status tooltip shows `passed by tolerance`.
+
+### API
+
+#### Update a baseline threshold
+
+```bash
+curl -X PUT http://localhost:3000/v1/baselines/<baselineId> \
+  -H 'Content-Type: application/json' \
+  -H 'apikey: <apiKey>' \
+  -d '{"toleranceThreshold":0.6}'
+```
+
+#### Re-compare a check with current baseline settings
+
+```bash
+curl -X POST http://localhost:3000/v1/checks/<checkId>/recompare \
+  -H 'apikey: <apiKey>'
+```
+
+This reuses the current baseline settings, including:
+
+- `matchType`
+- `ignoreRegions`
+- `toleranceThreshold`
+
+#### Set threshold while creating a check via client API
+
+```bash
+curl -X POST http://localhost:3000/v1/client/createCheck \
+  -H 'Content-Type: application/json' \
+  -H 'apikey: <apiKey>' \
+  -d '{
+    "testid":"<testId>",
+    "name":"Login page",
+    "appName":"My App",
+    "branch":"main",
+    "suitename":"Smoke",
+    "viewport":"1366x768",
+    "browserName":"chrome",
+    "browserVersion":"125",
+    "browserFullVersion":"125.0.6422.142",
+    "os":"macOS",
+    "hashcode":"<snapshotHash>",
+    "toleranceThreshold":0.6
+  }'
+```
+
+If a baseline already exists for the same ident, this request applies the threshold to that baseline before comparison.
