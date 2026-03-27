@@ -21,6 +21,7 @@ import {
   getTestEngineStatePath,
   readSessionState,
   removeSessionState,
+  removeSessionStateIfOwned,
   updateSessionActivity,
   waitForSessionStateReady,
   writeSessionState,
@@ -113,6 +114,7 @@ type DaemonCommandResponse = {
   shouldExit: boolean;
   stdout: string;
   stderr: string;
+  state?: TestEngineSessionState | null;
 };
 
 type DaemonStatusResponse = {
@@ -507,7 +509,8 @@ const shouldMarkBrokenFromText = (text: string): boolean => (
   text.includes('Request timed out') ||
   text.includes('Connection closed') ||
   text.includes('Failed to reach session daemon') ||
-  text.includes('MCP error -32001')
+  text.includes('MCP error -32001') ||
+  text.includes('Session daemon for agent')
 );
 
 const getHealthLabel = (state: TestEngineSessionState): string => {
@@ -519,6 +522,20 @@ const getHealthLabel = (state: TestEngineSessionState): string => {
   }
   return 'ready';
 };
+
+const sanitizeToolList = (tools: Array<{ name: string; description?: string }>): string[] => (
+  tools.map(({ name, description }) => `${name}${description ? ` - ${description}` : ''}`)
+);
+
+const fallbackToolList = (): string[] => [
+  'session_start_new - Starts a new MCP browser session.',
+  'sessions_clear - Clears existing Playwright browser contexts/pages.',
+  'step_execute_single - Executes a single BDD step.',
+  'step_execute_many - Executes multiple BDD steps in sequence.',
+  'attach_existing_session - Attaches to an existing debug MCP session.',
+];
+
+const formatStableToolList = (): string => fallbackToolList().join('\n');
 
 const writeJson = (stream: Writable, payload: JsonCommandPayload) => {
   stream.write(`${JSON.stringify(payload, null, 2)}\n`);
@@ -767,8 +784,17 @@ class TestEngineCliRuntime {
 
   private async runTools(): Promise<boolean> {
     const client = await this.ensureConnected();
-    const tools = await client.listTools(undefined, { timeout: TOOL_TIMEOUTS.listTools });
-    const lines = tools.tools.map(({ name, description }) => `${name}${description ? ` - ${description}` : ''}`);
+    let lines: string[];
+    try {
+      const tools = await client.listTools(undefined, { timeout: TOOL_TIMEOUTS.listTools });
+      lines = sanitizeToolList(tools.tools);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!message.includes('inputSchema') || !message.includes('expected "object"')) {
+        throw error;
+      }
+      lines = fallbackToolList();
+    }
     this.printSuccess(lines.join('\n'));
     return true;
   }
@@ -974,7 +1000,7 @@ class TestEngineCliRuntime {
         this.printError(this.bridgeStderr.trim());
         this.bridgeStderr = '';
       }
-      return { ok: false, shouldExit: !options.interactive };
+      return { ok: false, shouldExit: options.interactive ? false : !this.keepBridgeAlive };
     }
   }
 
@@ -1083,7 +1109,26 @@ const startDaemonProcess = async (
   child.unref();
 
   try {
-    const state = await waitForSessionStateReady(identity.agentId, DAEMON_START_TIMEOUT_MS);
+    const startedAt = Date.now();
+    let state: TestEngineSessionState | null = null;
+
+    while (Date.now() - startedAt < DAEMON_START_TIMEOUT_MS) {
+      const candidate = await readSessionState(identity.agentId);
+      if (candidate && candidate.daemonPid === child.pid && !candidate.initializing) {
+        state = candidate;
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+
+    if (!state) {
+      state = await waitForSessionStateReady(identity.agentId, 1000, 100).catch(() => null);
+    }
+
+    if (!state || state.daemonPid !== child.pid) {
+      throw new Error(`Timed out waiting for daemon ${child.pid} to publish a ready session state for agent ${identity.agentId}.`);
+    }
+
     const startupStdout = await fs.readFile(statusFile, 'utf8').catch(() => '');
     const parsed = startupStdout ? JSON.parse(startupStdout) as { startupStdout?: string } : {};
     return { state, startupStdout: parsed.startupStdout ?? '' };
@@ -1275,6 +1320,28 @@ const handleDirectCommand = async (
     }
   }
 
+  if (command === 'tools') {
+    const identity = await resolveIdentityForCommand(explicitAgentId, fallbackAgentId);
+    const state = await ensureActiveState(identity.agentId);
+    const stdout = formatStableToolList();
+    if (options.jsonOutput) {
+      writeJson(streams.stdout, {
+        ok: true,
+        command,
+        systemThread: identity.agentId,
+        health: getHealthLabel(state),
+        stdout,
+        stderr: '',
+        artifacts: [],
+        state,
+        eventLogFile: getTestEngineEventLogPath(identity.agentId),
+      });
+    } else {
+      writeLine(streams.stdout, stdout);
+    }
+    return { ok: true, resolvedAgentId: identity.agentId };
+  }
+
   const identity = await resolveIdentityForCommand(explicitAgentId, fallbackAgentId);
 
   if (command === 'status' || command === 'resolve') {
@@ -1419,15 +1486,17 @@ const handleDirectCommand = async (
     : [command, ...strippedArgs.map(quoteCommandToken)].join(' ');
   const response = await sendDaemonCommand(state, daemonCommand);
   const artifacts = extractArtifacts(`${response.stdout}\n${response.stderr}`);
+  const responseState = response.state ?? await readSessionState(identity.agentId);
   const ok = options.jsonOutput
     ? (writeJson(streams.stdout, {
       ok: response.ok,
       command,
       systemThread: identity.agentId,
-      health: (await readSessionState(identity.agentId)) ? getHealthLabel((await readSessionState(identity.agentId))!) : undefined,
+      health: responseState ? getHealthLabel(responseState) : undefined,
       stdout: response.stdout,
       stderr: response.stderr,
       artifacts,
+      state: responseState,
       eventLogFile: getTestEngineEventLogPath(identity.agentId),
     }), response.ok)
     : printDaemonResponse(streams, response);
@@ -1508,6 +1577,7 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
     if (
       commandLine === 'status' ||
       commandLine === 'resolve' ||
+      commandLine === 'tools' ||
       commandLine === 'help' ||
       commandLine.startsWith('steps ')
     ) {
@@ -1609,7 +1679,10 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
 
         try {
           const commandResponse = await taskResponse;
-          sendJson(200, commandResponse);
+          sendJson(200, {
+            ...commandResponse,
+            state: currentState,
+          } satisfies DaemonCommandResponse);
 
           if (payload.command.trim().startsWith('shutdown') || commandResponse.shouldExit) {
             setImmediate(async () => {
@@ -1622,7 +1695,7 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
                 currentCommand: undefined,
                 lastActivity: new Date().toISOString(),
               });
-              await removeSessionState(parsed.agentId!);
+              await removeSessionStateIfOwned(parsed.agentId!, process.pid);
               await runtime.close();
               await new Promise<void>((resolve) => server.close(() => resolve()));
               process.exit(0);
@@ -1715,7 +1788,7 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
   } finally {
     await runtime.close();
     if (currentState.initError) {
-      await removeSessionState(parsed.agentId).catch(() => undefined);
+      await removeSessionStateIfOwned(parsed.agentId, process.pid).catch(() => undefined);
     }
   }
 };

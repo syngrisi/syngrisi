@@ -192,7 +192,9 @@ test.describe('MCP Cape-style CLI integration', { tag: '@no-app-start' }, () => 
       });
 
       expect(ambiguousResult.code).toBe(1);
-      expect(ambiguousResult.stderr).toContain('Unable to resolve system thread.');
+      expect(ambiguousResult.stderr).toContain('multiple active sessions exist');
+      expect(ambiguousResult.stderr).toContain(firstAgentId);
+      expect(ambiguousResult.stderr).toContain(secondAgentId);
     } finally {
       await removeSessionState(firstAgentId);
       await removeSessionState(secondAgentId);

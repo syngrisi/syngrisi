@@ -103,6 +103,19 @@ export const removeSessionState = async (agentId: string): Promise<void> => {
   }
 };
 
+export const removeSessionStateIfOwned = async (
+  agentId: string,
+  daemonPid: number,
+): Promise<boolean> => {
+  const state = await readSessionState(agentId);
+  if (state && state.daemonPid !== daemonPid) {
+    return false;
+  }
+
+  await removeSessionState(agentId);
+  return true;
+};
+
 export const updateSessionActivity = async (agentId: string): Promise<void> => {
   const state = await readSessionState(agentId);
   if (!state) {

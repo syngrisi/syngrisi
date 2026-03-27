@@ -85,10 +85,14 @@ export const isProcessAlive = async (pid: number): Promise<boolean> => {
   }
 };
 
-const resolveAgentIdFromState = async (): Promise<string | null> => {
+const resolveAgentIdFromState = async (): Promise<{
+  agentId: string | null;
+  ambiguous: boolean;
+  candidates: string[];
+}> => {
   const states = await getAllSessionStates();
   if (states.length === 0) {
-    return null;
+    return { agentId: null, ambiguous: false, candidates: [] };
   }
 
   const aliveStates: TestEngineSessionState[] = [];
@@ -100,10 +104,18 @@ const resolveAgentIdFromState = async (): Promise<string | null> => {
 
   const candidates = aliveStates.length > 0 ? aliveStates : states;
   if (candidates.length === 1) {
-    return candidates[0]?.agentId ?? null;
+    return {
+      agentId: candidates[0]?.agentId ?? null,
+      ambiguous: false,
+      candidates: candidates.map((state) => state.agentId),
+    };
   }
 
-  return null;
+  return {
+    agentId: null,
+    ambiguous: candidates.length > 1,
+    candidates: candidates.map((state) => state.agentId),
+  };
 };
 
 export const resolveAgentIdentity = async (
@@ -183,13 +195,19 @@ export const resolveAgentIdentity = async (
     }
   }
 
-  const stateAgentId = await resolveAgentIdFromState();
-  if (stateAgentId) {
+  const stateResolution = await resolveAgentIdFromState();
+  if (stateResolution.agentId) {
     return {
-      agentId: stateAgentId,
+      agentId: stateResolution.agentId,
       source: 'state',
       warning: 'Resolved system thread from local state cache. Prefer --system-thread for deterministic routing.',
     };
+  }
+
+  if (stateResolution.ambiguous) {
+    throw new Error(
+      `Unable to resolve system thread from local state cache because multiple active sessions exist: ${stateResolution.candidates.join(', ')}. Set SYSTEM_THREAD or pass --system-thread.`,
+    );
   }
 
   throw new Error(

@@ -39,6 +39,7 @@ The server uses dynamic port allocation (port 0), letting the OS assign a free p
 - `step ... --docstring-file <path>` – Load docstring payload from a file instead of base64 or inline quoting
 - `steps find <query>` – Search available step definitions without starting a browser session
 - `restart <sessionName>` – Replace the current session for the same `SYSTEM_THREAD`
+- `tools` – Return the stable wrapper-level MCP tool list without depending on raw SDK schema parsing
 - `--json` – Return machine-readable output including `health`, `state`, `artifacts`, and `eventLogFile`
 
 These commands are especially useful for quote-heavy steps such as `I create "1" tests with:` and for YAML payloads used in env/bootstrap flows.
@@ -61,8 +62,11 @@ Operational caveats for the current session-aware CLI:
 - Serialize commands for a given `SYSTEM_THREAD`; concurrent `step` calls can mix stdout and screenshot artifacts.
 - `start` runs a smoke step before the session is marked healthy.
 - `status` includes `health`, `brokenReason`, `eventLogFile`, `lastCommand`, and `lastArtifacts`.
+- `tools` is the preferred stable discovery surface from the CLI.
 - If a real step fails with `Session not started` after a successful `start`, use `restart` first.
 - If a timed-out step is followed by `No active session found`, assume the session continuity is gone and bootstrap again.
+- If fallback resolution reports `multiple active sessions exist`, pass explicit `--system-thread` or `SYSTEM_THREAD`.
+- Immediately after `shutdown`, `status` may briefly show `shutting_down`; wait for `Has active session: no` before assuming teardown is complete.
 
 Step definitions are loaded dynamically from `packages/syngrisi/e2e/steps/**` and `support/mcp/sd/**`. They are regenerated each time you start a new session—after editing any step definitions, restart the session so clients discover the updated catalogue.
 

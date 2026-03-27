@@ -83,6 +83,7 @@ Rules of thumb:
 - `start` now runs a mandatory smoke step before the session is considered healthy.
 - Prefer `SYSTEM_THREAD` or explicit `--system-thread` for deterministic routing.
 - Use `status` or `resolve` to inspect what session the CLI will target.
+- Use `tools` as the stable wrapper-level MCP discovery command.
 - Prefer `step` for all single actions, assertions, diagnostics, and value-returning steps.
 - Use `batch` only for short deterministic sequences when per-step output is not needed.
 - Prefer existing BDD/domain steps over low-level locator steps when both exist.
@@ -298,6 +299,7 @@ npx tsx support/mcp/test-engine-cli.ts shutdown
   - `busy` means a command is running
   - `broken` means replace the session with `restart`
   - `shutting_down` means teardown is in progress
+- If auto-resolution fails with `multiple active sessions exist`, stop relying on fallback and pass explicit `--system-thread` or `SYSTEM_THREAD`.
 - If `status` says the session exists but a real `step` fails with `Session not started`, assume the daemon and bridge drifted out of sync.
 - If a regular user step times out and the next command says `No active session found`, treat the session as broken and restart it from `yarn kill` plus fresh `start`.
 - `status` now includes `eventLogFile`, `lastCommand`, `currentCommand`, `brokenReason`, and `lastArtifacts`.

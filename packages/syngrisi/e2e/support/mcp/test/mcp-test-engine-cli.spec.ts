@@ -234,6 +234,7 @@ test.describe('MCP Test Engine CLI tests', { tag: '@no-app-start' }, () => {
       args: ['shutdown', '--system-thread', agentId],
       attachmentName: 'mcp-test-engine-cli-status-shutdown-output',
     });
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     const afterShutdownResult = await runTestEngineCli(testInfo, {
       args: ['status', '--system-thread', agentId],
       attachmentName: 'mcp-test-engine-cli-status-after-shutdown-output',
@@ -619,5 +620,48 @@ test.describe('MCP Test Engine CLI tests', { tag: '@no-app-start' }, () => {
       attachmentName: 'mcp-test-engine-cli-event-log-shutdown-output',
     });
     expect(shutdownResult.code).toBe(0);
+  });
+
+  test('restart returns the fresh session state instead of stale broken state', async ({ }, testInfo) => {
+    test.setTimeout(TIMEOUTS.TEST_SUITE);
+    const env = buildSessionEnv(testInfo, 'restart-state');
+
+    const startResult = await runTestEngineCli(testInfo, {
+      args: ['start', 'mcp-test-engine-cli-restart-a', '--headed'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-restart-a-start-output',
+    });
+    const restartResult = await runTestEngineCli(testInfo, {
+      args: ['restart', 'mcp-test-engine-cli-restart-b', '--headed', '--json'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-restart-b-output',
+    });
+    const statusResult = await runTestEngineCli(testInfo, {
+      args: ['status', '--json'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-restart-b-status-output',
+    });
+    const shutdownResult = await runTestEngineCli(testInfo, {
+      args: ['shutdown'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-restart-b-shutdown-output',
+    });
+
+    expect(startResult.code).toBe(0);
+    expect(startResult.stderr).toBe('');
+
+    expect(restartResult.code).toBe(0);
+    expect(restartResult.stderr).toBe('');
+    expect(restartResult.stdout).toContain('"health": "ready"');
+    expect(restartResult.stdout).toContain('"sessionName": "mcp-test-engine-cli-restart-b"');
+    expect(restartResult.stdout).not.toContain('"health": "broken"');
+
+    expect(statusResult.code).toBe(0);
+    expect(statusResult.stderr).toBe('');
+    expect(statusResult.stdout).toContain('"sessionName": "mcp-test-engine-cli-restart-b"');
+    expect(statusResult.stdout).toContain('"health": "ready"');
+
+    expect(shutdownResult.code).toBe(0);
+    expect(shutdownResult.stderr).toBe('');
   });
 });
