@@ -8,11 +8,12 @@ export async function createInitialSettings(): Promise<void> {
         await settings.loadInitialFromFile();
     } else {
         for (const seed of initialAppSettings) {
-            const alreadyExists = settings.cache?.some((item: any) => item.name === seed.name);
-            if (!alreadyExists) {
-                const created = await AppSettingsModel.create(seed);
-                settings.cache.push(created.toObject());
-            }
+            await AppSettingsModel.updateOne(
+                { name: seed.name },
+                { $setOnInsert: seed },
+                { upsert: true }
+            );
         }
+        await settings.init();
     }
 }

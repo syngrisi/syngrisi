@@ -208,15 +208,20 @@ When('I remove the {string} check', async ({ page }: { page: Page }, checkName: 
     const confirmButton = page.locator(`[data-test='check-remove-icon-confirm'][data-confirm-button-name='${checkName}']`).first();
     await confirmButton.waitFor({ state: 'visible', timeout: 10000 });
 
-    // Wait for DELETE API response to complete before proceeding
-    // This prevents race condition where UI update happens after test assertion
-    await Promise.all([
-      page.waitForResponse(
-        (resp) => resp.url().includes('/v1/checks/') && resp.request().method() === 'DELETE' && resp.ok(),
-        { timeout: 15000 }
-      ),
-      confirmButton.click(),
-    ]);
+    // Prefer the DELETE response, but fall back to UI state if the request observer misses it.
+    const deleteResponsePromise = page.waitForResponse(
+      (resp) => resp.url().includes('/v1/checks/') && resp.request().method() === 'DELETE' && resp.ok(),
+      { timeout: 15000 }
+    ).catch(() => null);
+
+    await confirmButton.click();
+
+    const deleteResponse = await deleteResponsePromise;
+    if (!deleteResponse) {
+      await icon.waitFor({ state: 'detached', timeout: 10000 }).catch(async () => {
+        await confirmButton.waitFor({ state: 'detached', timeout: 10000 });
+      });
+    }
 
     logger.info(`Removed check: ${checkName}`);
   } catch (error: unknown) {

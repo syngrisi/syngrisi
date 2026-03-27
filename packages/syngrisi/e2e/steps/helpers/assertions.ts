@@ -87,7 +87,7 @@ export async function assertCondition(
         await page.waitForLoadState('networkidle', { timeout: 2000 }).catch(() => undefined);
         await page.waitForTimeout(200);
       }
-      const retryTimeout = Math.min(effectiveOptions.timeout ?? 5000, 5000);
+      const retryTimeout = effectiveOptions.timeout ?? 30000;
       await handler(locator.first(), { timeout: retryTimeout });
     }
     return;

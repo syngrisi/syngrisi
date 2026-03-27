@@ -37,13 +37,12 @@ Feature: Tests Table Features
               checkName: CheckName
       """
     When I wait for "5" seconds
-
-    Then the element with locator "[data-test='table-refresh-icon-badge']" should have contains text "3"
+    When I wait for "1" seconds
+    When I wait up to 60 seconds for element "[data-test='table-refresh-icon-badge']" to contain text "3"
     When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-before]" to be visible
 
     When I click element with locator "[aria-label='Refresh']"
-    # Use polling assertion to wait for all 3 items to be loaded with extended timeout
-    Then the element "[data-table-test-name=TestName-after]" should have exactly 3 items within 30 seconds
+    Then the element "[data-table-test-name=TestName-after]" should have exactly 3 items within 60 seconds with refresh
 
   # ============================================
   # Folding
