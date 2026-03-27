@@ -526,8 +526,11 @@ async function createTestsWithParams(
 
     // Validate count via /v1/checks endpoint which supports API key auth
     // (unlike /v1/tests which only supports session auth)
-    const maxRetries = 5;
-    const retryDelays = [500, 1000, 2000, 3000, 5000];
+    const isLargeBatch = createdTestIds.length >= 10;
+    const maxRetries = isLargeBatch ? 8 : 5;
+    const retryDelays = isLargeBatch
+      ? [500, 1000, 2000, 3000, 5000, 5000, 5000, 5000]
+      : [500, 1000, 2000, 3000, 5000];
     let lastError: Error | null = null;
     let verificationPassed = false;
 

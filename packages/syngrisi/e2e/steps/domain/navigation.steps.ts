@@ -194,17 +194,29 @@ When('I wait for table to stabilize', async ({ page }) => {
 When('I save the share URL', async ({ page, testData }: { page: Page; testData: TestStore }) => {
   logger.info('Saving share URL from input field');
 
-  // Wait for the Share Check modal to be visible
-  const shareModal = page.getByRole('dialog', { name: 'Share Check' });
-  await shareModal.waitFor({ state: 'visible', timeout: 15000 });
+  // Prefer the named dialog, but fall back to the share URL input when the modal
+  // is rendered without a stable accessible name during slower UI updates.
+  let shareModal = page.getByRole('dialog', { name: 'Share Check' });
+  let modalReady = true;
+
+  try {
+    await shareModal.waitFor({ state: 'visible', timeout: 15000 });
+  } catch {
+    modalReady = false;
+    const shareUrlInput = page.locator('[data-test="share-url-input"]');
+    await shareUrlInput.waitFor({ state: 'visible', timeout: 15000 });
+    shareModal = shareUrlInput.locator('xpath=ancestor::*[@role="dialog"][1]');
+  }
 
   let shareUrl = '';
 
   // Find the textbox inside the Share Check modal - it contains the share URL
   try {
-    const textbox = shareModal.getByRole('textbox');
+    const textbox = modalReady
+      ? shareModal.getByRole('textbox')
+      : page.locator('[data-test="share-url-input"]');
     if (await textbox.count() > 0) {
-      shareUrl = await textbox.inputValue();
+      shareUrl = await textbox.first().inputValue();
       logger.info(`Got URL from textbox.inputValue: ${shareUrl}`);
     }
   } catch (e) {

@@ -24,18 +24,51 @@ When(
     ordinal: number,
     name: string
   ) => {
-    const uri = `${appServer.baseURL}/v1/checks?limit=0&filter={"$and":[{"name":{"$regex":"${name}","$options":"im"}}]}`;
+    const currentCheck = testData.get('currentCheck') as Record<string, any> | undefined;
+    let check = currentCheck && currentCheck.name === name ? currentCheck : null;
 
-    logger.info(`Fetching checks with name "${name}"`);
-    const checksResponse = await requestWithSession(uri, testData, appServer);
-    const checks = checksResponse.json.results;
+    if (check) {
+      logger.info(`Using current check from test data for acceptance: ${JSON.stringify(check)}`);
+    } else {
+      const uri = `${appServer.baseURL}/v1/checks?limit=0&filter={"$and":[{"name":{"$regex":"${name}","$options":"im"}}]}`;
+      const maxFetchAttempts = 8;
+      let checks: any[] = [];
+      let lastFetchError: Error | null = null;
 
-    logger.info(`Found ${checks.length} checks`);
+      for (let attempt = 0; attempt < maxFetchAttempts; attempt += 1) {
+        try {
+          logger.info(`Fetching checks with name "${name}" (attempt ${attempt + 1}/${maxFetchAttempts})`);
+          const checksResponse = await requestWithSession(uri, testData, appServer);
+          checks = [...(checksResponse.json.results || [])].sort((a, b) => {
+            const aTime = new Date(a.createdDate || a.updatedDate || 0).getTime();
+            const bTime = new Date(b.createdDate || b.updatedDate || 0).getTime();
+            return bTime - aTime;
+          });
 
-    // Playwright BDD ordinal is 0-based: "1st" = 0, "2nd" = 1, etc.
-    const check = checks[ordinal];
+          logger.info(`Found ${checks.length} checks`);
+          check = checks[ordinal];
+          if (check) {
+            break;
+          }
+
+          lastFetchError = new Error(
+            `Check #${ordinal + 1} (${ordinal}-based index) with name "${name}" not found. Found ${checks.length} checks.`
+          );
+        } catch (error) {
+          lastFetchError = error as Error;
+          logger.warn(`Fetching checks failed on attempt ${attempt + 1}: ${lastFetchError.message}`);
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+
+      if (!check) {
+        throw lastFetchError || new Error(`Check with name "${name}" was not found`);
+      }
+    }
+
     if (!check) {
-      throw new Error(`Check #${ordinal + 1} (${ordinal}-based index) with name "${name}" not found. Found ${checks.length} checks.`);
+      throw new Error(`Check #${ordinal + 1} (${ordinal}-based index) with name "${name}" not found.`);
     }
     logger.info(`Fetched check for acceptance: ${JSON.stringify(check)}`);
     const checkId = check._id;

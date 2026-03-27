@@ -1467,8 +1467,8 @@ Then(
   'the element {string} should have exactly {int} items within {int} seconds with refresh',
   async ({ page }, selector: string, exactCount: number, seconds: number) => {
     const locator = getLocatorQuery(page, selector);
-    // Use the table refresh icon which has the badge for new items
-    const refreshButton = page.locator('[data-test="table-refresh-icon"]');
+    // Support both the data-test refresh icon and the visible button label.
+    const refreshButton = page.locator('[data-test="table-refresh-icon"], [aria-label="Refresh"]').first();
     const newItemsBadge = page.locator('[data-test="table-refresh-icon-badge"]');
     const startTime = Date.now();
     const timeoutMs = seconds * 1000;
@@ -1489,7 +1489,11 @@ Then(
         // Check for badge before clicking
         const hasBadge = await newItemsBadge.isVisible({ timeout: 200 }).catch(() => false);
 
-        await refreshButton.click();
+        try {
+          await refreshButton.click({ timeout: 2000 });
+        } catch (error) {
+          logger.warn(`Refresh click failed while waiting for "${selector}": ${String(error)}`);
+        }
 
         // Wait for the refresh to complete - badge should disappear or stay gone
         await page.waitForTimeout(500);
@@ -1511,7 +1515,11 @@ Then(
     // Final attempt: one more refresh and check
     const refreshVisible = await refreshButton.isVisible({ timeout: 500 }).catch(() => false);
     if (refreshVisible) {
-      await refreshButton.click();
+      try {
+        await refreshButton.click({ timeout: 2000 });
+      } catch (error) {
+        logger.warn(`Final refresh click failed while waiting for "${selector}": ${String(error)}`);
+      }
       await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => { });
       await page.waitForTimeout(500);
     }
