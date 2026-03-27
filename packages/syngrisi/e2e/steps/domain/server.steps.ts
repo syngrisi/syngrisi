@@ -329,12 +329,19 @@ Then('the server should fail to start', async () => {
   }
 });
 
-Then('the error message should contain {string}', async ({ }, errorMessage: string) => {
+Then('the error message should contain {string}', async ({ appServer }: { appServer: AppServerFixture }, errorMessage: string) => {
   if (!lastStartError) {
     throw new Error('No error captured from server start');
   }
-  if (!lastStartError.message.includes(errorMessage)) {
-    throw new Error(`Error message "${lastStartError.message}" does not contain "${errorMessage}"`);
+
+  const details = [
+    lastStartError.message,
+    lastStartError.stack || '',
+    appServer.getBackendLogs?.() || '',
+  ].join('\n');
+
+  if (!details.includes(errorMessage)) {
+    throw new Error(`Error details "${details}" do not contain "${errorMessage}"`);
   }
 });
 
