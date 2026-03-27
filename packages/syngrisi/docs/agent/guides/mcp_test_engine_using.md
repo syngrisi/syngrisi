@@ -36,10 +36,13 @@ Important runtime caveats:
 - Serialize commands per `SYSTEM_THREAD`; do not run multiple `step` invocations in parallel against the same session.
 - `status` reflects daemon/cache state, not a full guarantee that the underlying bridge session is still attached.
 - `start` now includes a mandatory smoke step (`I test`, fallback `I get current URL`).
+- `tools` is a stable wrapper-level discovery command; prefer it over raw SDK tool enumeration.
 - Use `restart <sessionName>` to replace a broken session for the same `SYSTEM_THREAD`.
 - Health states are explicit: `initializing`, `ready`, `busy`, `broken`, `shutting_down`.
 - If real steps start failing with `Session not started` while `status` still looks healthy, use `restart` first; if needed, fall back to `yarn kill` plus fresh `start`.
 - If a regular UI step times out and the next call reports `No active session found`, treat the whole session as broken.
+- If auto-resolution fails with `multiple active sessions exist`, stop relying on fallback and pass explicit `--system-thread` or `SYSTEM_THREAD`.
+- After `shutdown`, `status` can briefly show `shutting_down`; wait a moment before treating that as a failure.
 - Use `--json` when you need structured `state`, `health`, `artifacts`, and `eventLogFile`.
 
 ## Start the MCP server (Playwright-backed)
