@@ -12,6 +12,7 @@ import * as checkService from './check.service';
 import * as testRunService from './test-run.service';
 import * as snapshotFileService from './snapshot-file.service';
 import * as comparisonService from './comparison.service';
+import { adminDataJobService } from './admin-data-job.service';
 
 export {
     runService,
@@ -27,4 +28,5 @@ export {
     testRunService,
     snapshotFileService,
     comparisonService,
+    adminDataJobService,
 };

@@ -9,6 +9,7 @@ import AdminUsers from '@admin/components/Users/AdminUsers';
 import AdminSettings from '@admin/components/Settings/AdminSettings';
 import AdminLogs from '@admin/components/Logs/AdminLogs';
 import AdminPluginSettings from '@admin/components/PluginSettings/AdminPluginSettings';
+import AdminDataManagement from '@admin/components/DataManagement/AdminDataManagement';
 
 export default function AdminLayout() {
     return (
@@ -28,6 +29,7 @@ export default function AdminLayout() {
                     <Route path="settings" element={<AdminSettings />} />
                     <Route path="plugins" element={<AdminPluginSettings />} />
                     <Route path="logs" element={<AdminLogs />} />
+                    <Route path="data" element={<AdminDataManagement />} />
                 </Routes>
                 <Routes>
                     <Route path="/tasks/">
@@ -38,4 +40,3 @@ export default function AdminLayout() {
         </AppShell>
     );
 }
-

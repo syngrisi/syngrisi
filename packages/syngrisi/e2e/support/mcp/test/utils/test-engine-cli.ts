@@ -66,6 +66,7 @@ const runTestEngineCli = async (
       cwd: e2eRoot,
       env: buildSubprocessEnv(process.env as Record<string, string>, {
         ZENFLOW_WORKER_INSTANCE: workerInstanceId,
+        SYSTEM_THREAD: workerInstanceId,
         E2E_HEADLESS: '1',
         NODE_NO_WARNINGS: '1',
         TEST_WORKER_INDEX: String(uniqueWorkerIndex),

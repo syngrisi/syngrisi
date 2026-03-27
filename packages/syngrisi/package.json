@@ -49,7 +49,6 @@
     "test": "yarn build && cd e2e && yarn test",
     "test:mcp": "cd e2e && yarn test:mcp",
     "test:mcp:test-engine": "cd e2e && yarn test:mcp:test-engine",
-    "test:mcp:test-engine": "cd e2e && yarn test:mcp:test-engine",
     "start:mcp": "cd e2e && yarn start:mcp",
     "start:mcp:bridge": "cd e2e && yarn start:mcp:bridge",
     "build": "yarn build:ui && yarn build:server",
@@ -108,6 +107,7 @@
     "@inquirer/prompts": "^8.0.2",
     "@node-saml/passport-saml": "^5.1.0",
     "@syngrisi/node-resemble.js": "^3.1.7",
+    "bson": "^7.2.0",
     "compression": "^1.8.1",
     "connect-mongo": "^5.1.0",
     "dotenv": "^17.2.3",
@@ -127,6 +127,7 @@
     "passport-oauth2": "^1.8.0",
     "path-to-regexp": "^8.3.0",
     "swagger-ui-express": "^5.0.1",
+    "tar-stream": "^3.1.8",
     "winston": "^3.19.0",
     "winston-mongodb": "^7.0.1",
     "zod": "^4.1.13"

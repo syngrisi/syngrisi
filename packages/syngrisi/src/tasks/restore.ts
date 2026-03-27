@@ -2,8 +2,8 @@
 import { input, confirm, select } from '@inquirer/prompts';
 import * as fs from 'node:fs'
 import * as path from 'node:path';
-import { execSync } from 'child_process';
 import { config } from '../server/config';
+import { restoreDatabaseBackupArchive, restoreScreenshotsArchive } from './lib/dataBackupRestore';
 
 const run = async () => {
     const backupFolder = config.backupsFolder;
@@ -11,7 +11,7 @@ const run = async () => {
         fs.mkdirSync(backupFolder, { recursive: true });
     }
 
-    console.log('Be sure that Application is down and \'mongodump\', \'mongorestore\' and \'rsync\' tools are present in your system.');
+    console.log('Be sure that application is down before restoring data.');
 
     const backupsFolders = fs.readdirSync(backupFolder, { withFileTypes: true })
         .filter((x) => x.isDirectory())
@@ -30,13 +30,13 @@ const run = async () => {
     const fullBackupPath = path.join(backupFolder, answers.backupSubFolder);
     console.log({ fullBackupPath });
 
-    const fullSourceDatabasePath = path.join(fullBackupPath, 'database');
+    const fullSourceDatabasePath = path.join(fullBackupPath, 'database.tar.gz');
     if (!fs.existsSync(fullSourceDatabasePath)) {
         console.log('The Source Database Folder is not exists, please select tha another folder');
         return;
     }
 
-    const fullSourceImagesPath = path.join(fullBackupPath, 'images');
+    const fullSourceImagesPath = path.join(fullBackupPath, 'images.tar.gz');
     if (!fs.existsSync(fullSourceImagesPath)) {
         console.log('The Source Images Folder is not exists, please select tha another folder');
         return;
@@ -47,27 +47,13 @@ const run = async () => {
         return;
     }
 
-    console.log('Remove the Destination Database');
-    const removeDbResult = execSync(`mongosh '${answers.destConnectionString}' --eval "db.dropDatabase();"`)
-        .toString();
-    console.log(removeDbResult);
-
     console.log('Restore the Database');
-    const restoreDbResult = execSync(`mongorestore --uri ${answers.destConnectionString} --gzip ${fullSourceDatabasePath}/*`)
-        .toString();
-    console.log(restoreDbResult);
-
-    console.log('Clean the Destination Images Folder');
-    // eslint-disable-next-line max-len
-    const removeImagesResult = execSync(`ls ${answers.destImagesSubFolder};rm -rfv ${answers.destImagesSubFolder} && mkdir ${answers.destImagesSubFolder}`)
-        .toString();
-    console.log(removeImagesResult);
+    await restoreDatabaseBackupArchive(answers.destConnectionString, fullSourceDatabasePath);
+    console.log('Database restore completed');
 
     console.log('Restore the Images');
-    console.log({ fullSourceImagesPath });
-    const restoreImagesResult = execSync(`rsync -vah --progress  ${fullSourceImagesPath}/ ${answers.destImagesSubFolder}`)
-        .toString('utf8');
-    console.log(restoreImagesResult);
+    await restoreScreenshotsArchive(fullSourceImagesPath, answers.destImagesSubFolder, { skipExisting: false });
+    console.log('Images restore completed');
 
     return '✅ Success'
 }

@@ -12,6 +12,7 @@ import { env } from '@env';
 import { errMsg } from './utils';
 import { appSettings } from '@settings';
 import { initPlugins } from './plugins';
+import { adminDataJobService } from './services';
 
 const logMeta = { scope: 'entrypoint' };
 
@@ -26,6 +27,7 @@ connectDB().then(async () => {
     await createBasicUsers();
     await createInitialSettings();
     if (config.testMode) await createTestsUsers();
+    await adminDataJobService.initialize();
 
     // Initialize plugin system
     log.info('Initializing plugin system', logMeta);

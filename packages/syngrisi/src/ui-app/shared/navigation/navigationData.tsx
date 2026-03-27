@@ -3,6 +3,7 @@ import {
     IconBrowser,
     IconCircleCheck,
     IconClipboardList,
+    IconDatabase,
     IconDeviceAnalytics,
     IconList,
     IconListCheck,
@@ -122,6 +123,16 @@ export function navigationData(): INavDataItem[] {
             crumbs: [
                 { title: 'Admin', href: '/admin' },
                 { title: 'Users', href: '/admin/users' },
+            ],
+        },
+        {
+            title: 'Data Management',
+            description: 'Admin backup and restore jobs',
+            group: 'admin',
+            icon: <IconDatabase size={18} />,
+            crumbs: [
+                { title: 'Admin', href: '/admin' },
+                { title: 'Data Management', href: '/admin/data' },
             ],
         },
         {

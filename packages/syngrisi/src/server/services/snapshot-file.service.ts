@@ -88,7 +88,11 @@ export async function prepareActualSnapshot(
     session?: ClientSession
 ): Promise<SnapshotDocument> {
     let currentSnapshot: SnapshotDocument;
-    const fileData = checkParam.files ? checkParam.files.file.data : null;
+    let fileData = checkParam.files ? checkParam.files.file.data : null;
+
+    if ((!fileData || fileData.length === 0) && checkParam.files?.file.tempFilePath) {
+        fileData = await fsp.readFile(checkParam.files.file.tempFilePath);
+    }
 
     if (snapshotFoundedByHashcode) {
         if (!snapshotFoundedByHashcode.filename) {
