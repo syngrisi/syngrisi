@@ -13,13 +13,18 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { e2eRoot, mcpRoot } from './config';
 import { resolveAgentIdentity, type ResolvedAgentIdentity, isProcessAlive } from './test-engine-agent-resolver';
 import {
+  appendSessionEvent,
+  cleanupSessionStates,
+  getTestEngineEventLogPath,
   getAllSessionStates,
+  patchSessionState,
   getTestEngineStatePath,
   readSessionState,
   removeSessionState,
   updateSessionActivity,
   waitForSessionStateReady,
   writeSessionState,
+  type TestEngineSessionHealth,
   type TestEngineSessionState,
 } from './test-engine-state';
 import { simpleTokenSearch } from './utils/simpleTokenSearch';
@@ -58,12 +63,14 @@ const HELP_TEXT = [
   '  step-json <json>',
   '  batch <step1> <step2> [step3 ...]',
   '  batch-json <json>',
+  '  restart [sessionName] [--headed]',
   '  steps find <query>',
   '  clear',
   '  shutdown',
   '',
   'Global options:',
   '  --system-thread <id>  Override SYSTEM_THREAD / PID heuristic lookup.',
+  '  --json                Print machine-readable JSON.',
   '',
   'Rules of thumb:',
   '  - Use start once; every next CLI call reuses the same session via local state.',
@@ -92,6 +99,7 @@ type ParsedCliArgs = {
   daemonHeaded: boolean;
   statusFile: string | null;
   agentId: string | null;
+  jsonOutput: boolean;
 };
 
 type TestEngineCliOptions = {
@@ -110,6 +118,25 @@ type DaemonCommandResponse = {
 type DaemonStatusResponse = {
   ok: boolean;
   state: TestEngineSessionState | null;
+};
+
+type DaemonCommandTaskResult = {
+  result: CommandExecutionResult;
+  stdout: string;
+  stderr: string;
+};
+
+type JsonCommandPayload = {
+  ok: boolean;
+  command: string;
+  systemThread?: string | null;
+  health?: TestEngineSessionHealth;
+  reused?: boolean;
+  stdout?: string;
+  stderr?: string;
+  state?: TestEngineSessionState | null;
+  artifacts?: string[];
+  eventLogFile?: string;
 };
 
 class BufferingWritable extends Writable {
@@ -245,6 +272,7 @@ const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   let daemonHeaded = false;
   let statusFile: string | null = null;
   let agentId: string | null = null;
+  let jsonOutput = false;
   const passthroughTokens: string[] = [];
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -257,6 +285,11 @@ const parseCliArgs = (argv: string[]): ParsedCliArgs => {
 
     if (token === '--daemon-server') {
       daemonServer = true;
+      continue;
+    }
+
+    if (token === '--json') {
+      jsonOutput = true;
       continue;
     }
 
@@ -315,6 +348,7 @@ const parseCliArgs = (argv: string[]): ParsedCliArgs => {
     daemonHeaded,
     statusFile,
     agentId,
+    jsonOutput,
   };
 };
 
@@ -459,6 +493,35 @@ const formatResolvedIdentity = (identity: ResolvedAgentIdentity): string[] => {
     lines.push(`Warning: ${identity.warning}`);
   }
   return lines;
+};
+
+const makeCommandId = (): string => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+const extractArtifacts = (text: string): string[] => {
+  const matches = text.match(/\/Users\/[^\s"]+\.(?:png|jsonl|log|yml|yaml|json)/gu) ?? [];
+  return [...new Set(matches)];
+};
+
+const shouldMarkBrokenFromText = (text: string): boolean => (
+  text.includes('Session not started') ||
+  text.includes('Request timed out') ||
+  text.includes('Connection closed') ||
+  text.includes('Failed to reach session daemon') ||
+  text.includes('MCP error -32001')
+);
+
+const getHealthLabel = (state: TestEngineSessionState): string => {
+  if (state.health) {
+    return state.health;
+  }
+  if (state.initializing) {
+    return 'initializing';
+  }
+  return 'ready';
+};
+
+const writeJson = (stream: Writable, payload: JsonCommandPayload) => {
+  stream.write(`${JSON.stringify(payload, null, 2)}\n`);
 };
 
 const fetchJson = async <T>(
@@ -672,7 +735,24 @@ class TestEngineCliRuntime {
       throw new Error('Failed to start MCP session: no result returned.');
     }
 
-    return this.printToolResult(result);
+    const started = await this.printToolResult(result);
+    if (!started) {
+      return false;
+    }
+
+    const smokeCommands: StepExecutorParams[] = [
+      { stepText: 'I test' },
+      { stepText: 'I get current URL' },
+    ];
+
+    for (const smokeCommand of smokeCommands) {
+      const smokeOk = await this.executeStructuredStep(smokeCommand);
+      if (smokeOk) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private async runAttach(): Promise<boolean> {
@@ -861,6 +941,8 @@ class TestEngineCliRuntime {
           return { ok: true, shouldExit: false };
         case 'start':
           return { ok: await this.runStart(args), shouldExit: false };
+        case 'restart':
+          return { ok: await this.runStart(args), shouldExit: false };
         case 'attach':
           return { ok: await this.runAttach(), shouldExit: false };
         case 'tools':
@@ -1019,7 +1101,13 @@ const ensureActiveState = async (agentId: string): Promise<TestEngineSessionStat
   if (!alive) {
     throw new Error(`No active session found for agent "${agentId}". Run start first.`);
   }
-  return (await readSessionState(agentId)) ?? state;
+  const refreshed = (await readSessionState(agentId)) ?? state;
+  if (getHealthLabel(refreshed) === 'broken') {
+    throw new Error(
+      `Session "${agentId}" is marked broken. ${refreshed.brokenReason ?? 'Run start again to create a fresh session.'}`,
+    );
+  }
+  return refreshed;
 };
 
 const sendDaemonCommand = async (state: TestEngineSessionState, command: string): Promise<DaemonCommandResponse> => {
@@ -1045,6 +1133,13 @@ const sendDaemonCommand = async (state: TestEngineSessionState, command: string)
 
   if (response.ok) {
     await updateSessionActivity(state.agentId);
+  } else if (shouldMarkBrokenFromText(`${response.stdout}\n${response.stderr}`)) {
+    await patchSessionState(state.agentId, {
+      health: 'broken',
+      brokenReason: response.stderr.trim() || response.stdout.trim() || 'Session became unusable.',
+      currentCommand: undefined,
+      lastActivity: new Date().toISOString(),
+    });
   }
 
   return response;
@@ -1078,6 +1173,7 @@ const formatStateSummary = (identity: ResolvedAgentIdentity, state: TestEngineSe
   lines.push(`Session name: ${state.sessionName}`);
   lines.push(`Daemon PID: ${state.daemonPid}`);
   lines.push(`Daemon port: ${state.daemonPort}`);
+  lines.push(`Health: ${getHealthLabel(state)}`);
   lines.push(`Mode: ${state.mode}`);
   lines.push(`Headed: ${state.headed ? 'yes' : 'no'}`);
   lines.push(`Started at: ${state.startedAt}`);
@@ -1090,6 +1186,27 @@ const formatStateSummary = (identity: ResolvedAgentIdentity, state: TestEngineSe
   }
   if (state.initError) {
     lines.push(`Init error: ${state.initError}`);
+  }
+  if (state.brokenReason) {
+    lines.push(`Broken reason: ${state.brokenReason}`);
+  }
+  if (state.currentCommand) {
+    lines.push(`Current command: ${state.currentCommand}`);
+  }
+  if (state.lastCommand) {
+    lines.push(`Last command: ${state.lastCommand}`);
+  }
+  if (state.smokeStep) {
+    lines.push(`Smoke step: ${state.smokeStep}`);
+  }
+  if (state.smokeCheckedAt) {
+    lines.push(`Smoke checked at: ${state.smokeCheckedAt}`);
+  }
+  if (state.eventLogFile) {
+    lines.push(`Event log: ${state.eventLogFile}`);
+  }
+  if (state.lastArtifacts?.length) {
+    lines.push(`Last artifacts: ${state.lastArtifacts.join(', ')}`);
   }
   return lines.join('\n');
 };
@@ -1106,6 +1223,7 @@ const formatSessionStartSummary = (
     `Session name: ${state.sessionName}`,
     `Daemon PID: ${state.daemonPid}`,
     `Daemon port: ${state.daemonPort}`,
+    `Health: ${getHealthLabel(state)}`,
   ];
   if (state.sessionId) {
     lines.push(`Session ID: ${state.sessionId}`);
@@ -1127,6 +1245,7 @@ const handleDirectCommand = async (
   commandLine: string,
   streams: { stdout: Writable; stderr: Writable },
   fallbackAgentId: string | null,
+  options: { jsonOutput: boolean },
 ): Promise<{ ok: boolean; resolvedAgentId: string | null }> => {
   const tokens = parseCommandLine(commandLine);
   if (tokens.length === 0) {
@@ -1138,7 +1257,11 @@ const handleDirectCommand = async (
   validateCommandUsage(command, strippedArgs);
 
   if (command === 'help') {
-    writeLine(streams.stdout, HELP_TEXT);
+    if (options.jsonOutput) {
+      writeJson(streams.stdout, { ok: true, command: 'help', stdout: HELP_TEXT });
+    } else {
+      writeLine(streams.stdout, HELP_TEXT);
+    }
     return { ok: true, resolvedAgentId: fallbackAgentId };
   }
 
@@ -1158,11 +1281,22 @@ const handleDirectCommand = async (
     const state = await readSessionState(identity.agentId);
     const alive = await cleanUpStaleState(state);
     const refreshed = alive ? await readSessionState(identity.agentId) : null;
-    writeLine(streams.stdout, formatStateSummary(identity, refreshed));
+    if (options.jsonOutput) {
+      writeJson(streams.stdout, {
+        ok: true,
+        command,
+        systemThread: identity.agentId,
+        health: refreshed ? getHealthLabel(refreshed) : undefined,
+        state: refreshed,
+        eventLogFile: getTestEngineEventLogPath(identity.agentId),
+      });
+    } else {
+      writeLine(streams.stdout, formatStateSummary(identity, refreshed));
+    }
     return { ok: true, resolvedAgentId: identity.agentId };
   }
 
-  if (command === 'start') {
+  if (command === 'start' || command === 'restart') {
     let headed = false;
     const sessionNameTokens: string[] = [];
     for (const token of strippedArgs) {
@@ -1175,38 +1309,106 @@ const handleDirectCommand = async (
 
     const sessionName = sessionNameTokens.join(' ').trim();
     if (!sessionName) {
-      throw new Error('start requires a session name.');
+      throw new Error(`${command} requires a session name.`);
     }
 
     const existingState = await readSessionState(identity.agentId);
-    if (await cleanUpStaleState(existingState)) {
+    if (command === 'start' && await cleanUpStaleState(existingState) && getHealthLabel((await readSessionState(identity.agentId)) ?? existingState!) !== 'broken') {
       const activeState = await ensureActiveState(identity.agentId);
-      writeLine(streams.stdout, formatSessionStartSummary(identity, activeState, true));
+      if (options.jsonOutput) {
+        writeJson(streams.stdout, {
+          ok: true,
+          command,
+          systemThread: identity.agentId,
+          health: getHealthLabel(activeState),
+          state: activeState,
+          reused: true,
+          eventLogFile: getTestEngineEventLogPath(identity.agentId),
+        });
+      } else {
+        writeLine(streams.stdout, formatSessionStartSummary(identity, activeState, true));
+      }
       return { ok: true, resolvedAgentId: identity.agentId };
     }
 
+    if (existingState) {
+      if (command === 'restart') {
+        try {
+          const response = await sendDaemonCommand(existingState, 'shutdown');
+          printDaemonResponse(streams, response);
+        } catch {
+          // stale/broken session is being replaced anyway
+        }
+      }
+      await removeSessionState(identity.agentId);
+    }
+
     const { state, startupStdout } = await startDaemonProcess(identity, sessionName, headed, false);
-    writeLine(streams.stdout, formatSessionStartSummary(identity, state, false));
-    const startupDetails = normalizeStartupDetails(startupStdout);
-    if (startupDetails) {
-      writeLine(streams.stdout, startupDetails);
+    if (options.jsonOutput) {
+      writeJson(streams.stdout, {
+        ok: true,
+        command,
+        systemThread: identity.agentId,
+        health: getHealthLabel(state),
+        state,
+        reused: false,
+        stdout: startupStdout,
+        artifacts: extractArtifacts(startupStdout),
+        eventLogFile: getTestEngineEventLogPath(identity.agentId),
+      });
+    } else {
+      writeLine(streams.stdout, formatSessionStartSummary(identity, state, false));
+      const startupDetails = normalizeStartupDetails(startupStdout);
+      if (startupDetails) {
+        writeLine(streams.stdout, startupDetails);
+      }
     }
     return { ok: true, resolvedAgentId: identity.agentId };
   }
 
   if (command === 'attach') {
     const existingState = await readSessionState(identity.agentId);
-    if (await cleanUpStaleState(existingState)) {
+    if (await cleanUpStaleState(existingState) && getHealthLabel((await readSessionState(identity.agentId)) ?? existingState!) !== 'broken') {
       const activeState = await ensureActiveState(identity.agentId);
-      writeLine(streams.stdout, formatSessionStartSummary(identity, activeState, true));
+      if (options.jsonOutput) {
+        writeJson(streams.stdout, {
+          ok: true,
+          command,
+          systemThread: identity.agentId,
+          health: getHealthLabel(activeState),
+          state: activeState,
+          reused: true,
+          eventLogFile: getTestEngineEventLogPath(identity.agentId),
+        });
+      } else {
+        writeLine(streams.stdout, formatSessionStartSummary(identity, activeState, true));
+      }
       return { ok: true, resolvedAgentId: identity.agentId };
     }
 
+    if (existingState) {
+      await removeSessionState(identity.agentId);
+    }
+
     const { state, startupStdout } = await startDaemonProcess(identity, `attached-${identity.agentId}`, false, true);
-    writeLine(streams.stdout, formatSessionStartSummary(identity, state, false));
-    const startupDetails = normalizeStartupDetails(startupStdout);
-    if (startupDetails) {
-      writeLine(streams.stdout, startupDetails);
+    if (options.jsonOutput) {
+      writeJson(streams.stdout, {
+        ok: true,
+        command,
+        systemThread: identity.agentId,
+        health: getHealthLabel(state),
+        state,
+        reused: false,
+        stdout: startupStdout,
+        artifacts: extractArtifacts(startupStdout),
+        eventLogFile: getTestEngineEventLogPath(identity.agentId),
+      });
+    } else {
+      writeLine(streams.stdout, formatSessionStartSummary(identity, state, false));
+      const startupDetails = normalizeStartupDetails(startupStdout);
+      if (startupDetails) {
+        writeLine(streams.stdout, startupDetails);
+      }
     }
     return { ok: true, resolvedAgentId: identity.agentId };
   }
@@ -1216,7 +1418,19 @@ const handleDirectCommand = async (
     ? `${command} ${strippedArgs[0] ?? ''}`.trimEnd()
     : [command, ...strippedArgs.map(quoteCommandToken)].join(' ');
   const response = await sendDaemonCommand(state, daemonCommand);
-  const ok = printDaemonResponse(streams, response);
+  const artifacts = extractArtifacts(`${response.stdout}\n${response.stderr}`);
+  const ok = options.jsonOutput
+    ? (writeJson(streams.stdout, {
+      ok: response.ok,
+      command,
+      systemThread: identity.agentId,
+      health: (await readSessionState(identity.agentId)) ? getHealthLabel((await readSessionState(identity.agentId))!) : undefined,
+      stdout: response.stdout,
+      stderr: response.stderr,
+      artifacts,
+      eventLogFile: getTestEngineEventLogPath(identity.agentId),
+    }), response.ok)
+    : printDaemonResponse(streams, response);
   return { ok, resolvedAgentId: identity.agentId };
 };
 
@@ -1248,6 +1462,99 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
     startedAt: new Date().toISOString(),
     lastActivity: new Date().toISOString(),
     initializing: true,
+    health: 'initializing',
+  };
+  let commandQueue: Promise<void> = Promise.resolve();
+
+  const persistState = async (patch: Partial<TestEngineSessionState>) => {
+    currentState = {
+      ...currentState,
+      ...patch,
+    };
+    await writeSessionState(parsed.agentId, currentState);
+  };
+
+  const markBroken = async (reason: string) => {
+    await persistState({
+      health: 'broken',
+      brokenReason: reason,
+      currentCommand: undefined,
+      initializing: false,
+      lastActivity: new Date().toISOString(),
+    });
+    await appendSessionEvent(parsed.agentId, { type: 'session_broken', reason, health: 'broken' });
+  };
+
+  const executeDaemonCommand = async (commandLine: string): Promise<DaemonCommandTaskResult> => {
+    const commandId = makeCommandId();
+    stdoutBuffer.clear();
+    stderrBuffer.clear();
+
+    await persistState({
+      health: 'busy',
+      currentCommand: commandLine,
+      lastCommand: commandLine,
+      lastCommandId: commandId,
+      brokenReason: undefined,
+      lastActivity: new Date().toISOString(),
+    });
+    await appendSessionEvent(parsed.agentId, {
+      type: 'command_started',
+      commandId,
+      command: commandLine,
+    });
+
+    let result: CommandExecutionResult;
+    if (
+      commandLine === 'status' ||
+      commandLine === 'resolve' ||
+      commandLine === 'help' ||
+      commandLine.startsWith('steps ')
+    ) {
+      result = await handleDirectCommand(
+        commandLine,
+        { stdout: stdoutBuffer, stderr: stderrBuffer },
+        parsed.agentId,
+        { jsonOutput: false },
+      )
+        .then((value) => ({ ok: value.ok, shouldExit: false }));
+    } else {
+      result = await runtime.executeLine(commandLine, { interactive: false });
+    }
+
+    const stdout = stdoutBuffer.readText();
+    const stderr = stderrBuffer.readText();
+    const combinedText = `${stdout}\n${stderr}`;
+    const broken = !result.ok && shouldMarkBrokenFromText(combinedText);
+    const artifacts = extractArtifacts(combinedText);
+
+    const smokeMatch = stdout.match(/Result:\s+"([^"]+)"/u);
+    await persistState({
+      health: broken ? 'broken' : 'ready',
+      brokenReason: broken ? (stderr.trim() || stdout.trim() || 'Session became unusable.') : undefined,
+      currentCommand: undefined,
+      lastActivity: new Date().toISOString(),
+      lastArtifacts: artifacts,
+      ...(commandLine.startsWith('start ') || commandLine === 'attach'
+        ? {
+          smokeCheckedAt: new Date().toISOString(),
+          smokeStep: stdout.includes('Result: "Test message from diagnostic step"') ? 'I test' : (
+            smokeMatch ? 'I get current URL' : undefined
+          ),
+        }
+        : {}),
+    });
+    await appendSessionEvent(parsed.agentId, {
+      type: broken ? 'command_broken' : 'command_finished',
+      commandId,
+      command: commandLine,
+      ok: result.ok,
+      shouldExit: result.shouldExit,
+      artifacts,
+      stderr: stderr.trim() || undefined,
+    });
+
+    return { result, stdout, stderr };
   };
 
   const server = http.createServer(async (request, response) => {
@@ -1275,27 +1582,60 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
           return;
         }
 
-        stdoutBuffer.clear();
-        stderrBuffer.clear();
-        const result = await runtime.executeLine(payload.command, { interactive: false });
-        const commandResponse: DaemonCommandResponse = {
-          ok: result.ok,
-          shouldExit: result.shouldExit,
-          stdout: stdoutBuffer.readText(),
-          stderr: stderrBuffer.readText(),
-        };
+        let resolveTask: ((value: DaemonCommandResponse) => void) | null = null;
+        let rejectTask: ((reason?: unknown) => void) | null = null;
+        const taskResponse = new Promise<DaemonCommandResponse>((resolve, reject) => {
+          resolveTask = resolve;
+          rejectTask = reject;
+        });
 
-        currentState.lastActivity = new Date().toISOString();
-        await writeSessionState(parsed.agentId, currentState);
-        sendJson(200, commandResponse);
-
-        if (payload.command.trim().startsWith('shutdown') || result.shouldExit) {
-          setImmediate(async () => {
-            await removeSessionState(parsed.agentId!);
-            await runtime.close();
-            await new Promise<void>((resolve) => server.close(() => resolve()));
-            process.exit(0);
+        commandQueue = commandQueue
+          .catch(() => undefined)
+          .then(async () => {
+            try {
+              const { result, stdout, stderr } = await executeDaemonCommand(payload.command.trim());
+              resolveTask?.({
+                ok: result.ok,
+                shouldExit: result.shouldExit,
+                stdout,
+                stderr,
+              });
+            } catch (error) {
+              const message = error instanceof Error ? error.message : String(error);
+              await markBroken(message);
+              rejectTask?.(new Error(message));
+            }
           });
+
+        try {
+          const commandResponse = await taskResponse;
+          sendJson(200, commandResponse);
+
+          if (payload.command.trim().startsWith('shutdown') || commandResponse.shouldExit) {
+            setImmediate(async () => {
+              await appendSessionEvent(parsed.agentId!, {
+                type: 'shutdown',
+                lastCommand: payload.command.trim(),
+              });
+              await persistState({
+                health: 'shutting_down',
+                currentCommand: undefined,
+                lastActivity: new Date().toISOString(),
+              });
+              await removeSessionState(parsed.agentId!);
+              await runtime.close();
+              await new Promise<void>((resolve) => server.close(() => resolve()));
+              process.exit(0);
+            });
+          }
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          sendJson(500, {
+            ok: false,
+            shouldExit: false,
+            stdout: '',
+            stderr: message,
+          } satisfies DaemonCommandResponse);
         }
         return;
       }
@@ -1318,18 +1658,21 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
     }
 
     currentState.daemonPort = address.port;
+    currentState.eventLogFile = getTestEngineEventLogPath(parsed.agentId);
     await writeSessionState(parsed.agentId, currentState);
+    await appendSessionEvent(parsed.agentId, {
+      type: 'daemon_started',
+      daemonPid: process.pid,
+      daemonPort: currentState.daemonPort,
+      eventLogFile: currentState.eventLogFile,
+    });
 
-    stdoutBuffer.clear();
-    stderrBuffer.clear();
-    const result = await runtime.executeLine(initialCommand, { interactive: false });
-    const stdoutText = stdoutBuffer.readText();
-    const stderrText = stderrBuffer.readText();
+    const { result, stdout: stdoutText, stderr: stderrText } = await executeDaemonCommand(initialCommand);
 
     if (!result.ok) {
       currentState.initializing = false;
       currentState.initError = stderrText || stdoutText || 'Failed to initialize session daemon.';
-      await writeSessionState(parsed.agentId, currentState);
+      await markBroken(currentState.initError);
       throw new Error(currentState.initError);
     }
 
@@ -1337,10 +1680,17 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
       ...currentState,
       ...parseSessionMetadata(stdoutText),
       initializing: false,
+      health: 'ready',
       initError: undefined,
       lastActivity: new Date().toISOString(),
     };
     await writeSessionState(parsed.agentId, currentState);
+    await appendSessionEvent(parsed.agentId, {
+      type: 'session_ready',
+      sessionId: currentState.sessionId,
+      logFile: currentState.logFile,
+      smokeStep: currentState.smokeStep,
+    });
 
     if (parsed.statusFile) {
       await fs.mkdir(path.dirname(parsed.statusFile), { recursive: true });
@@ -1375,18 +1725,26 @@ export const runTestEngineCli = async (argv: string[], options: TestEngineCliOpt
   const stdout = options.stdout ?? process.stdout;
   const stderr = options.stderr ?? process.stderr;
 
+  await cleanupSessionStates({ isProcessAlive });
+
   if (parsed.daemonServer) {
     return runDaemonServer(parsed);
   }
 
   if (parsed.showHelp || parsed.commands.length === 0) {
-    writeLine(stdout, HELP_TEXT);
+    if (parsed.jsonOutput) {
+      writeJson(stdout, { ok: true, command: 'help', stdout: HELP_TEXT });
+    } else {
+      writeLine(stdout, HELP_TEXT);
+    }
     return 0;
   }
 
   let fallbackAgentId: string | null = parsed.agentId;
   for (const command of parsed.commands) {
-    const result = await handleDirectCommand(command, { stdout, stderr }, fallbackAgentId);
+    const result = await handleDirectCommand(command, { stdout, stderr }, fallbackAgentId, {
+      jsonOutput: parsed.jsonOutput,
+    });
     if (!result.ok) {
       return 1;
     }

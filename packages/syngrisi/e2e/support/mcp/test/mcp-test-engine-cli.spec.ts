@@ -2,9 +2,11 @@ import { expect, test } from '@playwright/test';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import type { ChildProcess } from 'node:child_process';
+import process from 'node:process';
 
 import { findEphemeralPort } from '../utils/port-utils';
 import { spawnMcpServer } from '../utils/server-spawn';
+import { cleanupSessionStates, readSessionState, writeSessionState } from '../test-engine-state';
 import { TIMEOUTS } from './utils';
 import { runTestEngineCli } from './utils/test-engine-cli';
 
@@ -58,6 +60,8 @@ test.describe('MCP Test Engine CLI tests', { tag: '@no-app-start' }, () => {
     expect(startResult.stderr).toBe('');
     expect(startResult.stdout).toContain('Status: Success');
     expect(startResult.stdout).toContain('Reused: no');
+    expect(startResult.stdout).toContain('Health: ready');
+    expect(startResult.stdout).toContain('Result: "Test message from diagnostic step"');
 
     expect(stepResult.code).toBe(0);
     expect(stepResult.stderr).toBe('');
@@ -243,7 +247,9 @@ test.describe('MCP Test Engine CLI tests', { tag: '@no-app-start' }, () => {
     expect(statusResult.code).toBe(0);
     expect(statusResult.stderr).toBe('');
     expect(statusResult.stdout).toContain('Has active session: yes');
+    expect(statusResult.stdout).toContain('Health: ready');
     expect(statusResult.stdout).toContain('Session name: mcp-test-engine-cli-status');
+    expect(statusResult.stdout).toContain('Smoke step: I test');
 
     expect(shutdownResult.code).toBe(0);
     expect(shutdownResult.stderr).toBe('');
@@ -375,5 +381,243 @@ test.describe('MCP Test Engine CLI tests', { tag: '@no-app-start' }, () => {
 
     expect(result.code).toBe(1);
     expect(result.stderr).toContain('No active session found for agent');
+  });
+
+  test('serializes concurrent commands within one session', async ({ }, testInfo) => {
+    test.setTimeout(TIMEOUTS.TEST_SUITE);
+    const env = buildSessionEnv(testInfo, 'queue');
+
+    const startResult = await runTestEngineCli(testInfo, {
+      args: ['start', 'mcp-test-engine-cli-queue'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-queue-start-output',
+    });
+
+    expect(startResult.code).toBe(0);
+
+    const [stepResult, urlResult] = await Promise.all([
+      runTestEngineCli(testInfo, {
+        args: ['step', 'I test'],
+        env,
+        attachmentName: 'mcp-test-engine-cli-queue-step-output',
+      }),
+      runTestEngineCli(testInfo, {
+        args: ['step', 'I get current URL'],
+        env,
+        attachmentName: 'mcp-test-engine-cli-queue-url-output',
+      }),
+    ]);
+
+    expect(stepResult.code).toBe(0);
+    expect(stepResult.stderr).toBe('');
+    expect(stepResult.stdout).toContain('Status: Success');
+
+    expect(urlResult.code).toBe(0);
+    expect(urlResult.stderr).toBe('');
+    expect(urlResult.stdout).toContain('Status: Success');
+
+    const statusResult = await runTestEngineCli(testInfo, {
+      args: ['status'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-queue-status-output',
+    });
+    expect(statusResult.code).toBe(0);
+    expect(statusResult.stdout).toContain('Health: ready');
+
+    const shutdownResult = await runTestEngineCli(testInfo, {
+      args: ['shutdown'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-queue-shutdown-output',
+    });
+    expect(shutdownResult.code).toBe(0);
+  });
+
+  test('daemon command surface supports status directly', async ({ }, testInfo) => {
+    test.setTimeout(TIMEOUTS.TEST_SUITE);
+    const env = buildSessionEnv(testInfo, 'daemon-status');
+
+    const startResult = await runTestEngineCli(testInfo, {
+      args: ['start', 'mcp-test-engine-cli-daemon-status'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-daemon-status-start-output',
+    });
+    expect(startResult.code).toBe(0);
+
+    const state = await readSessionState(env.SYSTEM_THREAD);
+    if (!state) {
+      throw new Error('Expected session state to exist.');
+    }
+
+    const response = await fetch(`http://127.0.0.1:${state.daemonPort}/command`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ command: 'status' }),
+    });
+    const payload = await response.json() as {
+      ok: boolean;
+      stdout: string;
+      stderr: string;
+    };
+
+    expect(response.ok).toBe(true);
+    expect(payload.ok).toBe(true);
+    expect(payload.stderr).toBe('');
+    expect(payload.stdout).toContain('Has active session: yes');
+    expect(payload.stdout).toContain('Health: busy');
+    expect(payload.stdout).toContain('Current command: status');
+
+    const shutdownResult = await runTestEngineCli(testInfo, {
+      args: ['shutdown'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-daemon-status-shutdown-output',
+    });
+    expect(shutdownResult.code).toBe(0);
+  });
+
+  test('supports json output for start and step', async ({ }, testInfo) => {
+    test.setTimeout(TIMEOUTS.TEST_SUITE);
+    const env = buildSessionEnv(testInfo, 'json-output');
+
+    const startResult = await runTestEngineCli(testInfo, {
+      args: ['start', 'mcp-test-engine-cli-json-output', '--json'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-json-start-output',
+    });
+    expect(startResult.code).toBe(0);
+    const startPayload = JSON.parse(startResult.stdout) as {
+      ok: boolean;
+      command: string;
+      state: { smokeStep?: string; eventLogFile?: string; health?: string };
+      health: string;
+    };
+    expect(startPayload.ok).toBe(true);
+    expect(startPayload.command).toBe('start');
+    expect(startPayload.health).toBe('ready');
+    expect(startPayload.state.smokeStep).toBe('I test');
+    expect(startPayload.state.eventLogFile).toContain('.events.jsonl');
+
+    const stepResult = await runTestEngineCli(testInfo, {
+      args: ['step', 'I get current URL', '--json'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-json-step-output',
+    });
+    expect(stepResult.code).toBe(0);
+    const stepPayload = JSON.parse(stepResult.stdout) as {
+      ok: boolean;
+      command: string;
+      stdout: string;
+      eventLogFile: string;
+    };
+    expect(stepPayload.ok).toBe(true);
+    expect(stepPayload.command).toBe('step');
+    expect(stepPayload.stdout).toContain('Result: "http://');
+    expect(stepPayload.eventLogFile).toContain('.events.jsonl');
+
+    const shutdownResult = await runTestEngineCli(testInfo, {
+      args: ['shutdown'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-json-shutdown-output',
+    });
+    expect(shutdownResult.code).toBe(0);
+  });
+
+  test('restart creates a fresh session after shutdown-worthy state replacement', async ({ }, testInfo) => {
+    test.setTimeout(TIMEOUTS.TEST_SUITE);
+    const env = buildSessionEnv(testInfo, 'restart');
+
+    const startResult = await runTestEngineCli(testInfo, {
+      args: ['start', 'mcp-test-engine-cli-restart'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-restart-start-output',
+    });
+    expect(startResult.code).toBe(0);
+
+    const firstState = await readSessionState(env.SYSTEM_THREAD);
+    if (!firstState?.sessionId) {
+      throw new Error('Expected initial session id.');
+    }
+
+    const restartResult = await runTestEngineCli(testInfo, {
+      args: ['restart', 'mcp-test-engine-cli-restart'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-restart-output',
+    });
+    expect(restartResult.code).toBe(0);
+
+    const secondState = await readSessionState(env.SYSTEM_THREAD);
+    if (!secondState?.sessionId) {
+      throw new Error('Expected restarted session id.');
+    }
+
+    expect(secondState.sessionId).not.toBe(firstState.sessionId);
+    expect(secondState.health).toBe('ready');
+
+    const shutdownResult = await runTestEngineCli(testInfo, {
+      args: ['shutdown'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-restart-shutdown-output',
+    });
+    expect(shutdownResult.code).toBe(0);
+  });
+
+  test('cleans up stale broken states automatically', async ({ }, testInfo) => {
+    test.setTimeout(TIMEOUTS.CALL_TOOL);
+    const agentId = `stale-broken-${testInfo.workerIndex}-${testInfo.retry}`;
+
+    await writeSessionState(agentId, {
+      agentId,
+      sessionName: 'stale-broken',
+      daemonPid: process.pid,
+      daemonPort: 49999,
+      headed: false,
+      mode: 'start',
+      startedAt: new Date(Date.now() - 60_000).toISOString(),
+      lastActivity: new Date(Date.now() - 60_000).toISOString(),
+      health: 'broken',
+      brokenReason: 'Old broken state',
+    });
+
+    await cleanupSessionStates({ brokenMs: 1000, staleMs: 24 * 60 * 60 * 1000, isProcessAlive: async () => true });
+    const stateAfterCleanup = await readSessionState(agentId);
+    expect(stateAfterCleanup).toBeNull();
+  });
+
+  test('writes session event log and tracks artifacts', async ({ }, testInfo) => {
+    test.setTimeout(TIMEOUTS.TEST_SUITE);
+    const env = buildSessionEnv(testInfo, 'event-log');
+
+    const startResult = await runTestEngineCli(testInfo, {
+      args: ['start', 'mcp-test-engine-cli-event-log'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-event-log-start-output',
+    });
+    expect(startResult.code).toBe(0);
+
+    const screenshotResult = await runTestEngineCli(testInfo, {
+      args: ['step', 'I save page screenshot as "event-log-proof"', '--json'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-event-log-step-output',
+    });
+    expect(screenshotResult.code).toBe(0);
+    const screenshotPayload = JSON.parse(screenshotResult.stdout) as {
+      artifacts?: string[];
+      eventLogFile: string;
+    };
+    expect(screenshotPayload.artifacts?.some((item) => item.endsWith('event-log-proof.png'))).toBe(true);
+
+    const state = await readSessionState(env.SYSTEM_THREAD);
+    expect(state?.lastArtifacts?.some((item) => item.endsWith('event-log-proof.png'))).toBe(true);
+    expect(state?.eventLogFile).toContain('.events.jsonl');
+
+    const eventLog = await fs.readFile(state!.eventLogFile!, 'utf8');
+    expect(eventLog).toContain('"type":"daemon_started"');
+    expect(eventLog).toContain('"type":"command_finished"');
+
+    const shutdownResult = await runTestEngineCli(testInfo, {
+      args: ['shutdown'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-event-log-shutdown-output',
+    });
+    expect(shutdownResult.code).toBe(0);
   });
 });

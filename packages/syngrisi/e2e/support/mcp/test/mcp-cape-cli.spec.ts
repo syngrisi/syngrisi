@@ -198,4 +198,81 @@ test.describe('MCP Cape-style CLI integration', { tag: '@no-app-start' }, () => 
       await removeSessionState(secondAgentId);
     }
   });
+
+  test('marks session as broken when daemon reports lost MCP session', async ({ }, testInfo) => {
+    test.setTimeout(TIMEOUTS.TEST_SUITE);
+    const agentId = `cape-broken-${testInfo.workerIndex}-${testInfo.retry}`;
+    const server = http.createServer((request, response) => {
+      if (request.method === 'GET' && request.url === '/status') {
+        response.writeHead(200, { 'content-type': 'application/json' });
+        response.end(JSON.stringify({ ok: true, state: null }));
+        return;
+      }
+
+      if (request.method === 'POST' && request.url === '/command') {
+        let body = '';
+        request.on('data', (chunk) => {
+          body += chunk.toString();
+        });
+        request.on('end', () => {
+          const payload = JSON.parse(body || '{}') as { command?: string };
+          const isShutdown = payload.command?.trim().startsWith('shutdown') ?? false;
+
+          response.writeHead(200, { 'content-type': 'application/json' });
+          response.end(JSON.stringify({
+            ok: isShutdown,
+            shouldExit: isShutdown,
+            stdout: '',
+            stderr: isShutdown ? '' : 'Session not started. Please call session_start_new first.',
+          }));
+        });
+        return;
+      }
+
+      response.writeHead(404, { 'content-type': 'application/json' });
+      response.end(JSON.stringify({ ok: false }));
+    });
+
+    await new Promise<void>((resolve) => {
+      server.listen(0, '127.0.0.1', () => resolve());
+    });
+
+    const address = server.address();
+    if (!address || typeof address === 'string') {
+      throw new Error('Failed to determine fake daemon port.');
+    }
+
+    try {
+      await writeSessionState(agentId, {
+        agentId,
+        sessionName: 'cape-broken-demo',
+        daemonPid: process.pid,
+        daemonPort: address.port,
+        headed: false,
+        mode: 'start',
+        startedAt: new Date().toISOString(),
+        lastActivity: new Date().toISOString(),
+        health: 'ready',
+      });
+
+      const stepResult = await runTestEngineCli(testInfo, {
+        args: ['step', 'I analyze current page', '--system-thread', agentId],
+        attachmentName: 'mcp-cape-cli-broken-step-output',
+      });
+      const statusResult = await runTestEngineCli(testInfo, {
+        args: ['status', '--system-thread', agentId],
+        attachmentName: 'mcp-cape-cli-broken-status-output',
+      });
+
+      expect(stepResult.code).toBe(1);
+      expect(stepResult.stderr).toContain('Session not started. Please call session_start_new first.');
+
+      expect(statusResult.code).toBe(0);
+      expect(statusResult.stdout).toContain('Health: broken');
+      expect(statusResult.stdout).toContain('Broken reason: Session not started. Please call session_start_new first.');
+    } finally {
+      await removeSessionState(agentId);
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+    }
+  });
 });
