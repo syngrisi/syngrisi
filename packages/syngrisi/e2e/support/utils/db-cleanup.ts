@@ -36,7 +36,7 @@ export async function closeAllPooledConnections(): Promise<void> {
 
 function getCid(): number {
   if (process.env.DOCKER === '1') return 100;
-  return parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
+  return parseInt(process.env.SYNGRISI_TEST_CID || process.env.TEST_WORKER_INDEX || '0', 10);
 }
 
 function resolveDbUri(cid: number): string {

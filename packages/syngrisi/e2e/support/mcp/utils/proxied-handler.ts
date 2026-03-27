@@ -3,7 +3,6 @@ import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
-  ListToolsResultSchema,
   LoggingMessageNotificationSchema,
   type Notification,
 } from '@modelcontextprotocol/sdk/types.js';
@@ -23,6 +22,10 @@ type ProxiedHandlerOptions = {
   onNotificationForwardError: (error: unknown) => void;
   onRemoteShutdown: () => void;
 };
+
+function normalizeToolDefinition(tool: unknown) {
+  return JSON.parse(JSON.stringify(tool));
+}
 
 export class ProxiedHandler {
   private readonly server: Server;
@@ -52,7 +55,10 @@ export class ProxiedHandler {
       const tools = (remote.tools ?? []).filter(
         (tool: any) => tool?.name !== 'session_start_new' && tool?.name !== 'attach_existing_session',
       );
-      tools.unshift(sessionStartToolDefinition, attachExistingSessionToolDefinition);
+      tools.unshift(
+        normalizeToolDefinition(sessionStartToolDefinition),
+        normalizeToolDefinition(attachExistingSessionToolDefinition),
+      );
       return { tools } as any;
     });
 

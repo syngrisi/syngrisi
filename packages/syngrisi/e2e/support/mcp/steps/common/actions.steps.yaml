@@ -1,6 +1,6 @@
 metadata:
   category: common/actions
-  generatedAt: '2026-03-26T20:29:19.392Z'
+  generatedAt: '2026-03-27T06:28:30.180Z'
   totalFiles: 2
   totalSteps: 36
   sourceFiles:
@@ -57,13 +57,13 @@ steps:
       ```gherkin
       When I click the 1st button "Open Check"
       ```
-    line: 1093
+    line: 1114
   - pattern: I delete the cookie {string}
     description: ''
     line: 1016
   - pattern: I drag the element with {target} {string} by offset {int}, {int}
     description: 'Step definition: `When I drag the element with {target} {string} by offset {int}, {int}`'
-    line: 1129
+    line: 1150
   - pattern: 'I execute javascript code:'
     description: |-
       Step definition: `When I execute javascript code:`
@@ -142,7 +142,7 @@ steps:
     line: 1051
   - pattern: I move to element {string} with an offset of {int},{int}
     description: ''
-    line: 1072
+    line: 1093
   - pattern: I press {string}
     description: ''
     line: 1020
@@ -171,7 +171,7 @@ steps:
     line: 1002
   - pattern: I safely click element with {target} {string}
     description: ''
-    line: 1102
+    line: 1123
   - pattern: I scroll container {string} to bottom
     description: ''
     line: 777

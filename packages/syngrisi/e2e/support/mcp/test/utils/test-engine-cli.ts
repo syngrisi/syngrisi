@@ -6,6 +6,33 @@ import type { TestInfo } from '@playwright/test';
 
 const NPX_BIN = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 const TEST_ENGINE_CLI_RELATIVE_PATH = ['support', 'mcp', 'test-engine-cli.ts'];
+let testEngineCliSpawnCounter = 0;
+
+const buildSubprocessEnv = (
+  baseEnv: Record<string, string | undefined>,
+  overrides: Record<string, string>,
+): Record<string, string> => {
+  const env = { ...baseEnv };
+
+  delete env.NODE_OPTIONS;
+  delete env.PW_TEST_SOURCE_TRANSFORM;
+  delete env.PW_TEST_SOURCE_TRANSFORM_SCOPE;
+  delete env.PLAYWRIGHT_JSON_OUTPUT_NAME;
+  delete env.PLAYWRIGHT_JUNIT_OUTPUT_NAME;
+  delete env.PW_TEST_HTML_REPORT_OPEN;
+  delete env.FORCE_COLOR;
+  delete env.NO_COLOR;
+  delete env.SYNGRISI_APP_PORT;
+  delete env.SYNGRISI_DB_URI;
+  delete env.SYNGRISI_IMAGES_PATH;
+
+  return Object.fromEntries(
+    Object.entries({
+      ...env,
+      ...overrides,
+    }).filter(([, value]) => typeof value === 'string'),
+  ) as Record<string, string>;
+};
 
 const runTestEngineCli = async (
   testInfo: TestInfo,
@@ -32,17 +59,20 @@ const runTestEngineCli = async (
   ];
 
   const workerInstanceId = `test-engine-${testInfo.workerIndex}-${testInfo.retry}-${randomUUID()}`;
+  const uniqueWorkerIndex = 200 + (testInfo.parallelIndex * 1000) + testEngineCliSpawnCounter++;
 
   return new Promise((resolve, reject) => {
     const child = spawn(NPX_BIN, commandArgs, {
       cwd: e2eRoot,
-      env: {
-        ...(process.env as Record<string, string>),
+      env: buildSubprocessEnv(process.env as Record<string, string>, {
         ZENFLOW_WORKER_INSTANCE: workerInstanceId,
         E2E_HEADLESS: '1',
         NODE_NO_WARNINGS: '1',
+        TEST_WORKER_INDEX: String(uniqueWorkerIndex),
+        SYNGRISI_TEST_CID: String(uniqueWorkerIndex),
+        SYNGRISI_APP_PORT: String(5100 + uniqueWorkerIndex),
         ...envOverrides,
-      },
+      }),
       stdio: ['ignore', 'pipe', 'pipe'],
     });
 
