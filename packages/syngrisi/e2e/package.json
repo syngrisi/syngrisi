@@ -29,9 +29,8 @@
     "test:serial": "cross-env SYNGRISI_LOG_LEVEL=warn SYNGRISI_DISABLE_LOGS=true playwright test --project=chromium --grep '@serial' --workers=1 --reporter=list",
     "test:mcp": "cross-env SYNGRISI_LOG_LEVEL=debug SYNGRISI_DISABLE_LOGS=true E2E_HEADLESS=1 MCP_IDLE_TIMEOUT_MS=15000 MCP_IDLE_CHECK_INTERVAL_MS=3000 playwright test --workers=1 --config support/mcp/playwright.config.ts --grep-invert '@flaky'",
     "test:mcp:headed": "cross-env SYNGRISI_LOG_LEVEL=warn SYNGRISI_DISABLE_LOGS=true PLAYWRIGHT_HEADED=1 playwright test --workers=1 --config support/mcp/playwright.config.ts --grep-invert '@flaky'",
-    "test:mcp:test-engine": "cross-env SYNGRISI_LOG_LEVEL=warn SYNGRISI_DISABLE_LOGS=true E2E_HEADLESS=1 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/test/mcp-cape-cli.spec.ts",
-    "test:mcp:cape": "yarn test:mcp:test-engine",
-    "start:mcp": "npx tsx support/mcp/test-engine-cli.ts",
+    "test:mcp:test-engine": "cross-env SYNGRISI_LOG_LEVEL=warn SYNGRISI_DISABLE_LOGS=true E2E_HEADLESS=1 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/test/mcp-test-engine-cli.spec.ts",
+        "start:mcp": "npx tsx support/mcp/test-engine-cli.ts",
     "start:mcp:bridge": "npx tsx support/mcp/bridge-cli.ts",
     "test:bench": "cross-env SYNGRISI_LOG_LEVEL=warn SYNGRISI_DISABLE_LOGS=true playwright test --config support/mcp/benchmark/playwright.benchmark.config.ts --grep-invert '@flaky'"
   },

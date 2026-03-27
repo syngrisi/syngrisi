@@ -20,7 +20,7 @@ const runTestEngineCli = async (
     args = [],
     commands = [],
     env: envOverrides = {},
-    attachmentName = 'test-engine-cli-output',
+    attachmentName = 'mcp-test-engine-cli-output',
   } = options;
 
   const e2eRoot = path.resolve(__dirname, '..', '..', '..', '..');
