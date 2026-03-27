@@ -38,6 +38,8 @@ The server uses dynamic port allocation (port 0), letting the OS assign a free p
 - `batch-json <json>` – Execute multiple structured steps, each item can include `stepDocstring`
 - `step ... --docstring-file <path>` – Load docstring payload from a file instead of base64 or inline quoting
 - `steps find <query>` – Search available step definitions without starting a browser session
+- `restart <sessionName>` – Replace the current session for the same `SYSTEM_THREAD`
+- `--json` – Return machine-readable output including `health`, `state`, `artifacts`, and `eventLogFile`
 
 These commands are especially useful for quote-heavy steps such as `I create "1" tests with:` and for YAML payloads used in env/bootstrap flows.
 
@@ -57,8 +59,9 @@ npx tsx support/mcp/test-engine-cli.ts shutdown
 Operational caveats for the current session-aware CLI:
 
 - Serialize commands for a given `SYSTEM_THREAD`; concurrent `step` calls can mix stdout and screenshot artifacts.
-- `status` is a cache/daemon view and can be greener than the real bridge session.
-- If a real step fails with `Session not started` after a successful `start`, restart from `yarn kill` and a fresh `start`.
+- `start` runs a smoke step before the session is marked healthy.
+- `status` includes `health`, `brokenReason`, `eventLogFile`, `lastCommand`, and `lastArtifacts`.
+- If a real step fails with `Session not started` after a successful `start`, use `restart` first.
 - If a timed-out step is followed by `No active session found`, assume the session continuity is gone and bootstrap again.
 
 Step definitions are loaded dynamically from `packages/syngrisi/e2e/steps/**` and `support/mcp/sd/**`. They are regenerated each time you start a new session—after editing any step definitions, restart the session so clients discover the updated catalogue.
