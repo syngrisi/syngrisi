@@ -9,6 +9,10 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 import { e2eRoot, mcpRoot } from './config';
+import { simpleTokenSearch } from './utils/simpleTokenSearch';
+import type { StepExecutorParams } from './utils/stepExecutor';
+import type { Data } from './utils/types';
+import { getStepDefinitions } from './utils/stepDefinitions';
 
 const NPX_BIN = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 const BRIDGE_ENTRY = path.join(mcpRoot, 'bridge-cli.ts');
@@ -31,7 +35,10 @@ const HELP_TEXT = [
   '  attach',
   '  tools',
   '  step <stepText> [--docstring <text>] [--docstring-json <json>] [--docstring-base64 <base64>]',
+  '  step-json <json>',
   '  batch <step1> <step2> [step3 ...]',
+  '  batch-json <json>',
+  '  steps find <query>',
   '  clear',
   '  shutdown',
   '  exit',
@@ -191,6 +198,11 @@ const writeLine = (stream: Writable, message: string = '') => {
   stream.write(`${message}\n`);
 };
 
+const readDocstringFile = async (filePath: string): Promise<string> => {
+  const absolutePath = path.isAbsolute(filePath) ? filePath : path.resolve(process.cwd(), filePath);
+  return fs.readFile(absolutePath, 'utf8');
+};
+
 const extractContentText = (payload: unknown): string => {
   if (!payload || typeof payload !== 'object') {
     return '';
@@ -325,6 +337,68 @@ const parseCliArgs = (argv: string[]): ParsedCliArgs => {
   }
 
   return { commands, showHelp, interactiveAfterCommands, daemonized, statusFile };
+};
+
+const parseStepJsonInput = (raw: string): StepExecutorParams => {
+  const parsed = JSON.parse(raw) as string | StepExecutorParams;
+
+  if (typeof parsed === 'string') {
+    return { stepText: parsed };
+  }
+
+  if (!parsed || typeof parsed !== 'object' || typeof parsed.stepText !== 'string') {
+    throw new Error('step-json expects a JSON string or object with a string stepText field.');
+  }
+
+  return {
+    stepText: parsed.stepText,
+    ...(parsed.stepDocstring !== undefined ? { stepDocstring: parsed.stepDocstring } : {}),
+  };
+};
+
+const parseBatchJsonInput = (raw: string): StepExecutorParams[] => {
+  const parsed = JSON.parse(raw) as Array<string | StepExecutorParams>;
+
+  if (!Array.isArray(parsed) || parsed.length < 2) {
+    throw new Error('batch-json expects a JSON array with at least 2 items.');
+  }
+
+  return parsed.map((item, index) => {
+    if (typeof item === 'string') {
+      return { stepText: item };
+    }
+
+    if (!item || typeof item !== 'object' || typeof item.stepText !== 'string') {
+      throw new Error(`batch-json item at index ${index} must be a string or object with a string stepText field.`);
+    }
+
+    return {
+      stepText: item.stepText,
+      ...(item.stepDocstring !== undefined ? { stepDocstring: item.stepDocstring } : {}),
+    };
+  });
+};
+
+const formatStepSearchResults = (query: string, data: Data): string => {
+  const results = simpleTokenSearch(data, query).slice(0, 20);
+  if (results.length === 0) {
+    return `No step definitions found for query: "${query}"`;
+  }
+
+  const lines = results.map((result, index) => {
+    const lineSuffix = result.line ? `:${result.line}` : '';
+    const matchedTokens = result.matchedTokens.length > 0
+      ? ` [matched: ${result.matchedTokens.join(', ')}]`
+      : '';
+    return `${index + 1}. ${result.pattern}\n   file: ${result.file}${lineSuffix}\n   score: ${result.score.toFixed(2)}${matchedTokens}\n   description: ${result.description}`;
+  });
+
+  return `Found ${results.length} matching step definitions for "${query}":\n${lines.join('\n')}`;
+};
+
+const loadLiveStepDefinitions = (): Data => {
+  const raw = getStepDefinitions();
+  return JSON.parse(raw) as Data;
 };
 
 class TestEngineCliRuntime {
@@ -476,15 +550,29 @@ class TestEngineCliRuntime {
       { timeout: TOOL_TIMEOUTS.startSession },
     );
 
-    await client.callTool({ name: 'sessions_clear', arguments: {} }, undefined, { timeout: TOOL_TIMEOUTS.execute });
-    let result = await startSession();
+    let result: Awaited<ReturnType<typeof startSession>> | null = null;
 
-    const text = extractContentText(result);
-    const isError = Boolean(result && typeof result === 'object' && 'isError' in result && (result as { isError?: boolean }).isError);
-    if (isError && text.includes('ERR_CONNECTION_REFUSED')) {
-      await new Promise((resolve) => setTimeout(resolve, 1_000));
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
       await client.callTool({ name: 'sessions_clear', arguments: {} }, undefined, { timeout: TOOL_TIMEOUTS.execute });
       result = await startSession();
+
+      const text = extractContentText(result);
+      const isError = Boolean(result && typeof result === 'object' && 'isError' in result && (result as { isError?: boolean }).isError);
+      const isTransientStartError = isError && (
+        text.includes('ERR_CONNECTION_REFUSED')
+        || text.includes('Request timed out')
+        || text.includes('Connection closed')
+      );
+
+      if (!isTransientStartError || attempt === 3) {
+        break;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 2_000));
+    }
+
+    if (!result) {
+      throw new Error('Failed to start MCP session: no result returned.');
     }
 
     this.startedHeadedSession = headed;
@@ -545,6 +633,16 @@ class TestEngineCliRuntime {
         continue;
       }
 
+      if (token === '--docstring-file') {
+        const value = args[index + 1];
+        if (value === undefined) {
+          throw new Error('Missing value after --docstring-file.');
+        }
+        stepDocstring = await readDocstringFile(value);
+        index += 1;
+        continue;
+      }
+
       stepTokens.push(token);
     }
 
@@ -571,6 +669,15 @@ class TestEngineCliRuntime {
     return this.printToolResult(result);
   }
 
+  private async runStepJson(args: string[]): Promise<boolean> {
+    if (args.length !== 1) {
+      throw new Error('step-json expects exactly 1 JSON argument.');
+    }
+
+    const step = parseStepJsonInput(args[0]);
+    return this.executeStructuredStep(step);
+  }
+
   private async runBatch(args: string[]): Promise<boolean> {
     if (args.length < 2) {
       throw new Error('batch requires at least 2 steps.');
@@ -589,6 +696,60 @@ class TestEngineCliRuntime {
     );
 
     return this.printToolResult(result);
+  }
+
+  private async runBatchJson(args: string[]): Promise<boolean> {
+    if (args.length !== 1) {
+      throw new Error('batch-json expects exactly 1 JSON argument.');
+    }
+
+    const steps = parseBatchJsonInput(args[0]);
+    const client = await this.ensureConnected();
+    const result = await client.callTool(
+      {
+        name: 'step_execute_many',
+        arguments: { steps },
+      },
+      undefined,
+      { timeout: TOOL_TIMEOUTS.execute },
+    );
+
+    return this.printToolResult(result);
+  }
+
+  private async executeStructuredStep(step: StepExecutorParams): Promise<boolean> {
+    const client = await this.ensureConnected();
+    const argumentsPayload: Record<string, unknown> = { stepText: step.stepText };
+    if (step.stepDocstring !== undefined) {
+      argumentsPayload.stepDocstring = step.stepDocstring;
+    }
+
+    const result = await client.callTool(
+      {
+        name: 'step_execute_single',
+        arguments: argumentsPayload,
+      },
+      undefined,
+      { timeout: TOOL_TIMEOUTS.execute },
+    );
+
+    return this.printToolResult(result);
+  }
+
+  private async runSteps(args: string[]): Promise<boolean> {
+    const [subcommand, ...rest] = args;
+    if (subcommand !== 'find') {
+      throw new Error(`Unknown steps subcommand: ${subcommand ?? '(empty)'}`);
+    }
+
+    const query = rest.join(' ').trim();
+    if (!query) {
+      throw new Error('steps find requires a query.');
+    }
+
+    const stepDefinitions = loadLiveStepDefinitions();
+    this.printSuccess(formatStepSearchResults(query, stepDefinitions));
+    return true;
   }
 
   private async runClear(): Promise<boolean> {
@@ -631,8 +792,14 @@ class TestEngineCliRuntime {
           return { ok: await this.runTools(), shouldExit: false };
         case 'step':
           return { ok: await this.runStep(args), shouldExit: false };
+        case 'step-json':
+          return { ok: await this.runStepJson(args), shouldExit: false };
         case 'batch':
           return { ok: await this.runBatch(args), shouldExit: false };
+        case 'batch-json':
+          return { ok: await this.runBatchJson(args), shouldExit: false };
+        case 'steps':
+          return { ok: await this.runSteps(args), shouldExit: false };
         case 'clear':
           return { ok: await this.runClear(), shouldExit: false };
         case 'shutdown':
@@ -655,6 +822,13 @@ class TestEngineCliRuntime {
   }
 
   async executeLine(line: string, options: { interactive: boolean }): Promise<CommandExecutionResult> {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('step-json ')) {
+      return this.executeTokens(['step-json', trimmed.slice('step-json '.length)], options);
+    }
+    if (trimmed.startsWith('batch-json ')) {
+      return this.executeTokens(['batch-json', trimmed.slice('batch-json '.length)], options);
+    }
     return this.executeTokens(tokenizeCommand(line), options);
   }
 

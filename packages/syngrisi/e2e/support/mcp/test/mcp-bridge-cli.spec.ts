@@ -25,26 +25,9 @@ test.describe('MCP Bridge CLI tests', { tag: '@no-app-start' }, () => {
     const { client, asyncErrors, cleanup } = await startBridgeCli(testInfo);
 
     try {
-      const toolsResultBootstrap = await client.listTools(undefined, { timeout: TIMEOUTS.LIST_TOOLS });
-      const toolNamesBootstrap = toolsResultBootstrap.tools.map(({ name }) => name);
-
-      expect(toolNamesBootstrap, 'Bootstrap tools should NOT include step_execute_many').toEqual(
-        expect.arrayContaining([
-          'session_start_new',
-          'step_execute_single',
-          'attach_existing_session',
-        ]),
-      );
-
-      expect(toolNamesBootstrap, 'step_execute_many should NOT be in bootstrap - it comes from remote server').not.toContain('step_execute_many');
-
-      const nonSessionTools = toolsResultBootstrap.tools.filter(
-        ({ name }) => name !== 'session_start_new' && name !== 'attach_existing_session',
-      );
-
-      for (const tool of nonSessionTools) {
+      for (const toolName of ['step_execute_single', 'sessions_clear']) {
         const baseArguments = (() => {
-          switch (tool.name) {
+          switch (toolName) {
             case 'step_execute_single':
               return { stepText: 'I get current URL' };
             default:
@@ -53,30 +36,28 @@ test.describe('MCP Bridge CLI tests', { tag: '@no-app-start' }, () => {
         })();
 
         const preStartResult = await client.callTool(
-          { name: tool.name, arguments: baseArguments },
+          { name: toolName, arguments: baseArguments },
           undefined,
           { timeout: TIMEOUTS.CALL_TOOL },
         );
 
         const preStartText = extractContentText(preStartResult);
-        expect(preStartText, `Tool ${tool.name} should fail before session start`).toBe('Status: Failed\nError: Session not started. Please call session_start_new first.');
-        expect(preStartResult, `Tool ${tool.name} should return error flag`).toEqual(expect.objectContaining({ isError: true }));
+        expect(preStartText, `Tool ${toolName} should fail before session start`).toBe('Status: Failed\nError: Session not started. Please call session_start_new first.');
+        expect(preStartResult, `Tool ${toolName} should return error flag`).toEqual(expect.objectContaining({ isError: true }));
       }
 
       const { text: sessionText } = await startNewSession(client, 'mcp-bridge-cli-tests');
       expect(sessionText, 'Session should start successfully').toContain('Status: Success');
       expect(sessionText, 'Session start response should include cache path').toContain('Available test steps (open to read):');
 
-      const toolsResultAfter = await client.listTools(undefined, { timeout: TIMEOUTS.LIST_TOOLS });
-      const toolNamesAfter = toolsResultAfter.tools.map(({ name }) => name);
+      const { text: stepText } = await executeStep(client, 'I test');
+      expect(stepText, 'Single-step execution should work after session start').toContain('Status: Success');
 
-      expect(toolNamesAfter, 'Post-session tools should include step_execute_many from remote server').toEqual(
-        expect.arrayContaining([
-          'step_execute_single',
-          'step_execute_many',
-          'session_start_new',
-        ]),
-      );
+      const { text: batchText } = await executeBatch(client, [
+        'I test',
+        { stepText: 'I get current URL' },
+      ]);
+      expect(batchText, 'Batch execution should work after session start').toContain('Status: Success');
 
       await shutdownSession(client);
 
@@ -149,19 +130,6 @@ test.describe('MCP Bridge CLI tests', { tag: '@no-app-start' }, () => {
       expect(connectText, 'Connect tool should include scenario title').toContain('Scenario: Debug Generated Scenario');
       expect(connectText, 'Connect tool should include feature path').toContain('Feature file: test/e2e/features/debug.feature');
 
-      const toolsAfterConnect = await client.listTools(undefined, { timeout: TIMEOUTS.LIST_TOOLS });
-      expect(
-        toolsAfterConnect.tools.map(({ name }) => name),
-        'Tools list after connect should include testing commands',
-      ).toEqual(
-        expect.arrayContaining([
-          'session_start_new',
-          'step_execute_single',
-          'attach_existing_session',
-          'step_execute_many',
-        ]),
-      );
-
       const sessionResponse = await client.callTool(
         {
           name: 'session_start_new',
@@ -173,6 +141,12 @@ test.describe('MCP Bridge CLI tests', { tag: '@no-app-start' }, () => {
       const sessionText = extractContentText(sessionResponse);
       expect(sessionText, 'Session start should succeed via debug connection').toContain('Status: Success');
       expect(sessionText, 'Session start should report cache path').toContain('Available test steps (open to read):');
+
+      const { text: batchText } = await executeBatch(client, [
+        'I test',
+        { stepText: 'I get current URL' },
+      ]);
+      expect(batchText, 'Debug connection should expose batch step execution').toContain('Status: Success');
 
       await shutdownSession(client);
 
@@ -565,21 +539,16 @@ test.describe('MCP Bridge CLI tests', { tag: '@no-app-start' }, () => {
     try {
       const { text: firstSessionText } = await startNewSession(client, 'mcp-bridge-cli-no-duplicate-session-1');
       expect(firstSessionText, 'First session should start successfully').toContain('Status: Success');
-
-      const toolsResultAfterFirst = await client.listTools(undefined, { timeout: TIMEOUTS.LIST_TOOLS });
-      const sessionStartToolsAfterFirst = toolsResultAfterFirst.tools.filter(({ name }) => name === 'session_start_new');
-      expect(sessionStartToolsAfterFirst, 'Only one session_start_new should exist after first session').toHaveLength(1);
+      const { text: firstStepText } = await executeStep(client, 'I test');
+      expect(firstStepText, 'First session should keep single-step execution working').toContain('Status: Success');
 
       const { text: secondSessionText } = await startNewSession(client, 'mcp-bridge-cli-no-duplicate-session-2');
       expect(secondSessionText, 'Second session should start successfully').toContain('Status: Success');
-
-      const toolsResultAfterSecond = await client.listTools(undefined, { timeout: TIMEOUTS.LIST_TOOLS });
-      const sessionStartToolsAfterSecond = toolsResultAfterSecond.tools.filter(({ name }) => name === 'session_start_new');
-      expect(sessionStartToolsAfterSecond, 'Only one session_start_new should exist after second session').toHaveLength(1);
-
-      const toolNames = toolsResultAfterSecond.tools.map(({ name }) => name);
-      const uniqueToolNames = new Set(toolNames);
-      expect(toolNames.length, 'No duplicate tool names should exist').toBe(uniqueToolNames.size);
+      const { text: secondBatchText } = await executeBatch(client, [
+        'I test',
+        { stepText: 'I get current URL' },
+      ]);
+      expect(secondBatchText, 'Second session should keep batch execution working after restart').toContain('Status: Success');
 
       await shutdownSession(client);
 

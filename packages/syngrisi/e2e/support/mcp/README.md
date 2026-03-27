@@ -7,13 +7,13 @@ This directory packages the Syngrisi end-to-end Playwright stack as a Model Cont
 From the repository root:
 
 ```bash
-timeout 300s bash -lc 'cd packages/syngrisi/e2e && npm run test:mcp:headed'
+timeout 300s bash -lc 'cd packages/syngrisi/e2e && yarn test:mcp:headed'
 ```
 
 That script expands to `cross-env E2E_HEADLESS=0 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts`. It launches the full Syngrisi app, opens Chromium headed, and shuts down automatically when the spec finishes.
 
 ```bash
-timeout 300s bash -lc 'cd packages/syngrisi/e2e && E2E_HEADLESS=1 npm run test:mcp'
+timeout 300s bash -lc 'cd packages/syngrisi/e2e && E2E_HEADLESS=1 yarn test:mcp'
 ```
 
 The server uses dynamic port allocation (port 0), letting the OS assign a free port automatically. The actual port is reported as `🚀 MCP server listening at http://localhost:<port>`.
@@ -29,6 +29,17 @@ The server uses dynamic port allocation (port 0), letting the OS assign a free p
 - `step_execute_many` – Validate and execute multiple steps in sequence. **Use ONLY for reproducing multiple steps together**. **DO NOT use for single steps, diagnostic steps, or steps that return values** (this tool does not return individual step results). использовать только при ≥2 шагах; одиночные шаги запрещены.
 - `attach_existing_session` – Attach the bridge to a Playwright MCP server that was launched separately (for example via the debug step described below) by reading the latest port file in `support/mcp/logs/ports/`.
 - `sd/diagnostics.sd.ts` includes utilities such as `When I analyze current page`, which provides page analysis for AI agents.
+
+## Test Engine CLI additions
+
+`support/mcp/test-engine-cli.ts` now supports several faster and less fragile interfaces on top of the bridge:
+
+- `step-json <json>` – Execute one step from structured JSON, for example `{"stepText":"I test"}`
+- `batch-json <json>` – Execute multiple structured steps, each item can include `stepDocstring`
+- `step ... --docstring-file <path>` – Load docstring payload from a file instead of base64 or inline quoting
+- `steps find <query>` – Search available step definitions without starting a browser session
+
+These commands are especially useful for quote-heavy steps such as `I create "1" tests with:` and for YAML payloads used in env/bootstrap flows.
 
 Step definitions are loaded dynamically from `packages/syngrisi/e2e/steps/**` and `support/mcp/sd/**`. They are regenerated each time you start a new session—after editing any step definitions, restart the session so clients discover the updated catalogue.
 

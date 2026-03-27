@@ -19,6 +19,8 @@ import logger, { formatArgs } from './utils/logger';
 // without requiring tsconfig.json path resolution
 import { waitFor } from '../utils/common';
 import { findEphemeralPort, waitForHttpAvailability } from './utils/port-utils';
+import { isServerRunning } from '../utils/app-server';
+import { ensureServerReady } from '../utils/app-server';
 
 export const sessionStartToolDefinition = {
   name: 'session_start_new',
@@ -306,9 +308,17 @@ export async function startMcpServer({
 
   const internalStartSession = async (sessionName: string) => {
     logger.info(formatArgs(`🎯 Starting new session "${sessionName}"`));
-    if (fixtures?.appServer && !fixtures.appServer.serverPort) {
-      logger.info(formatArgs('🚀 Starting Syngrisi app server before MCP session'));
-      await fixtures.appServer.start();
+    if (fixtures?.appServer) {
+      const serverPort = Number(fixtures.appServer.serverPort || 0);
+      const shouldStartServer = !serverPort || !(await isServerRunning(serverPort));
+      if (shouldStartServer) {
+        logger.info(formatArgs('🚀 Starting Syngrisi app server before MCP session'));
+        await fixtures.appServer.start();
+      }
+      const resolvedPort = Number(fixtures.appServer.serverPort || 0);
+      if (resolvedPort) {
+        await ensureServerReady(resolvedPort, 60_000);
+      }
     }
     const id = startNewSession(sessionName);
     const info = getSessionInfo();
@@ -318,7 +328,30 @@ export async function startMcpServer({
     }
     if (fixtures?.appServer?.baseURL) {
       logger.info(formatArgs(`🌍 Launching application at ${fixtures.appServer.baseURL}`));
-      await page.goto(fixtures.appServer.baseURL);
+      let lastGotoError: unknown;
+      for (let attempt = 1; attempt <= 2; attempt += 1) {
+        try {
+          await page.goto(fixtures.appServer.baseURL);
+          lastGotoError = null;
+          break;
+        } catch (error) {
+          lastGotoError = error;
+          const message = error instanceof Error ? error.message : String(error);
+          if (!message.includes('ERR_CONNECTION_REFUSED') || attempt === 2) {
+            throw error;
+          }
+
+          logger.warn(formatArgs(`⚠️ page.goto failed with ERR_CONNECTION_REFUSED, retrying (${attempt}/2)`));
+          const retryPort = Number(fixtures.appServer.serverPort || 0);
+          if (retryPort) {
+            await ensureServerReady(retryPort, 60_000);
+          }
+          await page.waitForTimeout(1_000);
+        }
+      }
+      if (lastGotoError) {
+        throw lastGotoError;
+      }
       // await page.pause();
     } else {
       logger.warn(formatArgs('⚠️ Unable to launch application automatically: Playwright page or appServer baseURL missing.'));
