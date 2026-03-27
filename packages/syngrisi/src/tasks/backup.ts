@@ -1,8 +1,8 @@
 import { input, confirm } from '@inquirer/prompts';
 import * as fs from 'node:fs'
 import * as path from 'node:path';
-import { execSync } from 'child_process';
 import { config } from '../server/config';
+import { createDatabaseBackupArchive, createScreenshotsArchive } from './lib/dataBackupRestore';
 
 const run = async () => {
     const backupFolder: string = config.backupsFolder;
@@ -10,7 +10,6 @@ const run = async () => {
         fs.mkdirSync(backupFolder, { recursive: true });
     }
 
-    console.log('Please be sure that \'mongodump\', \'mongorestore\' and \'rsync\' tools are present in your system.');
     const currDate: string = new Date().toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: 'numeric' })
         .replace(/[/]/gm, '_');
     const backupSubFolder: string = `${currDate}_${Date.now()}`;
@@ -33,20 +32,16 @@ const run = async () => {
         return;
     }
     fs.mkdirSync(fullBackupPath, { recursive: true });
-    const destDatabasePath: string = path.join(fullBackupPath, 'database');
-    fs.mkdirSync(destDatabasePath, { recursive: true });
-
-    const destImagesPath: string = path.join(fullBackupPath, 'images');
-    fs.mkdirSync(fullBackupPath, { recursive: true });
+    const destDatabasePath: string = path.join(fullBackupPath, 'database.tar.gz');
+    const destImagesPath: string = path.join(fullBackupPath, 'images.tar.gz');
 
     console.log('Backup the Database');
-    const dbDumpResult: string = execSync(`mongodump --uri=${answers.connectionString} --gzip --out ${destDatabasePath}`).toString();
-    console.log(dbDumpResult);
+    await createDatabaseBackupArchive(answers.connectionString, destDatabasePath);
+    console.log(`Database archive created: ${destDatabasePath}`);
 
     console.log('Backup Images');
-    const imagesBackupResult: string = execSync(`rsync -vah --progress ${answers.imagesPath} ${destImagesPath}`)
-        .toString('utf8');
-    console.log(imagesBackupResult);
+    await createScreenshotsArchive(answers.imagesPath, destImagesPath);
+    console.log(`Screenshots archive created: ${destImagesPath}`);
     return '✅ Success'
 }
 

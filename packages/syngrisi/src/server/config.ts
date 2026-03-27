@@ -56,6 +56,10 @@ export const config = {
     codeCoverage: env.SYNGRISI_COVERAGE,
     disableCors: env.SYNGRISI_DISABLE_DEV_CORS,
     fileUploadMaxSize: 50 * 1024 * 1024,
+    adminDataJobsPath: env.SYNGRISI_ADMIN_DATA_JOBS_PATH,
+    adminDataJobsTtlMs: env.SYNGRISI_ADMIN_DATA_JOBS_TTL_MS,
+    adminDataMaxConcurrentJobs: env.SYNGRISI_ADMIN_DATA_MAX_CONCURRENT_JOBS,
+    adminDataUploadMaxSize: env.SYNGRISI_ADMIN_DATA_UPLOAD_MAX_SIZE_MB * 1024 * 1024,
     testMode: env.SYNGRISI_TEST_MODE,
     jsonLimit: '50mb',
     tmpDir: env.SYNGRISI_TMP_DIR,
@@ -104,8 +108,11 @@ if (config.domSnapshotsPath !== config.defaultImagesPath && !fs.existsSync(confi
     fs.mkdirSync(config.domSnapshotsPath, { recursive: true });
 }
 
+if (!fs.existsSync(config.adminDataJobsPath)) {
+    fs.mkdirSync(config.adminDataJobsPath, { recursive: true });
+}
+
 if (!fs.existsSync(logsFolder)) {
     fs.mkdirSync(logsFolder, { recursive: true });
 }
-
 

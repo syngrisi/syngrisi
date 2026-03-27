@@ -1,9 +1,10 @@
 metadata:
   category: domain/app
-  generatedAt: '2026-03-27T06:35:20.527Z'
-  totalFiles: 24
-  totalSteps: 194
+  generatedAt: '2026-03-27T15:21:17.798Z'
+  totalFiles: 25
+  totalSteps: 203
   sourceFiles:
+    - steps/domain/admin-data.steps.ts
     - steps/domain/ai.steps.ts
     - steps/domain/api-key.steps.ts
     - steps/domain/app.steps.ts
@@ -29,6 +30,33 @@ metadata:
     - steps/domain/stored-values.steps.ts
     - steps/domain/tests.steps.ts
 steps:
+  - pattern: I create a database backup archive fixture stored as {string}
+    description: ''
+    line: 85
+  - pattern: 'I create a screenshots restore archive stored as {string}:'
+    description: ''
+    line: 94
+  - pattern: I create screenshot file {string} with content {string}
+    description: ''
+    line: 104
+  - pattern: I download the {string} link and store it as {string}
+    description: ''
+    line: 132
+  - pattern: I download the latest {string} archive and store it as {string}
+    description: ''
+    line: 145
+  - pattern: I upload stored file {string} into file input {string}
+    description: ''
+    line: 113
+  - pattern: the screenshot file {string} should contain {string}
+    description: ''
+    line: 188
+  - pattern: the stored file {string} should exist
+    description: ''
+    line: 167
+  - pattern: 'the stored tar.gz file {string} should contain entries:'
+    description: ''
+    line: 175
   - pattern: I batch accept {string} via AI endpoint
     description: ''
     line: 57
@@ -424,27 +452,27 @@ steps:
     line: 12
   - pattern: I open the saved share URL
     description: Opens the previously saved share URL
-    line: 247
+    line: 249
   - pattern: I open the shared check URL
     description: |-
       Opens the shared check URL from the share input field (immediate - modal must be open)
       Gets the URL from [data-test="share-url-input"] input and navigates to it
-    line: 263
+    line: 265
   - pattern: I save the share URL
     description: Gets share URL from Share Check modal and stores it in testData
-    line: 194
+    line: 196
   - pattern: I wait for navbar filter to sync
     description: Navbar synchronization steps
-    line: 176
+    line: 178
   - pattern: I wait for navbar to be ready
     description: ''
-    line: 180
+    line: 182
   - pattern: I wait for table to stabilize
     description: ''
-    line: 184
+    line: 186
   - pattern: the current url contains {string}
     description: ''
-    line: 107
+    line: 109
   - pattern: 'I update plugin {string} settings via API:'
     description: ''
     line: 12

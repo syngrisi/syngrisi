@@ -16,6 +16,10 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_IMAGES_PATH: str({ default: path.join(process.cwd(), './.snapshots-images') }),
     SYNGRISI_DOM_SNAPSHOTS_PATH: str({ default: '' }),  // If empty, uses SYNGRISI_IMAGES_PATH
     SYNGRISI_TMP_DIR: str({ default: path.join(process.cwd(), '.tmp') }),
+    SYNGRISI_ADMIN_DATA_JOBS_PATH: str({ default: path.join(process.cwd(), '.tmp', 'admin-data-jobs') }),
+    SYNGRISI_ADMIN_DATA_JOBS_TTL_MS: num({ default: 24 * 60 * 60 * 1000 }),
+    SYNGRISI_ADMIN_DATA_MAX_CONCURRENT_JOBS: num({ default: 1 }),
+    SYNGRISI_ADMIN_DATA_UPLOAD_MAX_SIZE_MB: num({ default: 10240 }),
     SYNGRISI_HTTP_LOG: bool({ default: false }),
     SYNGRISI_COVERAGE: bool({ default: false }),
 

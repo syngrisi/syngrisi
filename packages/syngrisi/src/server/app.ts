@@ -43,7 +43,12 @@ app.use(compression({ filter: compressionFilter }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
-app.use(fileUpload({ limits: { fileSize: config.fileUploadMaxSize } }));
+app.use(fileUpload({
+    useTempFiles: true,
+    tempFileDir: path.join(config.tmpDir, 'uploads'),
+    createParentPath: true,
+    limits: { fileSize: Math.max(config.fileUploadMaxSize, config.adminDataUploadMaxSize) },
+}));
 app.use(express.json({ limit: config.jsonLimit }));
 if (config.enableHttpLogger) app.use(httpLoggerMiddleware);
 

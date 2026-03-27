@@ -10,6 +10,7 @@ import * as appController from './app.controller';
 import * as settingsController from './settings.controller';
 import * as runsController from './runs.controller';
 import * as suiteController from './suite.controller';
+import * as adminDataController from './admin-data.controller';
 
 export {
     baselineController,
@@ -24,4 +25,5 @@ export {
     settingsController,
     runsController,
     suiteController,
+    adminDataController,
 };

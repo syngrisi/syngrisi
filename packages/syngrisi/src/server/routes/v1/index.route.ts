@@ -15,6 +15,7 @@ import tasksRoute from './tasks.route';
 import clientRoute from './client.route';
 import shareRoute from './share.route';
 import pluginSettingsRoute from './plugin-settings.route';
+import adminDataRoute from './admin-data.route';
 
 const router = express.Router();
 
@@ -82,6 +83,10 @@ const defaultRoutes = [
     {
         path: '/plugin-settings',
         route: pluginSettingsRoute,
+    },
+    {
+        path: '/admin/data',
+        route: adminDataRoute,
     },
 ];
 

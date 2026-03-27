@@ -5,6 +5,7 @@ import {
     IconSettings,
     IconArticle, IconListDetails,
     IconPlugConnected,
+    IconDatabase,
 } from '@tabler/icons-react';
 import { createStyles } from '@mantine/styles';
 import { LinksGroup } from '@admin/components/Navbar/NavbarLinksGroup';
@@ -18,6 +19,7 @@ const navbarItems = [
         icon: IconListDetails,
         links: taskLinks,
     },
+    { label: 'Data Management', icon: IconDatabase, link: '/admin/data' },
     { label: 'Plugins', icon: IconPlugConnected, link: '/admin/plugins' },
     { label: 'Settings', icon: IconSettings, link: '/admin/settings' },
 ];
