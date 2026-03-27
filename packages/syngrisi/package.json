@@ -49,7 +49,7 @@
     "test": "yarn build && cd e2e && yarn test",
     "test:mcp": "cd e2e && yarn test:mcp",
     "test:mcp:test-engine": "cd e2e && yarn test:mcp:test-engine",
-    "test:mcp:cape": "cd e2e && yarn test:mcp:cape",
+    "test:mcp:test-engine": "cd e2e && yarn test:mcp:test-engine",
     "start:mcp": "cd e2e && yarn start:mcp",
     "start:mcp:bridge": "cd e2e && yarn start:mcp:bridge",
     "build": "yarn build:ui && yarn build:server",
