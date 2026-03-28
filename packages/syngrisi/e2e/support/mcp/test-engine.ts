@@ -54,6 +54,7 @@ const HELP_TEXT = [
   '  npx tsx support/mcp/test-engine-cli.ts batch "I test" "I get current URL" [--system-thread <id>]',
   '  npx tsx support/mcp/test-engine-cli.ts status [--system-thread <id>]',
   '  npx tsx support/mcp/test-engine-cli.ts shutdown [--system-thread <id>]',
+  '  npx tsx support/mcp/test-engine-cli.ts reset [--system-thread <id>]',
   '',
   'Commands:',
   '  help',
@@ -71,6 +72,7 @@ const HELP_TEXT = [
   '  steps suggest <intent>',
   '  clear',
   '  shutdown',
+  '  reset',
   '',
   'Global options:',
   '  --system-thread <id>  Override SYSTEM_THREAD / PID heuristic lookup.',
@@ -519,7 +521,8 @@ const requiresExplicitSystemThread = (command: string): boolean => (
   command === 'batch' ||
   command === 'batch-json' ||
   command === 'clear' ||
-  command === 'shutdown'
+  command === 'shutdown' ||
+  command === 'reset'
 );
 
 const maybeResolveRuntimeSystemThread = (
@@ -596,11 +599,19 @@ const extractArtifacts = (text: string): string[] => {
 
 const shouldMarkBrokenFromText = (text: string): boolean => (
   text.includes('Session not started') ||
-  text.includes('Request timed out') ||
   text.includes('Connection closed') ||
   text.includes('Failed to reach session daemon') ||
-  text.includes('MCP error -32001') ||
   text.includes('Session daemon for agent')
+);
+
+const shouldTreatCommandErrorAsRecoverable = (text: string): boolean => (
+  text.includes('Request timed out') ||
+  text.includes('timed out after') ||
+  text.includes('TimeoutError') ||
+  text.includes('locator.click: Timeout') ||
+  text.includes('locator.fill: Timeout') ||
+  text.includes('locator.waitFor: Timeout') ||
+  text.includes('element is not enabled')
 );
 
 const getHealthLabel = (state: TestEngineSessionState): string => {
@@ -1363,6 +1374,51 @@ const waitForDaemonShutdown = async (
   await removeSessionStateIfOwned(state.agentId, state.daemonPid).catch(() => undefined);
 };
 
+const forceShutdownSession = async (
+  state: TestEngineSessionState,
+  reason: string,
+): Promise<void> => {
+  await appendSessionEvent(state.agentId, {
+    type: 'force_shutdown_started',
+    reason,
+    daemonPid: state.daemonPid,
+    daemonPort: state.daemonPort,
+  }).catch(() => undefined);
+
+  try {
+    await fetchJson<DaemonCommandResponse>(
+      `http://${LOCALHOST}:${state.daemonPort}/command`,
+      {
+        method: 'POST',
+        body: { command: 'shutdown' },
+        timeoutMs: 3000,
+      },
+    ).catch(() => undefined);
+  } finally {
+    if (await isProcessAlive(state.daemonPid)) {
+      try {
+        process.kill(state.daemonPid, 'SIGTERM');
+      } catch {
+        // Ignore race: daemon may have already exited.
+      }
+    }
+
+    if (process.platform !== 'win32') {
+      try {
+        process.kill(-state.daemonPid, 'SIGTERM');
+      } catch {
+        // Ignore race: process group may already be gone.
+      }
+    }
+
+    await removeSessionStateIfOwned(state.agentId, state.daemonPid).catch(() => undefined);
+    await appendSessionEvent(state.agentId, {
+      type: 'force_shutdown_finished',
+      reason,
+    }).catch(() => undefined);
+  }
+};
+
 const sendDaemonCommand = async (state: TestEngineSessionState, command: string): Promise<DaemonCommandResponse> => {
   let response: DaemonCommandResponse;
   try {
@@ -1600,6 +1656,47 @@ const handleDirectCommand = async (
     return { ok: true, resolvedAgentId: identity.agentId };
   }
 
+  if (command === 'reset') {
+    const existingState = await readSessionState(identity.agentId);
+    if (!existingState) {
+      const message = `No active session found for agent "${identity.agentId}". State already clean.`;
+      if (options.jsonOutput) {
+        writeJson(streams.stdout, {
+          ok: true,
+          command,
+          systemThread: identity.agentId,
+          stdout: message,
+          stderr: '',
+          state: null,
+          eventLogFile: getTestEngineEventLogPath(identity.agentId),
+          sessionDir: getTestEngineSessionDir(identity.agentId),
+        });
+      } else {
+        writeLine(streams.stdout, message);
+      }
+      return { ok: true, resolvedAgentId: identity.agentId };
+    }
+
+    await forceShutdownSession(existingState, 'manual_reset').catch(() => undefined);
+    await removeSessionState(identity.agentId).catch(() => undefined);
+    const message = `Reset session "${identity.agentId}" via local state cleanup.`;
+    if (options.jsonOutput) {
+      writeJson(streams.stdout, {
+        ok: true,
+        command,
+        systemThread: identity.agentId,
+        stdout: message,
+        stderr: '',
+        state: null,
+        eventLogFile: getTestEngineEventLogPath(identity.agentId),
+        sessionDir: getTestEngineSessionDir(identity.agentId),
+      });
+    } else {
+      writeLine(streams.stdout, message);
+    }
+    return { ok: true, resolvedAgentId: identity.agentId };
+  }
+
   if (command === 'start' || command === 'restart') {
     let headed = false;
     const sessionNameTokens: string[] = [];
@@ -1725,6 +1822,28 @@ const handleDirectCommand = async (
       }
     }
     return { ok: true, resolvedAgentId: identity.agentId };
+  }
+
+  if (command === 'shutdown') {
+    const existingState = await readSessionState(identity.agentId);
+    if (!existingState) {
+      throw new Error(`No active session found for agent "${identity.agentId}". Run start first.`);
+    }
+
+    const alive = await cleanUpStaleState(existingState);
+    if (!alive) {
+      await forceShutdownSession(existingState, 'shutdown_on_stale_state').catch(() => undefined);
+      await removeSessionState(identity.agentId).catch(() => undefined);
+      writeLine(streams.stdout, `Session "${identity.agentId}" was stale and has been force-cleaned locally.`);
+      return { ok: true, resolvedAgentId: identity.agentId };
+    }
+
+    const refreshed = (await readSessionState(identity.agentId)) ?? existingState;
+    if (getHealthLabel(refreshed) === 'broken') {
+      await forceShutdownSession(refreshed, 'shutdown_on_broken_session');
+      writeLine(streams.stdout, `Session "${identity.agentId}" was marked broken and has been force-shut down locally.`);
+      return { ok: true, resolvedAgentId: identity.agentId };
+    }
   }
 
   const state = await ensureActiveState(identity.agentId);
@@ -1963,6 +2082,35 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
               });
             } catch (error) {
               const message = error instanceof Error ? error.message : String(error);
+              if (shouldTreatCommandErrorAsRecoverable(message)) {
+                await persistState({
+                  health: 'ready',
+                  brokenReason: undefined,
+                  currentCommand: undefined,
+                  lastActivity: new Date().toISOString(),
+                });
+                await markPhase(
+                  payload.command.trim().startsWith('step') || payload.command.trim().startsWith('batch')
+                    ? 'executing_steps'
+                    : 'executing_command',
+                  'error',
+                  message,
+                );
+                await appendSessionEvent(parsed.agentId, {
+                  type: 'command_failed_recoverable',
+                  command: payload.command.trim(),
+                  stderr: message,
+                });
+                resolveTask?.({
+                  ok: false,
+                  shouldExit: false,
+                  stdout: '',
+                  stderr: message,
+                  state: currentState,
+                });
+                return;
+              }
+
               await markBroken(message);
               rejectTask?.(new Error(message));
             }

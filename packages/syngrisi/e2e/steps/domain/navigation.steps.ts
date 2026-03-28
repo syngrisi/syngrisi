@@ -176,7 +176,16 @@ Then('the current url contains {string}', async ({ page, testData }: { page: Pag
 
 // Navbar synchronization steps
 When('I wait for navbar filter to sync', async ({ page }) => {
-  await page.waitForSelector('[data-test-filter-synced="true"]', { timeout: 15000 });
+  const syncMarker = page.locator('[data-test-filter-synced]');
+  if (await syncMarker.count() > 0) {
+    await page.waitForSelector('[data-test-filter-synced="true"]', { timeout: 15000 });
+    return;
+  }
+
+  // Header quick filter does not expose the navbar sync marker. In that case,
+  // wait for the table query to settle instead of failing on a missing test-only attribute.
+  await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => { });
+  await page.waitForTimeout(500);
 });
 
 When('I wait for navbar to be ready', async ({ page }) => {
