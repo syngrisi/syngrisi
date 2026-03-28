@@ -1,6 +1,6 @@
 metadata:
   category: domain/app
-  generatedAt: '2026-03-28T07:06:50.876Z'
+  generatedAt: '2026-03-28T08:04:29.471Z'
   totalFiles: 25
   totalSteps: 203
   sourceFiles:
@@ -452,24 +452,24 @@ steps:
     line: 12
   - pattern: I open the saved share URL
     description: Opens the previously saved share URL
-    line: 249
+    line: 258
   - pattern: I open the shared check URL
     description: |-
       Opens the shared check URL from the share input field (immediate - modal must be open)
       Gets the URL from [data-test="share-url-input"] input and navigates to it
-    line: 265
+    line: 274
   - pattern: I save the share URL
     description: Gets share URL from Share Check modal and stores it in testData
-    line: 196
+    line: 205
   - pattern: I wait for navbar filter to sync
     description: Navbar synchronization steps
     line: 178
   - pattern: I wait for navbar to be ready
     description: ''
-    line: 182
+    line: 191
   - pattern: I wait for table to stabilize
     description: ''
-    line: 186
+    line: 195
   - pattern: the current url contains {string}
     description: ''
     line: 109
