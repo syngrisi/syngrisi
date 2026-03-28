@@ -7,6 +7,7 @@ export interface TestEngineSessionState {
   sessionName: string;
   daemonPid: number;
   daemonPort: number;
+  sessionDir?: string;
   headed: boolean;
   mode: 'start' | 'attach';
   startedAt: string;
@@ -24,6 +25,18 @@ export interface TestEngineSessionState {
   smokeCheckedAt?: string;
   lastArtifacts?: string[];
   eventLogFile?: string;
+  lastPhase?: string;
+  phases?: Array<{
+    name: string;
+    startedAt: string;
+    finishedAt?: string;
+    status: 'running' | 'ok' | 'error';
+    details?: string;
+  }>;
+  ownedResources?: {
+    daemonPid?: number;
+    daemonPort?: number;
+  };
 }
 
 export type TestEngineSessionHealth = 'initializing' | 'ready' | 'busy' | 'broken' | 'shutting_down';
@@ -42,8 +55,18 @@ export const getTestEngineStatePath = (agentId: string): string => (
 );
 
 export const getTestEngineEventLogPath = (agentId: string): string => (
-  path.join(getTestEngineStateDir(), `agent-${agentId}.events.jsonl`)
+  path.join(getTestEngineSessionDir(agentId), 'events.jsonl')
 );
+
+export const getTestEngineSessionDir = (agentId: string): string => (
+  path.join(getTestEngineStateDir(), 'sessions', agentId)
+);
+
+export const ensureTestEngineSessionDir = async (agentId: string): Promise<string> => {
+  const sessionDir = getTestEngineSessionDir(agentId);
+  await fs.promises.mkdir(sessionDir, { recursive: true });
+  return sessionDir;
+};
 
 export const ensureTestEngineStateDir = async (): Promise<void> => {
   await fs.promises.mkdir(getTestEngineStateDir(), { recursive: true });
@@ -60,6 +83,7 @@ export const readSessionState = async (agentId: string): Promise<TestEngineSessi
 
 export const writeSessionState = async (agentId: string, state: TestEngineSessionState): Promise<void> => {
   await ensureTestEngineStateDir();
+  await ensureTestEngineSessionDir(agentId);
   await fs.promises.writeFile(getTestEngineStatePath(agentId), JSON.stringify(state, null, 2), 'utf8');
 };
 
@@ -82,6 +106,7 @@ export const appendSessionEvent = async (
   event: Record<string, unknown>,
 ): Promise<void> => {
   await ensureTestEngineStateDir();
+  await ensureTestEngineSessionDir(agentId);
   await fs.promises.appendFile(
     getTestEngineEventLogPath(agentId),
     `${JSON.stringify({ timestamp: new Date().toISOString(), ...event })}\n`,
@@ -100,6 +125,12 @@ export const removeSessionState = async (agentId: string): Promise<void> => {
     await fs.promises.unlink(getTestEngineEventLogPath(agentId));
   } catch {
     // Ignore missing file.
+  }
+
+  try {
+    await fs.promises.rm(getTestEngineSessionDir(agentId), { recursive: true, force: true });
+  } catch {
+    // Ignore missing directory.
   }
 };
 
