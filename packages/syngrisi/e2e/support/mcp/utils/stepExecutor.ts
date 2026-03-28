@@ -44,6 +44,16 @@ const createStepParamsSchema = (includeDocstring: boolean) =>
 const normalizeStepParam = (step: string | StepExecutorParams): StepExecutorParams =>
   typeof step === 'string' ? { stepText: step } : step;
 
+const normalizeHumanStepText = (stepText: string): string => {
+  let normalized = removeGherkinKeywords(stepText).trim();
+  normalized = normalized.replace(/[“”]/g, '"').replace(/[‘’]/g, '\'');
+  normalized = normalized.replace(/\s+/g, ' ');
+  normalized = normalized.replace(/^Then the element with locator /u, 'the element with locator ');
+  normalized = normalized.replace(/^When the element with locator /u, 'the element with locator ');
+  normalized = normalized.replace(/^And the element with locator /u, 'the element with locator ');
+  return normalized.trim();
+};
+
 export interface StepExecutorParams {
   stepText: string;
   stepDocstring?: unknown;
@@ -243,7 +253,7 @@ const validateAndResolveStep = async (
   dependencies: StepExecutorDependencies,
   sessionId: string,
 ): Promise<ValidationResult> => {
-  const normalizedText = removeGherkinKeywords(stepText);
+  const normalizedText = normalizeHumanStepText(stepText);
 
   // Find step definitions from playwright-bdd registry
   let stepDefinitions: any[];
@@ -306,7 +316,9 @@ const validateAndResolveStep = async (
 
     const stepDefinitionsFiles = await getStepDefinitionsFilePath();
     const filesListFormatted = stepDefinitionsFiles.map(p => `- ${p}`).join('\n');
-    const message = `ERROR: Step definition not found for: "${normalizedText}"\n\nDid you mean one of these?\n\n${suggestionsList}\n\nAvailable test steps (open to read):\n${filesListFormatted}`;
+    const bestMatch = searchResults[0];
+    const suggestedCommand = bestMatch ? `step "${bestMatch.pattern}"` : undefined;
+    const message = `ERROR: Step definition not found for: "${normalizedText}"\n\nRecommended exact command:\n${suggestedCommand ?? 'No recommendation available.'}\n\nDid you mean one of these?\n\n${suggestionsList}\n\nAvailable test steps (open to read):\n${filesListFormatted}`;
     await logStepExecution('When', normalizedText, 'Not Found', sessionId, message);
     return { ok: false, errorResponse: createErrorResponse(message) };
   }
