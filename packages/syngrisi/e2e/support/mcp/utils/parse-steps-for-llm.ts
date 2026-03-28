@@ -4,6 +4,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { stepsRoot, mcpRoot } from '../config';
 import type { StepDefinitionSummary, StepFileSummary } from './types';
+import { getCustomStepDefinitions } from './customStepRegistry';
+import { requirePlaywrightBddModule } from './playwrightBddPaths';
 
 const STEP_DIRECTORIES = [stepsRoot, path.join(mcpRoot, 'sd')];
 const STEP_FILE_EXTENSIONS = new Set(['.ts', '.js']);
@@ -161,14 +163,130 @@ const walkStepDirectories = (dirs: string[], filter?: string): StepFileSummary[]
   return summaries.sort((a, b) => a.fileName.localeCompare(b.fileName));
 };
 
-const main = () => {
+const loadTypeScriptModule = (modulePath: string) => {
+  void require('tsx/cjs');
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    require(modulePath);
+  } catch {
+    // Best-effort runtime discovery: a single broken module must not block
+    // the whole step catalog for manual MCP flows.
+  }
+};
+
+const loadAllStepModules = (dirs: string[]) => {
+  const visit = (dirPath: string) => {
+    if (!fs.existsSync(dirPath)) return;
+    const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dirPath, entry.name);
+      if (entry.isDirectory()) {
+        visit(fullPath);
+        continue;
+      }
+      if (!entry.isFile() || !/\.(ts|js)$/.test(entry.name) || entry.name.endsWith('.d.ts')) {
+        continue;
+      }
+      loadTypeScriptModule(fullPath);
+    }
+  };
+
+  dirs.forEach(visit);
+};
+
+const collectRuntimeStepSummaries = (filter?: string): StepFileSummary[] => {
+  const regexSummaries = walkStepDirectories(STEP_DIRECTORIES, filter);
+  const descriptionMap = new Map<string, StepDefinitionSummary>();
+
+  regexSummaries.forEach((file) => {
+    file.steps.forEach((step) => {
+      descriptionMap.set(`${file.fileName}::${step.pattern}`, step);
+    });
+  });
+
+  loadAllStepModules(STEP_DIRECTORIES);
+
+  let stepDefinitions: Array<{
+    patternString?: string;
+    keyword?: string;
+    uri?: string;
+    line?: number;
+  }> = [];
+
+  try {
+    stepDefinitions = requirePlaywrightBddModule<{ stepDefinitions: typeof stepDefinitions }>(
+      'dist',
+      'steps',
+      'stepRegistry.js',
+    ).stepDefinitions;
+  } catch {
+    return regexSummaries;
+  }
+
+  const grouped = new Map<string, StepDefinitionSummary[]>();
+  const pushStep = (fileName: string, step: StepDefinitionSummary) => {
+    if (filter && !fileName.endsWith(filter)) {
+      return;
+    }
+    const existing = grouped.get(fileName) ?? [];
+    if (!existing.some((item) => item.pattern === step.pattern)) {
+      existing.push(step);
+      grouped.set(fileName, existing);
+    }
+  };
+
+  for (const definition of stepDefinitions) {
+    const runtimePath = definition.uri
+      ? path.relative(path.resolve(stepsRoot, '..'), definition.uri)
+      : 'runtime/playwright-bdd';
+    const pattern = definition.patternString?.trim();
+    if (!pattern) continue;
+    const described = descriptionMap.get(`${runtimePath}::${pattern}`);
+    pushStep(runtimePath, {
+      pattern,
+      description: described?.description ?? '',
+      line: definition.line ?? described?.line,
+    });
+  }
+
+  try {
+    for (const definition of getCustomStepDefinitions()) {
+      const pattern = definition.patternString?.trim();
+      if (!pattern) continue;
+      const matchingEntry = regexSummaries.find((file) => file.steps.some((step) => step.pattern === pattern));
+      const fileName = matchingEntry?.fileName ?? 'runtime/custom-registry';
+      const described = descriptionMap.get(`${fileName}::${pattern}`);
+      pushStep(fileName, {
+        pattern,
+        description: described?.description ?? '',
+        line: described?.line,
+      });
+    }
+  } catch {
+    return regexSummaries;
+  }
+
+  if (grouped.size === 0) {
+    return regexSummaries;
+  }
+
+  return [...grouped.entries()]
+    .map(([fileName, steps]) => ({
+      fileName,
+      steps: steps.sort((a, b) => a.pattern.localeCompare(b.pattern)),
+    }))
+    .sort((a, b) => a.fileName.localeCompare(b.fileName));
+};
+
+const main = async () => {
   const options = parseArgs();
-  const files = walkStepDirectories(STEP_DIRECTORIES, options.file);
+  const files = collectRuntimeStepSummaries(options.file);
   const output = {
     metadata: {
       generatedAt: new Date().toISOString(),
       totalFiles: files.length,
       totalSteps: files.reduce((total, file) => total + file.steps.length, 0),
+      source: 'runtime-registry',
     },
     files,
   };
@@ -176,4 +294,4 @@ const main = () => {
   process.stdout.write(JSON.stringify(output));
 };
 
-main();
+void main();

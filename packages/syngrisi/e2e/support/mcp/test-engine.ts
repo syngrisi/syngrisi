@@ -16,7 +16,9 @@ import {
   appendSessionEvent,
   cleanupSessionStates,
   getTestEngineEventLogPath,
+  getTestEngineSessionDir,
   getAllSessionStates,
+  ensureTestEngineSessionDir,
   patchSessionState,
   getTestEngineStatePath,
   readSessionState,
@@ -39,7 +41,7 @@ const TSX_DIST_ROOT = path.join(e2eRoot, 'node_modules', 'tsx', 'dist');
 const TSX_PREFLIGHT = path.join(TSX_DIST_ROOT, 'preflight.cjs');
 const TSX_LOADER = `file://${path.join(TSX_DIST_ROOT, 'loader.mjs')}`;
 const LOCALHOST = '127.0.0.1';
-const DAEMON_START_TIMEOUT_MS = 120_000;
+const DAEMON_START_TIMEOUT_MS = 180_000;
 const DAEMON_REQUEST_TIMEOUT_MS = 180_000;
 
 const HELP_TEXT = [
@@ -66,6 +68,7 @@ const HELP_TEXT = [
   '  batch-json <json>',
   '  restart [sessionName] [--headed]',
   '  steps find <query>',
+  '  steps suggest <intent>',
   '  clear',
   '  shutdown',
   '',
@@ -74,6 +77,7 @@ const HELP_TEXT = [
   '  --json                Print machine-readable JSON.',
   '',
   'Rules of thumb:',
+  '  - Always set SYSTEM_THREAD or pass --system-thread for manual sessions.',
   '  - Use start once; every next CLI call reuses the same session via local state.',
   '  - Use step for single actions and diagnostics.',
   '  - Use batch only for 2 or more sequential steps.',
@@ -139,6 +143,9 @@ type JsonCommandPayload = {
   state?: TestEngineSessionState | null;
   artifacts?: string[];
   eventLogFile?: string;
+  suggestedCommand?: string;
+  sessionDir?: string;
+  phases?: TestEngineSessionState['phases'];
 };
 
 class BufferingWritable extends Writable {
@@ -420,6 +427,31 @@ const formatStepSearchResults = (query: string, data: Data): string => {
   return `Found ${results.length} matching step definitions for "${query}":\n${lines.join('\n')}`;
 };
 
+const formatStepSuggestions = (query: string, data: Data): string => {
+  const results = simpleTokenSearch(data, query).slice(0, 5);
+  if (results.length === 0) {
+    return `No suggested step found for intent: "${query}"`;
+  }
+
+  const [best, ...alternatives] = results;
+  const lines = [
+    `Intent: "${query}"`,
+    `Recommended exact command: step "${best.pattern}"`,
+    `Source: ${best.file}${best.line ? `:${best.line}` : ''}`,
+    best.description ? `Why: ${best.description}` : '',
+  ].filter(Boolean);
+
+  if (alternatives.length > 0) {
+    lines.push('');
+    lines.push('Alternatives:');
+    lines.push(...alternatives.map((result, index) => (
+      `${index + 1}. step "${result.pattern}" (${result.file}${result.line ? `:${result.line}` : ''})`
+    )));
+  }
+
+  return lines.join('\n');
+};
+
 const loadLiveStepDefinitions = (): Data => {
   const raw = getStepDefinitions();
   return JSON.parse(raw) as Data;
@@ -474,6 +506,64 @@ const stripLeadingSuccessLine = (stdout: string): string => {
   }
 
   return trimmed.replace(/^Status:\s+Success\s*/u, '').trim();
+};
+
+const requiresExplicitSystemThread = (command: string): boolean => (
+  command === 'start' ||
+  command === 'restart' ||
+  command === 'attach' ||
+  command === 'status' ||
+  command === 'resolve' ||
+  command === 'step' ||
+  command === 'step-json' ||
+  command === 'batch' ||
+  command === 'batch-json' ||
+  command === 'clear' ||
+  command === 'shutdown'
+);
+
+const maybeResolveRuntimeSystemThread = (
+  explicitAgentId: string | null,
+  fallbackAgentId: string | null,
+): string | null => explicitAgentId ?? fallbackAgentId ?? process.env.SYSTEM_THREAD?.trim() ?? null;
+
+const updatePhaseList = (
+  state: TestEngineSessionState,
+  name: string,
+  status: 'running' | 'ok' | 'error',
+  details?: string,
+): TestEngineSessionState['phases'] => {
+  const phases = [...(state.phases ?? [])];
+  const now = new Date().toISOString();
+  const last = phases[phases.length - 1];
+
+  if (status === 'running') {
+    phases.push({ name, status, startedAt: now, details });
+    return phases;
+  }
+
+  if (last && last.name === name && last.status === 'running') {
+    last.status = status;
+    last.finishedAt = now;
+    if (details) {
+      last.details = details;
+    }
+    return phases;
+  }
+
+  phases.push({
+    name,
+    status,
+    startedAt: now,
+    finishedAt: now,
+    details,
+  });
+  return phases;
+};
+
+const extractSuggestedCommand = (text: string): string | undefined => {
+  const match = text.match(/^\d+\.\s+"([^"]+)"/m);
+  return match?.[1] ? `step "${match[1]}"` : undefined;
 };
 
 const normalizeStartupDetails = (stdout: string): string => {
@@ -923,16 +1013,20 @@ class TestEngineCliRuntime {
 
   private async runSteps(args: string[]): Promise<boolean> {
     const [subcommand, ...rest] = args;
-    if (subcommand !== 'find') {
+    if (subcommand !== 'find' && subcommand !== 'suggest') {
       throw new Error(`Unknown steps subcommand: ${subcommand ?? '(empty)'}`);
     }
 
     const query = rest.join(' ').trim();
     if (!query) {
-      throw new Error('steps find requires a query.');
+      throw new Error(`steps ${subcommand ?? 'find'} requires a query.`);
     }
 
-    this.printSuccess(formatStepSearchResults(query, loadLiveStepDefinitions()));
+    this.printSuccess(
+      subcommand === 'suggest'
+        ? formatStepSuggestions(query, loadLiveStepDefinitions())
+        : formatStepSearchResults(query, loadLiveStepDefinitions()),
+    );
     return true;
   }
 
@@ -1071,13 +1165,71 @@ const cleanUpStaleState = async (state: TestEngineSessionState | null): Promise<
   return false;
 };
 
+const attemptSessionSelfHeal = async (
+  state: TestEngineSessionState,
+  reason: string,
+): Promise<void> => {
+  await appendSessionEvent(state.agentId, {
+    type: 'self_heal_started',
+    reason,
+    daemonPid: state.daemonPid,
+    daemonPort: state.daemonPort,
+  });
+
+  try {
+    await fetchJson<DaemonCommandResponse>(
+      `http://${LOCALHOST}:${state.daemonPort}/command`,
+      {
+        method: 'POST',
+        body: { command: 'shutdown' },
+        timeoutMs: 5000,
+      },
+    ).catch(() => undefined);
+  } finally {
+    if (await isProcessAlive(state.daemonPid)) {
+      try {
+        process.kill(state.daemonPid, 'SIGTERM');
+      } catch {
+        // Ignore race: daemon may have exited after shutdown request.
+      }
+    }
+
+    if (process.platform !== 'win32') {
+      try {
+        process.kill(-state.daemonPid, 'SIGTERM');
+      } catch {
+        // Ignore race: process group may already be gone.
+      }
+    }
+
+    await removeSessionStateIfOwned(state.agentId, state.daemonPid).catch(() => undefined);
+    await appendSessionEvent(state.agentId, {
+      type: 'self_heal_finished',
+      reason,
+    }).catch(() => undefined);
+  }
+};
+
 const startDaemonProcess = async (
   identity: ResolvedAgentIdentity,
   sessionName: string,
   headed: boolean,
   attachMode: boolean,
 ): Promise<{ state: TestEngineSessionState; startupStdout: string }> => {
-  const statusFile = path.join(e2eRoot, 'support', 'mcp', 'logs', `daemon-status-${Date.now()}-${process.pid}.json`);
+  const sessionDir = await ensureTestEngineSessionDir(identity.agentId);
+  const statusFile = path.join(sessionDir, 'daemon-status.json');
+  const readStatusFile = async (): Promise<{ ok?: boolean; error?: string; startupStdout?: string } | null> => {
+    const raw = await fs.readFile(statusFile, 'utf8').catch(() => '');
+    if (!raw) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(raw) as { ok?: boolean; error?: string; startupStdout?: string };
+    } catch {
+      return { ok: false, error: `Failed to parse daemon status file for agent ${identity.agentId}.` };
+    }
+  };
   const child = spawn(
     process.execPath,
     [
@@ -1113,11 +1265,24 @@ const startDaemonProcess = async (
     let state: TestEngineSessionState | null = null;
 
     while (Date.now() - startedAt < DAEMON_START_TIMEOUT_MS) {
+      const status = await readStatusFile();
+      if (status?.ok === false) {
+        throw new Error(status.error ?? `Daemon startup failed for agent ${identity.agentId}.`);
+      }
+
       const candidate = await readSessionState(identity.agentId);
       if (candidate && candidate.daemonPid === child.pid && !candidate.initializing) {
         state = candidate;
         break;
       }
+
+      if (!(await isProcessAlive(child.pid ?? -1))) {
+        throw new Error(
+          status?.error
+            ?? `Daemon ${child.pid} exited before publishing a ready session state for agent ${identity.agentId}.`,
+        );
+      }
+
       await new Promise((resolve) => setTimeout(resolve, 200));
     }
 
@@ -1129,8 +1294,12 @@ const startDaemonProcess = async (
       throw new Error(`Timed out waiting for daemon ${child.pid} to publish a ready session state for agent ${identity.agentId}.`);
     }
 
-    const startupStdout = await fs.readFile(statusFile, 'utf8').catch(() => '');
-    const parsed = startupStdout ? JSON.parse(startupStdout) as { startupStdout?: string } : {};
+    const status = await readStatusFile();
+    const parsed = status ?? {};
+    if (parsed.ok === false) {
+      throw new Error(parsed.error ?? `Daemon startup failed for agent ${identity.agentId}.`);
+    }
+    const startupStdout = parsed.startupStdout ?? '';
     return { state, startupStdout: parsed.startupStdout ?? '' };
   } finally {
     await fs.rm(statusFile, { force: true }).catch(() => undefined);
@@ -1144,6 +1313,7 @@ const ensureActiveState = async (agentId: string): Promise<TestEngineSessionStat
   }
   const alive = await cleanUpStaleState(state);
   if (!alive) {
+    await attemptSessionSelfHeal(state, 'stale_or_unreachable_state').catch(() => undefined);
     throw new Error(`No active session found for agent "${agentId}". Run start first.`);
   }
   const refreshed = (await readSessionState(agentId)) ?? state;
@@ -1153,6 +1323,44 @@ const ensureActiveState = async (agentId: string): Promise<TestEngineSessionStat
     );
   }
   return refreshed;
+};
+
+const waitForDaemonShutdown = async (
+  state: TestEngineSessionState,
+  timeoutMs = 10000,
+): Promise<void> => {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    const latestState = await readSessionState(state.agentId);
+    if (!latestState || latestState.daemonPid !== state.daemonPid) {
+      return;
+    }
+
+    if (!(await isProcessAlive(state.daemonPid))) {
+      await removeSessionStateIfOwned(state.agentId, state.daemonPid).catch(() => undefined);
+      return;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 200));
+  }
+
+  if (await isProcessAlive(state.daemonPid)) {
+    try {
+      process.kill(state.daemonPid, 'SIGTERM');
+    } catch {
+      // Ignore race: daemon may have already exited.
+    }
+  }
+
+  if (process.platform !== 'win32') {
+    try {
+      process.kill(-state.daemonPid, 'SIGTERM');
+    } catch {
+      // Ignore race: process group may already be gone.
+    }
+  }
+
+  await removeSessionStateIfOwned(state.agentId, state.daemonPid).catch(() => undefined);
 };
 
 const sendDaemonCommand = async (state: TestEngineSessionState, command: string): Promise<DaemonCommandResponse> => {
@@ -1169,6 +1377,7 @@ const sendDaemonCommand = async (state: TestEngineSessionState, command: string)
     const alive = await cleanUpStaleState(state);
     const message = error instanceof Error ? error.message : String(error);
     if (!alive) {
+      await attemptSessionSelfHeal(state, 'daemon_unreachable').catch(() => undefined);
       throw new Error(
         `Session daemon for agent "${state.agentId}" is no longer reachable. Run start again. Last error: ${message}`,
       );
@@ -1185,6 +1394,10 @@ const sendDaemonCommand = async (state: TestEngineSessionState, command: string)
       currentCommand: undefined,
       lastActivity: new Date().toISOString(),
     });
+  }
+
+  if (response.ok && command.trim().startsWith('shutdown')) {
+    await waitForDaemonShutdown(state).catch(() => undefined);
   }
 
   return response;
@@ -1209,6 +1422,7 @@ const printDaemonResponse = (streams: { stdout: Writable; stderr: Writable }, re
 const formatStateSummary = (identity: ResolvedAgentIdentity, state: TestEngineSessionState | null): string => {
   const lines = formatResolvedIdentity(identity);
   lines.push(`State file: ${getTestEngineStatePath(identity.agentId)}`);
+  lines.push(`Session dir: ${getTestEngineSessionDir(identity.agentId)}`);
   if (!state) {
     lines.push('Has active session: no');
     return lines.join('\n');
@@ -1250,6 +1464,9 @@ const formatStateSummary = (identity: ResolvedAgentIdentity, state: TestEngineSe
   if (state.eventLogFile) {
     lines.push(`Event log: ${state.eventLogFile}`);
   }
+  if (state.lastPhase) {
+    lines.push(`Last phase: ${state.lastPhase}`);
+  }
   if (state.lastArtifacts?.length) {
     lines.push(`Last artifacts: ${state.lastArtifacts.join(', ')}`);
   }
@@ -1269,6 +1486,7 @@ const formatSessionStartSummary = (
     `Daemon PID: ${state.daemonPid}`,
     `Daemon port: ${state.daemonPort}`,
     `Health: ${getHealthLabel(state)}`,
+    `Session dir: ${state.sessionDir ?? getTestEngineSessionDir(identity.agentId)}`,
   ];
   if (state.sessionId) {
     lines.push(`Session ID: ${state.sessionId}`);
@@ -1282,9 +1500,24 @@ const formatSessionStartSummary = (
 const resolveIdentityForCommand = async (
   explicitAgentId: string | null,
   fallbackAgentId: string | null,
-): Promise<ResolvedAgentIdentity> => resolveAgentIdentity({
-  envAgentId: explicitAgentId ?? fallbackAgentId ?? undefined,
-});
+  command?: string,
+): Promise<ResolvedAgentIdentity> => {
+  const manualAgentId = maybeResolveRuntimeSystemThread(explicitAgentId, fallbackAgentId);
+  if (
+    command &&
+    requiresExplicitSystemThread(command) &&
+    !manualAgentId &&
+    process.env.TEST_ENGINE_ALLOW_HEURISTIC_RESOLUTION !== '1'
+  ) {
+    throw new Error(
+      `Command "${command}" requires an explicit system thread. Set SYSTEM_THREAD or pass --system-thread.`,
+    );
+  }
+
+  return resolveAgentIdentity({
+    envAgentId: manualAgentId ?? undefined,
+  });
+};
 
 const handleDirectCommand = async (
   commandLine: string,
@@ -1321,7 +1554,7 @@ const handleDirectCommand = async (
   }
 
   if (command === 'tools') {
-    const identity = await resolveIdentityForCommand(explicitAgentId, fallbackAgentId);
+    const identity = await resolveIdentityForCommand(explicitAgentId, fallbackAgentId, command);
     const state = await ensureActiveState(identity.agentId);
     const stdout = formatStableToolList();
     if (options.jsonOutput) {
@@ -1335,6 +1568,8 @@ const handleDirectCommand = async (
         artifacts: [],
         state,
         eventLogFile: getTestEngineEventLogPath(identity.agentId),
+        sessionDir: state.sessionDir ?? getTestEngineSessionDir(identity.agentId),
+        phases: state.phases,
       });
     } else {
       writeLine(streams.stdout, stdout);
@@ -1342,7 +1577,7 @@ const handleDirectCommand = async (
     return { ok: true, resolvedAgentId: identity.agentId };
   }
 
-  const identity = await resolveIdentityForCommand(explicitAgentId, fallbackAgentId);
+  const identity = await resolveIdentityForCommand(explicitAgentId, fallbackAgentId, command);
 
   if (command === 'status' || command === 'resolve') {
     const state = await readSessionState(identity.agentId);
@@ -1356,6 +1591,8 @@ const handleDirectCommand = async (
         health: refreshed ? getHealthLabel(refreshed) : undefined,
         state: refreshed,
         eventLogFile: getTestEngineEventLogPath(identity.agentId),
+        sessionDir: refreshed?.sessionDir ?? getTestEngineSessionDir(identity.agentId),
+        phases: refreshed?.phases,
       });
     } else {
       writeLine(streams.stdout, formatStateSummary(identity, refreshed));
@@ -1391,6 +1628,8 @@ const handleDirectCommand = async (
           state: activeState,
           reused: true,
           eventLogFile: getTestEngineEventLogPath(identity.agentId),
+          sessionDir: activeState.sessionDir ?? getTestEngineSessionDir(identity.agentId),
+          phases: activeState.phases,
         });
       } else {
         writeLine(streams.stdout, formatSessionStartSummary(identity, activeState, true));
@@ -1407,6 +1646,7 @@ const handleDirectCommand = async (
           // stale/broken session is being replaced anyway
         }
       }
+      await attemptSessionSelfHeal(existingState, `${command}_replace_existing_session`).catch(() => undefined);
       await removeSessionState(identity.agentId);
     }
 
@@ -1422,6 +1662,8 @@ const handleDirectCommand = async (
         stdout: startupStdout,
         artifacts: extractArtifacts(startupStdout),
         eventLogFile: getTestEngineEventLogPath(identity.agentId),
+        sessionDir: state.sessionDir ?? getTestEngineSessionDir(identity.agentId),
+        phases: state.phases,
       });
     } else {
       writeLine(streams.stdout, formatSessionStartSummary(identity, state, false));
@@ -1441,12 +1683,14 @@ const handleDirectCommand = async (
         writeJson(streams.stdout, {
           ok: true,
           command,
-          systemThread: identity.agentId,
-          health: getHealthLabel(activeState),
-          state: activeState,
-          reused: true,
-          eventLogFile: getTestEngineEventLogPath(identity.agentId),
-        });
+        systemThread: identity.agentId,
+        health: getHealthLabel(activeState),
+        state: activeState,
+        reused: true,
+        eventLogFile: getTestEngineEventLogPath(identity.agentId),
+        sessionDir: activeState.sessionDir ?? getTestEngineSessionDir(identity.agentId),
+        phases: activeState.phases,
+      });
       } else {
         writeLine(streams.stdout, formatSessionStartSummary(identity, activeState, true));
       }
@@ -1454,6 +1698,7 @@ const handleDirectCommand = async (
     }
 
     if (existingState) {
+      await attemptSessionSelfHeal(existingState, 'attach_replace_existing_session').catch(() => undefined);
       await removeSessionState(identity.agentId);
     }
 
@@ -1469,6 +1714,8 @@ const handleDirectCommand = async (
         stdout: startupStdout,
         artifacts: extractArtifacts(startupStdout),
         eventLogFile: getTestEngineEventLogPath(identity.agentId),
+        sessionDir: state.sessionDir ?? getTestEngineSessionDir(identity.agentId),
+        phases: state.phases,
       });
     } else {
       writeLine(streams.stdout, formatSessionStartSummary(identity, state, false));
@@ -1498,6 +1745,9 @@ const handleDirectCommand = async (
       artifacts,
       state: responseState,
       eventLogFile: getTestEngineEventLogPath(identity.agentId),
+      suggestedCommand: extractSuggestedCommand(`${response.stdout}\n${response.stderr}`),
+      sessionDir: responseState?.sessionDir ?? getTestEngineSessionDir(identity.agentId),
+      phases: responseState?.phases,
     }), response.ok)
     : printDaemonResponse(streams, response);
   return { ok, resolvedAgentId: identity.agentId };
@@ -1521,17 +1771,29 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
   const stdoutBuffer = new BufferingWritable();
   const stderrBuffer = new BufferingWritable();
   const runtime = new TestEngineCliRuntime({ stdout: stdoutBuffer, stderr: stderrBuffer }, { keepBridgeAlive: true });
+  const sessionDir = await ensureTestEngineSessionDir(parsed.agentId);
   let currentState: TestEngineSessionState = {
     agentId: parsed.agentId,
     sessionName: parsed.daemonAttach ? `attached-${parsed.agentId}` : parsed.commands[0] ?? `agent-${parsed.agentId}`,
     daemonPid: process.pid,
     daemonPort: 0,
+    sessionDir,
     headed: parsed.daemonHeaded,
     mode: parsed.daemonAttach ? 'attach' : 'start',
     startedAt: new Date().toISOString(),
     lastActivity: new Date().toISOString(),
     initializing: true,
     health: 'initializing',
+    lastPhase: 'boot',
+    phases: [{
+      name: 'boot',
+      status: 'running',
+      startedAt: new Date().toISOString(),
+      details: parsed.daemonAttach ? 'daemon attach bootstrap' : 'daemon session bootstrap',
+    }],
+    ownedResources: {
+      daemonPid: process.pid,
+    },
   };
   let commandQueue: Promise<void> = Promise.resolve();
 
@@ -1543,6 +1805,24 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
     await writeSessionState(parsed.agentId, currentState);
   };
 
+  const markPhase = async (
+    name: string,
+    status: 'running' | 'ok' | 'error',
+    details?: string,
+  ) => {
+    const nextPhases = updatePhaseList(currentState, name, status, details);
+    await persistState({
+      phases: nextPhases,
+      lastPhase: name,
+    });
+    await appendSessionEvent(parsed.agentId, {
+      type: 'phase',
+      phase: name,
+      status,
+      details,
+    });
+  };
+
   const markBroken = async (reason: string) => {
     await persistState({
       health: 'broken',
@@ -1550,6 +1830,7 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
       currentCommand: undefined,
       initializing: false,
       lastActivity: new Date().toISOString(),
+      phases: updatePhaseList(currentState, currentState.lastPhase ?? 'unknown', 'error', reason),
     });
     await appendSessionEvent(parsed.agentId, { type: 'session_broken', reason, health: 'broken' });
   };
@@ -1567,6 +1848,11 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
       brokenReason: undefined,
       lastActivity: new Date().toISOString(),
     });
+    await markPhase(
+      commandLine.startsWith('step') || commandLine.startsWith('batch') ? 'executing_steps' : 'executing_command',
+      'running',
+      commandLine,
+    );
     await appendSessionEvent(parsed.agentId, {
       type: 'command_started',
       commandId,
@@ -1614,6 +1900,11 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
         }
         : {}),
     });
+    await markPhase(
+      commandLine.startsWith('step') || commandLine.startsWith('batch') ? 'executing_steps' : 'executing_command',
+      broken ? 'error' : 'ok',
+      commandLine,
+    );
     await appendSessionEvent(parsed.agentId, {
       type: broken ? 'command_broken' : 'command_finished',
       commandId,
@@ -1721,6 +2012,7 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
   });
 
   try {
+    await markPhase('starting_daemon_http', 'running');
     await new Promise<void>((resolve, reject) => {
       server.listen(0, LOCALHOST, () => resolve());
       server.once('error', reject);
@@ -1732,14 +2024,21 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
 
     currentState.daemonPort = address.port;
     currentState.eventLogFile = getTestEngineEventLogPath(parsed.agentId);
+    currentState.ownedResources = {
+      daemonPid: process.pid,
+      daemonPort: currentState.daemonPort,
+    };
     await writeSessionState(parsed.agentId, currentState);
+    await markPhase('starting_daemon_http', 'ok', `port=${currentState.daemonPort}`);
     await appendSessionEvent(parsed.agentId, {
       type: 'daemon_started',
       daemonPid: process.pid,
       daemonPort: currentState.daemonPort,
       eventLogFile: currentState.eventLogFile,
+      sessionDir: currentState.sessionDir,
     });
 
+    await markPhase(parsed.daemonAttach ? 'attaching_remote_session' : 'starting_browser_session', 'running');
     const { result, stdout: stdoutText, stderr: stderrText } = await executeDaemonCommand(initialCommand);
 
     if (!result.ok) {
@@ -1758,6 +2057,9 @@ const runDaemonServer = async (parsed: ParsedCliArgs): Promise<number> => {
       lastActivity: new Date().toISOString(),
     };
     await writeSessionState(parsed.agentId, currentState);
+    await markPhase(parsed.daemonAttach ? 'attaching_remote_session' : 'starting_browser_session', 'ok');
+    await markPhase('smoke_check', 'running', currentState.smokeStep ?? 'bootstrap smoke');
+    await markPhase('smoke_check', 'ok', currentState.smokeStep ?? 'bootstrap smoke');
     await appendSessionEvent(parsed.agentId, {
       type: 'session_ready',
       sessionId: currentState.sessionId,

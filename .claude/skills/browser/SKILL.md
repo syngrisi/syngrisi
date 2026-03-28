@@ -29,21 +29,32 @@ Equivalent direct entrypoint:
 npx tsx support/mcp/test-engine-cli.ts help
 ```
 
-## Mandatory Preflight
+## Contract
 
-Before any headed/manual browser flow:
+For manual browser work, follow these rules exactly:
+
+1. Always run from `packages/syngrisi/e2e`.
+2. Always set `SYSTEM_THREAD` explicitly.
+3. Never run commands in parallel for the same session.
+4. Prefer `step` over `batch`; use `batch` only for short deterministic sequences.
+5. Use `step-json` / `batch-json` when quoting becomes fragile.
+6. Prefer existing domain/common steps over raw locators.
+7. Use `status --json` when the session behaves unexpectedly.
+8. Use `shutdown` when you are done. Use `restart` if the session becomes broken.
+
+## Preflight
+
+Before any scenario-oriented manual flow:
 
 ```bash
 cd /Users/a1/Project/syngrisi/packages/syngrisi/e2e
 npx bddgen
-yarn kill
+export SYSTEM_THREAD=manual-browser
 npx tsx support/mcp/test-engine-cli.ts help
 ```
 
-Interpretation rules:
-
 - `npx bddgen` is mandatory before scenario-oriented work so the generated MCP step catalogs are fresh.
-- `yarn kill` is mandatory before headed runs because stale Playwright/Chromium/server processes can cause `ERR_CONNECTION_REFUSED` or broken sessions.
+- `SYSTEM_THREAD` is mandatory for deterministic routing in manual mode.
 - `help` is a cheap smoke check that confirms the wrapper starts before you launch a long interactive flow.
 
 If preflight fails, stop and fix that first.
@@ -52,12 +63,12 @@ If preflight fails, stop and fix that first.
 
 The CLI is now session-aware.
 
-Each command is a separate process invocation, but the same browser/MCP session is reused through:
+Each command is a separate process invocation, but the same browser/MCP session is reused through an explicit session id:
 
-- explicit `--system-thread <id>`
 - `SYSTEM_THREAD`
-- parent PID heuristics
-- fallback to a single active cached session
+- or explicit `--system-thread <id>`
+
+Do not rely on process-tree or cache-based fallback in manual flows.
 
 Core commands:
 
@@ -72,35 +83,22 @@ Core commands:
 - `batch <step1> <step2> [step3 ...] [--system-thread <id>]`
 - `batch-json <json> [--system-thread <id>]`
 - `steps find <query>`
+- `steps suggest <intent>`
 - `clear [--system-thread <id>]`
 - `shutdown [--system-thread <id>]`
 - add `--json` for machine-readable `state`, `health`, `artifacts`, and `eventLogFile`
 
-Rules of thumb:
-
-- `start` once, then run later commands as separate CLI invocations in the same session.
-- Run commands sequentially for a given `SYSTEM_THREAD`; do not fire multiple `step` calls in parallel against the same session.
-- `start` now runs a mandatory smoke step before the session is considered healthy.
-- Prefer `SYSTEM_THREAD` or explicit `--system-thread` for deterministic routing.
-- Use `status` or `resolve` to inspect what session the CLI will target.
-- Use `tools` as the stable wrapper-level MCP discovery command.
-- Prefer `step` for all single actions, assertions, diagnostics, and value-returning steps.
-- Use `batch` only for short deterministic sequences when per-step output is not needed.
-- Prefer existing BDD/domain steps over low-level locator steps when both exist.
-- Prefer `step-json` / `batch-json` when step text contains many quotes or when a docstring must be passed without shell escaping.
-- Prefer `--docstring-file` or `--docstring-base64` over raw multiline shell quoting.
-- `shutdown` is explicit; the browser should remain alive between separate `step` invocations until you call it.
+`start` runs a smoke phase before the session is considered healthy.
 
 ## Recommended Manual Testing Flow
 
 1. `npx bddgen`
-2. `yarn kill`
-3. export a stable session id, for example `export SYSTEM_THREAD=manual-browser`
-4. `start <sessionName> --headed`
-5. Run one setup step at a time with separate `step ...` invocations
-6. After each important state transition, run a visible assertion step
-7. If the session becomes broken, run `restart <sessionName> --headed`
-8. Run `shutdown` only when you explicitly want to close the browser and finish the session
+2. `export SYSTEM_THREAD=manual-browser`
+3. `start <sessionName> --headed`
+4. Run one setup step at a time with separate `step ...` invocations
+5. After each important state transition, run a visible assertion step
+6. If the session becomes broken, inspect `status --json`, then run `restart <sessionName> --headed`
+7. Run `shutdown` only when you explicitly want to close the browser and finish the session
 
 Example:
 
@@ -135,6 +133,10 @@ Useful discovery commands:
 
 ```bash
 npx tsx support/mcp/test-engine-cli.ts steps find tolerance threshold
+```
+
+```bash
+npx tsx support/mcp/test-engine-cli.ts steps suggest "open share modal"
 ```
 
 ```bash
@@ -209,7 +211,7 @@ npx tsx support/mcp/test-engine-cli.ts "${STEP_CREATE_USER_ARGS[@]}"
 
 More patterns are in [step-patterns.md](step-patterns.md).
 
-## Operational Cookbook
+## Recipes
 
 ### 1) Headed login smoke
 

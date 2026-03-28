@@ -3,10 +3,16 @@ import { spawn } from 'node:child_process';
 import path from 'node:path';
 import process from 'node:process';
 import type { TestInfo } from '@playwright/test';
+import { findEphemeralPort } from '../../utils/port-utils';
 
 const NPX_BIN = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 const TEST_ENGINE_CLI_RELATIVE_PATH = ['support', 'mcp', 'test-engine-cli.ts'];
 let testEngineCliSpawnCounter = 0;
+const testInvocationEnvCache = new WeakMap<TestInfo, Promise<{
+  workerInstanceId: string;
+  uniqueWorkerIndex: number;
+  appPort: number;
+}>>();
 
 const buildSubprocessEnv = (
   baseEnv: Record<string, string | undefined>,
@@ -41,6 +47,7 @@ const runTestEngineCli = async (
     commands?: string[];
     env?: Record<string, string>;
     attachmentName?: string;
+    timeoutMs?: number;
   } = {},
 ): Promise<{ code: number | null; signal: NodeJS.Signals | null; stdout: string; stderr: string }> => {
   const {
@@ -48,6 +55,7 @@ const runTestEngineCli = async (
     commands = [],
     env: envOverrides = {},
     attachmentName = 'mcp-test-engine-cli-output',
+    timeoutMs = 180_000,
   } = options;
 
   const e2eRoot = path.resolve(__dirname, '..', '..', '..', '..');
@@ -58,20 +66,33 @@ const runTestEngineCli = async (
     ...commands.flatMap((command) => ['--command', command]),
   ];
 
-  const workerInstanceId = `test-engine-${testInfo.workerIndex}-${testInfo.retry}-${randomUUID()}`;
-  const uniqueWorkerIndex = 200 + (testInfo.parallelIndex * 1000) + testEngineCliSpawnCounter++;
+  let invocationEnvPromise = testInvocationEnvCache.get(testInfo);
+  if (!invocationEnvPromise) {
+    invocationEnvPromise = (async () => {
+      const uniqueWorkerIndex = 200 + (testInfo.parallelIndex * 1000) + testEngineCliSpawnCounter++;
+      return {
+        workerInstanceId: `test-engine-${testInfo.workerIndex}-${testInfo.retry}-${randomUUID()}`,
+        uniqueWorkerIndex,
+        appPort: await findEphemeralPort(),
+      };
+    })();
+    testInvocationEnvCache.set(testInfo, invocationEnvPromise);
+  }
+  const invocationEnv = await invocationEnvPromise;
 
   return new Promise((resolve, reject) => {
     const child = spawn(NPX_BIN, commandArgs, {
       cwd: e2eRoot,
       env: buildSubprocessEnv(process.env as Record<string, string>, {
-        ZENFLOW_WORKER_INSTANCE: workerInstanceId,
-        SYSTEM_THREAD: workerInstanceId,
+        ZENFLOW_WORKER_INSTANCE: invocationEnv.workerInstanceId,
+        SYSTEM_THREAD: invocationEnv.workerInstanceId,
         E2E_HEADLESS: '1',
         NODE_NO_WARNINGS: '1',
-        TEST_WORKER_INDEX: String(uniqueWorkerIndex),
-        SYNGRISI_TEST_CID: String(uniqueWorkerIndex),
-        SYNGRISI_APP_PORT: String(5100 + uniqueWorkerIndex),
+        NPM_CONFIG_UPDATE_NOTIFIER: 'false',
+        npm_config_update_notifier: 'false',
+        TEST_WORKER_INDEX: String(invocationEnv.uniqueWorkerIndex),
+        SYNGRISI_TEST_CID: String(invocationEnv.uniqueWorkerIndex),
+        SYNGRISI_APP_PORT: String(invocationEnv.appPort),
         ...envOverrides,
       }),
       stdio: ['ignore', 'pipe', 'pipe'],
@@ -79,6 +100,13 @@ const runTestEngineCli = async (
 
     let stdout = '';
     let stderr = '';
+    let timedOut = false;
+
+    const timeoutHandle = setTimeout(() => {
+      timedOut = true;
+      stderr += `Timed out after ${timeoutMs}ms while running: ${commandArgs.join(' ')}\n`;
+      child.kill('SIGTERM');
+    }, timeoutMs);
 
     child.stdout?.setEncoding('utf8');
     child.stderr?.setEncoding('utf8');
@@ -94,7 +122,9 @@ const runTestEngineCli = async (
     child.once('error', reject);
 
     child.once('exit', async (code, signal) => {
-      if (testInfo.status !== 'passed' && (stdout || stderr)) {
+      clearTimeout(timeoutHandle);
+
+      if ((testInfo.status !== 'passed' || code !== 0 || timedOut) && (stdout || stderr)) {
         await testInfo.attach(attachmentName, {
           body: `STDOUT:\n${stdout}\n\nSTDERR:\n${stderr}`,
           contentType: 'text/plain',

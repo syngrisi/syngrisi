@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import type { ChildProcess } from 'node:child_process';
 import process from 'node:process';
+import { randomUUID } from 'node:crypto';
 
 import { findEphemeralPort } from '../utils/port-utils';
 import { spawnMcpServer } from '../utils/server-spawn';
@@ -12,7 +13,7 @@ import { runTestEngineCli } from './utils/test-engine-cli';
 
 test.describe('MCP Test Engine CLI tests', { tag: '@no-app-start' }, () => {
   const buildSessionEnv = (testInfo: Parameters<typeof runTestEngineCli>[0], suffix: string) => ({
-    SYSTEM_THREAD: `test-engine-cli-${testInfo.workerIndex}-${testInfo.retry}-${suffix}`,
+    SYSTEM_THREAD: `test-engine-cli-${testInfo.workerIndex}-${testInfo.retry}-${suffix}-${randomUUID().slice(0, 8)}`,
   });
 
   test('prints help output', async ({ }, testInfo) => {
@@ -218,9 +219,23 @@ test.describe('MCP Test Engine CLI tests', { tag: '@no-app-start' }, () => {
     expect(result.stdout).toContain('steps/domain/');
   });
 
+  test('suggests an exact command for an intent', async ({ }, testInfo) => {
+    test.setTimeout(TIMEOUTS.CALL_TOOL);
+
+    const result = await runTestEngineCli(testInfo, {
+      commands: ['steps suggest login user'],
+      attachmentName: 'mcp-test-engine-cli-steps-suggest-output',
+    });
+
+    expect(result.code).toBe(0);
+    expect(result.stderr).toBe('');
+    expect(result.stdout).toContain('Recommended exact command:');
+    expect(result.stdout).toContain('step "I login with user:{string} password {string}"');
+  });
+
   test('reports session status and supports explicit --system-thread', async ({ }, testInfo) => {
     test.setTimeout(TIMEOUTS.TEST_SUITE);
-    const agentId = `explicit-agent-${testInfo.workerIndex}-${testInfo.retry}`;
+    const agentId = `explicit-agent-${testInfo.workerIndex}-${testInfo.retry}-${randomUUID().slice(0, 8)}`;
 
     const startResult = await runTestEngineCli(testInfo, {
       args: ['start', 'mcp-test-engine-cli-status', '--system-thread', agentId],
@@ -384,6 +399,19 @@ test.describe('MCP Test Engine CLI tests', { tag: '@no-app-start' }, () => {
     expect(result.stderr).toContain('No active session found for agent');
   });
 
+  test('requires explicit system thread for manual commands', async ({ }, testInfo) => {
+    test.setTimeout(TIMEOUTS.CALL_TOOL);
+
+    const result = await runTestEngineCli(testInfo, {
+      args: ['status'],
+      env: { SYSTEM_THREAD: '' },
+      attachmentName: 'mcp-test-engine-cli-requires-system-thread-output',
+    });
+
+    expect(result.code).toBe(1);
+    expect(result.stderr).toContain('requires an explicit system thread');
+  });
+
   test('serializes concurrent commands within one session', async ({ }, testInfo) => {
     test.setTimeout(TIMEOUTS.TEST_SUITE);
     const env = buildSessionEnv(testInfo, 'queue');
@@ -490,12 +518,17 @@ test.describe('MCP Test Engine CLI tests', { tag: '@no-app-start' }, () => {
       command: string;
       state: { smokeStep?: string; eventLogFile?: string; health?: string };
       health: string;
+      sessionDir: string;
+      phases?: Array<{ name?: string }>;
     };
     expect(startPayload.ok).toBe(true);
     expect(startPayload.command).toBe('start');
     expect(startPayload.health).toBe('ready');
     expect(startPayload.state.smokeStep).toBe('I test');
-    expect(startPayload.state.eventLogFile).toContain('.events.jsonl');
+    expect(startPayload.state.eventLogFile).toContain('events.jsonl');
+    expect(startPayload.sessionDir).toContain('/sessions/');
+    expect(Array.isArray(startPayload.phases)).toBe(true);
+    expect(startPayload.phases?.some((item: { name?: string }) => item.name === 'starting_browser_session')).toBe(true);
 
     const stepResult = await runTestEngineCli(testInfo, {
       args: ['step', 'I get current URL', '--json'],
@@ -508,11 +541,13 @@ test.describe('MCP Test Engine CLI tests', { tag: '@no-app-start' }, () => {
       command: string;
       stdout: string;
       eventLogFile: string;
+      sessionDir: string;
     };
     expect(stepPayload.ok).toBe(true);
     expect(stepPayload.command).toBe('step');
     expect(stepPayload.stdout).toContain('Result: "http://');
-    expect(stepPayload.eventLogFile).toContain('.events.jsonl');
+    expect(stepPayload.eventLogFile).toContain('events.jsonl');
+    expect(stepPayload.sessionDir).toContain('/sessions/');
 
     const shutdownResult = await runTestEngineCli(testInfo, {
       args: ['shutdown'],
@@ -608,7 +643,7 @@ test.describe('MCP Test Engine CLI tests', { tag: '@no-app-start' }, () => {
 
     const state = await readSessionState(env.SYSTEM_THREAD);
     expect(state?.lastArtifacts?.some((item) => item.endsWith('event-log-proof.png'))).toBe(true);
-    expect(state?.eventLogFile).toContain('.events.jsonl');
+    expect(state?.eventLogFile).toContain('events.jsonl');
 
     const eventLog = await fs.readFile(state!.eventLogFile!, 'utf8');
     expect(eventLog).toContain('"type":"daemon_started"');
@@ -663,5 +698,43 @@ test.describe('MCP Test Engine CLI tests', { tag: '@no-app-start' }, () => {
 
     expect(shutdownResult.code).toBe(0);
     expect(shutdownResult.stderr).toBe('');
+  });
+
+  test('replaces unreachable existing session during start', async ({ }, testInfo) => {
+    test.setTimeout(TIMEOUTS.TEST_SUITE);
+    const env = {
+      SYSTEM_THREAD: `self-heal-${testInfo.workerIndex}-${testInfo.retry}-${Date.now()}`,
+    };
+
+    await writeSessionState(env.SYSTEM_THREAD, {
+      agentId: env.SYSTEM_THREAD,
+      sessionName: 'stale-session',
+      daemonPid: 999999,
+      daemonPort: 1,
+      health: 'ready',
+      headed: false,
+      mode: 'start',
+      startedAt: new Date(Date.now() - 60_000).toISOString(),
+      lastActivity: new Date(Date.now() - 60_000).toISOString(),
+    });
+
+    const startResult = await runTestEngineCli(testInfo, {
+      args: ['start', 'mcp-test-engine-cli-self-heal'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-self-heal-start-output',
+    });
+    expect(startResult.code).toBe(0);
+    expect(startResult.stderr).toBe('');
+
+    const healedState = await readSessionState(env.SYSTEM_THREAD);
+    expect(healedState?.daemonPort).not.toBe(1);
+    expect(healedState?.health).toBe('ready');
+
+    const shutdownResult = await runTestEngineCli(testInfo, {
+      args: ['shutdown'],
+      env,
+      attachmentName: 'mcp-test-engine-cli-self-heal-shutdown-output',
+    });
+    expect(shutdownResult.code).toBe(0);
   });
 });
