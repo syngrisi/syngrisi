@@ -47,10 +47,14 @@ class AppSettings {
 
     async loadInitialFromFile(): Promise<void> {
         await this.ensureInitialized();
-        const settings = initialAppSettings;
-        await this.model.insertMany(settings);
-        this.cache = settings;
-        this.lastFetch = Date.now();
+        for (const setting of initialAppSettings) {
+            await this.model.updateOne(
+                { name: setting.name },
+                { $setOnInsert: setting },
+                { upsert: true }
+            );
+        }
+        await this.refreshCache();
     }
 
     async get(name: string): Promise<any> {

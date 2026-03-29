@@ -113,7 +113,7 @@ try {
 
     // SSO tests warning
     console.log('\x1b[33m%s\x1b[0m', '⚠️⚠️⚠️⚠️⚠️⚠️ SSO TESTS NOT INCLUDED ⚠️⚠️⚠️⚠️⚠️⚠️');
-    console.log('\x1b[33m%s\x1b[0m', 'SSO tests (@saml, @sso-external, @sso-logto) are excluded from this run.');
+    console.log('\x1b[33m%s\x1b[0m', 'SSO tests (@saml, @sso-common, @sso-external, @sso-logto, @sso-metadata) are excluded from this run.');
     console.log('\x1b[33m%s\x1b[0m', 'To run SSO tests separately, use:');
     console.log('\x1b[36m%s\x1b[0m', 'npm run test:sso');
     console.log('\n');

@@ -1,4 +1,4 @@
-@smoke @fast-server @flaky
+@smoke @fast-server @flaky @mode:serial
 Feature: Navbar Quick Filtering
 
   Background:

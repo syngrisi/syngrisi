@@ -1,4 +1,4 @@
-@smoke @fast-server
+@smoke @fast-server @mode:serial
 Feature: Check details Related Checks - Navigation and Accept
 
   Background:

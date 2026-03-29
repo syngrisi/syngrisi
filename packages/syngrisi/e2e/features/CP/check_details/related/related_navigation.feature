@@ -1,4 +1,4 @@
-@smoke @fast-server
+@smoke @fast-server @mode:serial
 Feature: Check details Related Checks - Navigation
 
   Background:
@@ -100,4 +100,3 @@ Feature: Check details Related Checks - Navigation
 
     Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
     Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(134,142,150,1)"
-

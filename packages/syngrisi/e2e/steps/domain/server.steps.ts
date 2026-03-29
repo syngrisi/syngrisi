@@ -25,6 +25,31 @@ let vDriver: SyngrisiDriver | null = null;
 const restartAfterEnvSet = new Map<number, boolean>();
 const getCid = (): number => (process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_WORKER_INDEX || '0', 10));
 
+const transientEnvKeys = [
+  'SYNGRISI_AUTH',
+  'SYNGRISI_AUTH_OVERRIDE',
+  'SYNGRISI_API_KEY',
+  'SYNGRISI_PLUGINS_ENABLED',
+  'SYNGRISI_PLUGIN_JWT_AUTH_ENABLED',
+  'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL',
+  'SYNGRISI_PLUGIN_JWT_AUTH_ISSUER',
+  'SYNGRISI_PLUGIN_JWT_AUTH_AUTO_PROVISION',
+  'SYNGRISI_PLUGIN_JWT_AUTH_SERVICE_USER_ROLE',
+  'SYNGRISI_PLUGIN_JWT_AUTH_HEADER_NAME',
+  'SYNGRISI_PLUGIN_JWT_AUTH_HEADER_PREFIX',
+  'SYNGRISI_PLUGIN_JWT_AUTH_AUDIENCE',
+  'SYNGRISI_PLUGIN_JWT_AUTH_REQUIRED_SCOPES',
+  'SYNGRISI_PLUGIN_JWT_AUTH_ISSUER_MATCH',
+  'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_CACHE_TTL',
+  'SYNGRISI_AUTH_TOKEN',
+];
+
+function resetTransientTestEnv(): void {
+  for (const key of transientEnvKeys) {
+    delete process.env[key];
+  }
+}
+
 function resetTestCreationState(testData?: TestStore): void {
   if (!testData) return;
   testData.clear('createdTestsByName');
@@ -33,6 +58,17 @@ function resetTestCreationState(testData?: TestStore): void {
   testData.clear('lastTestId');
   testData.set('createdTestsByName', {});
   testData.set('autoCreatedChecks', []);
+}
+
+function getAdminDataJobsPath(): string {
+  return process.env.SYNGRISI_ADMIN_DATA_JOBS_PATH || path.resolve(resolveRepoRoot(), '.tmp', 'admin-data-jobs');
+}
+
+async function clearAdminDataJobs(): Promise<void> {
+  const jobsPath = getAdminDataJobsPath();
+  await fs.promises.rm(jobsPath, { recursive: true, force: true });
+  await fs.promises.mkdir(jobsPath, { recursive: true });
+  logger.info(`Admin data jobs cleared at ${jobsPath}`);
 }
 
 When(
@@ -141,9 +177,7 @@ When(
     }
 
     // Reset critical env vars to prevent leakage to other tests in the same worker
-    delete process.env.SYNGRISI_AUTH;
-    delete process.env.SYNGRISI_AUTH_OVERRIDE;
-    delete process.env.SYNGRISI_API_KEY;
+    resetTransientTestEnv();
 
     logger.info('Server stopped and env vars reset');
     resetTestCreationState(testData);
@@ -165,9 +199,7 @@ When(
     }
 
     // Reset critical env vars to prevent leakage to other tests in the same worker
-    delete process.env.SYNGRISI_AUTH;
-    delete process.env.SYNGRISI_AUTH_OVERRIDE;
-    delete process.env.SYNGRISI_API_KEY;
+    resetTransientTestEnv();
 
     logger.info('Server stopped and env vars reset');
     resetTestCreationState(testData);
@@ -199,6 +231,8 @@ Given(
       // Clear database (removeBaselines = true by default, as in original)
       logger.info('Clearing database...');
       await clearDatabase(undefined, true); // Explicitly pass removeBaselines = true to clear screenshots folder
+      await clearAdminDataJobs();
+      resetTransientTestEnv();
 
       // Reset legacy default environment expectations between scenarios
       process.env.SYNGRISI_DISABLE_FIRST_RUN = 'true';
@@ -294,15 +328,15 @@ When(
   'I try to start Server',
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
     try {
+      logger.info('Ensuring no stale server process is running before validation start');
+      stopServerProcess();
+      await waitForServerStop();
+
       if (appServer.baseURL) {
-        logger.info('Server is running, force restarting (no retry) to apply new env variables');
-        await appServer.restart(true, true); // noRetry: true for validation tests
+        logger.info('Server fixture has existing baseURL, forcing clean restart in no-retry mode');
+        await appServer.restart(true, true);
       } else {
-        logger.info('Ensuring no stale server process is running before validation start');
-        stopServerProcess();
-        await waitForServerStop();
         logger.info('Starting server (no retry mode for validation tests)...');
-        // Use startNoRetry if available (fails immediately on startup error)
         if (appServer.startNoRetry) {
           await appServer.startNoRetry();
         } else {

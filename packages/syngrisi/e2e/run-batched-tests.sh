@@ -51,7 +51,7 @@ for ((batch=0; batch<TOTAL_BATCHES; batch++)); do
 
     # Run playwright test with timeout
     OUTPUT=$(gtimeout 600 npx playwright test ${BATCH_FILES[@]} \
-        --grep-invert "@saml|@sso-external|@sso-logto|@demo|@flaky" \
+        --grep-invert "@saml|@sso-common|@sso-external|@sso-logto|@sso-metadata|@demo|@flaky" \
         --workers=$WORKERS \
         --timeout=$TIMEOUT_MS \
         2>&1) || true

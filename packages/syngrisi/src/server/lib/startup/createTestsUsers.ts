@@ -23,41 +23,51 @@ async function waitForCondition(
     return false;
 }
 
+type SeedUser = {
+    PASSWORD_?: string;
+    API_KEY_?: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+    password?: string;
+    apiKey?: string;
+    salt?: string;
+    createdDate?: string | Date | null;
+    updatedDate?: string | Date | null;
+};
+
+const buildUserInsertPayload = (userData: SeedUser) => ({
+    username: userData.username,
+    firstName: userData.firstName,
+    lastName: userData.lastName,
+    role: userData.role,
+    provider: 'local',
+    authSource: 'local',
+    password: userData.password,
+    apiKey: userData.apiKey,
+    salt: userData.salt,
+    createdDate: userData.createdDate || undefined,
+    updatedDate: userData.updatedDate || undefined,
+});
+
 export async function createTestsUsers(): Promise<void> {
     log.debug('creating tests users', logOpts);
     try {
         const createdApiKeys: string[] = [];
 
         for (const userData of testUsers) {
-            const existingUser = await User.findOne({ username: userData.username });
-            if (!existingUser) {
-                const newUser = new User({
-                    username: userData.username,
-                    firstName: userData.firstName,
-                    lastName: userData.lastName,
-                    role: userData.role,
-                    apiKey: userData.apiKey,
-                });
+            const insertPayload = buildUserInsertPayload(userData);
+            const result = await User.updateOne(
+                { username: userData.username },
+                { $setOnInsert: insertPayload },
+                { upsert: true }
+            );
 
-                // Use the plain text password from the JSON if available, or default to 'Test-123'
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const password = (userData as any).PASSWORD_ || 'Test-123';
-                await newUser.setPassword(password);
-                await newUser.save();
-                log.info(`Created user: ${newUser.username} with role: ${newUser.role}`, logOpts);
-                createdApiKeys.push(userData.apiKey);
-
-                // Verify password was set correctly by trying to authenticate immediately
-                try {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const verified = await (newUser as any).authenticate(password);
-                    if (verified) {
-                        log.info(`✓ Password verified for ${newUser.username}`, logOpts);
-                    } else {
-                        log.error(`✗ Password verification FAILED for ${newUser.username}`, logOpts);
-                    }
-                } catch (verifyErr) {
-                    log.error(`✗ Password verification ERROR for ${newUser.username}: ${verifyErr}`, logOpts);
+            if (result.upsertedCount > 0) {
+                log.info(`Created user: ${userData.username} with role: ${userData.role}`, logOpts);
+                if (userData.apiKey) {
+                    createdApiKeys.push(userData.apiKey);
                 }
             } else {
                 log.debug(`User ${userData.username} already exists`, logOpts);

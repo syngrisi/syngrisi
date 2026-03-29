@@ -1,6 +1,5 @@
 import { HttpStatus } from '@utils';
-import { EJSON } from 'bson';
-import { catchAsync } from '@utils';
+import { catchAsync, deserializeIfJSON } from '@utils';
 import { logsService } from '@services';
 import { Response } from "express";
 
@@ -8,9 +7,8 @@ import { pick } from '@utils';
 import { ExtRequest } from '@types';
 
 const getLogs = catchAsync(async (req: ExtRequest, res: Response) => {
-    // const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};
     const filter = typeof req.query.filter === 'string'
-        ? EJSON.parse(req.query.filter)
+        ? deserializeIfJSON(req.query.filter) || {}
         : {};
 
     const options = pick(req.query, ['sortBy', 'limit', 'page']);

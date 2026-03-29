@@ -78,38 +78,45 @@ When(
     };
 
     let apiKey: string | null = null;
-    const deadline = Date.now() + 10000;
-    while (!apiKey && Date.now() < deadline) {
-      apiKey = await readApiKeyFromDom();
-      if (!apiKey) {
-        await page.waitForTimeout(250);
+    const cookies = await page.context().cookies();
+    const sessionCookie = cookies.find((cookie: { name: string; value: string }) => cookie.name === 'connect.sid');
+
+    if (sessionCookie) {
+      try {
+        const uri = `${appServer.baseURL}/v1/auth/apikey`;
+        logger.info('Fetching API key via HTTP using current UI session');
+        const response = await got.get(uri, {
+          headers: createAuthHeaders(appServer, {
+            sessionId: sessionCookie.value,
+            path: '/v1/auth/apikey',
+          }),
+        });
+        const parsed = JSON.parse(response.body);
+        apiKey = parsed?.apikey || null;
+        if (apiKey) {
+          logger.info('API key obtained via HTTP session request');
+        }
+      } catch (error) {
+        logger.warn(`HTTP API key fetch failed, falling back to DOM parsing: ${(error as Error).message}`);
       }
     }
 
     if (!apiKey) {
-      // Fallback: request API key via HTTP using current session cookie (mirrors backend call triggered by UI)
-      const cookies = await page.context().cookies();
-      const sessionCookie = cookies.find((cookie: { name: string; value: string }) => cookie.name === 'connect.sid');
-      if (!sessionCookie) {
-        throw new Error('API key not found on page and no session cookie available to fetch it');
+      const deadline = Date.now() + 10000;
+      while (!apiKey && Date.now() < deadline) {
+        apiKey = await readApiKeyFromDom();
+        if (!apiKey) {
+          await page.waitForTimeout(250);
+        }
       }
-      const uri = `${appServer.baseURL}/v1/auth/apikey`;
-      logger.info('Fetching API key via HTTP fallback');
-      const response = await got.get(uri, {
-        headers: createAuthHeaders(appServer, {
-          sessionId: sessionCookie.value,
-          path: '/v1/auth/apikey',
-        }),
-      });
-      const parsed = JSON.parse(response.body);
-      apiKey = parsed?.apikey;
-      if (!apiKey) {
-        throw new Error(`API key not found on page and HTTP fallback failed: ${response.body}`);
-      }
-      logger.info('API key obtained via HTTP fallback');
+    }
+
+    if (!apiKey) {
+      throw new Error('API key not found via HTTP session request or DOM parsing');
     }
 
     testData.set('apiKey', { value: apiKey });
+    await page.waitForTimeout(500);
     logger.info(`API key parsed and stored (length=${apiKey.length})`);
   }
 );

@@ -1,4 +1,4 @@
-@smoke @fast-server
+@smoke @fast-server @mode:serial
 Feature: Check Detail Appearance
 
   Background:

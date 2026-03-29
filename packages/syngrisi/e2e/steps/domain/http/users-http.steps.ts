@@ -5,8 +5,13 @@ import { createLogger } from '@lib/logger';
 import { createAuthHeaders } from '@utils/http-client';
 import { got } from 'got-cjs';
 import { expect } from '@playwright/test';
+import * as crypto from 'crypto';
 
 const logger = createLogger('UsersHttpSteps');
+
+function hashApiKey(apiKey: string): string {
+  return crypto.createHash('sha512').update(apiKey).digest('hex');
+}
 
 When(
   'I create via http test user',
@@ -157,13 +162,43 @@ When(
     });
 
     const response = JSON.parse(res.body);
-    testData.set('apiKey', { value: response.apikey });
+    const apiKey = response.apikey as string;
+    testData.set('apiKey', { value: apiKey });
     logger.info('API key generated successfully');
 
-    // Small delay to ensure API key is indexed by MongoDB before proceeding
-    // This prevents race conditions where the driver tries to use the API key
-    // before the user document is updated with the hashed key
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    const hashedApiKey = hashApiKey(apiKey);
+    const readinessUri = `${appServer.baseURL}/v1/tests?limit=0`;
+    const deadline = Date.now() + 10_000;
+    let ready = false;
+
+    while (Date.now() < deadline) {
+      try {
+        const readinessResponse = await got.get(readinessUri, {
+          headers: createAuthHeaders(appServer, {
+            path: '/v1/tests?limit=0',
+            headers: {
+              apikey: hashedApiKey,
+            },
+          }),
+          throwHttpErrors: false,
+          timeout: { request: 3000 },
+        });
+
+        if (readinessResponse.statusCode === 200) {
+          ready = true;
+          break;
+        }
+      } catch (error) {
+        logger.warn(`API key readiness probe failed: ${(error as Error).message}`);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+
+    if (!ready) {
+      throw new Error('Generated API key was not accepted by the server within 10 seconds');
+    }
+
     logger.info('API key indexing stabilization complete');
   }
 );
