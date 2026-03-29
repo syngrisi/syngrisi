@@ -6,6 +6,7 @@ Feature: RCA - Extended CSS Changes Detection
             """
             SYNGRISI_AUTH: "false"
             SYNGRISI_TEST_MODE: "true"
+            SYNGRISI_DISABLE_DOM_DATA: "false"
             """
         Given I start Server and start Driver
         And I clear database

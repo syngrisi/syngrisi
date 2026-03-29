@@ -20,14 +20,13 @@ const createUser = async (userBody: UserCreateReq) => {
     };
     log.debug(`create the user with name '${userBody.username}', params: '${JSON.stringify(userBody)}'`, logOpts);
 
-    const user = await User.create({ ...userBody, createdDate: Date.now() });
-
-    const updatedUser = await user.setPassword(userBody.password);
-    await updatedUser.save();
+    const user = new User({ ...userBody, createdDate: Date.now() });
+    await user.setPassword(userBody.password);
+    await user.save();
 
     log.debug(`password for user: '${userBody.username}' set successfully`, logOpts);
 
-    const userWithSelectedFields = await User.findById(updatedUser._id)
+    const userWithSelectedFields = await User.findById(user._id)
         .select('username firstName lastName role createdDate updatedDate createdDate')
         .exec();
 

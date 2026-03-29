@@ -25,27 +25,54 @@ async function waitForCondition(
     return false;
 }
 
-export async function createBasicUsers(): Promise<void> {
-    const defAdmin = await User.findOne({ username: 'Administrator' }).exec();
-    const defGuest = await User.findOne({ username: 'Guest' }).exec();
+type SeedUser = {
+    username: string;
+    role: string;
+    firstName: string;
+    lastName: string;
+    salt?: string;
+    password?: string;
+    apiKey?: string;
+    apikey?: string;
+};
 
+const buildUserInsertPayload = (userData: SeedUser) => ({
+    username: userData.username,
+    role: userData.role,
+    firstName: userData.firstName,
+    lastName: userData.lastName,
+    provider: 'local',
+    authSource: 'local',
+    salt: userData.salt,
+    password: userData.password,
+    apiKey: userData.apiKey || userData.apikey,
+});
+
+export async function createBasicUsers(): Promise<void> {
     const createdUsers: Array<{ username: string; apiKey?: string }> = [];
 
-    if (!defAdmin) {
+    const adminInsert = buildUserInsertPayload(adminData);
+    const adminResult = await User.updateOne(
+        { username: 'Administrator' },
+        { $setOnInsert: adminInsert },
+        { upsert: true }
+    );
+    if (adminResult.upsertedCount > 0) {
         log.info('create the default Administrator', logOpts);
-        const admin = new User(adminData);
-        await admin.setPassword(process.env.ADMIN_PASSWORD || 'Administrator');
-        await admin.save();
-        log.info(`administrator with id: '${admin._id}' was created`, logOpts);
-        createdUsers.push({ username: 'Administrator', apiKey: admin.apiKey });
+        createdUsers.push({ username: 'Administrator', apiKey: adminInsert.apiKey });
+        log.info('administrator was created', logOpts);
     }
-    if (!defGuest) {
+
+    const guestInsert = buildUserInsertPayload(guestData);
+    const guestResult = await User.updateOne(
+        { username: 'Guest' },
+        { $setOnInsert: guestInsert },
+        { upsert: true }
+    );
+    if (guestResult.upsertedCount > 0) {
         log.info('create the default Guest', logOpts);
-        const guest = new User(guestData);
-        await guest.setPassword(process.env.GUEST_PASSWORD || 'Guest');
-        await guest.save();
-        log.info(`guest with id: '${guest._id}' was created`, logOpts);
-        createdUsers.push({ username: 'Guest', apiKey: guest.apiKey });
+        createdUsers.push({ username: 'Guest', apiKey: guestInsert.apiKey });
+        log.info('guest was created', logOpts);
     }
 
     // Wait for created users to be indexed in MongoDB (prevents 401 race condition)

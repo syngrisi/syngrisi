@@ -1,6 +1,6 @@
 import { Schema, Document, FilterQuery } from 'mongoose';
-import { EJSON } from 'bson';
 import { PaginateOptions, QueryResult } from './utils';
+import { deserializeIfJSON } from '@utils';
 
 // type QueryResult = {
 //   results: Document[];
@@ -54,8 +54,11 @@ const paginateDistinct = (schema: Schema): void => {
 
     const documentsCount = (await this.aggregate([groupAggregateObj])
       .exec()).length;
+    const parsedFilter = typeof filter?.filter === 'string'
+      ? deserializeIfJSON(filter.filter) || {}
+      : {};
     const aggregateArr = [
-      { $match: EJSON.parse(filter.filter || '{}') },
+      { $match: parsedFilter },
       groupAggregateObj,
       { $sort: sort },
       { $skip: skip },

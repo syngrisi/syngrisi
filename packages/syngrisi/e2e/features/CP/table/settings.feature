@@ -1,3 +1,4 @@
+@mode:serial
 Feature: Tests Table Settings
 
     Background:
@@ -79,6 +80,7 @@ Feature: Tests Table Settings
         When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
         When I wait for "3" seconds
         When I select the option with the text "Name" for element "select[data-test='table-sort-by-select']"
+        When I wait 10 seconds for the element with locator "[aria-label='sort order is descendant']" to be visible
         When I click element with locator "[aria-label='sort order is descendant']"
 
         When I wait for "3" seconds
@@ -95,6 +97,7 @@ Feature: Tests Table Settings
               TestName-0, TestName-1, TestName-2
             """
 
+        When I wait 10 seconds for the element with locator "[aria-label='sort order is ascendant']" to be visible
         When I click element with locator "[aria-label='sort order is ascendant']"
 
         When I wait for "3" seconds

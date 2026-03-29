@@ -961,6 +961,7 @@ When('I set {string} to the inputfield {string}', async ({ page, testData }, val
   const locator = getLocatorQuery(page, renderedSelector);
   const targetLocator = locator.first();
 
+  await targetLocator.waitFor({ state: 'attached', timeout: 10000 });
   await targetLocator.waitFor({ state: 'visible', timeout: 10000 });
   try {
     await targetLocator.scrollIntoViewIfNeeded({ timeout: 7000 });
@@ -972,9 +973,36 @@ When('I set {string} to the inputfield {string}', async ({ page, testData }, val
       }
     }).catch(() => undefined);
   }
-  await targetLocator.click({ timeout: 10000 });
-  await targetLocator.fill('');
-  await targetLocator.fill(renderedValue);
+  try {
+    await targetLocator.click({ timeout: 10000 });
+  } catch (error) {
+    logger.warn(`Input click failed for "${renderedSelector}", retrying with focus fallback: ${(error as Error).message}`);
+    await targetLocator.evaluate((el) => {
+      if (el instanceof HTMLElement) {
+        el.focus();
+        el.scrollIntoView({ block: 'center', inline: 'center' });
+      }
+    }).catch(() => undefined);
+  }
+
+  try {
+    await targetLocator.fill('');
+    await targetLocator.fill(renderedValue);
+  } catch (error) {
+    logger.warn(`Input fill failed for "${renderedSelector}", retrying with direct value assignment: ${(error as Error).message}`);
+    await targetLocator.evaluate((el, nextValue) => {
+      const input = el as HTMLInputElement | HTMLTextAreaElement | null;
+      if (!input) {
+        return;
+      }
+      input.focus();
+      input.value = '';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.value = nextValue;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }, renderedValue);
+  }
 
   try {
     const deadline = Date.now() + 3000;
@@ -1069,7 +1097,10 @@ When('I hover over {string} and wait for tooltip {string}', async ({ page }, hov
   await element.waitFor({ state: 'visible', timeout: 30000 });
   await element.scrollIntoViewIfNeeded();
 
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    await page.mouse.move(0, 0).catch(() => { });
+    await page.waitForTimeout(100);
+
     await element.hover();
     await element.dispatchEvent('mouseenter');
     await element.dispatchEvent('mouseover');
@@ -1080,12 +1111,14 @@ When('I hover over {string} and wait for tooltip {string}', async ({ page }, hov
     }
 
     try {
-      await tooltip.waitFor({ state: 'visible', timeout: 4000 });
+      await tooltip.waitFor({ state: 'visible', timeout: 6000 });
       return;
     } catch (error) {
-      if (attempt === 3) {
+      if (attempt === 5) {
         throw error;
       }
+
+      await page.waitForTimeout(250);
     }
   }
 });

@@ -1,6 +1,7 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
-import { toJSON, paginate, paginateDistinct } from './plugins';
-import { PluginExtededModel } from './plugins/utils';
+import mongoose, { Schema, Document, Model, FilterQuery } from 'mongoose';
+import { toJSON, paginate } from './plugins';
+import { PluginExtededModel, PaginateOptions, QueryResult } from './plugins/utils';
+import { deserializeIfJSON } from '@utils';
 
 export interface TestDocument extends Document {
     name: string;
@@ -110,7 +111,67 @@ const TestSchema: Schema<TestDocument> = new Schema(
 
 TestSchema.plugin(toJSON);
 TestSchema.plugin(paginate);
-TestSchema.plugin(paginateDistinct);
+
+TestSchema.statics.paginateDistinct = async function (
+    filter: FilterQuery<unknown>,
+    options: PaginateOptions
+): Promise<QueryResult> {
+    let sort: Record<string, 1 | -1> = { _id: -1 };
+
+    if (options.sortBy) {
+        sort = {};
+        options.sortBy.split(',').forEach((sortOption: string) => {
+            const [key, order] = sortOption.split(':');
+            sort[key] = order === 'desc' ? -1 : 1;
+        });
+    }
+
+    let limit =
+        options.limit && parseInt(options.limit.toString(), 10) >= 0
+            ? parseInt(options.limit.toString(), 10)
+            : 10;
+    limit = limit === 0 ? Number.MAX_SAFE_INTEGER : limit;
+
+    const page =
+        options.page && parseInt(options.page.toString(), 10) > 0
+            ? parseInt(options.page.toString(), 10)
+            : 1;
+    const skip = (page - 1) * limit;
+    const groupAggregateObj = { $group: { _id: `$${options.field}` } };
+    const parsedFilter =
+        typeof filter?.filter === 'string' ? deserializeIfJSON(filter.filter) || {} : {};
+
+    const documentsCount = (
+        await this.aggregate([{ $match: parsedFilter }, groupAggregateObj]).exec()
+    ).length;
+
+    const aggregatedDocs = (await this.aggregate([
+        { $match: parsedFilter },
+        groupAggregateObj,
+        { $sort: sort },
+        { $skip: skip },
+        { $limit: limit },
+    ]))
+        .filter((x: { _id?: unknown }) => x._id)
+        .map((x: Record<string, unknown>) => {
+            const fieldValue = options.field ? x[options.field] : undefined;
+            if (Array.isArray(fieldValue) && fieldValue.length > 0) {
+                return fieldValue[0] as Document;
+            }
+            return { name: x._id } as Document;
+        });
+
+    const totalPages = Math.ceil(documentsCount / limit);
+
+    return {
+        results: aggregatedDocs,
+        page,
+        limit,
+        totalPages,
+        totalResults: documentsCount,
+        timestamp: Date.now(),
+    };
+};
 
 const Test: Model<TestDocument> = mongoose.model<TestDocument>('VRSTest', TestSchema);
 

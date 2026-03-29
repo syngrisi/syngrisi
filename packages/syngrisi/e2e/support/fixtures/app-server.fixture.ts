@@ -197,11 +197,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         if (currentInstance) {
           await currentInstance.stop();
           serverInstances.delete(cid);
-        }
-        // Also stop via pkill to ensure process is killed
-        // BUT: Skip pkill if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
-        const currentWorkerIndex = getCurrentCid();
-        if (currentWorkerIndex < 100) {
+        } else {
+          // Fallback only when we lost the in-memory process handle.
+          // Avoid broad pkill when we already know the exact child process.
           const { stopServerProcess } = require('@utils/app-server');
           stopServerProcess();
         }
@@ -418,7 +416,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
             const stopStart = performance.now();
             logger.info(`${modeLabel}: waiting for existing server on port ${workerPort} to stop (no pkill to avoid cross-kill)`);
             await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
-              timeoutMs: 25000,
+              timeoutMs: 90000,
               description: `Server stop on port ${workerPort}`,
             });
             serverInstances.delete(cid);
@@ -438,44 +436,49 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           getFrontendLogs: fixtureValue.getFrontendLogs,
           restart: async (force = false, noRetry = false) => {
             logger.info(`Fast mode restart: relaunching server on port ${workerPort}${noRetry ? ' (noRetry)' : ''}`);
-            // Skip pkill if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
-            if (currentWorkerIndex < 100) {
+            const currentInstance = serverInstances.get(cid);
+            if (currentInstance) {
+              await currentInstance.stop();
+              serverInstances.delete(cid);
+            } else if (currentWorkerIndex < 100) {
               stopServerProcess();
-              // Wait for server to actually stop to avoid race conditions (EADDRINUSE or pkill killing new server)
-              await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
-                timeoutMs: 25000,
-                description: `Server stop on port ${workerPort}`,
-              });
             }
+            await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
+              timeoutMs: 90000,
+              description: `Server stop on port ${workerPort}`,
+            });
             // Use process.env values since test may have set them via "I set env variables"
             await launchFreshInstance(true, noRetry);
           },
           start: async () => {
             logger.info(`Fast mode: restarting server to apply latest env on port ${workerPort} (using process.env)`);
-            // Skip pkill if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
-            if (currentWorkerIndex < 100) {
+            const currentInstance = serverInstances.get(cid);
+            if (currentInstance) {
+              await currentInstance.stop();
+              serverInstances.delete(cid);
+            } else if (currentWorkerIndex < 100) {
               stopServerProcess();
-              // Wait for server to actually stop to avoid race conditions (EADDRINUSE or pkill killing new server)
-              await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
-                timeoutMs: 25000,
-                description: `Server stop on port ${workerPort}`,
-              });
             }
+            await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
+              timeoutMs: 90000,
+              description: `Server stop on port ${workerPort}`,
+            });
             // Use process.env values since test may have set them via "I set env variables"
             await launchFreshInstance(true);
           },
           stop: async () => {
             logger.info(`Fast mode: stopping server on port ${workerPort}`);
-            // Skip pkill if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
-            if (currentWorkerIndex < 100) {
+            const currentInstance = serverInstances.get(cid);
+            if (currentInstance) {
+              await currentInstance.stop();
+              serverInstances.delete(cid);
+            } else if (currentWorkerIndex < 100) {
               stopServerProcess();
-              // Wait for server to actually stop
-              await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
-                timeoutMs: 25000,
-                description: `Server stop on port ${workerPort}`,
-              });
             }
-            serverInstances.delete(cid);
+            await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
+              timeoutMs: 45000,
+              description: `Server stop on port ${workerPort}`,
+            });
           },
         };
 

@@ -1,5 +1,5 @@
 import { When } from '@fixtures';
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import type { TestStore } from '@fixtures';
 import { getLocatorQuery } from '@helpers/locators';
 import { renderTemplate } from '@helpers/template';
@@ -19,78 +19,33 @@ function normalizeColor(raw: string): string {
 
 When(
   'I wait until element {string} contains text {string}',
-  async ({ page }: { page: Page }, selector: string, expected: string) => {
+  async ({ page, testData }: { page: Page; testData: TestStore }, selector: string, expected: string) => {
     const locator = getLocatorQuery(page, selector);
-    const expectedText = expected.trim();
-    const deadline = Date.now() + 60000;
-    let currentTexts: string[] = [];
+    const expectedText = renderTemplate(expected, testData).trim();
     const normalizedSelector = selector.toLowerCase();
     const isBadgeSelector = normalizedSelector.includes('table-refresh-icon-badge');
     const refreshIcon = page.locator('[data-test="table-refresh-icon"]').first();
 
-    while (Date.now() < deadline) {
-      if (isBadgeSelector) {
-        await refreshIcon.waitFor({ state: 'visible', timeout: 5000 }).catch(() => undefined);
-      }
-
-      const attached = await locator.first().waitFor({ state: 'attached', timeout: 2000 }).catch(() => false);
-      if (!attached) {
-        await page.waitForTimeout(300);
-        continue;
-      }
-
-      currentTexts = await locator.evaluateAll((elements) =>
-        elements.map((el) => {
-          const htmlElement = el as HTMLElement;
-          const text = htmlElement.innerText ?? el.textContent ?? '';
-          return text.replace(/\u00a0/g, ' ');
-        })
-      );
-      if (currentTexts.some((text) => text.includes(expectedText))) {
-        return;
-      }
-      if (isBadgeSelector) {
-        await page.waitForLoadState('networkidle', { timeout: 2000 }).catch(() => undefined);
-      }
-      await page.waitForTimeout(250);
+    if (isBadgeSelector) {
+      await refreshIcon.waitFor({ state: 'visible', timeout: 5000 }).catch(() => undefined);
     }
-    throw new Error(
-      `Element "${selector}" texts ${JSON.stringify(currentTexts)} did not contain "${expectedText}" after 60s`
-    );
+
+    await expect(locator.first()).toContainText(expectedText, { timeout: 60000 });
   }
 );
 
 When(
   'I wait up to {int} seconds for element {string} to contain text {string}',
-  async ({ page }: { page: Page }, timeoutSeconds: number, selector: string, expected: string) => {
+  async ({ page, testData }: { page: Page; testData: TestStore }, timeoutSeconds: number, selector: string, expected: string) => {
     const locator = getLocatorQuery(page, selector);
-    const expectedText = expected.trim();
-    const deadline = Date.now() + timeoutSeconds * 1000;
-    let currentTexts: string[] = [];
+    const expectedText = renderTemplate(expected, testData).trim();
 
-    while (Date.now() < deadline) {
-      const attached = await locator.first().waitFor({ state: 'attached', timeout: 2000 }).catch(() => false);
-      if (!attached) {
-        await page.waitForTimeout(300);
-        continue;
-      }
-
-      currentTexts = await locator.evaluateAll((elements) =>
-        elements.map((el) => {
-          const htmlElement = el as HTMLElement;
-          const text = htmlElement.innerText ?? el.textContent ?? '';
-          return text.replace(/\u00a0/g, ' ');
-        })
-      );
-      if (currentTexts.some((text) => text.includes(expectedText))) {
-        return;
-      }
-      await page.waitForTimeout(250);
+    try {
+      await expect(locator.first()).toContainText(expectedText, { timeout: timeoutSeconds * 1000 });
+    } catch {
+      const currentText = await locator.first().textContent().catch(() => '');
+      logger.warn(`Soft wait: element "${selector}" text "${currentText || ''}" did not contain "${expectedText}" after ${timeoutSeconds}s`);
     }
-
-    logger.warn(
-      `Soft wait: element "${selector}" texts ${JSON.stringify(currentTexts)} did not contain "${expectedText}" after ${timeoutSeconds}s`
-    );
   }
 );
 

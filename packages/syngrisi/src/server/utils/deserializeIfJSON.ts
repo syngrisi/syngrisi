@@ -1,5 +1,7 @@
-import { EJSON } from 'bson';
+import mongoose from 'mongoose';
 import { isJSON } from '.';
+
+const { EJSON } = mongoose.mongo.BSON;
 
 const EXTENDED_JSON_KEYS = [
     '$oid',
