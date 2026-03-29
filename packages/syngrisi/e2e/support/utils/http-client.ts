@@ -87,22 +87,35 @@ export async function requestWithSession(
     headers.apikey = hashedApiKey;
   }
 
-  let res;
-  try {
-    res = await got(uri, {
+  const performRequest = async (requestHeaders: Record<string, string>) => got(uri, {
       method: options.method || 'GET',
-      headers,
+      headers: requestHeaders,
       json: options.json,
       form: options.form,
       body: options.body,
     });
+
+  let res;
+  try {
+    res = await performRequest(headers);
   } catch (error: any) {
-    console.log('uri:', uri);
-    console.log('method:', options.method);
-    console.log('👉 request json:', options.json);
-    console.log('👉 request body:', options.body);
-    console.log('❌ response:', error?.response?.body);
-    throw error;
+    const statusCode = error?.response?.statusCode;
+    const canRetryWithApiKey = statusCode === 401 && Boolean(sessionSid) && Boolean(hashedApiKey);
+
+    if (!canRetryWithApiKey) {
+      console.log('uri:', uri);
+      console.log('method:', options.method);
+      console.log('👉 request json:', options.json);
+      console.log('👉 request body:', options.body);
+      console.log('❌ response:', error?.response?.body);
+      throw error;
+    }
+
+    const retryHeaders = { ...headers };
+    delete retryHeaders.cookie;
+    retryHeaders.apikey = hashedApiKey;
+    testData.clear('lastSessionId');
+    res = await performRequest(retryHeaders);
   }
 
   let json;

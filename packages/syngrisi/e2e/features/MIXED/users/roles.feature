@@ -48,106 +48,52 @@ Feature: User roles
                 "password": "Password-123"
             }
             """
-        # admin
-        When I create via http user as:"Test" with params:
-            """
-            {
-                "username": "superadmin@gmail.com",
-                "firstName": "Sonny",
-                "lastName": "Doe",
-                "role": "admin",
-                "password": "Password-123"
-            }
-            """
-
         ### create checks
         ## user
-        # login
-        When I reload session
-        When I open the app
-        When I login with user:"user@gmail.com" password "Password-123"
-        When I wait 30 seconds for the element with locator "span*=JD" to be visible
-
-        # generate and parse API key
-        When I click element with locator "span*=JD"
-        When I safely click element with locator "button=Generate API key"
-        When I wait 10 seconds for the element with locator "div[role='dialog'] button:has-text('Generate')" to be visible
-        When I safely click element with locator "div[role='dialog'] button:has-text('Generate')"
-        When I parse the API key
-        When I click element with locator "div[role='dialog'] button:has-text('Close')"
-
-
-        # create checks
-        When I set the API key in config
-        When I start Driver
-        When I create "5" tests with params:
-            """
-      filePath: files/A.png
-      testName: User test
-            """
-
-        # logout
-        When I log out of the application
-
-        ## reviewer
-        # login
-        When I login with user:"reviewer@gmail.com" password "Password-123"
-        When I wait 30 seconds for the element with locator "span*=RR" to be visible
-
-        # generate and parse API key
-        When I click element with locator "span*=RR"
-        When I safely click element with locator "button=Generate API key"
-        When I wait 10 seconds for the element with locator "div[role='dialog'] button:has-text('Generate')" to be visible
-        When I safely click element with locator "div[role='dialog'] button:has-text('Generate')"
-        When I parse the API key
-        When I click element with locator "div[role='dialog'] button:has-text('Close')"
-
-        # create checks
-        When I set the API key in config
-        When I start Driver
-        When I create "7" tests with params:
-            """
-      filePath: files/A.png
-      testName: Reviewer test
-            """
-
-        # logout
-        When I log out of the application
-
-        ## admin
-        # login
-        When I login with user:"superadmin@gmail.com" password "Password-123"
-        When I wait 30 seconds for the element with locator "span*=SD" to be visible
-
-        # generate and parse API key
-        When I click element with locator "span*=SD"
-        When I safely click element with locator "button=Generate API key"
-        When I wait 10 seconds for the element with locator "div[role='dialog'] button:has-text('Generate')" to be visible
-        When I safely click element with locator "div[role='dialog'] button:has-text('Generate')"
-        When I parse the API key
-        When I click element with locator "div[role='dialog'] button:has-text('Close')"
-
-        # create checks
+        # login and generate API key via HTTP to reduce UI flakiness during seed setup
+        When I login via http with user:"user@gmail.com" password "Password-123"
+        When I generate via http API key for the User
         When I set the API key in config
         When I start Driver
         When I create "3" tests with params:
             """
       filePath: files/A.png
-      testName: Admin test
+      testName: User test
             """
 
-        # logout
-        When I go to "logout" page
-        When I refresh page
+        ## reviewer
+        # login and generate API key via HTTP to reduce UI flakiness during seed setup
+        When I login via http with user:"reviewer@gmail.com" password "Password-123"
+        When I generate via http API key for the User
+        When I set the API key in config
+        When I start Driver
+        When I create "4" tests with params:
+            """
+      filePath: files/A.png
+      testName: Reviewer test
+            """
+
+        ## admin
+        # login and generate API key via HTTP to reduce UI flakiness during seed setup
+        When I login via http with user:"Test" password "123456aA-"
+        When I generate via http API key for the User
+        When I set the API key in config
+        When I start Driver
+        When I create "2" tests with params:
+            """
+      filePath: files/A.png
+      testName: Admin test
+            """
 
         ### verify checks
         ## USER
         # login
+        When I open the app
         When I login with user:"user@gmail.com" password "Password-123"
         When I wait 30 seconds for the element with locator "span*=JD" to be visible
         # checks - use polling assertions with refresh to handle data loading timing (60s for CI stability)
-        Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 60 seconds with refresh
-        Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 5 items within 15 seconds
+        Then the element "//div[contains(text(), 'User test')]" should have exactly 3 items within 60 seconds with refresh
+        Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 3 items within 15 seconds
         Then the element with locator "//div[contains(text(), 'Reviewer test')]" should not be visible
         Then the element with locator "//div[contains(text(), 'Admin test')]" should not be visible
 
@@ -159,28 +105,28 @@ Feature: User roles
         When I login with user:"reviewer@gmail.com" password "Password-123"
         When I wait 30 seconds for the element with locator "span*=RR" to be visible
         # checks - use polling assertions with refresh to handle data loading timing
-        Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 30 seconds with refresh
-        Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 5 items within 10 seconds
+        Then the element "//div[contains(text(), 'User test')]" should have exactly 3 items within 30 seconds with refresh
+        Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 3 items within 10 seconds
 
-        Then the element "//div[contains(text(), 'Reviewer test')]" should have exactly 7 items within 30 seconds with refresh
-        Then the element "[data-table-test-creatorusername='reviewer@gmail.com']" should have exactly 7 items within 10 seconds
+        Then the element "//div[contains(text(), 'Reviewer test')]" should have exactly 4 items within 30 seconds with refresh
+        Then the element "[data-table-test-creatorusername='reviewer@gmail.com']" should have exactly 4 items within 10 seconds
 
-        Then the element "//div[contains(text(), 'Admin test')]" should have exactly 3 items within 30 seconds with refresh
-        Then the element "[data-table-test-creatorusername='superadmin@gmail.com']" should have exactly 3 items within 10 seconds
+        Then the element "//div[contains(text(), 'Admin test')]" should have exactly 2 items within 30 seconds with refresh
+        Then the element "[data-table-test-creatorusername='Test']" should have exactly 2 items within 10 seconds
 
         # logout
         When I log out of the application
 
         ## ADMIN
         # login
-        When I login with user:"superadmin@gmail.com" password "Password-123"
-        When I wait 30 seconds for the element with locator "span*=SD" to be visible
+        When I login with user:"Test" password "123456aA-"
+        When I wait 30 seconds for the element with locator "span*=TA" to be visible
         # checks - use polling assertions with refresh to handle data loading timing
-        Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 30 seconds with refresh
-        Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 5 items within 10 seconds
+        Then the element "//div[contains(text(), 'User test')]" should have exactly 3 items within 30 seconds with refresh
+        Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 3 items within 10 seconds
 
-        Then the element "//div[contains(text(), 'Reviewer test')]" should have exactly 7 items within 30 seconds with refresh
-        Then the element "[data-table-test-creatorusername='reviewer@gmail.com']" should have exactly 7 items within 10 seconds
+        Then the element "//div[contains(text(), 'Reviewer test')]" should have exactly 4 items within 30 seconds with refresh
+        Then the element "[data-table-test-creatorusername='reviewer@gmail.com']" should have exactly 4 items within 10 seconds
 
-        Then the element "//div[contains(text(), 'Admin test')]" should have exactly 3 items within 30 seconds with refresh
-        Then the element "[data-table-test-creatorusername='superadmin@gmail.com']" should have exactly 3 items within 10 seconds
+        Then the element "//div[contains(text(), 'Admin test')]" should have exactly 2 items within 30 seconds with refresh
+        Then the element "[data-table-test-creatorusername='Test']" should have exactly 2 items within 10 seconds

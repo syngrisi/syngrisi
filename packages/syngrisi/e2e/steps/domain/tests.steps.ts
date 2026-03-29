@@ -163,6 +163,7 @@ async function createTestsWithParams(
   yml: string,
   options: CreateTestsOptions = {}
 ) {
+  const count = parseInt(num, 10);
   const fastSeed = process.env.E2E_FAST_SEED === 'true';
   // Use sequential creation to guarantee test order (important for sorting tests)
   const concurrency = 1;
@@ -249,36 +250,49 @@ async function createTestsWithParams(
       };
 
       const startSessionWithRecovery = async () => {
-        try {
-          return await vDriver.startTestSession({ params: sessionParams });
-        } catch (err: any) {
-          const message = err?.message || String(err);
-          const isConnRefused = message.includes('ECONNREFUSED') || message.includes('ERR_CONNECTION_REFUSED');
-          const isUnauthorized = message.includes('401') || message.includes('Unauthorized');
+        const maxAttempts = 3;
 
-          if (!isConnRefused && !isUnauthorized) {
-            throw err;
+        for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+          try {
+            return await vDriver.startTestSession({ params: sessionParams });
+          } catch (err: any) {
+            const message = err?.message || String(err);
+            const isConnRefused = message.includes('ECONNREFUSED') || message.includes('ERR_CONNECTION_REFUSED');
+            const isUnauthorized = message.includes('401') || message.includes('Unauthorized');
+
+            if ((!isConnRefused && !isUnauthorized) || attempt === maxAttempts) {
+              throw err;
+            }
+
+            logger.warn(
+              `startTestSession attempt ${attempt}/${maxAttempts} failed with ` +
+              `${isUnauthorized ? 'auth' : 'connection'} error. Recovering and retrying. Error: ${message}`
+            );
+
+            await appServer.restart(true);
+            if (appServer.serverPort) {
+              await ensureServerReady(appServer.serverPort, 60_000);
+            }
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+            const refreshedStoredApiKey = testData.get('explicitApiKey') as string | undefined;
+            const refreshedEnvApiKey = process.env.SYNGRISI_API_KEY;
+            const refreshedApiKey = refreshedStoredApiKey || refreshedEnvApiKey || defaultApiKey;
+            const baseURLAfterRestart = appServer.baseURL || `http://${env.E2E_BACKEND_HOST}:${appServer.serverPort || 3002}`;
+            const normalizedUrlAfterRestart = baseURLAfterRestart.endsWith('/') ? baseURLAfterRestart : `${baseURLAfterRestart}/`;
+
+            vDriver = new SyngrisiDriver({
+              url: normalizedUrlAfterRestart,
+              apiKey: refreshedApiKey,
+            });
+
+            if (useSharedDriver) {
+              testData.set('vDriver', vDriver);
+            }
           }
-
-          logger.warn(`startTestSession failed with ${isUnauthorized ? 'auth' : 'connection'} error, restarting server and retrying once. Error: ${message}`);
-          await appServer.restart(true);
-          if (appServer.serverPort) {
-            await ensureServerReady(appServer.serverPort);
-          }
-
-          // Recreate driver after restart to avoid stale baseURL
-          const baseURLAfterRestart = appServer.baseURL || `http://${env.E2E_BACKEND_HOST}:${appServer.serverPort || 3002}`;
-          const normalizedUrlAfterRestart = baseURLAfterRestart.endsWith('/') ? baseURLAfterRestart : `${baseURLAfterRestart}/`;
-          vDriver = new SyngrisiDriver({
-            url: normalizedUrlAfterRestart,
-            apiKey,
-          });
-          if (useSharedDriver) {
-            testData.set('vDriver', vDriver);
-          }
-
-          return await vDriver.startTestSession({ params: sessionParams });
         }
+
+        throw new Error(`Unable to start test session for "${testName}" after ${maxAttempts} attempts`);
       };
 
       const sessionData = await startSessionWithRecovery();
@@ -324,7 +338,8 @@ async function createTestsWithParams(
 
       const checkResults = [];
       for (const check of params.checks || []) {
-        const checkName = check.checkName || check.name || 'CheckName';
+        const generatedCheckName = count > 1 ? `CheckName-${testIndex}` : 'CheckName';
+        const checkName = check.checkName || check.name || generatedCheckName;
         if (!check.filePath) {
           throw new Error(
             `filePath is required for check "${checkName}". ` +
@@ -395,7 +410,7 @@ async function createTestsWithParams(
           const checkResult = await createCheckViaAPI(
             vDriver,
             testId,
-            params.checkName || 'CheckName',
+            params.checkName || (count > 1 ? `CheckName-${testIndex}` : 'CheckName'),
             imageBuffer,
             {
               browserName: params.browserName || 'chrome',
@@ -443,7 +458,6 @@ async function createTestsWithParams(
     }
   };
 
-  const count = parseInt(num, 10);
   const createdTestIds: string[] = [];
   const tasks = Array.from({ length: count }, (_v, i) => i).map((i) => ({
     index: i,
@@ -527,16 +541,16 @@ async function createTestsWithParams(
     // Validate count via /v1/checks endpoint which supports API key auth
     // (unlike /v1/tests which only supports session auth)
     const isLargeBatch = createdTestIds.length >= 10;
-    const maxRetries = isLargeBatch ? 8 : 5;
+    const maxRetries = isLargeBatch ? 12 : 5;
     const retryDelays = isLargeBatch
-      ? [500, 1000, 2000, 3000, 5000, 5000, 5000, 5000]
+      ? [1000, 2000, 3000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000]
       : [500, 1000, 2000, 3000, 5000];
     let lastError: Error | null = null;
     let verificationPassed = false;
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
-        const listResp = await got.get(`${apiBaseUrl}/v1/checks?limit=${createdTestIds.length + 5}`, {
+        const listResp = await got.get(`${apiBaseUrl}/v1/checks?limit=0`, {
           headers: { apikey: apiKeyHeader },
           throwHttpErrors: false,
           timeout: { request: 5000 },
@@ -567,6 +581,14 @@ async function createTestsWithParams(
         const body = JSON.parse(listResp.body || '{}') as { totalResults?: number };
         const total = body?.totalResults ?? 0;
 
+        if (isLargeBatch && total === 0 && appServer.serverPort) {
+          logger.warn(
+            `Large batch verification returned zero checks on attempt ${attempt + 1}/${maxRetries}. ` +
+            `Waiting for server readiness and index catch-up before retrying.`
+          );
+          await ensureServerReady(appServer.serverPort, 30000).catch(() => undefined);
+        }
+
         if (total < createdTestIds.length) {
           throw new Error(`List verification count mismatch: expected >=${createdTestIds.length} checks, got ${total}`);
         }
@@ -576,6 +598,18 @@ async function createTestsWithParams(
         break;
       } catch (error) {
         lastError = error as Error;
+        const message = lastError.message || String(lastError);
+        const isConnectionError = message.includes('ECONNREFUSED') || message.includes('ERR_CONNECTION_REFUSED');
+
+        if (isConnectionError && appServer.serverPort) {
+          logger.warn(`Verification attempt ${attempt + 1} hit connection error, waiting for server readiness on port ${appServer.serverPort}`);
+          try {
+            await ensureServerReady(appServer.serverPort, 30000);
+          } catch (readyError) {
+            logger.warn(`Server readiness check failed during verification recovery: ${String(readyError)}`);
+          }
+        }
+
         if (attempt < maxRetries - 1) {
           const delay = retryDelays[attempt];
           logger.warn(`Verification attempt ${attempt + 1} failed: ${lastError.message}. Retrying in ${delay}ms...`);
