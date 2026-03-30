@@ -537,6 +537,7 @@ const recompare = async (id: string, user: RequestUser): Promise<Record<string, 
         failReasons: [],
         actualSnapshotId: check.actualSnapshotId.toString(),
         hashCode: '',
+        toleranceThreshold: (check as any).toleranceThreshold,
     };
 
     const compareResult = await compareCheck(

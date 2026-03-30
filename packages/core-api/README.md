@@ -68,6 +68,25 @@ const checkResponse = await apiClient.coreCheck(imageBuffer, {
 });
 ```
 
+#### Tolerance Threshold
+
+You can set a per-check tolerance threshold (0-100%) to allow small visual differences to pass:
+
+```js
+const checkResponse = await apiClient.coreCheck(imageBuffer, {
+    name: 'homepage',
+    viewport: '1200x800',
+    browserName: 'chrome',
+    os: 'macOS',
+    app: 'MyProject',
+    branch: 'main',
+    testId: sessionResponse.testId,
+    toleranceThreshold: 0.5 // Allow up to 0.5% pixel difference
+});
+```
+
+Per-check tolerance overrides baseline tolerance for that specific check.
+
 ### 3. Stop Session
 
 After checks are completed, stop the session:

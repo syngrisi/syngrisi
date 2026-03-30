@@ -49,6 +49,8 @@ export interface CheckParams {
     autoAccept?: boolean,
     /** Skip sending DOM data even if collected. Useful for tests that don't need RCA. */
     skipDomData?: boolean,
+    /** Mismatch tolerance threshold in percent (0-100). Overrides baseline tolerance for this check only. */
+    toleranceThreshold?: number,
 }
 
 export interface CheckResult {

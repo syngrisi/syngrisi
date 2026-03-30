@@ -111,12 +111,23 @@ export function CheckDetails({
     }, [baselineQuery.data?.timestamp]);
 
     const toleranceThreshold = useMemo<number>(() => {
+        // Priority: applied threshold from check result (reflects actual comparison) > baseline setting
+        const parsed = currentCheck?.result ? JSON.parse(currentCheck?.result) : null;
+        if (parsed?.appliedToleranceThreshold !== undefined) {
+            const value = Number(parsed.appliedToleranceThreshold);
+            if (Number.isFinite(value) && value >= 0) return value;
+        }
         if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
             const value = Number(baselineQuery.data?.results[0].toleranceThreshold || 0);
             return Number.isFinite(value) ? value : 0;
         }
         return 0;
-    }, [baselineQuery.data?.timestamp]);
+    }, [baselineQuery.data?.timestamp, currentCheck?.result]);
+
+    const toleranceSource = useMemo<'api' | 'baseline' | undefined>(() => {
+        const parsed = currentCheck?.result ? JSON.parse(currentCheck?.result) : null;
+        return parsed?.toleranceSource || undefined;
+    }, [currentCheck?.result]);
 
     // RCA (Root Cause Analysis) hook - uses correct Baseline document ID
     const rca = useRCA({
@@ -588,6 +599,7 @@ export function CheckDetails({
                     classes={classes}
                     currentCheck={currentCheckSafe}
                     toleranceThreshold={toleranceThreshold}
+                    toleranceSource={toleranceSource}
                 />
                 {/* Toolbar */}
                 <Toolbar
