@@ -1,5 +1,16 @@
 # @syngrisi/playwright-sdk
 
+## 3.2.0
+
+### Minor Changes
+
+-   [`5972dc1`](https://github.com/syngrisi/syngrisi/commit/5972dc1448f8726a6c92bc34ea01efd97f546172) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Add per-check tolerance threshold via API. Tolerance can now be passed as `toleranceThreshold` (0-100%) in check params, overriding baseline tolerance for that specific check. Includes UI indicator showing tolerance source (API vs baseline), coercion fixes for form-data, and e2e test coverage.
+
+### Patch Changes
+
+-   Updated dependencies [[`5972dc1`](https://github.com/syngrisi/syngrisi/commit/5972dc1448f8726a6c92bc34ea01efd97f546172)]:
+    -   @syngrisi/core-api@3.2.0
+
 ## 3.1.7
 
 ### Patch Changes
