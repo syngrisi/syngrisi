@@ -913,6 +913,18 @@ async function createDownloadStream(jobId: string) {
     };
 }
 
+async function deleteJob(jobId: string) {
+    const job = await readJob(jobId);
+    if (!job) {
+        throw new Error(`Job not found: ${jobId}`);
+    }
+    if (isActiveStatus(job.status)) {
+        throw new Error('Cannot delete an active job. Cancel it first.');
+    }
+    await removeDirSafe(job.workDir);
+    return { deleted: true, id: jobId };
+}
+
 export const adminDataJobService = {
     initialize,
     listJobs: listJobsInternal,
@@ -923,5 +935,6 @@ export const adminDataJobService = {
     createScreenshotsBackupJob,
     createScreenshotsRestoreJob,
     cancelJob,
+    deleteJob,
     createDownloadStream,
 };

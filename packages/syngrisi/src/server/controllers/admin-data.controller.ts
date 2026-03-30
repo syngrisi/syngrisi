@@ -65,6 +65,15 @@ export const cancelJob = async (req: Request, res: Response): Promise<void> => {
     res.json(job);
 };
 
+export const deleteJob = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const result = await adminDataJobService.deleteJob(req.params.id);
+        res.json(result);
+    } catch (error) {
+        res.status(400).json({ error: error instanceof Error ? error.message : String(error) });
+    }
+};
+
 export const downloadJobArchive = async (req: Request, res: Response): Promise<void> => {
     try {
         const { fileName, stream } = await adminDataJobService.createDownloadStream(req.params.id);

@@ -373,6 +373,18 @@ Then(
 );
 
 Then(
+  'the admin data jobs count should be {int}',
+  async ({ appServer }: { appServer: AppServerFixture }, expectedCount: number) => {
+    const response = await fetch(`${appServer.baseURL}/v1/admin/data/jobs`, {
+      headers: { Accept: 'application/json' },
+    });
+    const payload = await response.json() as { jobs?: unknown[] };
+    const jobs = payload.jobs ?? [];
+    expect(jobs.length).toBe(expectedCount);
+  }
+);
+
+Then(
   'the latest admin data job {string} should have status {string} with message containing {string}',
   async (
     { appServer }: { appServer: AppServerFixture },

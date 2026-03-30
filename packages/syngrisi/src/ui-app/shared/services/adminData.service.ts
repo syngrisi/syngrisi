@@ -95,6 +95,11 @@ export const adminDataService = {
         return uploadForm('/v1/admin/data/screenshots/restore', formData);
     },
 
+    async deleteJob(jobId: string): Promise<{ deleted: boolean; id: string }> {
+        const response = await http.delete(`/v1/admin/data/jobs/${jobId}`, {}, 'adminDataService.deleteJob');
+        return response.json();
+    },
+
     getDownloadUrl(jobId: string): string {
         return `/v1/admin/data/jobs/${jobId}/download`;
     },
