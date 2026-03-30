@@ -13,6 +13,7 @@ interface Props {
     classes: any
     currentCheck: any
     toleranceThreshold?: number
+    toleranceSource?: 'api' | 'baseline'
 }
 
 export function Header(
@@ -20,6 +21,7 @@ export function Header(
         classes,
         currentCheck,
         toleranceThreshold = 0,
+        toleranceSource,
     }: Props,
 ) {
     const theme = useMantineTheme();
@@ -142,18 +144,23 @@ export function Header(
                 {
                     toleranceThreshold > 0 && (
                         <Tooltip
-                            label={`Tolerance threshold enabled: ${Number(toleranceThreshold).toFixed(2)}%`}
+                            label={
+                                toleranceSource === 'api'
+                                    ? `Tolerance: ${Number(toleranceThreshold).toFixed(2)}% — set via API for this check`
+                                    : `Tolerance: ${Number(toleranceThreshold).toFixed(2)}% — from baseline settings`
+                            }
                             withinPortal
                         >
                             <Group
                                 spacing={6}
                                 noWrap
                                 data-check="tolerance-indicator"
+                                data-tolerance-source={toleranceSource || 'baseline'}
                             >
-                                <ActionIcon size={24} variant="filled" color="orange">
+                                <ActionIcon size={24} variant="filled" color={toleranceSource === 'api' ? 'violet' : 'orange'}>
                                     <Text size={11} weight={700}>%</Text>
                                 </ActionIcon>
-                                <Text size={12} color="orange">
+                                <Text size={12} color={toleranceSource === 'api' ? 'violet' : 'orange'}>
                                     Tol {Number(toleranceThreshold).toFixed(2)}%
                                 </Text>
                             </Group>

@@ -103,6 +103,7 @@ export const CheckParamsSchema = z.object({
 
     domDump: DomDumpSchema.optional(), // DomNode tree or compressed format for RCA
     skipDomData: z.boolean().optional(), // Skip sending DOM data even if collected
+    toleranceThreshold: z.number().min(0).max(100).optional(), // Per-check tolerance override (0-100%)
 })
 
 export type CheckParams = z.infer<typeof CheckParamsSchema>;

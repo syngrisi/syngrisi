@@ -69,6 +69,11 @@ export interface CheckParams {
      * Useful for tests that don't need RCA functionality.
      */
     skipDomData?: boolean,
+    /**
+     * Mismatch tolerance threshold in percent (0-100).
+     * If set, overrides the baseline tolerance for this specific check only.
+     */
+    toleranceThreshold?: number,
 }
 
 export interface CheckResult {

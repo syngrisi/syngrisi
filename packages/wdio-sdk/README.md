@@ -158,6 +158,23 @@ await driver.check({
 });
 ```
 
+### Tolerance Threshold
+
+Tolerance allows checks with small visual differences to pass instead of failing. Set `toleranceThreshold` (0-100%) to define the maximum acceptable mismatch percentage.
+
+**Per-check** (overrides baseline setting for this check only):
+```js
+await driver.check({
+    checkName: 'Header',
+    imageBuffer: screenshot,
+    params: {
+        toleranceThreshold: 0.5 // Allow up to 0.5% pixel difference
+    }
+});
+```
+
+Tolerance can also be configured on the baseline via the Syngrisi UI or API (`PUT /v1/baselines/{id}`). Per-check tolerance always takes priority over baseline tolerance.
+
 ### 4. Stop the Test Session
 
 Once all checks are completed, stop the test session.
