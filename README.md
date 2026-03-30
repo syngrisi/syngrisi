@@ -51,17 +51,18 @@ yarn --cwd packages/syngrisi smoke
 yarn --cwd packages/core-api build
 ```
 
-## Baseline Tolerance Threshold
+## Tolerance Threshold
 
-Syngrisi supports `toleranceThreshold` in percent on a per-baseline basis.
+Syngrisi supports `toleranceThreshold` (0-100%) to allow checks with small visual differences to pass.
 
 - If `rawMisMatchPercentage <= toleranceThreshold`, the check passes.
 - `wrong_dimensions` still fails regardless of the threshold.
 - The actual diff percent is still preserved in the check result.
-- The threshold can be changed in Check Details from the same dropdown as `Auto-ignore Mode`.
-- `Auto-calc` in that dropdown sets the threshold to `currentDiff + 0.01`.
-- When a threshold is saved from Check Details, the current check is immediately re-compared.
-- The client API `POST /v1/client/createCheck` also accepts `toleranceThreshold`; when a matching baseline already exists for the same ident, that baseline is updated with the provided threshold.
+
+Tolerance can be set at two levels:
+
+- **Per-baseline** — via the Check Details UI (same dropdown as `Auto-ignore Mode`). `Auto-calc` sets the threshold to `currentDiff + 0.01`. When saved, the current check is immediately re-compared.
+- **Per-check via API** — `POST /v1/client/createCheck` accepts `toleranceThreshold` which overrides the baseline tolerance for that specific check only, without modifying the baseline.
 
 ## Documentation
 
