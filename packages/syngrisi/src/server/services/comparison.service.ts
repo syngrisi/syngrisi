@@ -143,7 +143,11 @@ export const compareCheck = async (
                 compareOptions.ignore = baseline.matchType || 'nothing';
             }
 
-            const toleranceThreshold = Math.max(0, Math.min(100, Number(baseline?.toleranceThreshold || 0)));
+            // API-supplied threshold takes priority over baseline setting
+            const apiThreshold = typeof newCheckParams.toleranceThreshold === 'number' ? newCheckParams.toleranceThreshold : null;
+            const baselineThreshold = Number(baseline?.toleranceThreshold || 0);
+            const toleranceThreshold = Math.max(0, Math.min(100, apiThreshold ?? baselineThreshold));
+            const toleranceSource: 'api' | 'baseline' = apiThreshold !== null ? 'api' : 'baseline';
 
             // Plugin hook: beforeCompare - allow plugins to skip or modify comparison
             const checkContext = {
@@ -239,6 +243,7 @@ export const compareCheck = async (
 
             (checkCompareResult as unknown as Record<string, unknown>).appliedToleranceThreshold = toleranceThreshold;
             (checkCompareResult as unknown as Record<string, unknown>).passedByTolerance = mismatchWithinTolerance;
+            (checkCompareResult as unknown as Record<string, unknown>).toleranceSource = toleranceSource;
             checkCompareResult.totalCheckHandleTime = process.hrtime(executionTimer).toString();
             compareResult.result = JSON.stringify(checkCompareResult, null, '\t');
         } catch (e: unknown) {

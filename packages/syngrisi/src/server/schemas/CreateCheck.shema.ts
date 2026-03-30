@@ -12,7 +12,7 @@ export const createCheckParamsSchema = z.object({
     browserFullVersion: z.string(),
     os: z.string().min(1),
     hashcode: z.string().min(64), // SHA256 (64 chars) or SHA512 (128 chars)
-    toleranceThreshold: z.number().min(0).max(100).optional(),
+    toleranceThreshold: z.coerce.number().min(0).max(100).optional(),
 });
 
 export type createCheckParam = z.infer<typeof createCheckParamsSchema>;

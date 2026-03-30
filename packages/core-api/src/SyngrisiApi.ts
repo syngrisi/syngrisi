@@ -286,7 +286,8 @@ class SyngrisiApi {
             browserName: 'browserName',
             browserVersion: 'browserVersion',
             browserFullVersion: 'browserFullVersion',
-            os: 'os'
+            os: 'os',
+            toleranceThreshold: 'toleranceThreshold',
         }
 
         return this.requestWithRetry(async () => {
@@ -295,7 +296,7 @@ class SyngrisiApi {
 
             Object.keys(fieldsMapping).forEach(key => {
                 // @ts-ignore
-                if (params[key]) {
+                if (params[key] !== undefined && params[key] !== null) {
                     // @ts-ignore
                     form.append(fieldsMapping[key], params[key])
                 }

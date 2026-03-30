@@ -34,6 +34,7 @@ export interface CheckDocument extends Document {
     failReasons?: string[];
     vOffset?: string;
     topStablePixels?: string;
+    toleranceThreshold?: number;
     meta?: Record<string, unknown>;
 }
 
@@ -152,6 +153,11 @@ const CheckSchema = new Schema<CheckDocument>({
     },
     topStablePixels: {
         type: String,
+    },
+    toleranceThreshold: {
+        type: Number,
+        min: 0,
+        max: 100,
     },
     meta: {
         type: Object,
