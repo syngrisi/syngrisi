@@ -13,6 +13,7 @@ router.get('/jobs/:id', adminDataController.getJob);
 router.get('/jobs/:id/log', adminDataController.getJobLog);
 router.get('/jobs/:id/download', adminDataController.downloadJobArchive);
 router.post('/jobs/:id/cancel', adminDataController.cancelJob);
+router.delete('/jobs/:id', adminDataController.deleteJob);
 
 router.post('/db/backup', adminDataController.createDbBackup);
 router.post('/db/restore', adminDataController.createDbRestore);

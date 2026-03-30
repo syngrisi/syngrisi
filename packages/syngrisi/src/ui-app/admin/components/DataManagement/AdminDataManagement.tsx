@@ -11,6 +11,7 @@ import {
     Loader,
     Paper,
     Progress,
+    ScrollArea,
     SimpleGrid,
     Stack,
     Table,
@@ -19,7 +20,7 @@ import {
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { IconAlertTriangle, IconDatabaseExport, IconDownload, IconPhotoUp, IconRefresh, IconRestore, IconX } from '@tabler/icons-react';
+import { IconAlertTriangle, IconDatabaseExport, IconDownload, IconPhotoUp, IconRefresh, IconRestore, IconTrash, IconX } from '@tabler/icons-react';
 import { adminDataService, AdminDataJob } from '@shared/services/adminData.service';
 import { useSubpageEffect } from '@shared/hooks';
 
@@ -192,12 +193,23 @@ export default function AdminDataManagement() {
         },
     });
 
+    const deleteMutation = useMutation({
+        mutationFn: (jobId: string) => withRefresh(adminDataService.deleteJob(jobId)),
+        onSuccess: () => {
+            showNotification({ color: 'green', title: 'Deleted', message: 'Job data has been removed from the server.' });
+        },
+        onError: (error) => {
+            showNotification({ color: 'red', title: 'Delete failed', message: error instanceof Error ? error.message : String(error) });
+        },
+    });
+
     const isBusy = dbBackupMutation.isPending
         || screenshotsBackupMutation.isPending
         || dbRestoreMutation.isPending
         || screenshotsRestoreMutation.isPending;
 
     return (
+        <ScrollArea type="auto" h="calc(100vh - 120px)">
         <Stack spacing="lg">
             <Group position="apart">
                 <div>
@@ -295,6 +307,7 @@ export default function AdminDataManagement() {
                     {jobsQuery.isLoading && <Loader size="sm" />}
                 </Group>
 
+                <div style={{ overflowX: 'auto' }}>
                 <Table striped highlightOnHover withBorder>
                     <thead>
                         <tr>
@@ -363,12 +376,27 @@ export default function AdminDataManagement() {
                                                 Cancel
                                             </Button>
                                         )}
+                                        {!ACTIVE_STATUSES.has(job.status) && (
+                                            <Button
+                                                color="gray"
+                                                variant="outline"
+                                                size="xs"
+                                                leftIcon={<IconTrash size={14} />}
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    deleteMutation.mutate(job.id);
+                                                }}
+                                            >
+                                                Delete
+                                            </Button>
+                                        )}
                                     </Group>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </Table>
+                </div>
             </Paper>
 
             <Paper withBorder p="md">
@@ -404,5 +432,6 @@ export default function AdminDataManagement() {
                 )}
             </Paper>
         </Stack>
+        </ScrollArea>
     );
 }

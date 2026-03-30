@@ -70,6 +70,13 @@ Feature: Admin Data Management
     Then the latest admin data job "Screenshots Restore" should have status "completed" with message containing "Screenshots restore completed"
     Then the screenshot file "existing.png" should contain "NEW"
 
+  Scenario: Admin can delete a completed backup job
+    When I click the 1st button "Start Database Backup"
+    Then the latest admin data job "Database Backup" should have status "completed" with message containing "Database backup completed"
+    Then the admin data jobs count should be 1
+    When I click the 1st button "Delete"
+    Then the admin data jobs count should be 0
+
   Scenario: Admin sees an error for an invalid database archive
     When I create an invalid tar.gz archive stored as "invalidDbArchive":
       """
