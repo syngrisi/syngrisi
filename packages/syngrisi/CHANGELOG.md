@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.2.1
+
+### Patch Changes
+
+-   [`8801e0e`](https://github.com/syngrisi/syngrisi/commit/8801e0eea08ecb26fe1875782f5ca89e106055d0) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Add delete button for completed backup jobs in Data Management admin panel. Fix vertical scroll on the Data Management page.
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.2.1
+
 ## 3.2.0
 
 ### Minor Changes
