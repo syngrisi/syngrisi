@@ -32,12 +32,13 @@ const useStyles = createStyles((theme) => ({
 interface Props {
     mainView: any
     check: any
+    view?: string
     apikey?: string
     rcaEnabled?: boolean
 }
 
 export function ScreenshotDetails({
-    mainView, check = {}, apikey, rcaEnabled,
+    mainView, check = {}, view = 'actual', apikey, rcaEnabled,
 }: Props) {
     const { classes } = useStyles();
 
@@ -50,18 +51,25 @@ export function ScreenshotDetails({
         checkResult.rawMisMatchPercentage :
         checkResult?.misMatchPercentage;
 
-    // Always show actual image size (consistent across all view modes)
     const imageSize = useMemo(() => {
-        if (mainView?.actualImage) {
-            const image = mainView.actualImage;
+        const imageByView = {
+            expected: mainView?.expectedImage,
+            actual: mainView?.actualImage,
+            diff: mainView?.diffImage,
+            slider: mainView?.actualImage,
+        } as Record<string, any>;
+        const image = imageByView[view] || mainView?.actualImage;
+
+        if (image) {
             let imgSrc = image.getSrc();
             if (apikey) {
                 imgSrc += `?apikey=${apikey}`;
             }
+            const viewLabel = view === 'expected' ? 'Expected' : view === 'diff' ? 'Diff' : 'Actual';
             return (
                 <Tooltip
                     withinPortal
-                    label={`Actual screenshot size: ${image.width}x${image.height}, click to open in a new tab`}
+                    label={`${viewLabel} screenshot size: ${image.width}x${image.height}, click to open in a new tab`}
                 >
                     <Badge color="blue" radius={'sm'} className={classes.infoBadges} data-check="image-size">
                         <a
@@ -81,7 +89,7 @@ export function ScreenshotDetails({
                 <Loader size="xs" color="blue" variant="dots" />
             </Badge>
         );
-    }, [mainView, apikey]);
+    }, [mainView, view, apikey]);
 
     // Always show actual image date (consistent across all view modes)
     const actualDateFull = check?.actualSnapshotId?.createdDate
