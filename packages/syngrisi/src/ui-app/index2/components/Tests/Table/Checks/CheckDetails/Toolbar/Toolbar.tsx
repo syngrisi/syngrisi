@@ -164,7 +164,7 @@ export function Toolbar(
                         </>
                     )}
 
-                    <ScreenshotDetails mainView={mainView} check={curCheck} apikey={apikey} rcaEnabled={rcaEnabled} />
+                    <ScreenshotDetails mainView={mainView} check={curCheck} view={view} apikey={apikey} rcaEnabled={rcaEnabled} />
                 </Group>
 
                 {/* Right side: Tools and actions */}
