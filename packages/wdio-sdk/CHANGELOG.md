@@ -1,5 +1,12 @@
 # @syngrisi/wdio-sdk
 
+## 3.2.2
+
+### Patch Changes
+
+-   Updated dependencies []:
+    -   @syngrisi/core-api@3.2.2
+
 ## 3.2.1
 
 ### Patch Changes
