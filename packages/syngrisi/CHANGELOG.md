@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.2.2
+
+### Patch Changes
+
+-   [`ab4989b`](https://github.com/syngrisi/syngrisi/commit/ab4989bf2b5347a2936845532d963fe0a704436c) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Fix navbar runs disappearing after table filter and page refresh
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.2.2
+
 ## 3.2.1
 
 ### Patch Changes
