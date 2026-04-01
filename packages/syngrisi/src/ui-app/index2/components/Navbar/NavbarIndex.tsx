@@ -98,7 +98,6 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
 
     const { firstPageQuery, infinityQuery } = useInfinityScroll({
         resourceName: groupByValue,
-        filterObj: query.filter,
         newestItemsFilterKey: getNewestFilter(groupByValue),
         baseFilterObj: navbarFilterObject,
         sortBy: query.sortByNavbar!,
