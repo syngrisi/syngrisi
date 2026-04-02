@@ -33,7 +33,7 @@ function AdminLogsTableHeads({ data, toggleAllRows, selection, visibleFields }: 
                                     style={{ ...adminLogsTableColumns[column].headStyle }}
                                     data-test={`table-header-${adminLogsTableColumns[column].label}`}
                                 >
-                                    <Text transform="capitalize">
+                                    <Text tt="capitalize">
                                         {adminLogsTableColumns[column].label}
                                     </Text>
                                 </th>

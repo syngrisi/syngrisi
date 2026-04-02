@@ -37,7 +37,7 @@ function Heads({ data, toggleAllRows, selection, visibleFields }: Props) {
                                     style={{ ...tableColumns[column].headStyle }}
                                     data-test={`table-header-${tableColumns[column].label}`}
                                 >
-                                    <Text transform="capitalize">
+                                    <Text tt="capitalize">
                                         {tableColumns[column].label}
                                     </Text>
                                 </th>

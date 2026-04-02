@@ -68,7 +68,7 @@ export function NavbarFilter(
                         data-test="navbar-quick-filter"
                         data-test-filter-synced={isFilterSynced ? 'true' : 'false'}
                         style={styles}
-                        sx={{ width: '100%' }}
+                        style={{ width: '100%' }}
                         placeholder="Filter"
                         value={quickFilter}
                         onChange={(e) => {

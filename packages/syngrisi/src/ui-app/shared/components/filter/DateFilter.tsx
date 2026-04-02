@@ -35,7 +35,7 @@ export function DateFilter({ label, groupRules, updateGroupRules, id }: Props) {
                 <SafeSelect
                     label=""
                     data-test="table-filter-operator"
-                    sx={{ width: '130px' }}
+                    style={{ width: '130px' }}
                     optionsData={[
                         { value: 'lt', label: 'less than' },
                         { value: 'gt', label: 'more than' },

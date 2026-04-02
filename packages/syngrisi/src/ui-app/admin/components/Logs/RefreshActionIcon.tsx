@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActionIcon, Badge, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Badge, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 
 interface Props {
@@ -9,11 +9,12 @@ interface Props {
 
 function RefreshActionIcon({ newestItemsQuery, firstPageQuery }: Props) {
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     const newestItems = newestItemsQuery?.data?.results.length > 50 ? '50+' : newestItemsQuery?.data?.results.length;
     const pluralCharset = newestItems > 1 ? 's' : '';
     return (
         <ActionIcon
-            color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+            color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
             data-test="table-refresh-icon"
             variant="subtle"
             onClick={() => firstPageQuery.refetch()}
@@ -34,7 +35,7 @@ function RefreshActionIcon({ newestItemsQuery, firstPageQuery }: Props) {
                         variant="filled"
                         radius="xl"
                         data-test="table-refresh-icon-badge"
-                        sx={{
+                        style={{
                             fontSize: '12px',
                             position: 'absolute',
                             bottom: 11,
@@ -44,7 +45,7 @@ function RefreshActionIcon({ newestItemsQuery, firstPageQuery }: Props) {
                             fontFamily: '"Roboto","Arial",sans-serif',
                             border: '2px',
                             borderStyle: 'solid',
-                            borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : 'white',
+                            borderColor: colorScheme === 'dark' ? theme.colors.dark[7] : 'white',
                         }}
                     >
                         {

@@ -1,9 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { InputVariant, Loader, Select, Styles, Sx } from '@mantine/core';
+import { Loader, Select } from '@mantine/core';
 
 import React, { ReactElement } from 'react';
-// eslint-disable-next-line import/no-unresolved
-import { BaseSelectStylesNames } from '@mantine/core/lib/Select/types';
 
 interface IOption {
     value: string,
@@ -20,11 +18,11 @@ interface Props {
     name: string;
     searchable: boolean;
     clearable: boolean;
-    sx: Sx;
+    style?: React.CSSProperties;
     'data-test': string;
     placeholder: string;
-    styles: Styles<BaseSelectStylesNames, Record<string, any>> | undefined;
-    variant: InputVariant;
+    styles?: any;
+    variant?: string;
     disabled: boolean;
     'aria-label'?: string;
 }
@@ -40,7 +38,7 @@ function SafeSelect(
         onChange,
         'data-test': dataTest,
         'aria-label': ariaLabel,
-        sx,
+        style,
         styles,
         searchable,
         clearable,
@@ -59,11 +57,10 @@ function SafeSelect(
                 label={label}
                 data={optionsData}
                 required={required}
-                dropdownPosition="bottom"
-                icon={loaded && <Loader size={24} />}
+                leftSection={loaded ? <Loader size={24} /> : undefined}
                 value={value}
                 onChange={onChange}
-                sx={sx}
+                style={style}
                 searchable={searchable}
                 clearable={clearable}
                 placeholder={placeholder}

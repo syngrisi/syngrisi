@@ -1,4 +1,4 @@
-import { Navbar, ScrollArea } from '@mantine/core';
+import { Box, ScrollArea, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import * as React from 'react';
 import {
     IconUsers,
@@ -7,7 +7,6 @@ import {
     IconPlugConnected,
     IconDatabase,
 } from '@tabler/icons-react';
-import { createStyles } from '@mantine/styles';
 import { LinksGroup } from '@admin/components/Navbar/NavbarLinksGroup';
 import { taskLinks } from '@admin/components/Tasks/tasksList';
 
@@ -23,32 +22,33 @@ const navbarItems = [
     { label: 'Plugins', icon: IconPlugConnected, link: '/admin/plugins' },
     { label: 'Settings', icon: IconSettings, link: '/admin/settings' },
 ];
-const useStyles = createStyles((theme) => ({
-    navbar: {
-        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
-        paddingBottom: 0,
-    },
-
-    links: {
-        marginLeft: -theme.spacing.md,
-        marginRight: -theme.spacing.md,
-    },
-
-    linksInner: {
-        paddingBottom: theme.spacing.md,
-    },
-}));
 
 export default function AdminNavbar() {
-    const { classes } = useStyles();
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme('light');
+
+    const navbarStyle: React.CSSProperties = {
+        backgroundColor: colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
+        paddingBottom: 0,
+    };
+
+    const linksStyle: React.CSSProperties = {
+        marginLeft: `calc(-1 * ${theme.spacing.md})`,
+        marginRight: `calc(-1 * ${theme.spacing.md})`,
+    };
+
+    const linksInnerStyle: React.CSSProperties = {
+        paddingBottom: theme.spacing.md,
+    };
+
     // eslint-disable-next-line react/jsx-props-no-spreading
     const links = navbarItems.map((item) => <LinksGroup {...item} key={item.label} />);
 
     return (
-        <Navbar height="100%" width={{ sm: 300 }} pl="md" pr="md" pt="sm" pb="md" className={classes.navbar}>
-            <Navbar.Section grow className={classes.links} component={ScrollArea}>
-                <div className={classes.linksInner}>{links}</div>
-            </Navbar.Section>
-        </Navbar>
+        <Box component="nav" pl="md" pr="md" pt="sm" pb="md" style={{ ...navbarStyle, height: '100%', width: 300 }}>
+            <ScrollArea style={{ ...linksStyle, flexGrow: 1 }}>
+                <div style={linksInnerStyle}>{links}</div>
+            </ScrollArea>
+        </Box>
     );
 }

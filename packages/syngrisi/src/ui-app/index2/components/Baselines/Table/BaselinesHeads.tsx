@@ -38,7 +38,7 @@ function BaselinesHeads({ flatData, toggleAllRows, selection, visibleFields }: P
                                     data-test={`table-header-${baselinesTableColumns[column].label}`}
                                     aria-label={`Column ${baselinesTableColumns[column].label}`}
                                 >
-                                    <Text transform="capitalize">
+                                    <Text tt="capitalize">
                                         {baselinesTableColumns[column].label}
                                     </Text>
                                 </th>

@@ -34,7 +34,7 @@ export function StringFilter({ label, groupRules, updateGroupRules, id }: Props)
                     label=""
                     data-test="table-filter-operator"
                     aria-label="Filter operator"
-                    sx={{ width: '130px' }}
+                    style={{ width: '130px' }}
                     optionsData={[
                         { value: 'eq', label: 'equals' },
                         { value: 'ne', label: 'not equals' },

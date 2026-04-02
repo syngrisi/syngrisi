@@ -53,7 +53,7 @@ export function LogLevelFilter({ label, updateGroupRules, id }: Props) {
                 <SafeSelect
                     label=""
                     data-test="table-filter-operator"
-                    sx={{ width: '130px' }}
+                    style={{ width: '130px' }}
                     optionsData={[
                         { value: 'eq', label: 'equals' },
                         { value: 'ne', label: 'not equals' },
@@ -65,7 +65,7 @@ export function LogLevelFilter({ label, updateGroupRules, id }: Props) {
 
                 <SafeSelect
                     data-test="table-filter-value"
-                    sx={{ width: '130px' }}
+                    style={{ width: '130px' }}
                     title={form.getInputProps('value').value}
                     optionsData={levels}
                     loaded={distinctQuery.isLoading}

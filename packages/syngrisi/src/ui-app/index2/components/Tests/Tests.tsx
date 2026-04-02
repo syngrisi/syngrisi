@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {
     Group,
-    useMantineTheme,
+    useMantineTheme, useComputedColorScheme,
     ActionIcon,
 } from '@mantine/core';
 import { useSearchParams } from 'react-router-dom';
@@ -26,6 +26,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
     const { query } = useParams();
 
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     // useIndexSubpageEffect('By Runs');
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -68,7 +69,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                 <ActionIcon
                     title="Table settings, sorting, and columns visibility"
                     aria-label="Table settings, sorting, and columns visibility"
-                    color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                    color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-sorting"
                     variant="subtle"
                     onClick={() => {
@@ -85,7 +86,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                 <ActionIcon
                     title="Filter the Table Data"
                     aria-label="Filter the Table Data"
-                    color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                    color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-filtering"
                     variant="subtle"
                     onClick={() => {
@@ -117,7 +118,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
         [
             newestItemsQuery?.data?.results.length,
             newestItemsQuery.status,
-            theme.colorScheme,
+            colorScheme,
         ],
     );
 
@@ -162,7 +163,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
     }
 
     return (
-        <Group align="start" noWrap spacing={0} sx={{ width: '100%' }}>
+        <Group align="start" noWrap gap={0} style={{ width: '100%' }}>
             <TestsTable
                 updateToolbar={updateToolbar}
                 firstPageQuery={firstPageQuery}

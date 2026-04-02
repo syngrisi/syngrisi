@@ -9,7 +9,7 @@ import {
     Skeleton,
     Text,
     Tooltip,
-    useMantineTheme,
+    useMantineTheme, useComputedColorScheme,
 } from '@mantine/core';
 
 import { stringify } from '@shared/utils/queryParams';
@@ -38,6 +38,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
 
     const imageWeight: number = 24 * sizes[checksViewSize].coefficient;
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
 
     // Preload all check images (baseline, actual, diff) on hover with high priority
     const { onMouseEnter: onHoverPreload } = useImagePreloadOnHover(check);
@@ -70,15 +71,15 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             data-check={check.name}
                             p="sm"
                             onMouseEnter={onHoverPreload}
-                            sx={{
+                            style={{
                                 width: '100%',
-                                borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]}`,
+                                borderBottom: `1px solid ${colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]}`,
                                 '&:hover': {
                                     // border: `1px solid ${theme.colors.gray[3]}`,
                                     backgroundColor: theme.colors.dark[5],
                                 },
                             }}
-                            position="apart"
+                            justify="space-between"
                         >
                             <Paper shadow="md" pb={0}>
                                 <Tooltip.Floating
@@ -97,8 +98,8 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                         href={linkToCheckOverlay}
                                     >
                                         <Group
-                                            position="center"
-                                            sx={{ width: '100%', cursor: 'pointer' }}
+                                            justify="center"
+                                            style={{ width: '100%', cursor: 'pointer' }}
                                             onClick={handlePreviewImageClick}
                                         >
                                             <Image
@@ -109,9 +110,9 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                                 withPlaceholder
                                                 placeholder={<Skeleton height={80} width={imageWeight * 4} animate />}
                                                 alt={check.name}
-                                                // sx={{
+                                                // style={{
                                                 //     cursor: 'pointer',
-                                                //     // border: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]}`
+                                                //     // border: `1px solid ${colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]}`
                                                 // }}
                                                 styles={
                                                     () => ({
@@ -132,14 +133,14 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             <Tooltip label={check.name} multiline withinPortal>
                                 <Text
                                     lineClamp={2}
-                                    sx={{ width: '50%' }}
+                                    style={{ width: '50%' }}
                                     data-table-check-name={check.name}
                                 >
                                     {check.name}
                                 </Text>
                             </Tooltip>
 
-                            <Group position="right">
+                            <Group justify="flex-end">
                                 <Status check={check} />
                                 <ViewPortLabel
                                     color="blue"
@@ -148,7 +149,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                     checksViewSize={checksViewSize}
                                 />
 
-                                <Group spacing={4} position="left" noWrap>
+                                <Group gap={4} justify="flex-start" noWrap>
                                     <AcceptButton
                                         check={check}
                                         testUpdateQuery={testUpdateQuery}
@@ -169,7 +170,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                         <Card
                             data-check={check.name}
                             onMouseEnter={onHoverPreload}
-                            sx={{
+                            style={{
                                 width: `${imageWeight}%`,
                                 '&:hover': {
                                     boxShadow: '0 1px 3px rgb(0 0 0 / 15%), rgb(0 0 0 / 15%) 0px 10px 15px -5px, rgb(0 0 0 / 14%) 0px 7px 7px -5px',
@@ -186,8 +187,8 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                 p="sm"
                                 ml={0}
                                 mr={0}
-                                sx={{
-                                    backgroundColor: (theme.colorScheme === 'dark')
+                                style={{
+                                    backgroundColor: (colorScheme === 'dark')
                                         ? theme.colors.dark[8]
                                         : theme.colors.gray[2],
                                 }}
@@ -224,8 +225,8 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                         data-check-previw-link={check.name}
                                     >
                                         <Group
-                                            position="center"
-                                            sx={{ width: '100%', cursor: 'pointer' }}
+                                            justify="center"
+                                            style={{ width: '100%', cursor: 'pointer' }}
                                             onClick={handlePreviewImageClick}
                                         >
                                             <Image
@@ -250,7 +251,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             </Card.Section>
 
                             {/* CHECK TOOLBAR */}
-                            <Group position="apart" pl="sm" pr="sm" mt="xs" mb={8} spacing={4} align="center" noWrap>
+                            <Group justify="space-between" pl="sm" pr="sm" mt="xs" mb={8} gap={4} align="center" noWrap>
                                 <Status check={check} variant="filled" />
 
                                 <ViewPortLabel
@@ -262,7 +263,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                     checksViewSize={checksViewSize}
                                     displayed={(checksViewSize !== 'small')}
                                 />
-                                <Group spacing={8} position="right" noWrap>
+                                <Group gap={8} justify="flex-end" noWrap>
                                     <AcceptButton
                                         size={22}
                                         check={check}

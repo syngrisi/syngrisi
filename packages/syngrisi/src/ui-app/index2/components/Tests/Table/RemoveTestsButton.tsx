@@ -1,4 +1,4 @@
-import { ActionIcon, Transition, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Transition, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import RemoveTestModalAsk from '@index/components/Tests/Table/RemoveTestModalAsk';
@@ -11,6 +11,7 @@ interface Props {
 
 export default function RemoveTestsButton({ selection, setSelection, infinityQuery }: Props) {
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     const [opened, setOpened] = useState(false);
     return (
         <>
@@ -18,7 +19,7 @@ export default function RemoveTestsButton({ selection, setSelection, infinityQue
                 {
                     (styles) => (
                         <ActionIcon
-                            color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                            color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                             data-test="table-remove-tests"
                             aria-label="Remove selected tests"
                             variant="subtle"

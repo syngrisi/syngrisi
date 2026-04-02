@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { FunctionComponent } from 'react';
-import { ActionIcon, Badge, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Badge, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
 
 const RefreshActionIcon: FunctionComponent<Props> = ({ newestItemsQuery, firstPageQuery, infinityQuery, refresh }) => {
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     const newestItems = newestItemsQuery?.data?.results.length > 50 ? '50+' : newestItemsQuery?.data?.results.length;
     const pluralCharset = newestItems > 1 ? 's' : '';
     return (
@@ -19,7 +20,7 @@ const RefreshActionIcon: FunctionComponent<Props> = ({ newestItemsQuery, firstPa
             <ActionIcon
                 title="Refresh"
                 aria-label="Refresh"
-                color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                 data-test="table-refresh-icon"
                 variant="subtle"
                 onClick={() => {
@@ -46,7 +47,7 @@ const RefreshActionIcon: FunctionComponent<Props> = ({ newestItemsQuery, firstPa
                             variant="filled"
                             radius="xl"
                             data-test="table-refresh-icon-badge"
-                            sx={{
+                            style={{
                                 fontSize: '12px',
                                 position: 'absolute',
                                 bottom: 11,
@@ -56,7 +57,7 @@ const RefreshActionIcon: FunctionComponent<Props> = ({ newestItemsQuery, firstPa
                                 fontFamily: '"Roboto","Arial",sans-serif',
                                 border: `2px`,
                                 borderStyle: 'solid',
-                                borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : 'white',
+                                borderColor: colorScheme === 'dark' ? theme.colors.dark[7] : 'white',
                             }}
                         >
                             {

@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { fabric } from 'fabric';
-import { createStyles, Group, Loader, Stack, Box } from '@mantine/core';
+import { Group, Loader, Stack, Box } from '@mantine/core';
 import { useDisclosure, useDocumentTitle, useHotkeys } from '@mantine/hooks';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
@@ -18,19 +18,16 @@ import { Canvas } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas
 import { log } from '@shared/utils/Logger';
 import { RCAPanel, useRCA } from '@index/components/Tests/Table/Checks/CheckDetails/RCA';
 
-// eslint-disable-next-line no-unused-vars
-const useStyles = createStyles((theme) => ({
+const inlineStyles = {
     zoomButtonsWrapper: {
-        '@media (max-width: 1070px)': {
-            display: 'none',
-        },
-    },
+        // Note: media query handled via CSS or responsive props
+    } as React.CSSProperties,
     checkPathFragment: {
         textOverflow: 'ellipsis',
         overflow: 'hidden',
         whiteSpace: 'nowrap',
-    },
-}));
+    } as React.CSSProperties,
+};
 
 interface Props {
     initCheckData: any, // initially open check by clicking from table (not from related panel)
@@ -56,7 +53,7 @@ export function CheckDetails({
     const canvasContainerRef = useRef(null);
     const { query, setQuery } = useParams();
     const queryClient = useQueryClient();
-    const { classes } = useStyles();
+    const classes = inlineStyles;
     const [mainView, setMainView] = useState<MainView | null>(null);
     const [isDirty, setIsDirty] = useState(false);
     
@@ -640,8 +637,8 @@ export function CheckDetails({
     }, [isDirty]);
 
     return (
-        <Group style={{ width: '96vw' }} spacing={4}>
-            <Stack sx={{ width: '100%' }}>
+        <Group style={{ width: '96vw' }} gap={4}>
+            <Stack style={{ width: '100%' }}>
                 {/* Header */}
                 <Header
                     classes={classes}
@@ -678,9 +675,9 @@ export function CheckDetails({
                 />
 
                 <Group
-                    spacing={4}
+                    gap={4}
                     align="stretch"
-                    sx={{ width: '100%' }}
+                    style={{ width: '100%' }}
                     noWrap
                 >
                     {/* Related checks */}
@@ -736,7 +733,7 @@ export function CheckDetails({
                                         transition: 'background-color 0.2s',
                                         flexShrink: 0,
                                     }}
-                                    sx={{
+                                    style={{
                                         '&:hover': {
                                             backgroundColor: 'var(--mantine-color-blue-5) !important',
                                         },

@@ -27,7 +27,7 @@ export default function AdminSettings() {
 
     return (
         <ScrollArea type="auto" h="calc(100vh - 120px)">
-            <Box p={10} sx={{ minHeight: '100%' }}>
+            <Box p={10} style={{ minHeight: '100%' }}>
                 <Title>Admin Settings</Title>
                 {
                     settingsQuery.isLoading
@@ -54,7 +54,7 @@ export default function AdminSettings() {
                                         )}
                                 </>
                             )
-                            : <Text color="red"> Cannot load data: {settingsQuery.error.toString()}</Text>
+                            : <Text c="red"> Cannot load data: {settingsQuery.error.toString()}</Text>
                 }
             </Box>
         </ScrollArea>

@@ -16,7 +16,6 @@ import {
 import { IconChevronDown, IconX } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useClickOutside, useDebouncedValue, useDisclosure } from '@mantine/hooks';
-import { createStyles } from '@mantine/styles';
 import { useDistinctQuery } from '@shared/hooks/useDistinctQuery';
 import { escapeRegExp } from '@shared/utils/utils';
 import { useParams } from '@hooks/useParams';
@@ -127,22 +126,13 @@ export function QuickFilter() {
         setBranchChipsData([]);
     };
 
-    const useStyles = createStyles(
-        () => (
-            {
-                quickFilter: {
-                    '@media (max-width: 1024px)': {
-                        display: 'none',
-                    },
-                },
-            }
-        ),
-    );
-
-    const { classes } = useStyles();
-
     return (
-        <Group className={classes.quickFilter}>
+        <Group className="syngrisi-quick-filter">
+            <style>{`
+                @media (max-width: 1024px) {
+                    .syngrisi-quick-filter { display: none; }
+                }
+            `}</style>
             <Text size={14}>Quick Filter: </Text>
             <TextInput
                 value={quickFilter}
@@ -180,8 +170,8 @@ export function QuickFilter() {
                 >
                     <Popover.Target>
                         <Group
-                            spacing={0}
-                            position="center"
+                            gap={0}
+                            justify="center"
                             // onClick={zoomPopoverHandler.toggle}
                         >
                             <ActionIcon
@@ -200,10 +190,10 @@ export function QuickFilter() {
                         <ScrollArea
                             style={{ height: '45vh' }}
                         >
-                            <Stack spacing={8} justify="flex-start">
-                                <Text size={10} color="gray.6" weight={600} transform="uppercase">Browsers:</Text>
+                            <Stack gap={8} justify="flex-start">
+                                <Text size={10} c="gray.6" fw={600} tt="uppercase">Browsers:</Text>
                                 <Chip.Group
-                                    spacing={4}
+                                    gap={4}
                                     multiple
                                     value={browserChipsData}
                                     onChange={setBrowserChipsData}
@@ -221,9 +211,9 @@ export function QuickFilter() {
                                     }
                                 </Chip.Group>
 
-                                <Text size={10} color="gray.6" weight={600} transform="uppercase">Platforms:</Text>
+                                <Text size={10} c="gray.6" fw={600} tt="uppercase">Platforms:</Text>
                                 <Chip.Group
-                                    spacing={4}
+                                    gap={4}
                                     multiple
                                     value={platformChipsData}
                                     onChange={setPlatformChipsData}
@@ -241,11 +231,11 @@ export function QuickFilter() {
                                     }
                                 </Chip.Group>
 
-                                <Text size={10} color="gray.6" weight={600} transform="uppercase">Viewports:</Text>
+                                <Text size={10} c="gray.6" fw={600} tt="uppercase">Viewports:</Text>
                                 <Chip.Group
                                     value={viewportChipsData}
                                     onChange={setViewportChipsData}
-                                    spacing={4}
+                                    gap={4}
                                     multiple
                                 >
                                     {
@@ -261,11 +251,11 @@ export function QuickFilter() {
                                     }
                                 </Chip.Group>
 
-                                <Text size={10} color="gray.6" weight={600} transform="uppercase">Status:</Text>
+                                <Text size={10} c="gray.6" fw={600} tt="uppercase">Status:</Text>
                                 <Chip.Group
                                     value={statusesChipsData}
                                     onChange={setStatusesChipsData}
-                                    spacing={4}
+                                    gap={4}
                                     multiple
                                 >
                                     {
@@ -281,11 +271,11 @@ export function QuickFilter() {
                                     }
                                 </Chip.Group>
 
-                                <Text size={10} color="gray.6" weight={600} transform="uppercase">Accepted:</Text>
+                                <Text size={10} c="gray.6" fw={600} tt="uppercase">Accepted:</Text>
                                 <Chip.Group
                                     value={acceptedStatusChipsData}
                                     onChange={setAcceptedStatusChipsData}
-                                    spacing={4}
+                                    gap={4}
                                     multiple
                                 >
                                     {
@@ -304,7 +294,7 @@ export function QuickFilter() {
                             </Stack>
                         </ScrollArea>
                         <Divider />
-                        <Group position="center" pt={16}>
+                        <Group justify="center" pt={16}>
                             <Button onClick={resetQuickFilter}>Reset</Button>
                             <Button onClick={close}>Close</Button>
                         </Group>

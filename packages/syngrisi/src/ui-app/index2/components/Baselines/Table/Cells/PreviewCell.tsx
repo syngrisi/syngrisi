@@ -22,7 +22,7 @@ export function PreviewCell({ baseline }: Props) {
         <td style={{ width: '100px' }}>
             <HoverCard width={400} shadow="md" withinPortal zIndex={1000}>
                 <HoverCard.Target>
-                    <Group position="center">
+                    <Group justify="center">
                         <Image src={src} width={80} height={60} fit="contain" />
                     </Group>
                 </HoverCard.Target>

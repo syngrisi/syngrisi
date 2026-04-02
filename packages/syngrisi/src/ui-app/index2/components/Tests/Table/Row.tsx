@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
-import { Checkbox, Collapse, createStyles } from '@mantine/core';
+import { Checkbox, Collapse, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { memo, useCallback, useMemo, useState, useEffect } from 'react';
 import { tableColumns } from '@index/components/Tests/Table/tableColumns';
@@ -9,8 +9,6 @@ import { testsCreateStyle } from '@index/components/Tests/Table/testsCreateStyle
 import { GenericService } from '@shared/services';
 import { errorMsg } from '@shared/utils';
 import { CellWrapper } from '@index/components/Tests/Table/Cells/CellWrapper';
-
-const useStyles = createStyles(testsCreateStyle as any);
 
 interface Props {
     item: any
@@ -35,7 +33,9 @@ export const Row = memo(function Row(
         infinityQuery,
     }: Props,
 ) {
-    const { classes, cx } = useStyles();
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
+    const styles = testsCreateStyle(theme, colorScheme);
     const selected = selection.includes(item.id!);
     const collapsed = collapse.includes(item.id!);
 
@@ -88,8 +88,7 @@ export const Row = memo(function Row(
             <tr
                 data-test={`table_row_${index}`}
                 data-row-name={test.name}
-                className={cx({ [classes.rowSelected]: selected })}
-                style={{ cursor: 'pointer' }}
+                style={{ ...(selected ? styles.rowSelected : {}), cursor: 'pointer' }}
                 onClick={handleRowClick}
             >
 

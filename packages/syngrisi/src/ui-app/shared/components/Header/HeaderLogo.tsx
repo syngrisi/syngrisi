@@ -4,11 +4,12 @@ import {
     Box,
     Container,
     Paper,
-    Text, useMantineTheme,
+    Text, useMantineTheme, useComputedColorScheme,
 } from '@mantine/core';
 
 function HeaderLogo({ size }: { size?: number | undefined }) {
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     return (
         <Container
             pl={0}
@@ -24,17 +25,13 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
                 <Paper
                     data-test="logo-container"
                     aria-label="Logo container"
-                    sx={{
+                    style={{
                         justifyContent: 'center',
                         height: 44,
                         width: 44,
                         display: 'flex',
                         alignItems: 'center',
                         borderRadius: '2px 20px 2px 20px',
-                        // backgroundColor:theme.colorScheme === 'dark' ? '#262626' : theme.colors.gray[0],
-                        '&:hover': {
-                            backgroundColor: theme.colorScheme === 'dark' ? '#000000' : theme.colors.gray[0],
-                        },
                     }}
                 >
                     <svg height={size || 32} viewBox="0 0 64 67" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -58,19 +55,13 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
                 }}
                 >
                     <Paper
-                        sx={{ backgroundColor: 'rgba(0, 0, 0, 0)' }}
+                        style={{ backgroundColor: 'rgba(0, 0, 0, 0)' }}
                     >
                         <Text
                             data-test="logo-text"
                             aria-label="Syngrisi"
-                            color={(theme.colorScheme === 'dark' ? 'white' : '#262626')}
-                            sx={
-                                {
-                                    '&:hover': {
-                                        color: theme.colorScheme === 'dark' ? theme.colors.gray[4] : theme.colors.dark[3],
-                                    },
-                                }
-                            }
+                            c={(colorScheme === 'dark' ? 'white' : '#262626')}
+                            className="syngrisi-logo-text"
                         >
                             Syngrisi
                         </Text>

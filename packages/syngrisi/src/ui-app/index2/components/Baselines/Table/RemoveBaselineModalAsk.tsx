@@ -46,7 +46,7 @@ export default function RemoveBaselineModalAsk({ opened, setOpened, selection, s
             <Text size="sm">
                 Are you sure you want to permanently delete the selected baselines?
             </Text>
-            <Group position="right">
+            <Group justify="flex-end">
                 <Button
                     data-test="confirm-remove-baseline-icon"
                     aria-label="Remove"

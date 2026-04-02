@@ -78,8 +78,8 @@ export function ShareModal({ opened, onClose, checkId }: ShareModalProps) {
 
     return (
         <Modal opened={opened} onClose={handleClose} title="Share Check" centered size="lg">
-            <Stack spacing="md">
-                <Text size="sm" color="dimmed">
+            <Stack gap="md">
+                <Text size="sm" c="dimmed">
                     Create a shareable link to allow anyone to view this check without logging in.
                     Shared links are read-only.
                 </Text>
@@ -117,14 +117,14 @@ export function ShareModal({ opened, onClose, checkId }: ShareModalProps) {
                 {/* Existing tokens */}
                 {tokensQuery.isLoading && <Loader size="sm" />}
                 {tokensQuery.data?.results && tokensQuery.data.results.length > 0 && (
-                    <Stack spacing="xs" mt="sm">
-                        <Text size="sm" weight={500}>Active Share Links</Text>
+                    <Stack gap="xs" mt="sm">
+                        <Text size="sm" fw={500}>Active Share Links</Text>
                         {tokensQuery.data.results.map((token: ShareToken) => (
-                            <Group key={token._id} position="apart" noWrap>
-                                <Text size="sm" color="dimmed">
+                            <Group key={token._id} justify="space-between" noWrap>
+                                <Text size="sm" c="dimmed">
                                     Created by
                                     {' '}
-                                    <Text span weight={500} color="dark">{token.createdByUsername}</Text>
+                                    <Text span fw={500} c="dark">{token.createdByUsername}</Text>
                                     {' '}
                                     on
                                     {' '}
@@ -144,7 +144,7 @@ export function ShareModal({ opened, onClose, checkId }: ShareModalProps) {
                     </Stack>
                 )}
 
-                <Group position="right" mt="md">
+                <Group justify="flex-end" mt="md">
                     <Button variant="default" onClick={handleClose}>Close</Button>
                 </Group>
             </Stack>

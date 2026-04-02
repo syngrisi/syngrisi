@@ -36,7 +36,7 @@ export function RemoveItemPopover(
                 </ActionIcon>
             </Popover.Target>
             <Popover.Dropdown p={8}>
-                <Group position="center">
+                <Group justify="center">
                     <Button
                         data-item={`${testAttr}_confirm`}
                         onClick={
