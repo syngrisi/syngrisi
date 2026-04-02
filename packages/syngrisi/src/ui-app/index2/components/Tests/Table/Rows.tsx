@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import UnfoldActionIcon from '@index/components/Tests/Table/UnfoldActionIcon';
 import { Row } from '@index/components/Tests/Table/Row';
 
@@ -15,13 +15,13 @@ const Rows = ({ infinityQuery, selection, setSelection, visibleFields, updateToo
     const [collapse, setCollapse]: [string[], any] = useState([]);
     const { data } = infinityQuery;
 
-    const toggleCollapse = (id: string) => {
+    const toggleCollapse = useCallback((id: string) => {
         setCollapse(
             (current: any) => (current.includes(id) ? current.filter((item: string) => item !== id) : [...current, id]),
         );
-    };
+    }, []);
 
-    const expand = (id: string) => {
+    const expand = useCallback((id: string) => {
         setCollapse(
             (current: any) => {
                 if (!current.includes(id)) {
@@ -30,8 +30,9 @@ const Rows = ({ infinityQuery, selection, setSelection, visibleFields, updateToo
                 return current;
             },
         );
-    };
-    const fold = (id: string) => {
+    }, []);
+
+    const fold = useCallback((id: string) => {
         setCollapse(
             (current: any) => {
                 if (current.includes(id)) {
@@ -40,15 +41,15 @@ const Rows = ({ infinityQuery, selection, setSelection, visibleFields, updateToo
                 return current;
             },
         );
-    };
+    }, []);
 
-    const expandSelected = () => {
+    const expandSelected = useCallback(() => {
         selection.forEach((item: string) => expand(item));
-    };
+    }, [selection, expand]);
 
-    const collapseSelected = () => {
+    const collapseSelected = useCallback(() => {
         selection.forEach((item: string) => fold(item));
-    };
+    }, [selection, fold]);
 
     useEffect(() => {
         updateToolbar(
@@ -61,9 +62,9 @@ const Rows = ({ infinityQuery, selection, setSelection, visibleFields, updateToo
         );
     }, [selection.length]);
 
-    const toggleRow = (id: string) => setSelection(
+    const toggleRow = useCallback((id: string) => setSelection(
         (current: any) => (current.includes(id) ? current.filter((item: string) => item !== id) : [...current, id]),
-    );
+    ), [setSelection]);
 
     return data.pages.map((page: any) => (
         page.results.map(

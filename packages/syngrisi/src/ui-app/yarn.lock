@@ -949,6 +949,13 @@
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.3.7.tgz#b89ddf2cd83b4feafcc4e2ea41afdfb95a0d194f"
   integrity sha512-MEe3UeoENYVFXzoXEWsvcpg6ZvlrFNlOQ7EOsvhI3CfAXwzPfO8Qwuxd40nepsYKqyyVQnTdEfv68q91yLcKrQ==
 
+"@types/react-window@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-window/-/react-window-2.0.0.tgz#9fe45015d6f98ec98a069362518c855fcc1fa8d0"
+  integrity sha512-E8hMDtImEpMk1SjswSvqoSmYvk7GEtyVaTa/GJV++FdDNuMVVEzpAClyJ0nqeKYBrMkGiyH6M1+rPLM0Nu1exQ==
+  dependencies:
+    react-window "*"
+
 "@types/react@^18.3.26":
   version "18.3.27"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.3.27.tgz#74a3b590ea183983dc65a474dc17553ae1415c34"
@@ -3337,6 +3344,11 @@ react-transition-group@4.4.2:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-window@*, react-window@^2.2.7:
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.7.tgz#7f3d31695d4323701b7e80dfc9bbbe1d4a0c160f"
+  integrity sha512-SH5nvfUQwGHYyriDUAOt7wfPsfG9Qxd6OdzQxl5oQ4dsSsUicqQvjV7dR+NqZ4coY0fUn3w1jnC5PwzIUWEg5w==
 
 react@^18.3.1:
   version "18.3.1"

@@ -3,19 +3,21 @@ import * as React from 'react';
 import {
     ActionIcon,
     Group,
+    Loader,
     LoadingOverlay,
     Modal,
     Stack,
     Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense, lazy } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconX } from '@tabler/icons-react';
 import { useParams } from '@hooks/useParams';
 import { GenericService } from '@shared/services';
 import { errorMsg } from '@shared/utils';
-import { CheckDetails } from '@index/components/Tests/Table/Checks/CheckDetails/CheckDetails';
+
+const CheckDetails = lazy(() => import('@index/components/Tests/Table/Checks/CheckDetails/CheckDetails').then(m => ({ default: m.CheckDetails })));
 
 interface Props {
     relatedRendered?: boolean;
@@ -176,16 +178,18 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
                         )
                         : checkData
                             ? (
-                                <CheckDetails
-                                    key={checkData._id}
-                                    initCheckData={checkData}
-                                    checkQuery={checkQuery}
-                                    closeHandler={closeHandler}
-                                    relatedRendered={relatedRendered}
-                                    testList={testList}
-                                    apikey={apikey}
-                                    initialSiblingChecks={cachedSiblingChecks}
-                                />
+                                <Suspense fallback={<Stack mt={60}><LoadingOverlay visible /><Text>Loading check details...</Text></Stack>}>
+                                    <CheckDetails
+                                        key={checkData._id}
+                                        initCheckData={checkData}
+                                        checkQuery={checkQuery}
+                                        closeHandler={closeHandler}
+                                        relatedRendered={relatedRendered}
+                                        testList={testList}
+                                        apikey={apikey}
+                                        initialSiblingChecks={cachedSiblingChecks}
+                                    />
+                                </Suspense>
                             )
                             : (
                                 <Group mt={60}>

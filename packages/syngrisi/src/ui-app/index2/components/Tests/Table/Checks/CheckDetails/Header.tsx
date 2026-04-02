@@ -16,7 +16,7 @@ interface Props {
     toleranceSource?: 'api' | 'baseline'
 }
 
-export function Header(
+export const Header = React.memo(function Header(
     {
         classes,
         currentCheck,
@@ -261,4 +261,4 @@ export function Header(
         </Group>
 
     );
-}
+});
