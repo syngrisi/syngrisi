@@ -16,7 +16,7 @@ interface Props {
     type: string
 }
 
-export function SuiteItem(
+export const SuiteItem = React.memo(function SuiteItem(
     {
         item,
         type,
@@ -106,4 +106,4 @@ export function SuiteItem(
             />
         </>
     );
-}
+});
