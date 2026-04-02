@@ -18,7 +18,9 @@ import {
 import { createStyles } from '@mantine/styles';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useToggle } from '@mantine/hooks';
+import { useQuery } from '@tanstack/react-query';
 import useInfinityScroll from '@shared/hooks/useInfinityScroll';
+import { GenericService } from '@shared/services';
 
 import { NavbarItems } from '@index/components/Navbar/NavbarItems';
 import SkeletonWrapper from '@index/components/Navbar/Skeletons/SkeletonWrapper';
@@ -27,6 +29,7 @@ import { useParams } from '@hooks/useParams';
 import { NavbarFilter } from '@index/components/Navbar/NavbarFilter';
 import { NavbarGroupBySelect } from '@index/components/Navbar/NavbarGroupBySelect';
 import { useNavbarActiveItems } from '@hooks/useNavbarActiveItems';
+import { errorMsg } from '@shared/utils';
 
 const useStyles = createStyles((theme) => ({
     navbar: {
@@ -96,26 +99,80 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
         return transform[item as keyof typeof transform] || '';
     };
 
-    const { firstPageQuery, infinityQuery } = useInfinityScroll({
+    const { firstPageQuery, infinityQuery, refresh } = useInfinityScroll({
         resourceName: groupByValue,
         newestItemsFilterKey: getNewestFilter(groupByValue),
+        newestItemsEnabled: query.modalIsOpen !== 'true',
         baseFilterObj: navbarFilterObject,
         sortBy: query.sortByNavbar!,
     });
 
+    const visibleRunIds = groupByValue === 'runs'
+        ? Array.from(new Set(
+            (infinityQuery.data?.pages || [])
+                .flatMap((page: any) => page.results || [])
+                .map((item: any) => item?._id)
+                .filter(Boolean),
+        ))
+        : [];
+
+    const runStatusesQuery = useQuery(
+        [
+            'navbar_run_statuses',
+            visibleRunIds.join(','),
+        ],
+        () => GenericService.get(
+            'tests',
+            {
+                run: { $in: visibleRunIds },
+            },
+            {
+                limit: '0',
+            },
+            'navbar_run_statuses',
+        ),
+        {
+            enabled: groupByValue === 'runs' && visibleRunIds.length > 0,
+            staleTime: 30 * 1000,
+            refetchOnWindowFocus: false,
+            onError: (e) => {
+                errorMsg({ error: e });
+            },
+        },
+    );
+
+    const testsStatusesByRun = React.useMemo(() => {
+        const map: Record<string, string[]> = {};
+        const tests = runStatusesQuery.data?.results || [];
+
+        tests.forEach((test: any) => {
+            const runId = test?.run?._id || test?.run;
+            if (!runId) return;
+            if (!map[runId]) map[runId] = [];
+            if (test.status) map[runId].push(test.status);
+        });
+
+        visibleRunIds.forEach((runId) => {
+            if (!map[runId]) map[runId] = [];
+        });
+
+        return map;
+    }, [runStatusesQuery.data?.timestamp, visibleRunIds.join(',')]);
+
     useEffect(function refetch() {
-        firstPageQuery.refetch();
+        refresh();
     }, [
         query?.app,
         query?.groupBy,
         // eslint-disable-next-line react-hooks/exhaustive-deps
         JSON.stringify(navbarFilterObject),
         query.sortByNavbar,
+        refresh,
     ]);
 
     const refreshIconClickHandler = useCallback(() => {
         setQuery({ base_filter: null });
-        firstPageQuery.refetch();
+        refresh();
         activeItemsHandler.clear();
     }, [setQuery, firstPageQuery, activeItemsHandler]);
 
@@ -266,6 +323,7 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                                         infinityQuery={infinityQuery}
                                         groupByValue={groupByValue}
                                         activeItemsHandler={activeItemsHandler}
+                                        testsStatusesByRun={testsStatusesByRun}
                                     />
                                 </List>
                             )

@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "react-performance-optimization": {
+      "source": "nickcrew/claude-ctx-plugin",
+      "sourceType": "github",
+      "computedHash": "841fb99740109cd8b77606c9402fbb81e44a5f8c5fc6b3dc010e9397218e33cb"
+    }
+  }
+}

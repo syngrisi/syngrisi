@@ -190,6 +190,11 @@ async function getRunningJobs() {
     return jobs.filter((job) => isActiveStatus(job.status));
 }
 
+async function hasActiveDatabaseRestoreJob() {
+    const jobs = await getRunningJobs();
+    return jobs.some((job) => job.type === 'db_restore');
+}
+
 async function assertCanStartJob() {
     const runningJobs = await getRunningJobs();
     if (runningJobs.length >= config.adminDataMaxConcurrentJobs) {
@@ -937,4 +942,5 @@ export const adminDataJobService = {
     cancelJob,
     deleteJob,
     createDownloadStream,
+    hasActiveDatabaseRestoreJob,
 };

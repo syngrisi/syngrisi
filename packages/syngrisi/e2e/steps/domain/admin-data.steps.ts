@@ -138,6 +138,43 @@ async function waitForLatestJob(appServer: AppServerFixture, jobLabel: string, e
   throw new Error(`Timed out waiting for latest ${jobLabel} job to be ${expectedStatus} with message containing "${expectedMessage}"`);
 }
 
+async function waitForJobsCount(appServer: AppServerFixture, expectedCount: number) {
+  const deadline = Date.now() + 30_000;
+
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(`${appServer.baseURL}/v1/admin/data/jobs`, {
+        headers: { Accept: 'application/json' },
+      });
+
+      if (!response.ok) {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+        continue;
+      }
+
+      const payload = await response.json() as { jobs?: unknown[] };
+      const jobs = payload.jobs ?? [];
+
+      if (jobs.length === expectedCount) {
+        return;
+      }
+    } catch {
+      if (appServer.serverPort) {
+        await ensureServerReady(appServer.serverPort, 30_000).catch(() => { });
+      }
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+
+  const response = await fetch(`${appServer.baseURL}/v1/admin/data/jobs`, {
+    headers: { Accept: 'application/json' },
+  });
+  const payload = await response.json() as { jobs?: unknown[] };
+  const jobs = payload.jobs ?? [];
+  expect(jobs.length).toBe(expectedCount);
+}
+
 async function getLatestJob(
   appServer: AppServerFixture,
   jobLabel: string,
@@ -375,12 +412,7 @@ Then(
 Then(
   'the admin data jobs count should be {int}',
   async ({ appServer }: { appServer: AppServerFixture }, expectedCount: number) => {
-    const response = await fetch(`${appServer.baseURL}/v1/admin/data/jobs`, {
-      headers: { Accept: 'application/json' },
-    });
-    const payload = await response.json() as { jobs?: unknown[] };
-    const jobs = payload.jobs ?? [];
-    expect(jobs.length).toBe(expectedCount);
+    await waitForJobsCount(appServer, expectedCount);
   }
 );
 

@@ -45,6 +45,15 @@ import { env } from "@/server/envConfig";
 import { hashSync } from '@utils/hash';
 import * as shareService from '@services/share.service';
 import { executeAuthHook } from '../../plugins';
+import { ensureGuestUserExists } from '@lib/startup/createBasicUsers';
+import { adminDataJobService } from '@services/admin-data-job.service';
+
+const transientGuestUser = {
+    username: 'Guest',
+    role: 'user',
+    firstName: 'Syngrisi',
+    lastName: 'Guest',
+};
 
 export const normalizeIncomingApiKey = (rawKey: unknown): string | undefined => {
     if (Array.isArray(rawKey)) {
@@ -91,6 +100,16 @@ const handleBasicAuth = async (req: ExtRequest, retryCount = 0): Promise<any> =>
 
         // Retry logic for Guest user lookup during startup (MongoDB indexing race condition)
         if (!guest) {
+            if (await adminDataJobService.hasActiveDatabaseRestoreJob()) {
+                log.warn('Guest user is temporarily unavailable during active database restore, using transient guest user', logOpts);
+                return {
+                    type: 'success',
+                    status: 200,
+                    value: '',
+                    user: transientGuestUser,
+                };
+            }
+            await ensureGuestUserExists().catch(() => undefined);
             if (retryCount < MAX_RETRIES) {
                 log.warn(`Guest user not found in handleBasicAuth (attempt ${retryCount + 1}/${MAX_RETRIES}), retrying in ${RETRY_DELAY_MS}ms...`, logOpts);
                 await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
@@ -182,6 +201,14 @@ const handleAPIAuth = async (rawApiKey: unknown, retryCount = 0): Promise<any> =
         const guest = await User.findOne({ username: 'Guest' });
 
         if (!guest) {
+            if (await adminDataJobService.hasActiveDatabaseRestoreJob()) {
+                log.warn('Guest user is temporarily unavailable during active database restore, using transient guest user', logOpts);
+                result.type = 'success';
+                result.user = transientGuestUser;
+                result.status = 200;
+                return result;
+            }
+            await ensureGuestUserExists().catch(() => undefined);
             // Retry logic for Guest user lookup during startup (MongoDB indexing race condition)
             if (retryCount < MAX_RETRIES) {
                 log.warn(`Guest user not found (attempt ${retryCount + 1}/${MAX_RETRIES}), retrying in ${RETRY_DELAY_MS}ms...`, logOpts);

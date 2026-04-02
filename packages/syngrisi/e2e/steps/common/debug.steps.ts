@@ -329,6 +329,28 @@ When('I log current URL', async ({ page }) => {
   return currentUrl;
 });
 
+When('I log stored javascript result', async ({ testData }: { testData: TestStore }) => {
+  const result = testData.get('js');
+  if (result === undefined) {
+    logger.info('Stored JavaScript result: undefined');
+    return;
+  }
+
+  try {
+    logger.info(`Stored JavaScript result: ${JSON.stringify(result, null, 2)}`);
+  } catch {
+    logger.info(`Stored JavaScript result: ${String(result)}`);
+  }
+});
+
+When('I save stored javascript result to file {string}', async ({ testData }: { testData: TestStore }, filePath: string) => {
+  const result = testData.get('js');
+  const serialized = result === undefined ? 'undefined' : JSON.stringify(result, null, 2);
+
+  await fs.writeFile(filePath, serialized, 'utf8');
+  logger.info(`Stored JavaScript result saved to: ${filePath}`);
+});
+
 When('I test', async () => {
   logger.info('Test message from diagnostic step');
   return 'Test message from diagnostic step';
