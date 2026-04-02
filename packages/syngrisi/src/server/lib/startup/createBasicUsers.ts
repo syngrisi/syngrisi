@@ -64,11 +64,7 @@ export async function createBasicUsers(): Promise<void> {
     }
 
     const guestInsert = buildUserInsertPayload(guestData);
-    const guestResult = await User.updateOne(
-        { username: 'Guest' },
-        { $setOnInsert: guestInsert },
-        { upsert: true }
-    );
+    const guestResult = await ensureGuestUserExists();
     if (guestResult.upsertedCount > 0) {
         log.info('create the default Guest', logOpts);
         createdUsers.push({ username: 'Guest', apiKey: guestInsert.apiKey });
@@ -103,4 +99,14 @@ export async function createBasicUsers(): Promise<void> {
     const adminCheck = await User.findOne({ username: 'Administrator' }).exec();
     const guestCheck = await User.findOne({ username: 'Guest' }).exec();
     log.info(`✓ Basic users verified - Administrator: ${!!adminCheck}, Guest: ${!!guestCheck}`, logOpts);
+}
+
+export async function ensureGuestUserExists() {
+    const guestInsert = buildUserInsertPayload(guestData);
+
+    return User.updateOne(
+        { username: 'Guest' },
+        { $setOnInsert: guestInsert },
+        { upsert: true }
+    );
 }

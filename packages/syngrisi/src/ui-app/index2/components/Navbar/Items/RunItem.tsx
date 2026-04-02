@@ -2,13 +2,10 @@
 import * as React from 'react';
 import { Group, List, Loader, Stack, Text, Tooltip } from '@mantine/core';
 import * as dateFns from 'date-fns';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
-import { useQuery } from '@tanstack/react-query';
 import RemoveItemModalAsk from '@index/components/Navbar/Items/RemoveItemModalAsk';
 import { StatusesRing } from '@shared/components/Tests/StatusesRing';
-import { GenericService } from '@shared/services';
-import { errorMsg } from '@shared/utils';
 import { RemoveItemPopover } from '@index/components/Navbar/Items/RemoveItemPopover';
 
 interface Props {
@@ -18,6 +15,8 @@ interface Props {
     handlerItemClick: any
     infinityQuery: any
     type: string
+    testsStatuses?: string[]
+    statusesLoaded?: boolean
 }
 
 export function RunItem(
@@ -28,6 +27,8 @@ export function RunItem(
         className,
         infinityQuery,
         handlerItemClick,
+        testsStatuses = [],
+        statusesLoaded = false,
     }: Props,
 ) {
     const [modalOpen, setModalOpen] = useState(false);
@@ -37,37 +38,6 @@ export function RunItem(
         setModalOpen(true);
         close();
     };
-
-    const testsQuery = useQuery(
-        [
-            `${type}_item_tests_query`,
-            item._id,
-        ],
-        () => GenericService.get(
-            'tests',
-            {
-                [type.toLowerCase()]: { $eq: item._id },
-            },
-            {
-                limit: '0',
-            },
-            `${type}_item_tests_query`,
-        ),
-        {
-            enabled: true,
-            refetchOnWindowFocus: false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
-        },
-    );
-
-    const testsStatuses: any = useMemo(() => {
-        if (testsQuery?.data?.results) {
-            return testsQuery?.data?.results.map((x) => x.status);
-        }
-        return [];
-    }, [testsQuery?.data?.timestamp]);
 
     return (
         <>
@@ -124,7 +94,7 @@ export function RunItem(
                     </Group>
                     <Group position="right" spacing={0} noWrap>
                         {
-                            testsQuery.isLoading
+                            !statusesLoaded
                                 ? (<Loader variant="dots" color="blue" size="xs" mr={16} />)
                                 : (<StatusesRing statuses={testsStatuses} name={item.name} />)
                         }

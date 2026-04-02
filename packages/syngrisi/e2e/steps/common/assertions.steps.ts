@@ -1474,6 +1474,7 @@ Then(
     const timeoutMs = seconds * 1000;
     const pollInterval = 1000;
     let lastCount = 0;
+    let unchangedRefreshCount = 0;
 
     while (Date.now() - startTime < timeoutMs) {
       lastCount = await locator.count();
@@ -1488,6 +1489,7 @@ Then(
       if (refreshVisible) {
         // Check for badge before clicking
         const hasBadge = await newItemsBadge.isVisible({ timeout: 200 }).catch(() => false);
+        const countBeforeRefresh = lastCount;
 
         try {
           await refreshButton.click({ timeout: 2000 });
@@ -1502,6 +1504,26 @@ Then(
         if (hasBadge) {
           await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
           // Check again immediately after refresh
+          lastCount = await locator.count();
+          if (lastCount === exactCount) {
+            return;
+          }
+        }
+
+        lastCount = await locator.count();
+        if (lastCount === countBeforeRefresh) {
+          unchangedRefreshCount += 1;
+        } else {
+          unchangedRefreshCount = 0;
+        }
+
+        // If refresh clicks are not changing the list at all, force a hard reload once
+        // to rebuild the anchor snapshot used by infinite-scroll auto-update logic.
+        if (unchangedRefreshCount >= 3) {
+          logger.warn(`Refresh did not change count for "${selector}" after ${unchangedRefreshCount} attempts, reloading page`);
+          await page.reload({ waitUntil: 'networkidle', timeout: 30000 }).catch(() => undefined);
+          await page.waitForTimeout(1000);
+          unchangedRefreshCount = 0;
           lastCount = await locator.count();
           if (lastCount === exactCount) {
             return;
