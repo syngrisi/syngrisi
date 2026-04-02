@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle,no-nested-ternary,react/jsx-no-useless-fragment */
 import * as React from 'react';
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Group, Stack, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
@@ -106,7 +107,7 @@ export function Checks({ item, testUpdateQuery }: Props) {
                                         <ChecksContainer p={20} align="start" data-test-checks-ready="true">
                                             {
                                                 checksQuery.data.results.map(
-                                                    (check) => (
+                                                    (check: any) => (
                                                         <Check
                                                             key={check._id}
                                                             check={check}

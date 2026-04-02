@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle,prefer-arrow-callback,react/jsx-one-expression-per-line */
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { RunItem, SuiteItem, BrowserItem, PlatformItem, StatusItem, AcceptStatusItem } from '@index/components/Navbar/Items';
 
 const itemTypesMap = {
@@ -17,7 +17,7 @@ interface Props {
     testsStatusesByRun?: Record<string, string[]>
 }
 
-export function BaseItemWrapper(
+export const BaseItemWrapper = React.memo(function BaseItemWrapper(
     {
         item,
         itemType,
@@ -30,10 +30,10 @@ export function BaseItemWrapper(
 ) {
     const type = itemTypesMap[itemType];
 
-    const handlerItemClick = (e: any) => {
+    const handlerItemClick = useCallback((e: any) => {
         if (!(e.metaKey || e.ctrlKey)) activeItemsHandler.clear();
         activeItemsHandler.addOrRemove(id);
-    };
+    }, [activeItemsHandler, id]);
 
     const className = `${activeItemsHandler.navbarItemClass()}`
         + ` ${(activeItemsHandler.get().includes(id)) && activeItemsHandler.activeNavbarItemClass()}`;
@@ -95,4 +95,4 @@ export function BaseItemWrapper(
         ),
     };
     return (itemsComponentsMap[itemType]);
-}
+});

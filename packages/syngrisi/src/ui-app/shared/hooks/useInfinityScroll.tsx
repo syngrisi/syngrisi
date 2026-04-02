@@ -111,8 +111,6 @@ export default function useInfinityScroll(
             $and: [
                 baseFilterObj,
                 newestItemsFilter,
-                // { [newestItemsFilterKey]: { $lte: new Date(firstPageData.newestItemsFilterValue!) } },
-                // { [newestItemsFilterKey]: { $lte: firstPageData.newestItemsFilterValue! } },
                 filterObj || {},
             ],
         };

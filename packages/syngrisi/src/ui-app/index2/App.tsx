@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import * as React from 'react';
-import { useMemo, ComponentPropsWithoutRef } from 'react';
+import { useMemo, ComponentPropsWithoutRef, lazy, Suspense } from 'react';
 
 import {
     ColorSchemeProvider,
@@ -19,7 +19,7 @@ import { DefaultAction } from '@mantine/spotlight/esm/DefaultAction/DefaultActio
 import config from '@config';
 
 import IndexLayout from '@index/IndexLayout';
-import { ChecksList } from '@index/components/ChecksList/ChecksList';
+const ChecksList = lazy(() => import('@index/components/ChecksList/ChecksList').then(m => ({ default: m.ChecksList })));
 import useColorScheme from '@shared/hooks/useColorSheme';
 import { navigationData } from '@shared/navigation/navigationData';
 import { INavDataItem } from '@shared/navigation/interfaces';
@@ -196,11 +196,13 @@ function App() {
                         <NotificationsProvider autoClose={5000} limit={5}>
                             <NavigationProgress />
 
-                            <Routes>
-                                <Route path={config.indexRoute} element={<IndexLayout />} />
-                                <Route path="/baselines" element={<IndexLayout />} />
-                                <Route path="/checks-list" element={<ChecksList />} />
-                            </Routes>
+                            <Suspense fallback={null}>
+                                <Routes>
+                                    <Route path={config.indexRoute} element={<IndexLayout />} />
+                                    <Route path="/baselines" element={<IndexLayout />} />
+                                    <Route path="/checks-list" element={<ChecksList />} />
+                                </Routes>
+                            </Suspense>
                         </NotificationsProvider>
                     </SpotlightProvider>
                 </MantineProvider>

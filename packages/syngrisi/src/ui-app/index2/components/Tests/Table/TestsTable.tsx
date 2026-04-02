@@ -1,5 +1,5 @@
 /* eslint-disable indent,react/jsx-indent,prefer-arrow-callback */
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
     createStyles,
     Table,
@@ -41,7 +41,10 @@ export default function TestsTable(
 ) {
     const { query } = useParams();
     const { data } = infinityQuery;
-    const flatData = data ? data.pages.flat().map((x: any) => x.results).flat() : [];
+    const flatData = useMemo(
+        () => (data ? data.pages.flat().map((x: any) => x.results).flat() : []),
+        [data],
+    );
 
     // eslint-disable-next-line no-unused-vars
     const { classes } = useStyles();
@@ -50,12 +53,12 @@ export default function TestsTable(
     useEffect(function resetSelection() {
         setSelection(() => ([]));
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [JSON.stringify(query.base_filter), query.app]);
+    }, [query.base_filter, query.app]);
 
     const scrollAreaRef = useRef(null);
     const viewportRef = useRef<HTMLDivElement>(null);
     // eslint-disable-next-line max-len
-    const toggleAllRows = () => setSelection((current: string) => (current.length === flatData.length ? [] : flatData.map((item: ILog) => item.id)));
+    const toggleAllRows = useCallback(() => setSelection((current: string) => (current.length === flatData.length ? [] : flatData.map((item: ILog) => item.id))), [flatData]);
 
     useEffect(function onSelectionUpdate() {
         updateToolbar(
@@ -77,7 +80,7 @@ export default function TestsTable(
         );
     }, [selection.length]);
 
-    const resetHorizontalScroll = () => {
+    const resetHorizontalScroll = useCallback(() => {
         if (!viewportRef.current) {
             return;
         }
@@ -87,11 +90,11 @@ export default function TestsTable(
                 viewportRef.current.scrollLeft = 0;
             }
         });
-    };
+    }, []);
 
     useEffect(() => {
         resetHorizontalScroll();
-    }, [navbarWidth, size, visibleFields.join(',')]);
+    }, [navbarWidth, size, visibleFields.join(','), resetHorizontalScroll]);
 
     return (
         <>
