@@ -172,6 +172,9 @@ export function MatchTypeSelector({
                 await queryClient.invalidateQueries({ queryKey: ['baseline_by_snapshot_id', currentCheck.baselineId._id] });
             }
             await queryClient.invalidateQueries({ queryKey: ['check_for_modal', checkId], exact: true });
+            if (checkQuery?.refetch) {
+                await checkQuery.refetch();
+            }
             const testId = currentCheck?.test?._id || currentCheck?.test;
             if (testId) {
                 await queryClient.invalidateQueries({ queryKey: ['preview_checks', testId], exact: true });
