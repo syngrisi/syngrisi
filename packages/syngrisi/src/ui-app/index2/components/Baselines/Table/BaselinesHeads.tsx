@@ -24,7 +24,6 @@ function BaselinesHeads({ flatData, toggleAllRows, selection, visibleFields }: P
                             ? (selection.length > 0 && selection.length !== flatData.length)
                             : false
                     }
-                    transitionDuration={0}
                 />
             </th>
             {

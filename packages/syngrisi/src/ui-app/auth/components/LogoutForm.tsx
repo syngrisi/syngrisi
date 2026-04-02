@@ -103,8 +103,7 @@ function LogoutForm() {
 
             <LoadingOverlay
                 visible={loading}
-                transitionDuration={300}
-                overlayBlur={1}
+                overlayProps={{ blur: 1 }}
                 loaderProps={{ color: 'green' }}
             />
 
@@ -114,7 +113,7 @@ function LogoutForm() {
                         ? <Text ta="center" c="green"><IconCircleCheck size="6rem" /></Text>
                         : <Text ta="center" c="red"><IconCircleX size="6rem" /></Text>
                 }
-                <Title align="center">{success ? 'Success!' : 'Failed'}</Title>
+                <Title ta="center">{success ? 'Success!' : 'Failed'}</Title>
                 <Text ta="center" size={16} mt="md">
                     {success
                         ? 'You have been successfully logged out. Click Sign In to login again.'

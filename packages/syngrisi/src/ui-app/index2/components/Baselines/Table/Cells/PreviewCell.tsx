@@ -13,7 +13,7 @@ export function PreviewCell({ baseline }: Props) {
     if (!filename) {
         return (
             <td style={{ width: '100px' }}>
-                <Image withPlaceholder width={80} height={60} fit="contain" />
+                <Image w={80} h={60} fit="contain" fallbackSrc="" />
             </td>
         );
     }
@@ -23,7 +23,7 @@ export function PreviewCell({ baseline }: Props) {
             <HoverCard width={400} shadow="md" withinPortal zIndex={1000}>
                 <HoverCard.Target>
                     <Group justify="center">
-                        <Image src={src} width={80} height={60} fit="contain" />
+                        <Image src={src} w={80} h={60} fit="contain" />
                     </Group>
                 </HoverCard.Target>
                 <HoverCard.Dropdown>

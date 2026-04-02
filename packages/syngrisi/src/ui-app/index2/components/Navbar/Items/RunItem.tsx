@@ -49,12 +49,12 @@ export const RunItem = React.memo(function RunItem(
                 style={{ cursor: 'pointer', width: '100%' }}
             >
                 <Group
-                    noWrap
+                    wrap="nowrap"
                     pl={8}
                     justify="space-between"
                     gap={0}
                 >
-                    <Group style={{ width: '100%' }} noWrap>
+                    <Group style={{ width: '100%' }} wrap="nowrap">
                         <Stack gap={0} style={{ width: '100%' }}>
                             <Group justify="flex-start" style={{ width: '100%' }}>
                                 <Tooltip label={item.name} multiline withinPortal>
@@ -77,7 +77,7 @@ export const RunItem = React.memo(function RunItem(
                                     }
                                 >
                                     <Text
-                                        align="right"
+                                        ta="right"
                                         size="xs"
                                         c="dimmed"
                                     >
@@ -92,7 +92,7 @@ export const RunItem = React.memo(function RunItem(
                         </Stack>
 
                     </Group>
-                    <Group justify="flex-end" gap={0} noWrap>
+                    <Group justify="flex-end" gap={0} wrap="nowrap">
                         {
                             !statusesLoaded
                                 ? (<Loader variant="dots" color="blue" size="xs" mr={16} />)

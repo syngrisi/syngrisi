@@ -88,7 +88,7 @@ export function ShareModal({ opened, onClose, checkId }: ShareModalProps) {
                     <TextInput
                         value={shareUrl}
                         readOnly
-                        icon={<IconLink size={16} />}
+                        leftSection={<IconLink size={16} />}
                         rightSection={(
                             <ActionIcon
                                 onClick={handleCopy}
@@ -120,7 +120,7 @@ export function ShareModal({ opened, onClose, checkId }: ShareModalProps) {
                     <Stack gap="xs" mt="sm">
                         <Text size="sm" fw={500}>Active Share Links</Text>
                         {tokensQuery.data.results.map((token: ShareToken) => (
-                            <Group key={token._id} justify="space-between" noWrap>
+                            <Group key={token._id} justify="space-between" wrap="nowrap">
                                 <Text size="sm" c="dimmed">
                                     Created by
                                     {' '}

@@ -20,7 +20,6 @@ function AdminLogsTableHeads({ data, toggleAllRows, selection, visibleFields }: 
                     onChange={toggleAllRows}
                     checked={selection.length === data.length}
                     indeterminate={selection.length > 0 && selection.length !== data.length}
-                    transitionDuration={0}
                 />
             </th>
             {

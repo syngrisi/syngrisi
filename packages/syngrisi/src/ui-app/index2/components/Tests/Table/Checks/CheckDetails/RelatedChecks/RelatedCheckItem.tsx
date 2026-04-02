@@ -105,21 +105,16 @@ export function RelatedCheckItem({ checkData, activeCheckId, setRelatedActiveChe
                             <Image
                                 data-related-check="image"
                                 src={imagePreviewSrc}
-                                width="125px"
+                                w="125px"
                                 fit="contain"
-                                withPlaceholder
                                 alt={check.name}
-                                styles={
-                                    () => ({
-                                        image: {
-                                            maxHeight: 150,
-                                        },
-                                    })
-                                }
+                                style={{
+                                    maxHeight: 150,
+                                }}
                             />
                         </Stack>
                         <Stack p={4} pt={8} align="start" gap={8}>
-                            <Group justify="center" gap={4} style={{ width: '100%' }} noWrap>
+                            <Group justify="center" gap={4} style={{ width: '100%' }} wrap="nowrap">
                                 <ViewPortLabel
                                     fontSize="8px"
                                     color="blue"
@@ -137,12 +132,12 @@ export function RelatedCheckItem({ checkData, activeCheckId, setRelatedActiveChe
                                     </Text>
                                 </Badge>
                             </Group>
-                            <Group pl={8} justify="center" gap={4} style={{ width: '100%' }} noWrap>
+                            <Group pl={8} justify="center" gap={4} style={{ width: '100%' }} wrap="nowrap">
                                 <OsIcon os={check.os} size={14} data-related-check="os-icon" />
                                 <Text size="xs" lineClamp={1} data-related-check="os-label">{check.os}</Text>
                             </Group>
 
-                            <Group pl={8} justify="center" gap={4} style={{ width: '100%' }} noWrap>
+                            <Group pl={8} justify="center" gap={4} style={{ width: '100%' }} wrap="nowrap">
                                 <BrowserIcon
                                     data-related-check-browser-name={check.browserName}
                                     data-related-check="browser-icon"

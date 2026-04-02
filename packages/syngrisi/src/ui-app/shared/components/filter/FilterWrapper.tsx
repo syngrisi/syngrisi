@@ -36,7 +36,7 @@ export function FilterWrapper(
         <Group
             pt={16}
             align="start"
-            noWrap
+            wrap="nowrap"
             data-test={testAttr}
         >
             <SafeSelect

@@ -42,14 +42,14 @@ export const Header = React.memo(function Header(
             style={{ width: 'calc(100% - 56px)', minWidth: 0 }}
             data-check-header-name={currentCheck.name}
             data-check-header-ready={currentCheck.name && currentCheck.status ? 'true' : 'false'}
-            noWrap
+            wrap="nowrap"
         >
             <Group
                 justify="flex-start"
                 align="center"
                 gap="xs"
                 style={{ position: 'relative', flex: 1, minWidth: 0 }}
-                noWrap
+                wrap="nowrap"
                 data-test="full-check-path"
             >
                 <Tooltip
@@ -73,7 +73,7 @@ export const Header = React.memo(function Header(
                 </Tooltip>
 
                 <Group
-                    noWrap
+                    wrap="nowrap"
                     gap={0}
                     style={{ minWidth: 0, flex: 1 }}
                 >
@@ -138,7 +138,7 @@ export const Header = React.memo(function Header(
             </Group>
 
             <Group
-                noWrap
+                wrap="nowrap"
                 gap="xs"
                 style={{ flexShrink: 0 }}
             >
@@ -154,7 +154,7 @@ export const Header = React.memo(function Header(
                         >
                             <Group
                                 gap={6}
-                                noWrap
+                                wrap="nowrap"
                                 data-check="tolerance-indicator"
                                 data-tolerance-source={toleranceSource || 'baseline'}
                             >
@@ -201,7 +201,7 @@ export const Header = React.memo(function Header(
                     }
                     withinPortal
                 >
-                    <Group gap={8} noWrap>
+                    <Group gap={8} wrap="nowrap">
                         <ActionIcon variant="light" size={32} p={4} ml={4}>
                             {
                                 currentCheck?.os
@@ -228,7 +228,7 @@ export const Header = React.memo(function Header(
                     }
                     withinPortal
                 >
-                    <Group gap={8} noWrap>
+                    <Group gap={8} wrap="nowrap">
                         <ActionIcon variant="light" size={32} p={4}>
                             {
                                 currentCheck?.browserName

@@ -94,9 +94,9 @@ export function ScreenshotDetails({
     const hasDiff = diffPercent !== undefined && diffPercent !== null && diffPercent !== '';
 
     return (
-        <Group gap="xs" noWrap style={{ '@media (max-width: 700px)': { display: 'none' } }} className="screenshot-details-group">
+        <Group gap="xs" wrap="nowrap" style={{ '@media (max-width: 700px)': { display: 'none' } }} className="screenshot-details-group">
             <Tooltip label="Actual image size" withinPortal>
-                <Group gap={2} noWrap>
+                <Group gap={2} wrap="nowrap">
                     <IconRuler2 size={16} style={iconLabelStyle} />
                     <Text style={labelTextStyle}>Size:</Text>
                     {imageSize}
@@ -105,7 +105,7 @@ export function ScreenshotDetails({
 
             {!rcaEnabled && (
                 <Tooltip label={`Actual image date: ${actualDateFull}`} withinPortal>
-                    <Group gap={2} noWrap>
+                    <Group gap={2} wrap="nowrap">
                         <IconCalendar size={16} style={iconLabelStyle} />
                         <Text style={labelTextStyle}>Date:</Text>
                         <Badge c="blue" radius="sm" style={infoBadgesStyle} data-check="image-date">
@@ -117,7 +117,7 @@ export function ScreenshotDetails({
 
             {hasDiff && (
                 <Tooltip label={`Images difference: ${diffPercent}%`} withinPortal>
-                    <Group gap={2} noWrap>
+                    <Group gap={2} wrap="nowrap">
                         <IconPercentage size={16} style={iconLabelStyle} />
                         <Text style={labelTextStyle}>Diff:</Text>
                         <Badge

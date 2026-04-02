@@ -79,8 +79,8 @@ export function AboutModal({ opened, setOpened }: { opened: boolean, setOpened: 
             opened={opened}
             onClose={() => setOpened(false)}
             title="About Syngrisi"
-            data-test="about-modal"
         >
+            <div data-test="about-modal" style={{ display: 'contents' }}>
             {isLoading ? (
                 <Group justify="center" py="xl">
                     <Loader />
@@ -152,6 +152,7 @@ export function AboutModal({ opened, setOpened }: { opened: boolean, setOpened: 
                     </Group>
                 </Stack>
             )}
+            </div>
         </Modal>
     );
 }

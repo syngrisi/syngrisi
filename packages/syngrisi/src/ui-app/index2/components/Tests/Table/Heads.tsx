@@ -24,7 +24,6 @@ function Heads({ data, toggleAllRows, selection, visibleFields }: Props) {
                             ? (selection.length > 0 && selection.length !== data.length)
                             : false
                     }
-                    transitionDuration={0}
                 />
             </th>
             {

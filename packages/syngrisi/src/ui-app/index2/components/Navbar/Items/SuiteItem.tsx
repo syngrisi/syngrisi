@@ -44,12 +44,12 @@ export const SuiteItem = React.memo(function SuiteItem(
                 style={{ cursor: 'pointer', width: '100%' }}
             >
                 <Group
-                    noWrap
+                    wrap="nowrap"
                     pl={8}
                     justify="space-between"
                     gap={0}
                 >
-                    <Group style={{ width: '100%' }} noWrap>
+                    <Group style={{ width: '100%' }} wrap="nowrap">
                         <Stack gap={0} style={{ width: '100%' }}>
                             <Group justify="flex-start" style={{ width: '100%' }}>
                                 <Tooltip label={item.name} multiline withinPortal>
@@ -72,7 +72,7 @@ export const SuiteItem = React.memo(function SuiteItem(
                                     }
                                 >
                                     <Text
-                                        align="right"
+                                        ta="right"
                                         size="xs"
                                         c="dimmed"
                                     >
@@ -87,7 +87,7 @@ export const SuiteItem = React.memo(function SuiteItem(
                         </Stack>
 
                     </Group>
-                    <Group justify="flex-end" gap={0} noWrap>
+                    <Group justify="flex-end" gap={0} wrap="nowrap">
                         <RemoveItemPopover
                             handleRemoveItemClick={handleRemoveItemClick}
                             type={type}

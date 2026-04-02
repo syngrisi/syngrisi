@@ -76,7 +76,7 @@ export function CommonDistinctFilter({ label, updateGroupRules, id, resource }: 
 
     return (
         <form>
-            <Group align="start" noWrap>
+            <Group align="start" wrap="nowrap">
                 <SafeSelect
                     label=""
                     data-test="table-filter-operator"

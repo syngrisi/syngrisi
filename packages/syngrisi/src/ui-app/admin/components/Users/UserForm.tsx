@@ -89,7 +89,7 @@ export default function UserForm(
     return (
         <Group>
             <form>
-                <Group noWrap gap="xs" align="center" data-test={username}>
+                <Group wrap="nowrap" gap="xs" align="center" data-test={username}>
                     <TextInput
                         style={{ width: '11%' }}
                         data-test="user-list-id"
@@ -161,7 +161,7 @@ export default function UserForm(
                     {
                         ((username !== 'Administrator') && (username !== 'Guest'))
                             ? (
-                                <Group noWrap gap={4} align="center">
+                                <Group wrap="nowrap" gap={4} align="center">
                                     <ActionIcon
                                         name="editUser"
                                         data-test={!editMode ? 'user-list-update-button' : 'user-list-send-button'}

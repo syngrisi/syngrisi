@@ -211,7 +211,7 @@ export function MatchTypeSelector({
                 {MATCH_TYPE_OPTIONS.map((option) => (
                     <Menu.Item
                         key={option.value}
-                        icon={matchType === option.value ? <IconCheck size={14} /> : null}
+                        leftSection={matchType === option.value ? <IconCheck size={14} /> : null}
                         onClick={() => setMatchType(option.value)}
                     >
                         <Text size="sm" fw={matchType === option.value ? 600 : 400}>

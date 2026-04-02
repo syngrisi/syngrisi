@@ -62,7 +62,7 @@ Feature: Create User
     When I click element with locator "button[aria-label='Add New User']"
     When I fill "j_doe@gmail.com" into element with label "Email"
 
-    Then the element with locator "//input[@aria-label='Email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "user with this email already exists"
+    Then the element with locator "//input[@aria-label='Email']/../../*[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "user with this email already exists"
 
     When I scroll to element "button[aria-label='Create']"
     When I click element with locator "button[aria-label='Create']"
@@ -74,7 +74,7 @@ Feature: Create User
     # invalid email - disabled fields
     When I click element with locator "button[aria-label='Add New User']"
     When I fill "j_doe@" into element with label "Email"
-    Then the element with locator "//input[@aria-label='Email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "Invalid email format"
+    Then the element with locator "//input[@aria-label='Email']/../../*[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "Invalid email format"
 
     Then the element with locator "input[aria-label='First Name'][data-test='user-add-first-name']" should have has attribute "disabled"
     Then the element with locator "input[aria-label='Last Name'][data-test='user-add-last-name']" should have has attribute "disabled"
@@ -82,13 +82,13 @@ Feature: Create User
 
     When I scroll to element "button[aria-label='Create']"
     When I click element with locator "button[aria-label='Create']"
-    Then the element with locator "//input[@aria-label='Email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "Invalid email format"
+    Then the element with locator "//input[@aria-label='Email']/../../*[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "Invalid email format"
 
     # valid email - enabled fields
     When I refresh page
     When I click element with locator "button[aria-label='Add New User']"
     When I fill "j_doe@xxx" into element with label "Email"
-    And the element "//input[@aria-label='Email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" does not exist
+    And the element "//input[@aria-label='Email']/../../*[contains(@class, 'mantine-InputWrapper-error')]" does not exist
 
     Then the element with locator "input[aria-label='First Name'][data-test='user-add-first-name']" should not have attribute "disabled"
     Then the element with locator "input[aria-label='Last Name'][data-test='user-add-last-name']" should not have attribute "disabled"

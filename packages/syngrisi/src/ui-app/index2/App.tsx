@@ -181,6 +181,9 @@ function App() {
                     lg: '75em',
                     xl: '87.5em',
                 },
+                components: {
+                    Text: { defaultProps: { component: 'div' } },
+                },
             }}
         >
             <AppInner />

@@ -33,5 +33,5 @@ Feature: Switch Color Theme
     # logo label
     Then the css attribute "color" from element "[aria-label='Syngrisi']" is "rgba(255,255,255,1)"
     # logo container
-    Then the css attribute "color" from element "[aria-label='Logo container']" is "rgba(193,194,197,1)"
+    Then the css attribute "color" from element "[aria-label='Logo container']" is "rgba(201,201,201,1)"
 

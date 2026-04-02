@@ -27,7 +27,7 @@ export function UserInfoModal({ opened, setOpened }: { opened: boolean, setOpene
             {
                 (user.isSuccess && user.data)
                     ? (
-                        <Group noWrap>
+                        <Group wrap="nowrap">
                             <Avatar src={null} color="white" size={120} radius={70}>
                                 <IconUser stroke={1} size={120} radius="md" />
                             </Avatar>
@@ -54,7 +54,7 @@ export function UserInfoModal({ opened, setOpened }: { opened: boolean, setOpene
                                 </Text>
 
                                 <Group
-                                    noWrap
+                                    wrap="nowrap"
                                     gap={5}
                                     mt={3}
                                 >

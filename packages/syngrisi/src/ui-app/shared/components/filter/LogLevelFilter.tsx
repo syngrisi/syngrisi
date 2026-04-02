@@ -49,7 +49,7 @@ export function LogLevelFilter({ label, updateGroupRules, id }: Props) {
 
     return (
         <form>
-            <Group align="start" noWrap>
+            <Group align="start" wrap="nowrap">
                 <SafeSelect
                     label=""
                     data-test="table-filter-operator"

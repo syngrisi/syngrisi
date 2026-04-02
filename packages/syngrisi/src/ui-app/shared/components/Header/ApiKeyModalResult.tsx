@@ -49,8 +49,7 @@ export function ApiKeyModalResult({ opened, setOpened, apiKey }: { opened: boole
                                     id="api-key"
                                     value={apiKey.data.apikey}
                                     style={{ width: '340px', display: 'inline' }}
-                                    icon={<IconKey />}
-                                    style={{ display: 'inline' }}
+                                    leftSection={<IconKey />}
                                 />
                                 <ActionIcon ml={-10} data-test="copy-api-icon">
                                     <CopyIcon

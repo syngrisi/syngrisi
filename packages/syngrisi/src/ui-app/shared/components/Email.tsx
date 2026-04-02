@@ -68,15 +68,11 @@ export const Email = {
                 required
                 rightSection={(userByEmailQuery.isFetching)
                 && <Loader size="xs" />}
-                icon={<IconAt size={16} />}
+                leftSection={<IconAt size={16} />}
                 autoComplete="nope"
                 disabled={disabled}
                 id="email"
-                styles={
-                    () => (
-                        { input: { paddingRight: 36 } }
-                    )
-                }
+                styles={{ input: { paddingRight: 36 } }}
                 {...rest}
             />
         );

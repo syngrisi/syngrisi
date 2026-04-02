@@ -678,7 +678,7 @@ export function CheckDetails({
                     gap={4}
                     align="stretch"
                     style={{ width: '100%' }}
-                    noWrap
+                    wrap="nowrap"
                 >
                     {/* Related checks */}
                     {relatedRendered && (

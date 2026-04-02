@@ -371,7 +371,7 @@ export default function AdminPluginSettings() {
                     {plugins.map((plugin) => (
                         <Accordion.Item key={plugin.pluginName} value={plugin.pluginName} data-value={plugin.pluginName}>
                             <Accordion.Control>
-                                <Group justify="space-between" noWrap>
+                                <Group justify="space-between" wrap="nowrap">
                                     <Group>
                                         <Text fw={500}>{plugin.displayName}</Text>
                                         {plugin.version && (

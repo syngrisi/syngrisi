@@ -106,24 +106,12 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                                 src={imagePreviewSrc}
                                                 data-test-preview-image={check.name}
                                                 fit="contain"
-                                                width={`${imageWeight * 4}px`}
-                                                withPlaceholder
-                                                placeholder={<Skeleton height={80} width={imageWeight * 4} animate />}
+                                                w={`${imageWeight * 4}px`}
                                                 alt={check.name}
-                                                // style={{
-                                                //     cursor: 'pointer',
-                                                //     // border: `1px solid ${colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]}`
-                                                // }}
-                                                styles={
-                                                    () => ({
-                                                        image: {
-                                                            // cursor: 'pointer',
-                                                            // maxHeight: `${imageWeight * 4}px`,
-                                                            aspectRatio: '1/1',
-                                                            // height: '10%!important',
-                                                        },
-                                                    })
-                                                }
+                                                fallbackSrc=""
+                                                style={{
+                                                    aspectRatio: '1/1',
+                                                }}
                                                 onClick={handlePreviewImageClick}
                                             />
                                         </Group>
@@ -149,7 +137,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                     checksViewSize={checksViewSize}
                                 />
 
-                                <Group gap={4} justify="flex-start" noWrap>
+                                <Group gap={4} justify="flex-start" wrap="nowrap">
                                     <AcceptButton
                                         check={check}
                                         testUpdateQuery={testUpdateQuery}
@@ -234,15 +222,10 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                                 src={imagePreviewSrc}
                                                 fit="contain"
                                                 alt={check.name}
-                                                withPlaceholder
-                                                placeholder={<Skeleton height={100} width="100%" animate />}
-                                                styles={
-                                                    () => ({
-                                                        image: {
-                                                            maxHeight: checksViewMode === 'bounded' ? `${imageWeight * 8}px` : '',
-                                                        },
-                                                    })
-                                                }
+                                                fallbackSrc=""
+                                                style={{
+                                                    maxHeight: checksViewMode === 'bounded' ? `${imageWeight * 8}px` : undefined,
+                                                }}
                                             />
                                         </Group>
                                     </a>
@@ -251,7 +234,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             </Card.Section>
 
                             {/* CHECK TOOLBAR */}
-                            <Group justify="space-between" pl="sm" pr="sm" mt="xs" mb={8} gap={4} align="center" noWrap>
+                            <Group justify="space-between" pl="sm" pr="sm" mt="xs" mb={8} gap={4} align="center" wrap="nowrap">
                                 <Status check={check} variant="filled" />
 
                                 <ViewPortLabel
@@ -263,7 +246,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                     checksViewSize={checksViewSize}
                                     displayed={(checksViewSize !== 'small')}
                                 />
-                                <Group gap={8} justify="flex-end" noWrap>
+                                <Group gap={8} justify="flex-end" wrap="nowrap">
                                     <AcceptButton
                                         size={22}
                                         check={check}

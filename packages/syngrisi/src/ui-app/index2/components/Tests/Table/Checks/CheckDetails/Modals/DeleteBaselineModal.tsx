@@ -20,7 +20,7 @@ export const DeleteBaselineModal: React.FC<DeleteBaselineModalProps> = ({
     return (
         <Modal opened={opened} onClose={onClose} title="Delete Baseline" centered>
             <Stack gap="md">
-                <Group noWrap align="flex-start">
+                <Group wrap="nowrap" align="flex-start">
                     <IconAlertTriangle size={40} color="red" style={{ minWidth: 40 }} />
                     <Stack gap="xs">
                         <Text fw={500}>

@@ -112,7 +112,7 @@ export default function AdminLogs() {
     ]);
 
     return (
-        <Group justify="space-between" align="start" noWrap>
+        <Group justify="space-between" align="start" wrap="nowrap">
             {/* eslint-disable-next-line no-nested-ternary */}
             {infinityQuery.status === 'loading'
                 ? (

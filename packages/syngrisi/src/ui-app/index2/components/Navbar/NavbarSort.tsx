@@ -61,7 +61,7 @@ export function NavbarSort(
             timingFunction="ease"
         >
             {(styles) => (
-                <Group align="end" justify="space-between" noWrap style={{ width: '100%' }} style={styles}>
+                <Group align="end" justify="space-between" wrap="nowrap" style={{ width: '100%', ...styles }}>
                     <SafeSelect
                         label="Sort by"
                         data-test="navbar-sort-by-select"
