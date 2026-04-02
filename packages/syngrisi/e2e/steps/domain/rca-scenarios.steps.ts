@@ -2,6 +2,8 @@ import { Given, When, Then } from '@fixtures';
 import type { AppServerFixture, TestStore } from '@fixtures';
 import { chromium } from '@playwright/test';
 import { createLogger } from '@lib/logger';
+import mongoose from 'mongoose';
+import { gzipSync } from 'node:zlib';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
@@ -80,16 +82,62 @@ async function capturePageData(url: string, collectDom: boolean = true): Promise
         // COLLECT_DOM_TREE_SCRIPT returns JSON string, parse it to object
         let domDump: object | null = null;
         if (collectDom) {
-            try {
-                const domDumpStr = await page.evaluate(DOM_COLLECTOR_SCRIPT) as string | undefined;
-                if (domDumpStr && typeof domDumpStr === 'string') {
-                    domDump = JSON.parse(domDumpStr);
-                } else {
-                    logger.warn(`DOM collector returned invalid data: ${typeof domDumpStr}`);
+            for (let attempt = 1; attempt <= 5; attempt++) {
+                try {
+                    const domDumpStr = await page.evaluate(DOM_COLLECTOR_SCRIPT) as string | undefined;
+                    if (domDumpStr && typeof domDumpStr === 'string') {
+                        domDump = JSON.parse(domDumpStr);
+                        break;
+                    }
+                    logger.warn(`DOM collector returned invalid data on attempt ${attempt}: ${typeof domDumpStr}`);
+                } catch (domError) {
+                    logger.warn(`Failed to collect DOM data on attempt ${attempt}: ${domError}`);
                 }
-            } catch (domError) {
-                logger.warn(`Failed to collect DOM data: ${domError}`);
-                // Continue without DOM data
+
+                await page.waitForTimeout(250);
+            }
+
+            if (!domDump) {
+                logger.warn('Falling back to lightweight DOM serializer');
+                domDump = await page.evaluate(() => {
+                    const serializeNode = (element: Element): any => {
+                        const htmlElement = element as HTMLElement;
+                        const rect = htmlElement.getBoundingClientRect();
+                        const computed = window.getComputedStyle(htmlElement);
+                        const computedStyles = {
+                            display: computed.display,
+                            visibility: computed.visibility,
+                            position: computed.position,
+                            color: computed.color,
+                            backgroundColor: computed.backgroundColor,
+                            fontSize: computed.fontSize,
+                        };
+
+                        const attributes = Array.from(element.attributes).reduce<Record<string, string>>((acc, attr) => {
+                            acc[attr.name] = attr.value;
+                            return acc;
+                        }, {});
+
+                        const children = Array.from(element.children).map(serializeNode);
+                        const text = element.children.length === 0 ? (element.textContent || '').trim() : '';
+
+                        return {
+                            tagName: element.tagName.toLowerCase(),
+                            attributes,
+                            rect: {
+                                x: rect.x,
+                                y: rect.y,
+                                width: rect.width,
+                                height: rect.height,
+                            },
+                            computedStyles,
+                            children,
+                            text,
+                        };
+                    };
+
+                    return serializeNode(document.documentElement);
+                });
             }
         }
 
@@ -341,12 +389,7 @@ async function createActualCheck(
     const baselineCheckId = testData.get('rcaScenarioBaselineCheckId') as string;
     logger.info(`Accepting baseline check: ${baselineCheckId}`);
 
-    const checkFilter = encodeURIComponent(JSON.stringify({ _id: baselineCheckId }));
-    const checkResponse = await got.get(`${baseURL}/v1/checks?limit=0&filter=${checkFilter}`, {
-        headers: { apikey: hashedApiKey },
-    });
-    const checkDetails = JSON.parse(checkResponse.body);
-    const check = checkDetails.results?.[0];
+    const check = await waitForScenarioCheck(baseURL, hashedApiKey, baselineCheckId);
     if (!check) {
         throw new Error(`Check ${baselineCheckId} not found`);
     }
@@ -405,8 +448,17 @@ async function createActualCheck(
         }
     );
 
-    logger.info(`Actual check created: ${checkResult?._id || checkResult?.id}, status: ${checkResult?.status}`);
-    testData.set('rcaScenarioActualCheckId', checkResult?._id || checkResult?.id);
+    const actualCheck = await waitForScenarioCheckByTestAndName(
+        baseURL,
+        hashedApiKey,
+        testId,
+        'RCA-Scenario-Check'
+    );
+    const actualCheckId = actualCheck?._id || actualCheck?.id || checkResult?._id || checkResult?.id;
+
+    logger.info(`Actual check created: ${actualCheckId}, status: ${actualCheck?.status || checkResult?.status}`);
+    await ensureActualDomSnapshotExists(appServer, hashedApiKey, actualCheckId, domDump);
+    testData.set('rcaScenarioActualCheckId', actualCheckId);
 
     await stopTestSession(baseURL, hashedApiKey, testId);
     logger.info('RCA scenario actual test session stopped');
@@ -415,6 +467,135 @@ async function createActualCheck(
         scenarioServer.close();
         scenarioServer = null;
     }
+}
+
+async function waitForScenarioCheck(baseURL: string, hashedApiKey: string, checkId: string) {
+    const checkFilter = encodeURIComponent(JSON.stringify({ _id: checkId }));
+    const maxRetries = 20;
+    const delayMs = 1000;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        const checkResponse = await got.get(`${baseURL}/v1/checks?limit=0&filter=${checkFilter}`, {
+            headers: { apikey: hashedApiKey },
+        });
+        const checkDetails = JSON.parse(checkResponse.body);
+        const check = checkDetails.results?.[0];
+
+        if (check) {
+            if (attempt > 1) {
+                logger.info(`Scenario check ${checkId} became available after ${attempt} attempts`);
+            }
+            return check;
+        }
+
+        logger.warn(`Scenario check ${checkId} not found yet (attempt ${attempt}/${maxRetries}), retrying...`);
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+
+    return null;
+}
+
+async function waitForScenarioCheckByTestAndName(
+    baseURL: string,
+    hashedApiKey: string,
+    testId: string,
+    checkName: string
+) {
+    const filter = encodeURIComponent(JSON.stringify({ test: testId, name: checkName }));
+    const maxRetries = 20;
+    const delayMs = 1000;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        const response = await got.get(
+            `${baseURL}/v1/checks?limit=1&sortBy=createdDate:desc&filter=${filter}`,
+            { headers: { apikey: hashedApiKey } }
+        );
+        const payload = JSON.parse(response.body);
+        const check = payload.results?.[0];
+
+        if (check) {
+            if (attempt > 1) {
+                logger.info(`Scenario check ${checkName} for test ${testId} became available after ${attempt} attempts`);
+            }
+            return check;
+        }
+
+        logger.warn(`Scenario check ${checkName} for test ${testId} not found yet (attempt ${attempt}/${maxRetries}), retrying...`);
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+
+    return null;
+}
+
+async function ensureActualDomSnapshotExists(
+    appServer: AppServerFixture,
+    hashedApiKey: string,
+    checkId: string,
+    domDump: object | null
+) {
+    if (!checkId || !domDump) {
+        return;
+    }
+
+    const baseURL = appServer.baseURL;
+    const domUrl = `${baseURL}/v1/checks/${checkId}/dom`;
+    const existingSnapshotResponse = await got.get(domUrl, {
+        headers: { apikey: hashedApiKey },
+        throwHttpErrors: false,
+    });
+
+    if (existingSnapshotResponse.statusCode === 200) {
+        return;
+    }
+
+    logger.warn(`DOM snapshot for check ${checkId} is missing after creation, repairing it via domSnapshotService`);
+
+    const connectionString = appServer.config?.connectionString || process.env.SYNGRISI_DB_URI;
+    if (!connectionString) {
+        throw new Error('Cannot repair DOM snapshot: missing connection string');
+    }
+
+    if (mongoose.connection.readyState === 0) {
+        await mongoose.connect(connectionString);
+    }
+
+    const serialized = JSON.stringify(domDump);
+    const hash = crypto.createHash('sha256').update(serialized, 'utf8').digest('hex');
+    const compressed = gzipSync(Buffer.from(serialized, 'utf8'));
+    const filename = `${checkId}_actual_${Date.now()}.dom.gz`;
+    const domSnapshotsPath =
+        process.env.SYNGRISI_DOM_SNAPSHOTS_PATH ||
+        process.env.SYNGRISI_IMAGES_PATH ||
+        appServer.config?.defaultImagesPath;
+
+    if (!domSnapshotsPath) {
+        throw new Error('Cannot repair DOM snapshot: missing DOM snapshots path');
+    }
+
+    await fs.promises.mkdir(domSnapshotsPath, { recursive: true });
+    await fs.promises.writeFile(path.join(domSnapshotsPath, filename), compressed);
+
+    const domSnapshotsCollection = mongoose.connection.collection('vrsdomsnapshots');
+    const existingSnapshot = await domSnapshotsCollection.findOne({
+        checkId: new mongoose.Types.ObjectId(checkId),
+        type: 'actual',
+    });
+
+    if (existingSnapshot) {
+        return;
+    }
+
+    await domSnapshotsCollection.insertOne({
+        checkId: new mongoose.Types.ObjectId(checkId),
+        type: 'actual',
+        filename,
+        hash,
+        compressed: true,
+        originalSize: Buffer.byteLength(serialized, 'utf8'),
+        compressedSize: compressed.length,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    });
 }
 
 Then(

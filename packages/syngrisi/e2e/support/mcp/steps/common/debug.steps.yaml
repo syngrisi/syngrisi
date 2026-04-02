@@ -1,8 +1,8 @@
 metadata:
   category: common/debug
-  generatedAt: '2026-03-31T15:49:22.807Z'
+  generatedAt: '2026-04-01T19:43:00.554Z'
   totalFiles: 1
-  totalSteps: 10
+  totalSteps: 12
   sourceFiles:
     - steps/common/debug.steps.ts
 steps:
@@ -12,6 +12,9 @@ steps:
   - pattern: I log current URL
     description: ''
     line: 326
+  - pattern: I log stored javascript result
+    description: ''
+    line: 332
   - pattern: I pause
     description: ''
     line: 283
@@ -32,6 +35,9 @@ steps:
   - pattern: 'I pause with phrase: {string}'
     description: ''
     line: 290
+  - pattern: I save stored javascript result to file {string}
+    description: ''
+    line: 346
   - pattern: I seed test environment with example data
     description: |-
       Step definition: `When I seed test environment with example data`
@@ -45,13 +51,13 @@ steps:
       ```gherkin
       When I seed test environment with example data
       ```
-    line: 434
+    line: 456
   - pattern: I start the debug MCP Test Engine
     description: ''
-    line: 337
+    line: 359
   - pattern: 'I start the MCP test engine with "codex":'
     description: ⚠️ experimental, not used widely yet
-    line: 348
+    line: 370
   - pattern: I test
     description: ''
-    line: 332
+    line: 354

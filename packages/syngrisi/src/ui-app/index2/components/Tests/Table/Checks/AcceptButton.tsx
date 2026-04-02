@@ -8,6 +8,7 @@ import ActionPopoverIcon from '@shared/components/ActionPopoverIcon';
 import { ChecksService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
 import { log } from '@shared/utils/Logger';
+import { replaceItemInInfinitePages, replaceItemInPaginatedResult } from '@shared/utils/queryCache';
 
 interface Props {
     check: any
@@ -43,17 +44,44 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
     const mutationAcceptCheck = useMutation(
         {
             mutationFn: (data: { check: any, newBaselineId: string }) => ChecksService.acceptCheck({ ...data, apikey }),
-            onSuccess: async () => {
+            onSuccess: async (updatedCheck: any) => {
                 successMsg({ message: 'Check has been successfully accepted' });
-                await queryClient.invalidateQueries({ queryKey: ['preview_checks', check.test._id] });
-                await queryClient.invalidateQueries({ queryKey: ['check_for_modal', check._id] });
-                // Invalidate baseline queries so toolbar buttons become enabled after accept
-                await queryClient.invalidateQueries({ queryKey: ['baseline_by_snapshot_id'] });
+
+                const testId = check.test?._id || check.test;
+                const nextCheck = {
+                    ...check,
+                    ...updatedCheck,
+                    markedAs: 'accepted',
+                    isCurrentlyAccepted: true,
+                    wasAcceptedEarlier: false,
+                };
+
+                if (testId) {
+                    queryClient.setQueryData(
+                        ['preview_checks', testId],
+                        (current: any) => replaceItemInPaginatedResult(current, nextCheck),
+                    );
+                }
+                queryClient.setQueryData(
+                    ['check_for_modal', check._id],
+                    (current: any) => replaceItemInPaginatedResult(current, nextCheck),
+                );
+                if (testId) {
+                    queryClient.setQueryData(
+                        ['sibling_checks', testId],
+                        (current: any) => replaceItemInPaginatedResult(current, nextCheck),
+                    );
+                }
+                queryClient.setQueriesData(
+                    { queryKey: ['related_checks_infinity_pages'] },
+                    (current: any) => replaceItemInInfinitePages(current, nextCheck),
+                );
+
                 await queryClient.refetchQueries(
                     { queryKey: ['related_checks_infinity_pages', initCheck?._id || check._id] },
                 );
-                checksQuery.refetch();
-                if (testUpdateQuery) testUpdateQuery.refetch();
+
+                await testUpdateQuery.refetch();
             },
             onError: (e: any) => {
                 errorMsg({ error: 'Cannot accept the check' });

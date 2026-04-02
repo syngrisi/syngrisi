@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { IFirstPagesQuery, IPagesQuery } from '@shared/interfaces/logQueries';
 import ILog from '@shared/interfaces/ILog';
@@ -12,6 +12,7 @@ interface IIScrollParams {
     baseFilterObj?: { [key: string]: any } | null
     filterObj?: { [key: string]: any }
     newestItemsFilterKey?: string
+    newestItemsEnabled?: boolean
     firstPageQueryUniqueKey?: any // object or something
     infinityScrollLimit?: number
     extraOptions?: { [key: string]: any }
@@ -25,15 +26,25 @@ export default function useInfinityScroll(
         baseFilterObj = {},
         filterObj = {},
         newestItemsFilterKey,
+        newestItemsEnabled = true,
         sortBy,
         infinityScrollLimit = 20,
         extraOptions = {},
     }: IIScrollParams,
 ) {
+    const [refreshNonce, setRefreshNonce] = useState(0);
+    const serializedBaseFilter = JSON.stringify(baseFilterObj || {});
+    const serializedFilter = JSON.stringify(filterObj || {});
+    const serializedExtraOptions = JSON.stringify(extraOptions || {});
 
     const firstPageQueryOptions: any = [
         'infinity_first_page',
         resourceName,
+        serializedBaseFilter,
+        serializedFilter,
+        sortBy,
+        serializedExtraOptions,
+        refreshNonce,
     ]
     if (firstPageQueryUniqueKey) {
         firstPageQueryOptions.push(firstPageQueryUniqueKey);
@@ -58,7 +69,7 @@ export default function useInfinityScroll(
             ),
             // enabled: false,
             staleTime: 30 * 1000, // 30 seconds - data considered fresh for 30s, then can refetch
-            refetchOnWindowFocus: true,
+            refetchOnWindowFocus: false,
             onError: (e) => {
                 errorMsg({ error: e });
             },
@@ -105,10 +116,10 @@ export default function useInfinityScroll(
         };
     }, [
         firstPageData.timestamp,
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        JSON.stringify(baseFilterObj),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        JSON.stringify(filterObj),
+        serializedBaseFilter,
+        serializedFilter,
+        newestItemsFilterKey,
+        firstPageData.newestItemsFilterValue,
     ]
     );
 
@@ -125,8 +136,10 @@ export default function useInfinityScroll(
                 resourceName,
                 firstPageData.timestamp,
                 sortBy,
-                JSON.stringify(filterObj),
-                JSON.stringify(baseFilterObj),
+                serializedFilter,
+                serializedBaseFilter,
+                serializedExtraOptions,
+                refreshNonce,
             ],
             queryFn: ({ pageParam = 1 }) => GenericService.get(
                 resourceName,
@@ -156,7 +169,8 @@ export default function useInfinityScroll(
         [
             'logs_infinity_newest_pages',
             resourceName,
-            firstPageData.newestItemsFilterValue
+            firstPageData.newestItemsFilterValue,
+            refreshNonce,
         ],
         () => {
             const beforeNewestItemsFilter = (newestItemsFilterKey && firstPageData.newestItemsFilterValue)
@@ -178,14 +192,19 @@ export default function useInfinityScroll(
             );
         },
         {
-            enabled: infinityQuery.data?.pages?.length! > 0,
-            refetchOnWindowFocus: true, // Always refetch on window focus
+            enabled: newestItemsEnabled && infinityQuery.data?.pages?.length! > 0,
+            refetchOnWindowFocus: false,
             // @ts-ignore
-            refetchInterval: 15000, // Poll every 15 seconds to reduce server load
+            refetchInterval: newestItemsEnabled ? 15000 : false,
             onError: (e) => {
                 errorMsg({ error: e });
             },
         },
     );
-    return { firstPageQuery, infinityQuery, newestItemsQuery };
+
+    const refresh = useCallback(() => {
+        setRefreshNonce((current) => current + 1);
+    }, []);
+
+    return { firstPageQuery, infinityQuery, newestItemsQuery, refresh };
 }

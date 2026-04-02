@@ -11,6 +11,7 @@ import { BrowserIcon } from '@shared/components/Check/BrowserIcon';
 import { OsIcon } from '@shared/components/Check/OsIcon';
 import { PreviewCheckTooltipLabel } from '@index/components/Tests/Table/Checks/PreviewCheckTooltipLabel';
 import { useParams } from '@hooks/useParams';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Props {
     checkData: any
@@ -21,6 +22,7 @@ interface Props {
 
 export function RelatedCheckItem({ checkData, activeCheckId, setRelatedActiveCheckId, index }: Props) {
     const { setQuery } = useParams();
+    const queryClient = useQueryClient();
     const check = checkData;
     const theme = useMantineTheme();
     const imageFilename = check.diffId?.filename || check.actualSnapshotId?.filename || check.baselineId?.filename;
@@ -29,7 +31,19 @@ export function RelatedCheckItem({ checkData, activeCheckId, setRelatedActiveChe
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
 
     const handleItemClick = () => {
+        queryClient.setQueryData(
+            ['check_for_modal', check._id],
+            {
+                results: [check],
+                page: 1,
+                limit: 1,
+                totalPages: 1,
+                totalResults: 1,
+                timestamp: Date.now(),
+            },
+        );
         setQuery({ checkId: checkData._id });
+        setQuery({ modalIsOpen: 'true' });
         setRelatedActiveCheckId(() => check._id);
     };
 
