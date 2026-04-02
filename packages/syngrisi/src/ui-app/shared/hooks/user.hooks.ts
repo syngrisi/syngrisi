@@ -20,6 +20,8 @@ export const UserHooks = {
                 onError: (err: unknown) => {
                     errorMsg({ error: err });
                 },
+                staleTime: 5 * 60 * 1000,
+                cacheTime: 10 * 60 * 1000,
                 refetchOnWindowFocus: false,
             },
         );

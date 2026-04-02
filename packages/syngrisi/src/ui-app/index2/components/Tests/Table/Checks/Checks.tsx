@@ -35,8 +35,8 @@ export function Checks({ item, testUpdateQuery }: Props) {
             'checksByIds',
         ),
         {
-            refetchOnWindowFocus: true,
-            staleTime: 10 * 1000, // 10 seconds - checks data considered fresh for 10s
+            refetchOnWindowFocus: false,
+            staleTime: 30 * 1000,
             onSuccess: () => {
             },
             onError: (e) => {

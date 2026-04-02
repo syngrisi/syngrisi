@@ -147,6 +147,18 @@ async function waitForIgnoreRegionCountChange(page: Page, expected: number): Pro
   );
 }
 
+async function dismissOpenModalIfNeeded(page: Page): Promise<void> {
+  const dialog = page.locator("div[role='dialog']").first();
+  const isVisible = await dialog.isVisible().catch(() => false);
+  if (!isVisible) {
+    return;
+  }
+
+  logger.warn('A modal dialog is still visible before preview click, dismissing it with Escape');
+  await page.keyboard.press('Escape').catch(() => undefined);
+  await dialog.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => undefined);
+}
+
 async function clickWithFallback(locator: Locator, noWaitAfter: boolean, logContext: string): Promise<void> {
   try {
     await locator.click({ timeout: 30000, noWaitAfter });
@@ -237,6 +249,8 @@ When(
         const maxAttempts = 3;
 
         for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+          await dismissOpenModalIfNeeded(page);
+
           const preview = getLocatorQuery(page, renderedValue).first();
           await preview.waitFor({ state: 'visible', timeout: 30000 });
           await preview.waitFor({ state: 'attached', timeout: 30000 });
@@ -261,6 +275,7 @@ When(
             if (attempt === maxAttempts) {
               throw error;
             }
+            await dismissOpenModalIfNeeded(page);
             logger.warn(`Preview click did not open check on attempt ${attempt}/${maxAttempts}, retrying`);
           }
         }
