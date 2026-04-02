@@ -10,7 +10,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState, useRef } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconX } from '@tabler/icons-react';
 import { useParams } from '@hooks/useParams';
 import { GenericService } from '@shared/services';
@@ -27,6 +27,7 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
     const { query, setQuery } = useParams();
     const [checkModalOpened, checkModalHandlers] = useDisclosure(false);
     const pollCountRef = useRef(0);
+    const queryClient = useQueryClient();
 
     const [initCheckId, setInitCheckId] = useState<string>('');
     useEffect(function onCheckIdChange() {
@@ -42,6 +43,51 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
         setQuery({ modalIsOpen: undefined });
         setInitCheckId('');
     };
+
+    const cachedPreviewCheck = React.useMemo(() => {
+        if (!initCheckId) return undefined;
+
+        const cachedModalData = queryClient.getQueryData(['check_for_modal', initCheckId]) as any;
+        const cachedModalCheck = cachedModalData?.results?.[0];
+        if (cachedModalCheck) return cachedModalCheck;
+
+        const previewQueries = queryClient.getQueriesData({ queryKey: ['preview_checks'] });
+        for (const [, data] of previewQueries) {
+            const check = (data as any)?.results?.find?.((item: any) => item?._id === initCheckId);
+            if (check) return check;
+        }
+
+        return undefined;
+    }, [initCheckId, queryClient]);
+
+    const cachedSiblingChecks = React.useMemo(() => {
+        const testId = cachedPreviewCheck?.test?._id || cachedPreviewCheck?.test;
+        if (!testId) return [];
+
+        const previewQueries = queryClient.getQueriesData({ queryKey: ['preview_checks'] });
+        for (const [queryKey, data] of previewQueries) {
+            if ((queryKey as any[])?.[1] !== testId) continue;
+            return (data as any)?.results || [];
+        }
+
+        return [];
+    }, [cachedPreviewCheck?._id, queryClient]);
+
+    const hasPopulatedEntity = (entity: any) => Boolean(entity && typeof entity === 'object' && (entity._id || entity.id));
+    const hasNamedEntity = (entity: any) => Boolean(hasPopulatedEntity(entity) && entity.name);
+    const hasSnapshotData = (snapshot: any) => Boolean(hasPopulatedEntity(snapshot) && snapshot.filename);
+
+    const needsCheckRefetch = (check: any) => {
+        if (!check) return true;
+        if (!hasNamedEntity(check.test) || !hasNamedEntity(check.suite) || !hasNamedEntity(check.app)) return true;
+        if (!hasSnapshotData(check.baselineId) || !hasSnapshotData(check.actualSnapshotId)) return true;
+        if (check.diffId && !hasSnapshotData(check.diffId)) return true;
+        if (!check.diffId && check.status?.[0] !== 'new' && check.status?.[0] !== 'passed') return true;
+        return false;
+    };
+
+    const hasHydratedCachedCheck = Boolean(cachedPreviewCheck) && !needsCheckRefetch(cachedPreviewCheck);
+    const shouldFetchCheck = checkModalOpened && needsCheckRefetch(cachedPreviewCheck);
 
     const checkQuery = useQuery(
         {
@@ -59,7 +105,18 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
                 },
                 'initial_check_for_check_details_modal',
             ),
-            enabled: checkModalOpened,
+            enabled: shouldFetchCheck,
+            initialData: hasHydratedCachedCheck
+                ? {
+                    results: [cachedPreviewCheck],
+                    page: 1,
+                    limit: 1,
+                    totalPages: 1,
+                    totalResults: 1,
+                    timestamp: Date.now(),
+                }
+                : undefined,
+            staleTime: hasHydratedCachedCheck ? 10 * 1000 : 0,
             refetchInterval: (data) => {
                 const check = data?.results?.[0];
                 if (check && !check.diffId && check.status[0] !== 'new' && check.status[0] !== 'passed') {
@@ -120,12 +177,14 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
                         : checkData
                             ? (
                                 <CheckDetails
+                                    key={checkData._id}
                                     initCheckData={checkData}
                                     checkQuery={checkQuery}
                                     closeHandler={closeHandler}
                                     relatedRendered={relatedRendered}
                                     testList={testList}
                                     apikey={apikey}
+                                    initialSiblingChecks={cachedSiblingChecks}
                                 />
                             )
                             : (

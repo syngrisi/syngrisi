@@ -1,5 +1,12 @@
 # Development Guide
 
+## Architecture Reference
+
+For a detailed explanation of how the main UI and backend exchange data, how the tests grid works, how check details are structured, how frontend polling and queues behave, and how state is stored, see:
+
+- [UI and Backend Data Flow Architecture](./ARCHITECTURE_UI_BACKEND_DATA_FLOW.md)
+- [Network Request Measurement Checklist](./NETWORK_REQUEST_MEASUREMENT_CHECKLIST.md)
+
 ## Starting the Server
 
 To start the server in development mode with **Authentication enabled**, **Auto-rebuild**, and **Test Users seeded**, run:

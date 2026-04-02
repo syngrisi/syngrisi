@@ -35,11 +35,12 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
     const baseFilter = query.base_filter ? query.base_filter : {};
     if (query.app) baseFilter.app = { $oid: query?.app || '' };
 
-    const { firstPageQuery, infinityQuery, newestItemsQuery } = useInfinityScroll({
+    const { firstPageQuery, infinityQuery, newestItemsQuery, refresh } = useInfinityScroll({
         baseFilterObj: baseFilter,
         filterObj: { ...query.filter, ...query.quick_filter },
         resourceName: 'tests',
         newestItemsFilterKey: 'startDate',
+        newestItemsEnabled: query.modalIsOpen !== 'true',
         sortBy: query.sortBy || '',
     });
     useNavProgressFetchEffect(infinityQuery.isFetching);
@@ -108,6 +109,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                     newestItemsQuery={newestItemsQuery}
                     firstPageQuery={firstPageQuery}
                     infinityQuery={infinityQuery}
+                    refresh={refresh}
                 />,
                 52,
             );
@@ -131,7 +133,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
 
             // Debounce the refetch by 100ms to prevent multiple rapid refetches
             refetchTimeoutRef.current = setTimeout(() => {
-                firstPageQuery.refetch();
+                refresh();
             }, 100);
 
             return () => {
@@ -145,6 +147,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
             query.filter,
             query.app,
             query.sortBy,
+            refresh,
         ],
     );
 

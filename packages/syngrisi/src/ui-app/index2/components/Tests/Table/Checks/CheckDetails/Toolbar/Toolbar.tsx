@@ -24,6 +24,7 @@ interface Props {
     classes: any
     curCheck: any
     baselineId: string
+    baselineData?: any
     initCheckData: any
     checkQuery: any
     closeHandler: any
@@ -51,6 +52,7 @@ export function Toolbar(
         classes,
         curCheck,
         baselineId,
+        baselineData,
         initCheckData,
         checkQuery,
         closeHandler,
@@ -85,9 +87,10 @@ export function Toolbar(
             onSuccess: async () => {
                 successMsg({ message: 'Baseline has been successfully removed' });
                 setDeleteModalOpened(false);
-                await queryClient.invalidateQueries({ queryKey: ['baseline_by_snapshot_id'] });
-                await queryClient.invalidateQueries({ queryKey: ['check_for_modal'] });
-                if (checkQuery) checkQuery.refetch();
+                if (curCheck?.baselineId?._id) {
+                    await queryClient.invalidateQueries({ queryKey: ['baseline_by_snapshot_id', curCheck.baselineId._id] });
+                }
+                await queryClient.invalidateQueries({ queryKey: ['check_for_modal', curCheck._id], exact: true });
                 if (closeHandler) closeHandler();
             },
             onError: (e: any) => {
@@ -198,6 +201,7 @@ export function Toolbar(
                                 <RegionsToolbar
                                     mainView={mainView}
                                     baselineId={baselineId}
+                                    baselineData={baselineData}
                                     view={view}
                                     hasDiff={!!mainView?.diffImage}
                                     currentCheck={curCheck}

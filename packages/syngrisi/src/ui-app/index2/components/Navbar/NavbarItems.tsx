@@ -8,9 +8,10 @@ type Props = {
     infinityQuery: any,
     groupByValue: string,
     activeItemsHandler: any
+    testsStatusesByRun?: Record<string, string[]>
 };
 
-export function NavbarItems({ infinityQuery, groupByValue, activeItemsHandler }: Props) {
+export function NavbarItems({ infinityQuery, groupByValue, activeItemsHandler, testsStatusesByRun = {} }: Props) {
 
     if (!infinityQuery.data) return [];
 
@@ -32,6 +33,7 @@ export function NavbarItems({ infinityQuery, groupByValue, activeItemsHandler }:
                             index={currentIndex}
                             item={item}
                             itemType={groupByValue}
+                            testsStatusesByRun={testsStatusesByRun}
                         />
                     </React.Fragment>
                 );
