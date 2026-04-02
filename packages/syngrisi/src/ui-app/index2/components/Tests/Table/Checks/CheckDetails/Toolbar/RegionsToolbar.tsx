@@ -4,6 +4,7 @@ import { ActionIcon, Group, Kbd, Stack, Text, Tooltip, Divider } from '@mantine/
 import { IconDeviceFloppy, IconShape, IconShapeOff, IconBoxMargin, IconWand } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useHotkeys } from '@mantine/hooks';
+import { useQueryClient } from '@tanstack/react-query';
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 import { log } from '@shared/utils/Logger';
 import { successMsg } from '@shared/utils/utils';
@@ -12,6 +13,7 @@ import { MatchTypeSelector } from './MatchTypeSelector';
 interface Props {
     mainView: any
     baselineId: string
+    baselineData?: any
     currentCheck?: any
     checkQuery?: any
     initialCheckId?: string
@@ -22,6 +24,7 @@ interface Props {
 export function RegionsToolbar({
     mainView,
     baselineId,
+    baselineData,
     view,
     hasDiff,
     currentCheck,
@@ -29,10 +32,45 @@ export function RegionsToolbar({
     initialCheckId,
     apikey,
 }: Props) {
+    const queryClient = useQueryClient();
     const [visibleRegionRemoveButton, setVisibleRegionRemoveButton] = useState(false);
     const [hasBoundRegion, setHasBoundRegion] = useState(false);
     const [hasAnyRegion, setHasAnyRegion] = useState(false);
     const [isDirty, setIsDirty] = useState(false);
+
+    const syncBaselineRegionsCache = () => {
+        const snapshotId = currentCheck?.baselineId?._id;
+        if (!snapshotId || !mainView) return;
+
+        const nextRegions = mainView.getRegionsData();
+        queryClient.setQueryData(['baseline_by_snapshot_id', snapshotId], (prev: any) => {
+            if (!prev?.results?.length) return prev;
+
+            return {
+                ...prev,
+                results: prev.results.map((baseline: any, index: number) => (
+                    index === 0
+                        ? {
+                            ...baseline,
+                            ignoreRegions: nextRegions.ignoreRegions,
+                            boundRegions: nextRegions.boundRegions,
+                        }
+                        : baseline
+                )),
+            };
+        });
+    };
+
+    const saveRegionsAndSyncCache = async () => {
+        if (!baselineId || !mainView) return false;
+
+        const success = await mainView.saveRegions(baselineId);
+        if (success) {
+            syncBaselineRegionsCache();
+        }
+
+        return success;
+    };
 
     const handleAutoRegion = async () => {
         if (!baselineId || !hasDiff || view === 'slider' || !mainView) {
@@ -116,7 +154,7 @@ export function RegionsToolbar({
 
     useHotkeys([
         ['alt+S', () => {
-            mainView.saveRegions(baselineId!);
+            saveRegionsAndSyncCache();
         }],
         ['Delete', () => mainView.removeActiveIgnoreRegions()],
         ['Backspace', () => mainView.removeActiveIgnoreRegions()],
@@ -311,7 +349,9 @@ export function RegionsToolbar({
                     data-check="save-ignore-region"
                     data-disabled={(!hasAnyRegion && !isDirty) ? "true" : undefined}
                     disabled={!hasAnyRegion && !isDirty}
-                    onClick={() => mainView.saveRegions(baselineId!)}
+                    onClick={() => {
+                        saveRegionsAndSyncCache();
+                    }}
                 >
                     <IconDeviceFloppy size={24} stroke={1} />
                 </ActionIcon>
@@ -321,6 +361,7 @@ export function RegionsToolbar({
 
             <MatchTypeSelector
                 baselineId={baselineId}
+                baselineData={baselineData}
                 checkId={currentCheck?._id}
                 currentCheck={currentCheck}
                 checkQuery={checkQuery}

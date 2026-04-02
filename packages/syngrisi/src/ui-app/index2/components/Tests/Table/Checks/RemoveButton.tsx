@@ -7,6 +7,7 @@ import ActionPopoverIcon from '@shared/components/ActionPopoverIcon';
 import { ChecksService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
 import { log } from '@shared/utils/Logger';
+import { removeItemFromPaginatedResult } from '@shared/utils/queryCache';
 
 interface Props {
     testUpdateQuery: any,
@@ -27,13 +28,21 @@ export function RemoveButton({ testUpdateQuery, check, closeHandler, initCheck, 
             onSuccess: async () => {
                 successMsg({ message: 'Check has been successfully removed' });
 
-                await queryClient.invalidateQueries({ queryKey: ['preview_checks', check.test._id || check.test] });
-                await queryClient.invalidateQueries({ queryKey: ['check_for_modal', check._id] });
+                const testId = check.test?._id || check.test;
+                queryClient.setQueryData(
+                    ['preview_checks', testId],
+                    (current: any) => removeItemFromPaginatedResult(current, check._id),
+                );
+                queryClient.removeQueries({ queryKey: ['check_for_modal', check._id], exact: true });
+                queryClient.setQueryData(
+                    ['sibling_checks', testId],
+                    (current: any) => removeItemFromPaginatedResult(current, check._id),
+                );
                 await queryClient.refetchQueries(
                     { queryKey: ['related_checks_infinity_pages', initCheck?._id || check._id] },
                 );
+                await testUpdateQuery.refetch();
 
-                if (testUpdateQuery) testUpdateQuery.refetch();
                 if (closeHandler) closeHandler();
             },
             onError: (e: any) => {
