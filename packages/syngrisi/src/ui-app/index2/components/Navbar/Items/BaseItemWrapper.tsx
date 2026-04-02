@@ -14,6 +14,7 @@ interface Props {
     activeItemsHandler: any
     infinityQuery: any
     itemType: string
+    testsStatusesByRun?: Record<string, string[]>
 }
 
 export function BaseItemWrapper(
@@ -24,6 +25,7 @@ export function BaseItemWrapper(
         id,
         activeItemsHandler,
         infinityQuery,
+        testsStatusesByRun = {},
     }: Props,
 ) {
     const type = itemTypesMap[itemType];
@@ -45,6 +47,8 @@ export function BaseItemWrapper(
                 className={className}
                 infinityQuery={infinityQuery}
                 handlerItemClick={handlerItemClick}
+                testsStatuses={testsStatusesByRun[item._id] || []}
+                statusesLoaded={Object.prototype.hasOwnProperty.call(testsStatusesByRun, item._id)}
             />
         ),
         suites: (

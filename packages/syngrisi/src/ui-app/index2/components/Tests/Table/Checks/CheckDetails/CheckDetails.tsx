@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { fabric } from 'fabric';
 import { createStyles, Group, Loader, Stack, Box } from '@mantine/core';
 import { useDisclosure, useDocumentTitle, useHotkeys } from '@mantine/hooks';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 import { createImageAndWaitForLoad, imageFromUrl, imageFromElement } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/helpers';
 import { errorMsg } from '@shared/utils';
@@ -39,6 +39,7 @@ interface Props {
     relatedRendered?: boolean,
     testList?: any[],
     apikey?: string,
+    initialSiblingChecks?: any[],
 }
 
 export function CheckDetails({
@@ -48,11 +49,13 @@ export function CheckDetails({
     relatedRendered = true,
     testList = [],
     apikey,
+    initialSiblingChecks = [],
 }: Props) {
     useDocumentTitle(initCheckData?.name);
     const canvasElementRef = useRef(null);
     const canvasContainerRef = useRef(null);
     const { query, setQuery } = useParams();
+    const queryClient = useQueryClient();
     const { classes } = useStyles();
     const [mainView, setMainView] = useState<MainView | null>(null);
     const [isDirty, setIsDirty] = useState(false);
@@ -102,6 +105,13 @@ export function CheckDetails({
         }
         return '';
     }, [baselineQuery.data?.results]);
+
+    const baselineData = useMemo(() => {
+        if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
+            return baselineQuery.data.results[0];
+        }
+        return null;
+    }, [baselineQuery.data?.timestamp]);
 
     const usageCount = useMemo<number>(() => {
         if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
@@ -184,7 +194,10 @@ export function CheckDetails({
     const settingsQuery = useQuery(
         ['settings-public'],
         () => GenericService.get('settings/public'),
-        { refetchOnWindowFocus: false }
+        {
+            refetchOnWindowFocus: false,
+            staleTime: 5 * 60 * 1000,
+        }
     );
 
     const isShareEnabled = useMemo(() => {
@@ -205,6 +218,9 @@ export function CheckDetails({
     }, [settingsQuery.data]);
 
     // Navigation Logic
+    const hasInitialSiblingChecks = initialSiblingChecks.length > 0
+        && initialSiblingChecks.some((item) => item?._id === currentCheck?._id);
+
     const siblingChecksQuery = useQuery(
         ['sibling_checks', currentCheck?.test?._id],
         () => GenericService.get(
@@ -219,8 +235,19 @@ export function CheckDetails({
             'sibling_checks_for_nav'
         ),
         {
-            enabled: !!currentCheck?.test?._id,
+            enabled: !!currentCheck?.test?._id && !hasInitialSiblingChecks,
             refetchOnWindowFocus: false,
+            initialData: hasInitialSiblingChecks
+                ? {
+                    results: initialSiblingChecks,
+                    page: 1,
+                    limit: initialSiblingChecks.length || 1,
+                    totalPages: 1,
+                    totalResults: initialSiblingChecks.length,
+                    timestamp: Date.now(),
+                }
+                : undefined,
+            staleTime: hasInitialSiblingChecks ? 10 * 1000 : 0,
         }
     );
     const siblingChecks = useMemo(() => {
@@ -245,7 +272,11 @@ export function CheckDetails({
         });
     }, [siblingChecksQuery.data?.results]);
     const currentCheckIndex = siblingChecks.findIndex((c: any) => c._id === currentCheck._id);
-    const currentTestIndex = testList.findIndex((t: any) => (t.id || t._id) === currentCheck?.test?._id);
+    const currentTestId = String(currentCheck?.test?._id || currentCheck?.test?.id || currentCheck?.test || '');
+    const currentTestIndex = testList.findIndex((t: any) => {
+        const candidateIds = [t?._id, t?.id].filter(Boolean).map((value) => String(value));
+        return candidateIds.includes(currentTestId);
+    });
 
     const handleNavigateCheck = (direction: 'prev' | 'next') => {
         if (!siblingChecks.length) return;
@@ -271,7 +302,7 @@ export function CheckDetails({
 
         if (targetTestIndex >= 0 && targetTestIndex < testList.length) {
             const targetTest = testList[targetTestIndex];
-            const targetTestId = targetTest.id || targetTest._id;
+            const targetTestId = targetTest._id || targetTest.id;
 
             const checks = await GenericService.get(
                 'checks',
@@ -286,7 +317,23 @@ export function CheckDetails({
             );
 
             if (checks.results && checks.results.length > 0) {
-                setQuery({ checkId: checks.results[0]._id });
+                const targetCheckId = checks.results[0]._id || checks.results[0].id;
+                if (targetCheckId) {
+                    await queryClient.prefetchQuery(
+                        ['check_for_modal', targetCheckId],
+                        () => GenericService.get(
+                            'checks',
+                            { _id: targetCheckId },
+                            {
+                                populate: 'baselineId,actualSnapshotId,diffId,test,suite,app',
+                                limit: '1',
+                                share: apikey,
+                            },
+                            'prefetch_check_for_test_navigation',
+                        ),
+                    );
+                    setQuery({ checkId: targetCheckId });
+                }
             }
         }
     };
@@ -453,11 +500,12 @@ export function CheckDetails({
     useEffect(function afterMainViewCreatedHandleRegions() {
         if (!baselineId) return;
         if (mainView) {
-            mainView.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
+            mainView.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId, baselineData);
         }
     }, [
         mainView,
         baselineId,
+        baselineData,
     ]);
 
     // Sync RCA overlay with MainView
@@ -609,6 +657,7 @@ export function CheckDetails({
                     initCheckData={initCheckData}
                     classes={classes}
                     baselineId={baselineId}
+                    baselineData={baselineData}
                     usageCount={usageCount}
                     closeHandler={closeHandler}
                     onNavigateCheck={handleNavigateCheck}

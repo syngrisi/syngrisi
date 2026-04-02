@@ -7,9 +7,10 @@ interface Props {
     newestItemsQuery: any,
     firstPageQuery: any,
     infinityQuery?: any,
+    refresh?: () => void,
 }
 
-const RefreshActionIcon: FunctionComponent<Props> = ({ newestItemsQuery, firstPageQuery, infinityQuery }) => {
+const RefreshActionIcon: FunctionComponent<Props> = ({ newestItemsQuery, firstPageQuery, infinityQuery, refresh }) => {
     const theme = useMantineTheme();
     const newestItems = newestItemsQuery?.data?.results.length > 50 ? '50+' : newestItemsQuery?.data?.results.length;
     const pluralCharset = newestItems > 1 ? 's' : '';
@@ -21,7 +22,13 @@ const RefreshActionIcon: FunctionComponent<Props> = ({ newestItemsQuery, firstPa
                 color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
                 data-test="table-refresh-icon"
                 variant="subtle"
-                onClick={() => firstPageQuery.refetch()}
+                onClick={() => {
+                    if (refresh) {
+                        refresh();
+                        return;
+                    }
+                    firstPageQuery.refetch();
+                }}
             >
                 <IconRefresh size={24} stroke={1} />
 
