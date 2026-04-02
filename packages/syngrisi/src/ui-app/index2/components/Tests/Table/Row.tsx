@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Checkbox, Collapse, createStyles } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { memo, useCallback, useMemo, useState, useEffect } from 'react';
 import { tableColumns } from '@index/components/Tests/Table/tableColumns';
 import { Checks } from '@index/components/Tests/Table/Checks/Checks';
 import { testsCreateStyle } from '@index/components/Tests/Table/testsCreateStyle';
@@ -23,7 +23,7 @@ interface Props {
     infinityQuery: any,
 }
 
-export function Row(
+export const Row = memo(function Row(
     {
         item,
         toggleRow,
@@ -37,6 +37,13 @@ export function Row(
 ) {
     const { classes, cx } = useStyles();
     const selected = selection.includes(item.id!);
+    const collapsed = collapse.includes(item.id!);
+
+    // Only mount Checks after first expansion to avoid unnecessary API queries
+    const [hasBeenExpanded, setHasBeenExpanded] = useState(false);
+    useEffect(() => {
+        if (collapsed && !hasBeenExpanded) setHasBeenExpanded(true);
+    }, [collapsed]);
 
     const testUpdateQuery = useQuery(
         [
@@ -65,7 +72,16 @@ export function Row(
     const test = useMemo(() => {
         if (testUpdateQuery.data?.results?.length) return testUpdateQuery.data?.results[0];
         return item;
-    }, [JSON.stringify(item), JSON.stringify(testUpdateQuery.data?.results)]);
+    }, [item, testUpdateQuery.dataUpdatedAt]);
+
+    const handleRowClick = useCallback(() => toggleCollapse(item.id!), [toggleCollapse, item.id]);
+    const handleCheckboxChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        event.stopPropagation();
+        toggleRow(item.id!);
+    }, [toggleRow, item.id]);
+    const handleCheckboxClick = useCallback((event: React.MouseEvent) => {
+        event.stopPropagation();
+    }, []);
 
     return (
         <>
@@ -74,7 +90,7 @@ export function Row(
                 data-row-name={test.name}
                 className={cx({ [classes.rowSelected]: selected })}
                 style={{ cursor: 'pointer' }}
-                onClick={() => toggleCollapse(test.id!)}
+                onClick={handleRowClick}
             >
 
                 <td>
@@ -82,15 +98,8 @@ export function Row(
                         data-test="table-item-checkbox"
                         data-test-checkbox-name={test.name}
                         checked={selected}
-                        onChange={(event) => {
-                            event.stopPropagation();
-                            toggleRow(test.id!);
-                        }}
-                        onClick={
-                            (event) => {
-                                event.stopPropagation();
-                            }
-                        }
+                        onChange={handleCheckboxChange}
+                        onClick={handleCheckboxClick}
                     />
                 </td>
                 {
@@ -111,7 +120,7 @@ export function Row(
             <tr>
                 <td style={{ padding: 0, border: 0, width: 'auto' }} colSpan={1000}>
                     <Collapse
-                        in={collapse.includes(test.id!)}
+                        in={collapsed}
                         pl={10}
                         pr={10}
                         pt={10}
@@ -120,11 +129,13 @@ export function Row(
                         transitionDuration={200}
                         transitionTimingFunction="ease-out"
                     >
-                        <Checks item={test} testUpdateQuery={testUpdateQuery} infinityQuery={infinityQuery} />
+                        {hasBeenExpanded && (
+                            <Checks item={test} testUpdateQuery={testUpdateQuery} infinityQuery={infinityQuery} />
+                        )}
                     </Collapse>
                 </td>
             </tr>
 
         </>
     );
-}
+});

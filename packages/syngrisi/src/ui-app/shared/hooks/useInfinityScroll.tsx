@@ -100,13 +100,15 @@ export default function useInfinityScroll(
             $and: [
                 baseFilterObj,
                 newestItemsFilter,
-                // { [newestItemsFilterKey]: { $lte: new Date(firstPageData.newestItemsFilterValue!) } },
-                // { [newestItemsFilterKey]: { $lte: firstPageData.newestItemsFilterValue! } },
                 filterObj || {},
             ],
         };
     }, [
         firstPageData.timestamp,
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        JSON.stringify(baseFilterObj),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        JSON.stringify(filterObj),
     ]
     );
 

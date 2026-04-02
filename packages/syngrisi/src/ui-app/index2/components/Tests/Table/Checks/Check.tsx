@@ -32,7 +32,7 @@ interface Props {
     checksQuery: any,
 }
 
-export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: Props) {
+export const Check = React.memo(function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: Props) {
     const { setQuery, query, queryConfig } = useParams();
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
 
@@ -283,4 +283,4 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
             }
         </>
     );
-}
+});

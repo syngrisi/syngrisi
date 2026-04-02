@@ -20,7 +20,7 @@ interface Props {
     type: string
 }
 
-export function RunItem(
+export const RunItem = React.memo(function RunItem(
     {
         item,
         type,
@@ -146,4 +146,4 @@ export function RunItem(
             />
         </>
     );
-}
+});

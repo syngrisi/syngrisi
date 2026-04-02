@@ -16,7 +16,7 @@ import {
     IconRefresh,
 } from '@tabler/icons-react';
 import { createStyles } from '@mantine/styles';
-import { useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useToggle } from '@mantine/hooks';
 import useInfinityScroll from '@shared/hooks/useInfinityScroll';
 
@@ -113,11 +113,11 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
         query.sortByNavbar,
     ]);
 
-    const refreshIconClickHandler = () => {
+    const refreshIconClickHandler = useCallback(() => {
         setQuery({ base_filter: null });
         firstPageQuery.refetch();
         activeItemsHandler.clear();
-    };
+    }, [setQuery, firstPageQuery, activeItemsHandler]);
 
     useEffect(() => {
         if (!isResizing) return undefined;
