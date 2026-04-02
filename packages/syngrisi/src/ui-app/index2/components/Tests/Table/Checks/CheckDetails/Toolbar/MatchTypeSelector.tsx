@@ -12,6 +12,7 @@ import { ChecksService } from '@shared/services';
 interface Props {
     baselineId: string;
     initialMatchType?: string;
+    baselineData?: BaselineSettingsResponse | null;
     checkId?: string;
     currentCheck?: any;
     initialCheckId?: string;
@@ -97,6 +98,7 @@ async function fetchBaseline(baselineId: string, apikey?: string): Promise<Basel
 export function MatchTypeSelector({
     baselineId,
     initialMatchType,
+    baselineData,
     checkId,
     currentCheck,
     initialCheckId,
@@ -109,6 +111,16 @@ export function MatchTypeSelector({
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        if (baselineData) {
+            if (baselineData.matchType) {
+                setMatchType(baselineData.matchType);
+            } else if (initialMatchType) {
+                setMatchType(initialMatchType as MatchType);
+            }
+            setToleranceThreshold(clampThreshold(Number(baselineData.toleranceThreshold || 0)));
+            return;
+        }
+
         if (baselineId && !initialMatchType) {
             fetchBaseline(baselineId, apikey).then((baseline) => {
                 if (baseline?.matchType) {
@@ -116,8 +128,13 @@ export function MatchTypeSelector({
                 }
                 setToleranceThreshold(clampThreshold(Number(baseline?.toleranceThreshold || 0)));
             });
+            return;
         }
-    }, [baselineId, initialMatchType, apikey]);
+
+        if (initialMatchType) {
+            setMatchType(initialMatchType as MatchType);
+        }
+    }, [baselineId, initialMatchType, apikey, baselineData]);
 
     const handleAutoCalc = () => {
         const rawMismatch = Number(currentCheck?.parsedResult?.rawMisMatchPercentage);
@@ -151,11 +168,18 @@ export function MatchTypeSelector({
                     errorMsg({ error: 'Cannot recompare check after updating baseline settings' });
                 }
             }
-            await queryClient.invalidateQueries({ queryKey: ['baseline_by_snapshot_id'] });
-            await queryClient.invalidateQueries({ queryKey: ['check_for_modal', checkId] });
-            await queryClient.invalidateQueries({ queryKey: ['preview_checks'] });
+            if (currentCheck?.baselineId?._id) {
+                await queryClient.invalidateQueries({ queryKey: ['baseline_by_snapshot_id', currentCheck.baselineId._id] });
+            }
+            await queryClient.invalidateQueries({ queryKey: ['check_for_modal', checkId], exact: true });
+            if (checkQuery?.refetch) {
+                await checkQuery.refetch();
+            }
+            const testId = currentCheck?.test?._id || currentCheck?.test;
+            if (testId) {
+                await queryClient.invalidateQueries({ queryKey: ['preview_checks', testId], exact: true });
+            }
             await queryClient.refetchQueries({ queryKey: ['related_checks_infinity_pages', initialCheckId || checkId] });
-            if (checkQuery) checkQuery.refetch();
         }
         setLoading(false);
     };

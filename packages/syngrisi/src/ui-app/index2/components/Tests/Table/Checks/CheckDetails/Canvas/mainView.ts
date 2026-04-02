@@ -866,8 +866,11 @@ export class MainView {
         });
     }
 
-    static async getRegionsData(baselineId: string) {
+    static async getRegionsData(baselineId: string, prefetchedBaseline?: any) {
         try {
+            if (prefetchedBaseline) {
+                return prefetchedBaseline;
+            }
             if (!baselineId) {
                 // log.debug('Cannot get regions, baseline id is empty');
                 return [];
@@ -895,9 +898,9 @@ export class MainView {
         return null;
     }
 
-    async getSnapshotIgnoreRegionsDataAndDrawRegions(id: string) {
+    async getSnapshotIgnoreRegionsDataAndDrawRegions(id: string, prefetchedBaseline?: any) {
         this.removeAllRegions();
-        const regionData = await MainView.getRegionsData(id);
+        const regionData = await MainView.getRegionsData(id, prefetchedBaseline);
 
         // Store initial state
         if (regionData) {
