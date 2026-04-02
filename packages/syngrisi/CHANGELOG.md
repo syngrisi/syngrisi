@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.3.1
+
+### Patch Changes
+
+-   [#22](https://github.com/syngrisi/syngrisi/pull/22) [`ddcccee`](https://github.com/syngrisi/syngrisi/commit/ddccceed9dc0cb340cbb1a22ac1f586957a6e5be) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Update frontend dependencies: TypeScript 4.9→5.9, Vite 6→7, date-fns 2→4, react-icons 4→5, react-error-boundary 3→4, and minor/patch updates across all packages. Fix outdated documentation paths and remove deprecated WDIO references.
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.3.1
+
 ## 3.3.0
 
 ### Minor Changes
