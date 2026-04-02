@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.2.3
+
+### Patch Changes
+
+-   [#18](https://github.com/syngrisi/syngrisi/pull/18) [`b14aee5`](https://github.com/syngrisi/syngrisi/commit/b14aee532f87ee7c1db03b1aa77571c3ef52b303) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Fix modal refresh after recompare and stabilize request reduction related e2e flows.
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.2.3
+
 ## 3.2.2
 
 ### Patch Changes
