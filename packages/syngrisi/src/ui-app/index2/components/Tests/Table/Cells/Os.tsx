@@ -17,11 +17,11 @@ export function Os({ type, test, itemValue }: Props) {
             style={{ ...tableColumns[type].cellStyle }}
         >
             <Tooltip label={test[type]} multiline withinPortal>
-                <Group spacing={6} align="center" noWrap>
+                <Group gap={6} align="center" noWrap>
                     <OsIcon size={18} os={itemValue} />
                     <Text
                         lineClamp={1}
-                        sx={{ wordBreak: 'break-all' }}
+                        style={{ wordBreak: 'break-all' }}
                     >
                         {itemValue}
                     </Text>

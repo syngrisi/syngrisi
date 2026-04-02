@@ -23,11 +23,11 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
     return (
         <form onSubmit={form.onSubmit((values) => handleSubmit({ ...values, name }))}>
             <Title size="sm" pb={20}>{label}</Title>
-            <Group spacing="xl">
+            <Group gap="xl">
                 <SafeSelect
                     data-test={`settings_value_${name}`}
                     aria-label={label}
-                    sx={{ width: '130px' }}
+                    style={{ width: '130px' }}
                     size="md"
                     optionsData={[
                         { value: 'true', label: 'true' },
@@ -46,7 +46,7 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
 
             <Text>{description}</Text>
 
-            <Group position="right" mt="md">
+            <Group justify="flex-end" mt="md">
                 <Button
                     type="submit"
                     data-test={`settings_update_button_${name}`}

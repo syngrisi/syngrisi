@@ -11,7 +11,7 @@ export default function TaskWrapper() {
     if (!task) {
         return (
             <Paper p={10}>
-                <Text color="red">Task not found: {params.task}</Text>
+                <Text c="red">Task not found: {params.task}</Text>
             </Paper>
         );
     }

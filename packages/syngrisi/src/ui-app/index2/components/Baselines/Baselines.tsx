@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {
     Group,
-    useMantineTheme,
+    useMantineTheme, useComputedColorScheme,
     ActionIcon,
 } from '@mantine/core';
 import { useSearchParams } from 'react-router-dom';
@@ -25,6 +25,7 @@ export default function Baselines({ updateToolbar }: Props) {
     const { query } = useParams();
 
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [sortOpen, setSortOpen] = useState(false);
@@ -68,7 +69,7 @@ export default function Baselines({ updateToolbar }: Props) {
                 <ActionIcon
                     title="Table settings, sorting, and columns visibility"
                     aria-label="Table settings, sorting, and columns visibility"
-                    color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                    color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-sorting"
                     variant="subtle"
                     onClick={() => {
@@ -85,7 +86,7 @@ export default function Baselines({ updateToolbar }: Props) {
                 <ActionIcon
                     title="Filter the Table Data"
                     aria-label="Filter the Table Data"
-                    color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                    color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-filtering"
                     variant="subtle"
                     onClick={() => {
@@ -116,7 +117,7 @@ export default function Baselines({ updateToolbar }: Props) {
         [
             newestItemsQuery?.data?.results.length,
             newestItemsQuery.status,
-            theme.colorScheme,
+            colorScheme,
         ],
     );
 
@@ -133,7 +134,7 @@ export default function Baselines({ updateToolbar }: Props) {
     );
 
     return (
-        <Group position="apart" align="start" noWrap>
+        <Group justify="space-between" align="start" noWrap>
             <BaselinesTable
                 updateToolbar={updateToolbar}
                 firstPageQuery={firstPageQuery}

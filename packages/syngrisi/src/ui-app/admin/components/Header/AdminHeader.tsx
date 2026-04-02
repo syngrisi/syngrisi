@@ -1,16 +1,17 @@
 import {
     Breadcrumbs,
+    Box,
     Container,
     Group,
-    Header,
     Kbd,
     Paper,
     Button,
     Text,
+    useMantineTheme,
+    useComputedColorScheme,
 } from '@mantine/core';
 import * as React from 'react';
 import { IconSearch } from '@tabler/icons-react';
-import { createStyles } from '@mantine/styles';
 import { useContext } from 'react';
 import { openSpotlight } from '@mantine/spotlight';
 import HeaderLogo from '@shared/components/Header/HeaderLogo';
@@ -18,74 +19,52 @@ import UserMenu from '@shared/components/Header/UserMenu';
 import { AppContext } from '@admin/AppContext';
 import { links } from '@shared/components/heaserLinks';
 
-const useStyles = createStyles((theme) => ({
-    header: {
-        paddingLeft: 0,
-        paddingRight: 0,
-        marginBottom: 120,
-    },
-    inner: {
-        height: 56,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2],
-    },
-    links: {
-        [theme.fn.smallerThan('md')]: {
-            display: 'none',
-        },
-    },
-    search: {
-        [theme.fn.smallerThan('xs')]: {
-            display: 'none',
-        },
-    },
-    link: {
+export default function AdminHeader() {
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme('light');
+
+    const linkStyle: React.CSSProperties = {
         display: 'block',
         lineHeight: 1,
         padding: '8px 12px',
         borderRadius: theme.radius.sm,
         textDecoration: 'none',
-        color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
+        color: colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
         fontSize: theme.fontSizes.sm,
         fontWeight: 500,
+    };
 
-        '&:hover': {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-        },
-    },
-    subheader: {
+    const innerStyle: React.CSSProperties = {
+        height: 56,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2],
+    };
+
+    const subheaderStyle: React.CSSProperties = {
         height: 42,
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingLeft: 25,
-    },
-    spotLight: {
+    };
+
+    const spotLightStyle: React.CSSProperties = {
         minWidth: 200,
         display: 'flex',
         paddingLeft: 12,
         paddingRight: 8,
-        backgroundColor: theme.colorScheme === 'dark'
+        backgroundColor: colorScheme === 'dark'
             ? theme.colors.dark[6]
             : theme.colors.gray[0],
-        '&:hover': {
-            backgroundColor: theme.colorScheme === 'dark'
-                ? theme.colors.dark[6]
-                : theme.colors.gray[0],
-        },
-    },
-}));
-
-export default function AdminHeader() {
-    const { classes } = useStyles();
+    };
 
     const headerLinks = links.map((link) => (
         <a
             key={link.label}
             href={link.link}
-            className={classes.link}
+            style={linkStyle}
         >
             {link.label}
         </a>
@@ -94,33 +73,33 @@ export default function AdminHeader() {
     const { toolbar, breadCrumbs }: any = useContext(AppContext);
 
     return (
-        <Header
-            height={100}
-            className={classes.header}
+        <Box
+            component="header"
+            style={{ height: 100, paddingLeft: 0, paddingRight: 0, marginBottom: 120 }}
         >
-            <Container className={classes.inner} fluid>
+            <Container style={innerStyle} fluid>
                 <Group>
                     {/* <Burger opened={opened} onClick={toggle} size="sm" /> */}
                     <HeaderLogo />
                 </Group>
 
                 <Group>
-                    <Group ml={50} spacing={5} className={classes.links}>
+                    <Group ml={50} gap={5}>
                         {headerLinks}
                     </Group>
                     <Button
                         onClick={() => openSpotlight()}
                         variant="default"
-                        className={classes.spotLight}
+                        style={spotLightStyle}
                     >
-                        <Group position="apart" sx={{ minWidth: 200 }}>
+                        <Group justify="space-between" style={{ minWidth: 200 }}>
                             <Group>
                                 <IconSearch size={16} stroke={1} />
-                                <Text color="dimmed" weight={400}>Search</Text>
+                                <Text c="dimmed">Search</Text>
                             </Group>
 
                             <Kbd
-                                sx={{ fontSize: 11, borderBottomWidth: 1 }}
+                                style={{ fontSize: 11, borderBottomWidth: 1 }}
                             >
                                 ⌘ + K
                             </Kbd>
@@ -128,21 +107,21 @@ export default function AdminHeader() {
 
                     </Button>
 
-                    <Group spacing={7}>
+                    <Group gap={7}>
                         <UserMenu />
                     </Group>
                 </Group>
             </Container>
             <Paper shadow="">
-                <Container className={classes.subheader} fluid>
+                <Container style={subheaderStyle} fluid>
                     <Group>
                         <Breadcrumbs>{breadCrumbs}</Breadcrumbs>
                     </Group>
-                    <Group spacing={4} mr="md" position="right">
+                    <Group gap={4} mr="md" justify="flex-end">
                         {toolbar}
                     </Group>
                 </Container>
             </Paper>
-        </Header>
+        </Box>
     );
 }

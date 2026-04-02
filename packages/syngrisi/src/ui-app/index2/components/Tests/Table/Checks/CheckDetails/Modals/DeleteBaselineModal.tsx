@@ -19,14 +19,14 @@ export const DeleteBaselineModal: React.FC<DeleteBaselineModalProps> = ({
 }) => {
     return (
         <Modal opened={opened} onClose={onClose} title="Delete Baseline" centered>
-            <Stack spacing="md">
+            <Stack gap="md">
                 <Group noWrap align="flex-start">
                     <IconAlertTriangle size={40} color="red" style={{ minWidth: 40 }} />
-                    <Stack spacing="xs">
-                        <Text weight={500}>
+                    <Stack gap="xs">
+                        <Text fw={500}>
                             Are you sure you want to delete this baseline?
                         </Text>
-                        <Text size="sm" color="dimmed">
+                        <Text size="sm" c="dimmed">
                             This baseline is used in{' '}
                             <Anchor
                                 href={`/checks?filter=${encodeURIComponent(JSON.stringify({ baselineId: snapshotId }))}`}
@@ -38,7 +38,7 @@ export const DeleteBaselineModal: React.FC<DeleteBaselineModalProps> = ({
                     </Stack>
                 </Group>
 
-                <Group position="right" mt="md">
+                <Group justify="flex-end" mt="md">
                     <Button variant="default" onClick={onClose}>Cancel</Button>
                     <Button color="red" onClick={onConfirm} data-test="confirm-delete-baseline">Delete</Button>
                 </Group>

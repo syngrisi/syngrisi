@@ -1,14 +1,12 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import { Checkbox, Collapse, createStyles, Paper, RingProgress, Text, Tooltip } from '@mantine/core';
+import { Checkbox, Collapse, Paper, RingProgress, Text, Tooltip, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import React, { useContext, useEffect, useState } from 'react';
 import { IPage } from '@shared/interfaces/logQueries';
 import ILog from '@shared/interfaces/ILog';
 import { adminLogsTableColumns } from '@admin/components/Logs/Table/adminLogsTableColumns';
-import { adminLogsCreateStyle } from '@admin/components/Logs/Table/adminLogsCreateStyle';
+import { getAdminLogsStyles } from '@admin/components/Logs/Table/adminLogsCreateStyle';
 import UnfoldActionIcon from '@admin/components/Logs/UnfoldActionIcon';
 import { AppContext } from '@admin/AppContext';
-
-const useStyles = createStyles(adminLogsCreateStyle as any);
 
 const logLevelColorMap: { [key: string]: string } = {
     debug: 'blue',
@@ -25,7 +23,10 @@ interface Props {
 }
 
 const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Props) => {
-    const { classes, cx } = useStyles();
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme('light');
+    const styles = getAdminLogsStyles(theme, colorScheme);
+
     const [collapse, setCollapse]: [string[], any] = useState([]);
     const { updateToolbar }: any = useContext(AppContext);
 
@@ -87,8 +88,10 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                     <React.Fragment key={item.id}>
                         <tr
                             data-test={`table_row_${index}`}
-                            className={cx({ [classes.rowSelected]: selected })}
-                            style={{ cursor: 'pointer' }}
+                            style={{
+                                cursor: 'pointer',
+                                ...(selected ? styles.rowSelected : {}),
+                            }}
                             onClick={() => toggleCollapse(item.id!)}
                         >
 
@@ -150,7 +153,7 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                                             <Tooltip label={itemValue} multiline withinPortal>
                                                 <Text
                                                     lineClamp={1}
-                                                    sx={{ wordBreak: 'break-all' }}
+                                                    style={{ wordBreak: 'break-all' }}
                                                 >
                                                     {itemValue}
                                                 </Text>
@@ -174,17 +177,15 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                                     <Paper p={20}>
                                         <Text
                                             size={16}
-                                            color={logLevelColorMap[item.level!]}
+                                            c={logLevelColorMap[item.level!]}
                                             component="span"
-                                            // sx={{ display: 'inline-block' }}
-
                                         >
                                             {item.level}{': '}
                                         </Text>
                                         <Text
                                             size={16}
-                                            sx={{ wordBreak: 'break-all' }}
-                                            color={logLevelColorMap[item.level!]}
+                                            style={{ wordBreak: 'break-all' }}
+                                            c={logLevelColorMap[item.level!]}
                                             component="span"
                                         >
                                             <pre>

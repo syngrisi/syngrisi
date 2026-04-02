@@ -18,8 +18,8 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
 
     return (
         <Stack
-            sx={{ maxWidth: '370px' }}
-            spacing={8}
+            style={{ maxWidth: '370px' }}
+            gap={8}
             p={8}
             data-check-tooltip-name={check.name}
         >
@@ -29,7 +29,7 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
                 </Text>
             </Group>
             <Divider />
-            <Group position="left" spacing={8} ml={-6} noWrap>
+            <Group justify="flex-start" gap={8} ml={-6} noWrap>
                 <Group>
                     <StatusIcon status={check.status[0]} size={72} />
                 </Group>
@@ -42,11 +42,11 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
             </Group>
             {
                 check.markedByUsername && (
-                    <Group position="apart">
+                    <Group justify="space-between">
                         <Group>
                             <Text size="xs">Accepted by: </Text>
                         </Group>
-                        <Group position="right">
+                        <Group justify="flex-end">
                             {
                                 check.markedByUsername && (
                                     <LabelUser dataTest="user-label" username={check.markedByUsername} size="xs" />
@@ -56,20 +56,20 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
                     </Group>
                 )
             }
-            <Group position="apart">
+            <Group justify="space-between">
                 <Group>
                     <Text size="xs">Platform: </Text>
                 </Group>
-                <Group position="right" spacing={6}>
+                <Group justify="flex-end" gap={6}>
                     <OsIcon os={check.os} size={24} />
                     <Text size="xs" data-test="os-label">{check.os}</Text>
                 </Group>
             </Group>
-            <Group position="apart" noWrap>
+            <Group justify="space-between" noWrap>
                 <Group>
                     <Text size="xs">Browser: </Text>
                 </Group>
-                <Group position="right" spacing={6} noWrap>
+                <Group justify="flex-end" gap={6} noWrap>
                     <BrowserIcon size={24} browser={check.browserName} />
                     <Text size="xs" data-test="browser-label">
                         {check.browserName}
@@ -79,11 +79,11 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
                 </Group>
             </Group>
 
-            <Group position="apart">
+            <Group justify="space-between">
                 <Group>
                     <Text size="xs">Viewport: </Text>
                 </Group>
-                <Group position="right">
+                <Group justify="flex-end">
                     <ViewPortLabel
                         fontSize="11px"
                         size="md"
@@ -95,18 +95,18 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
                 </Group>
             </Group>
 
-            <Group position="apart">
+            <Group justify="space-between">
                 <Group>
                     <Text size="xs">Branch: </Text>
                 </Group>
-                <Group position="right">
-                    <Badge color="blue" sx={{ maxWidth: 200 }}>
+                <Group justify="flex-end">
+                    <Badge color="blue" style={{ maxWidth: 200 }}>
                         {check.branch}
                     </Badge>
                 </Group>
             </Group>
 
-            <Group position="apart">
+            <Group justify="space-between">
                 <Group>
                     <Text size="xs">Created Date: </Text>
                 </Group>

@@ -1,12 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
-import { Checkbox, createStyles } from '@mantine/core';
+import { Checkbox, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { baselinesTableColumns } from './baselinesTableColumns';
 import { BaselinesCellWrapper } from './BaselinesCellWrapper';
 import { testsCreateStyle } from '@index/components/Tests/Table/testsCreateStyle';
 import { useNavigate } from 'react-router-dom';
-
-const useStyles = createStyles(testsCreateStyle as any);
 
 interface Props {
     item: any
@@ -25,14 +23,16 @@ export function BaselinesRow(
         selection,
     }: Props,
 ) {
-    const { classes, cx } = useStyles();
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
+    const styles = testsCreateStyle(theme, colorScheme);
     const selected = selection.includes(item.id || item._id);
     const navigate = useNavigate();
 
     const handleRowClick = () => {
         // snapshootId is just an ObjectId string, not a populated document
         const snapshootId = item.snapshootId;
-        
+
         if (snapshootId) {
              const filter = JSON.stringify({ baselineSnapshotId: snapshootId });
              navigate(`/?filter=${encodeURIComponent(filter)}`);
@@ -44,8 +44,7 @@ export function BaselinesRow(
             data-test={`table_row_${index}`}
             data-row-name={item.name}
             aria-label={`Baseline row ${item.name}`}
-            className={cx({ [classes.rowSelected]: selected })}
-            style={{ cursor: 'pointer' }}
+            style={{ ...(selected ? styles.rowSelected : {}), cursor: 'pointer' }}
             onClick={handleRowClick}
         >
             <td onClick={(e) => e.stopPropagation()}>

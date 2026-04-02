@@ -17,20 +17,20 @@ export function AcceptStatusItem({ item, index, handlerItemClick, className }: P
             data-testid={`navbar-accept-status-${item.name.toLowerCase()}`}
             onClick={handlerItemClick}
             className={className}
-            sx={{ cursor: 'pointer', width: '100%' }}
+            style={{ cursor: 'pointer', width: '100%' }}
         >
-            <Group noWrap pl={8} position="apart" spacing={0} sx={{ width: '100%' }}>
-                <Stack spacing={0} sx={{ width: '100%' }}>
-                    <Group position="left" sx={{ width: '100%' }}>
+            <Group noWrap pl={8} justify="space-between" gap={0} style={{ width: '100%' }}>
+                <Stack gap={0} style={{ width: '100%' }}>
+                    <Group justify="flex-start" style={{ width: '100%' }}>
                         <Tooltip label={item.name} multiline withinPortal>
-                            <Group spacing={8}>
+                            <Group gap={8}>
                                 <AcceptedStatusIcon status={item.name} size={44} />
                                 <Text
                                     data-test="navbar-item-name"
                                     data-testid={`accept-status-${item.name.toLowerCase()}`}
                                     size={16}
                                     lineClamp={1}
-                                    sx={{ wordBreak: 'break-all' }}
+                                    style={{ wordBreak: 'break-all' }}
                                 >
                                     {item.name}
                                 </Text>

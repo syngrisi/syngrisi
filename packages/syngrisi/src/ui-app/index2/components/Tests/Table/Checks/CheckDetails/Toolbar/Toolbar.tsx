@@ -121,12 +121,12 @@ export function Toolbar(
 
     return (
         <>
-            <Group position="apart" noWrap data-check="toolbar" data-navigation-ready={navigationReady ? 'true' : 'false'}>
+            <Group justify="space-between" noWrap data-check="toolbar" data-navigation-ready={navigationReady ? 'true' : 'false'}>
                 {/* Left side: Navigation arrows (fixed position) + ScreenshotDetails */}
-                <Group spacing="sm" noWrap>
+                <Group gap="sm" noWrap>
                     {!isShareMode && (
                         <>
-                            <Group spacing={2} noWrap>
+                            <Group gap={2} noWrap>
                                 <ActionIcon
                                     onClick={() => onNavigateCheck && onNavigateCheck('prev')}
                                     disabled={isFirstCheck}
@@ -144,7 +144,7 @@ export function Toolbar(
                                     <IconChevronRight size={20} />
                                 </ActionIcon>
                             </Group>
-                            <Group spacing={2} noWrap>
+                            <Group gap={2} noWrap>
                                 <ActionIcon
                                     onClick={() => onNavigateTest && onNavigateTest('prev')}
                                     disabled={isFirstTest}
@@ -171,11 +171,11 @@ export function Toolbar(
                 </Group>
 
                 {/* Right side: Tools and actions */}
-                <Group spacing="sm" noWrap>
+                <Group gap="sm" noWrap>
                     <Group
-                        spacing={4}
-                        className={classes.zoomButtonsWrapper}
-                        position="center"
+                        gap={4}
+                        style={classes.zoomButtonsWrapper}
+                        justify="center"
                         align="center"
                         noWrap
                     >
@@ -273,7 +273,7 @@ export function Toolbar(
                     {onToggleRCA && isRCAFeatureEnabled && (
                         <>
                             <Divider orientation="vertical" />
-                            <Group spacing={4} noWrap>
+                            <Group gap={4} noWrap>
                                 <ActionIcon
                                     onClick={onToggleRCA}
                                     title="Root Cause Analysis (D)"
@@ -297,7 +297,7 @@ export function Toolbar(
                                 )}
 
                                 {rcaEnabled && rcaStats && (
-                                    <Group spacing={4} ml={4}>
+                                    <Group gap={4} ml={4}>
                                         <MantineTooltip label="Total changes" withinPortal>
                                             <div style={{ display: 'flex' }}>
                                                 <Badge

@@ -144,7 +144,7 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
             centered
             size="auto"
             onClose={closeHandler}
-            sx={{ marginTop: -25 }}
+            style={{ marginTop: -25 }}
             styles={{ title: { width: '100%', paddingRight: 35 } }}
             withCloseButton={false}
         >
@@ -173,7 +173,7 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
                     : checkQuery.isError
                         ? (
                             <Stack mt={40}>
-                                <Text color="red">Error load the check data</Text>
+                                <Text c="red">Error load the check data</Text>
                             </Stack>
                         )
                         : checkData

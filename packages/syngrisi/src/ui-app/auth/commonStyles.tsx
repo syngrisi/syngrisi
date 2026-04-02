@@ -1,26 +1,23 @@
-import { createStyles } from '@mantine/styles';
+import { MantineTheme } from '@mantine/core';
 
-export default createStyles((theme) => ({
-    footer: {
-        marginTop: 120,
-        borderTop: `1px solid ${
-            theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
-        }`,
-    },
+export function getCommonStyles(theme: MantineTheme, colorScheme: 'light' | 'dark') {
+    return {
+        footer: {
+            marginTop: 120,
+            borderTop: `1px solid ${
+                colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
+            }`,
+        } as React.CSSProperties,
 
-    footerText: {
-        color: 'white',
-        fontSize: '1rem',
-    },
-    footerLink: {
-        margin: '8px',
-        color: 'white',
-        fontSize: '1rem',
-        ':hover': {
-            textDecoration: 'underline',
-            // color: 'red',
-            filter: 'brightness(120%)',
+        footerText: {
+            color: 'white',
+            fontSize: '1rem',
+        } as React.CSSProperties,
 
-        },
-    },
-}));
+        footerLink: {
+            margin: '8px',
+            color: 'white',
+            fontSize: '1rem',
+        } as React.CSSProperties,
+    };
+}

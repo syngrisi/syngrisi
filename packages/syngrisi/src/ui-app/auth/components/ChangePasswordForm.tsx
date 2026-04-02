@@ -185,13 +185,13 @@ export default function ChangePasswordForm() {
                     {checks}
 
                     {errorMessage
-                    && <Text size="sm" color="red" mt="md" id="error-message" hidden={false}>{errorMessage}</Text>}
+                    && <Text size="sm" c="red" mt="md" id="error-message" hidden={false}>{errorMessage}</Text>}
 
                     <Button
                         fullWidth
                         id="change-password"
                         mt="xl"
-                        color="green"
+                        c="green"
                         type="submit"
                     >
                         Update password

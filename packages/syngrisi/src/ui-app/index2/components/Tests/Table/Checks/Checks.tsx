@@ -92,7 +92,7 @@ export function Checks({ item, testUpdateQuery }: Props) {
                     : (
                         checksQuery.isError
                             ? (
-                                <Text color="red" size="md">
+                                <Text c="red" size="md">
                                     Cannot load the data
                                 </Text>
                             )

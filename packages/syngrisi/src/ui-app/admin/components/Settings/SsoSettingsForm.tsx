@@ -87,7 +87,7 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
     };
 
     return (
-        <Paper withBorder p={20} m={15} sx={{ width: '90%' }}>
+        <Paper withBorder p={20} m={15} style={{ width: '90%' }}>
             <Title order={4} mb="md">SSO Configuration</Title>
             <Switch
                 label="Enable SSO"
@@ -117,9 +117,9 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
                                 onChange={(e) => setClientId(e.currentTarget.value)}
                                 mb="sm"
                             />
-                            <Group spacing="xs" mb="sm">
+                            <Group gap="xs" mb="sm">
                                 <Text size="sm">Client Secret:</Text>
-                                <Badge color={secretsStatus?.clientSecretConfigured ? 'green' : 'red'}>
+                                <Badge c={secretsStatus?.clientSecretConfigured ? 'green' : 'red'}>
                                     {secretsStatus?.clientSecretConfigured ? 'Configured via ENV' : 'Not configured'}
                                 </Badge>
                             </Group>
@@ -149,9 +149,9 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
                                 onChange={(e) => setIssuer(e.currentTarget.value)}
                                 mb="sm"
                             />
-                            <Group spacing="xs" mb="sm">
+                            <Group gap="xs" mb="sm">
                                 <Text size="sm">Certificate:</Text>
-                                <Badge color={secretsStatus?.certConfigured ? 'green' : 'red'}>
+                                <Badge c={secretsStatus?.certConfigured ? 'green' : 'red'}>
                                     {secretsStatus?.certConfigured ? 'Configured via ENV' : 'Not configured'}
                                 </Badge>
                             </Group>

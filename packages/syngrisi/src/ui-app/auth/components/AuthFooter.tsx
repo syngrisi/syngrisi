@@ -1,8 +1,8 @@
-import { Anchor, Center, Text } from '@mantine/core';
+import { Anchor, Center, Text, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { IconExternalLink } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import * as React from 'react';
-import useStyle from '@auth/commonStyles';
+import { getCommonStyles } from '@auth/commonStyles';
 import config from '@config';
 import { log } from '@shared/utils';
 
@@ -12,7 +12,9 @@ interface AppInfo {
 }
 
 function AuthFooter() {
-    const { classes } = useStyle();
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme('light');
+    const styles = getCommonStyles(theme, colorScheme);
     const {
         isLoading,
         isError,
@@ -43,15 +45,15 @@ function AuthFooter() {
             <Anchor
                 href="https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi"
                 target="_blank"
-                className={classes.footerLink}
+                style={styles.footerLink}
                 data-test="auth-footer-github"
             >
                 <IconExternalLink size="1rem" stroke={1} />
                 GitHub
             </Anchor>
-            <Text component="span" className={classes.footerText}>|</Text>
+            <Text component="span" style={styles.footerText}>|</Text>
             <Anchor
-                className={classes.footerLink}
+                style={styles.footerLink}
                 href={tagUrl}
                 data-test="auth-footer-version"
             >
@@ -59,9 +61,9 @@ function AuthFooter() {
             </Anchor>
             {data.commitHash && (
                 <>
-                    <Text component="span" className={classes.footerText}>|</Text>
+                    <Text component="span" style={styles.footerText}>|</Text>
                     <Anchor
-                        className={classes.footerLink}
+                        style={styles.footerLink}
                         href={commitUrl!}
                         target="_blank"
                         data-test="auth-footer-commit"

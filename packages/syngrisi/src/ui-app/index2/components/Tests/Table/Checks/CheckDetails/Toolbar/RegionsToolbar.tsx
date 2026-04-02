@@ -188,9 +188,9 @@ export function RegionsToolbar({
                     (
                         <Group noWrap>
                             <Text>Remove selected ignore regions</Text>
-                            <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>Del</Kbd>
+                            <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>Del</Kbd>
                             {' or '}
-                            <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>Backspace</Kbd>
+                            <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>Backspace</Kbd>
                         </Group>
                     )
                 }
@@ -210,15 +210,15 @@ export function RegionsToolbar({
                 withinPortal
                 label={
                     (
-                        <Stack spacing={4}>
-                            <Group noWrap spacing={4}>
+                        <Stack gap={4}>
+                            <Group noWrap gap={4}>
                                 <Text>Add ignore region</Text>
-                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>A</Kbd>
+                                <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>A</Kbd>
                             </Group>
                             {
                                 !baselineId && (
-                                    <Group noWrap spacing={4}>
-                                        <Text color="orange">&#9888;</Text>
+                                    <Group noWrap gap={4}>
+                                        <Text c="orange">&#9888;</Text>
                                         <Text> First you need to accept this check</Text>
                                     </Group>
                                 )
@@ -248,25 +248,25 @@ export function RegionsToolbar({
                 withinPortal
                 label={
                     (
-                        <Stack spacing={4}>
-                            <Group noWrap spacing={4}>
+                        <Stack gap={4}>
+                            <Group noWrap gap={4}>
                                 <Text>Auto ignore regions from diff</Text>
-                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>R</Kbd>
+                                <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>R</Kbd>
                             </Group>
-                            <Text size="xs" color="dimmed">Create ignore regions for all diff areas</Text>
+                            <Text size="xs" c="dimmed">Create ignore regions for all diff areas</Text>
                             {
                                 !baselineId && (
-                                    <Group noWrap spacing={4}>
-                                        <Text color="orange">&#9888;</Text>
+                                    <Group noWrap gap={4}>
+                                        <Text c="orange">&#9888;</Text>
                                         <Text> First you need to accept this check</Text>
                                     </Group>
                                 )
                             }
                             {
                                 baselineId && !hasDiff && (
-                                    <Group noWrap spacing={4}>
-                                        <Text color="dimmed">&#8505;</Text>
-                                        <Text color="dimmed"> No diff available</Text>
+                                    <Group noWrap gap={4}>
+                                        <Text c="dimmed">&#8505;</Text>
+                                        <Text c="dimmed"> No diff available</Text>
                                     </Group>
                                 )
                             }
@@ -291,24 +291,24 @@ export function RegionsToolbar({
                 withinPortal
                 label={
                     (
-                        <Stack spacing={4}>
-                            <Group noWrap spacing={4}>
+                        <Stack gap={4}>
+                            <Group noWrap gap={4}>
                                 <Text>Checked area only</Text>
-                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>B</Kbd>
+                                <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>B</Kbd>
                             </Group>
-                            <Text size="xs" color="dimmed">Compare only within this region</Text>
+                            <Text size="xs" c="dimmed">Compare only within this region</Text>
                             {
                                 !baselineId && (
-                                    <Group noWrap spacing={4}>
-                                        <Text color="orange">&#9888;</Text>
+                                    <Group noWrap gap={4}>
+                                        <Text c="orange">&#9888;</Text>
                                         <Text> First you need to accept this check</Text>
                                     </Group>
                                 )
                             }
                             {
                                 baselineId && hasBoundRegion && (
-                                    <Group noWrap spacing={4}>
-                                        <Text color="orange">&#9888;</Text>
+                                    <Group noWrap gap={4}>
+                                        <Text c="orange">&#9888;</Text>
                                         <Text> Bound region already exists</Text>
                                     </Group>
                                 )
@@ -335,11 +335,11 @@ export function RegionsToolbar({
                     (
                         <Group>
                             <Text>Save regions</Text>
-                            <Group align="left" spacing={4} noWrap>
+                            <Group align="left" gap={4} noWrap>
 
-                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>Alt</Kbd>
+                                <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>Alt</Kbd>
                                 +
-                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>S</Kbd>
+                                <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>S</Kbd>
                             </Group>
                         </Group>
                     )

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Center, Group, Loader, Paper, useMantineTheme } from '@mantine/core';
+import { Center, Group, Loader, Paper, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 
 interface Props {
     canvasElementRef: React.MutableRefObject<any>;
@@ -9,9 +9,10 @@ interface Props {
 
 export function Canvas({ canvasElementRef, isRelatedOpened = false, isLoading = false }: Props) {
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
 
     return (
-        <Group sx={{ flex: 1, minWidth: 0 }}>
+        <Group style={{ flex: 1, minWidth: 0 }}>
             <Paper
                 shadow="xl"
                 withBorder
@@ -20,7 +21,7 @@ export function Canvas({ canvasElementRef, isRelatedOpened = false, isLoading = 
                 style={
                     {
                         backgroundColor: (
-                            theme.colorScheme === 'dark'
+                            colorScheme === 'dark'
                                 ? theme.colors.dark[8]
                                 : theme.colors.gray[1]
                         ),

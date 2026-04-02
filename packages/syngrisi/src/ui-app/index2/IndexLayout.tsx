@@ -1,4 +1,4 @@
-import { AppShell } from '@mantine/core';
+import { Box, useComputedColorScheme, useMantineTheme } from '@mantine/core';
 import * as React from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
@@ -16,6 +16,8 @@ export default function IndexLayout() {
     const [toolbar, setToolbar]: [any[], any] = useState([]);
     const [navbarWidth, setNavbarWidth] = useState(350);
     const location = useLocation();
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
 
     if (query.share) {
         return <SharedCheckLayout />;
@@ -32,32 +34,34 @@ export default function IndexLayout() {
     const isBaselinesPage = location.pathname.includes('/baselines');
 
     return (
-        <AppShell
-            padding={8}
-            navbar={
+        <Box
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: '100vh',
+                backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+            }}
+        >
+            <HeaderIndex breadCrumbs={breadCrumbs} toolbar={toolbar} />
+            <Box style={{ display: 'flex', flex: 1 }}>
                 <NavBarIndex
                     setBreadCrumbs={setBreadCrumbs}
                     navbarWidth={navbarWidth}
                     setNavbarWidth={setNavbarWidth}
                 />
-            }
-            header={<HeaderIndex breadCrumbs={breadCrumbs} toolbar={toolbar} />}
-            styles={(theme) => ({
-                main: {
-                    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
-                },
-            })}
-        >
-            <main
-                role="main"
-                aria-label="Test results content"
-                style={{ width: '100%' }}
-            >
-                {isBaselinesPage
-                    ? <Baselines updateToolbar={updateToolbar} />
-                    : <Tests updateToolbar={updateToolbar} navbarWidth={navbarWidth} />}
-            </main>
-            <ReactQueryDevtools initialIsOpen={false} />
-        </AppShell>
+                <Box component="main" style={{ flex: 1, padding: 8 }}>
+                    <main
+                        role="main"
+                        aria-label="Test results content"
+                        style={{ width: '100%' }}
+                    >
+                        {isBaselinesPage
+                            ? <Baselines updateToolbar={updateToolbar} />
+                            : <Tests updateToolbar={updateToolbar} navbarWidth={navbarWidth} />}
+                    </main>
+                    <ReactQueryDevtools initialIsOpen={false} />
+                </Box>
+            </Box>
+        </Box>
     );
 }

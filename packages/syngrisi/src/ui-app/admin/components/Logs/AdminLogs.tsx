@@ -3,7 +3,7 @@ import * as React from 'react';
 import {
     Text,
     Group,
-    useMantineTheme,
+    useMantineTheme, useComputedColorScheme,
     ActionIcon, Table,
 } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
@@ -41,6 +41,7 @@ export default function AdminLogs() {
     });
 
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     useSubpageEffect('Logs');
 
     const [sortOpen, setSortOpen] = useState(false);
@@ -63,7 +64,7 @@ export default function AdminLogs() {
         updateToolbar(
             <ActionIcon
                 title="Table settings, sorting, and columns visibility"
-                color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                 data-test="table-sorting"
                 variant="subtle"
                 onClick={() => {
@@ -78,7 +79,7 @@ export default function AdminLogs() {
         updateToolbar(
             <ActionIcon
                 title="Filter the Table Data"
-                color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                 data-test="logs-table-filtering"
                 variant="subtle"
                 onClick={() => {
@@ -101,7 +102,7 @@ export default function AdminLogs() {
             />,
             50,
         );
-    }, [newestItemsQuery?.data?.results.length, newestItemsQuery.status, theme.colorScheme]);
+    }, [newestItemsQuery?.data?.results.length, newestItemsQuery.status, colorScheme]);
 
     useEffect(function filterSortUpdate() {
         firstPageQuery.refetch();
@@ -111,7 +112,7 @@ export default function AdminLogs() {
     ]);
 
     return (
-        <Group position="apart" align="start" noWrap>
+        <Group justify="space-between" align="start" noWrap>
             {/* eslint-disable-next-line no-nested-ternary */}
             {infinityQuery.status === 'loading'
                 ? (
@@ -120,7 +121,7 @@ export default function AdminLogs() {
                     </Table>
                 )
                 : infinityQuery.status === 'error'
-                    ? (<Text color="red">Error: {infinityQuery.error.message}</Text>)
+                    ? (<Text c="red">Error: {infinityQuery.error.message}</Text>)
                     : (
                         <AdminLogsTable
                             infinityQuery={infinityQuery}

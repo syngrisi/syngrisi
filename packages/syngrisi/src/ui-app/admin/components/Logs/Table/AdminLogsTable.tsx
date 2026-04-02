@@ -1,19 +1,18 @@
 /* eslint-disable indent,react/jsx-indent */
 import React, { useState, useRef } from 'react';
 import {
-    createStyles,
     Table,
     ScrollArea,
+    useMantineTheme,
+    useComputedColorScheme,
 } from '@mantine/core';
 
 import InfinityScrollSkeleton from '@admin/components/Logs/Table/InfinityScrollSkeleton';
 import PagesCountAffix from '@admin/components/Logs/Table/PagesCountAffix';
 import ILog from '@shared/interfaces/ILog';
-import { adminLogsCreateStyle } from '@admin/components/Logs/Table/adminLogsCreateStyle';
+import { getAdminLogsStyles } from '@admin/components/Logs/Table/adminLogsCreateStyle';
 import AdminLogsTableRows from '@admin/components/Logs/Table/AdminLogsTableRows';
 import AdminLogsTableHeads from '@admin/components/Logs/Table/AdminLogsTableHeads';
-
-const useStyles = createStyles(adminLogsCreateStyle as any);
 
 // interface TableSelectionProps {
 //     data: { id: string; hostname: string; level: string; message: string; timestamp: string }[];
@@ -28,9 +27,12 @@ export default function AdminLogsTable({ infinityQuery, visibleFields }: Props) 
     const { data } = infinityQuery;
     const flatData = data.pages.flat().map((x: any) => x.results).flat();
 
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme('light');
+    const styles = getAdminLogsStyles(theme, colorScheme);
+
     // eslint-disable-next-line no-unused-vars
     const [scrolled, setScrolled] = useState(false);
-    const { classes, cx } = useStyles();
     const [selection, setSelection]: [string[], any] = useState([]);
     const scrollAreaRef = useRef(null);
     const viewportRef = useRef<HTMLDivElement>(null);
@@ -45,14 +47,17 @@ export default function AdminLogsTable({ infinityQuery, visibleFields }: Props) 
                 ref={scrollAreaRef}
                 viewportRef={viewportRef}
                 maxHeight="100vh"
-                sx={{ width: '100%', paddingBottom: 115 }}
+                style={{ width: '100%', paddingBottom: 115 }}
                 styles={{ scrollbar: { marginTop: '46px' } }}
             >
 
-                <Table sx={{ width: '100%', paddingBottom: 500 }} verticalSpacing="sm" highlightOnHover>
+                <Table style={{ width: '100%', paddingBottom: 500 }} verticalSpacing="sm" highlightOnHover>
                     <thead
-                        style={{ zIndex: 15 }}
-                        className={cx(classes.header, { [classes.scrolled]: scrolled })}
+                        style={{
+                            zIndex: 15,
+                            ...styles.header,
+                            ...(scrolled ? styles.scrolled : {}),
+                        }}
                     >
                     <AdminLogsTableHeads
                         data={data}
@@ -62,7 +67,7 @@ export default function AdminLogsTable({ infinityQuery, visibleFields }: Props) 
                     />
 
                     </thead>
-                    <tbody className={classes.tableBody}>
+                    <tbody style={styles.tableBody}>
                     <AdminLogsTableRows
                         data={data}
                         selection={selection}

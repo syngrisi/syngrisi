@@ -22,13 +22,13 @@ function DemoColors() {
     // @ts-ignore
     return (
         <>
-            <Text color="s_success">
+            <Text c="s_success">
                 Custom Theme Success Text
             </Text>
-            <Text color={theme.colors.s_success[3]}>
+            <Text c={theme.colors.s_success[3]}>
                 Custom Theme Success Text Shade - 3
             </Text>
-            <Text color="blue">
+            <Text c="blue">
                 Standard Blue text
             </Text>
             <Button color="red">

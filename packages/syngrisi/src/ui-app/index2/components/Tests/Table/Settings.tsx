@@ -53,7 +53,7 @@ function Settings(
             title="Settings"
             width={260}
         >
-            <Group align="end" spacing="sm" noWrap>
+            <Group align="end" gap="sm" noWrap>
                 <SafeSelect
                     label="Sort by"
                     data-test="table-sort-by-select"
@@ -76,7 +76,7 @@ function Settings(
                 </ActionIcon>
             </Group>
 
-            <Text pt="xl" weight={500}>Visible fields</Text>
+            <Text pt="xl" fw={500}>Visible fields</Text>
             <Chip.Group
                 align="self-start"
                 p={8}
@@ -98,8 +98,8 @@ function Settings(
                 }
             </Chip.Group>
 
-            <Text mt="md" weight={500} pb="xs">Appearance of Checks</Text>
-            <Group position="center">
+            <Text mt="md" fw={500} pb="xs">Appearance of Checks</Text>
+            <Group justify="center">
                 <SegmentedControl
                     data-test="preview-mode-segment-control"
                     data={['bounded', 'normal', 'list']}
@@ -107,7 +107,7 @@ function Settings(
                     onChange={setChecksViewMode}
                 />
             </Group>
-            <Group position="center" mt="md">
+            <Group justify="center" mt="md">
                 <SegmentedControl
                     data-test="preview-size-segment-control"
                     data={['small', 'medium', 'large', 'xlarge']}

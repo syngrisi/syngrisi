@@ -10,22 +10,18 @@ function ToggleThemeButton({ colorScheme, toggleColorScheme }: any): ReactElemen
     return (
         <Group
             mr={28}
-            position="right"
+            justify="flex-end"
             title={`Switch to ${dark ? 'light' : 'dark'} theme`}
         >
             <Switch
                 data-test="theme-button"
                 size="md"
-                styles={
-                    () => (
-                        {
-                            track: {
-                                backgroundColor: theme.colors.gray[8],
-                                borderColor: theme.colors.gray[8],
-                            },
-                        }
-                    )
-                }
+                styles={{
+                    track: {
+                        backgroundColor: theme.colors.gray[8],
+                        borderColor: theme.colors.gray[8],
+                    },
+                }}
                 color="gray.8"
                 checked={colorScheme === 'light'}
                 onChange={() => {
