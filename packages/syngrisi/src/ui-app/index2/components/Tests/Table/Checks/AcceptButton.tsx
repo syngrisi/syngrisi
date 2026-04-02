@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line */
 import * as React from 'react';
 import { Badge, useMantineTheme, Text, Stack } from '@mantine/core';
-import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/all';
+import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/bs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import ActionPopoverIcon from '@shared/components/ActionPopoverIcon';
