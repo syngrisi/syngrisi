@@ -29,7 +29,7 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
                 </Text>
             </Group>
             <Divider />
-            <Group justify="flex-start" gap={8} ml={-6} noWrap>
+            <Group justify="flex-start" gap={8} ml={-6} wrap="nowrap">
                 <Group>
                     <StatusIcon status={check.status[0]} size={72} />
                 </Group>
@@ -65,11 +65,11 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
                     <Text size="xs" data-test="os-label">{check.os}</Text>
                 </Group>
             </Group>
-            <Group justify="space-between" noWrap>
+            <Group justify="space-between" wrap="nowrap">
                 <Group>
                     <Text size="xs">Browser: </Text>
                 </Group>
-                <Group justify="flex-end" gap={6} noWrap>
+                <Group justify="flex-end" gap={6} wrap="nowrap">
                     <BrowserIcon size={24} browser={check.browserName} />
                     <Text size="xs" data-test="browser-label">
                         {check.browserName}

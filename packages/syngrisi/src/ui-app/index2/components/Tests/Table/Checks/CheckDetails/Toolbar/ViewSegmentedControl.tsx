@@ -61,14 +61,14 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                     withinPortal
                     label={
                         (
-                            <Group noWrap>
+                            <Group wrap="nowrap">
                                 <Text>Switch to Expected View</Text>
                                 <Kbd style={kbdStyle}>1</Kbd>
                             </Group>
                         )
                     }
                 >
-                    <Group justify="flex-start" gap={4} noWrap data-check="expected-view">
+                    <Group justify="flex-start" gap={4} wrap="nowrap" data-check="expected-view">
                         <IconSquareLetterE stroke={1} style={labelIconStyle} />
                     </Group>
                 </Tooltip>
@@ -82,14 +82,14 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                     withinPortal
                     label={
                         (
-                            <Group noWrap>
+                            <Group wrap="nowrap">
                                 <Text>Switch to Actual View</Text>
                                 <Kbd style={kbdStyle}>2</Kbd>
                             </Group>
                         )
                     }
                 >
-                    <Group justify="flex-start" gap={4} noWrap data-check="actual-view">
+                    <Group justify="flex-start" gap={4} wrap="nowrap" data-check="actual-view">
                         <IconSquareLetterA stroke={1} style={labelIconStyle} />
                     </Group>
                 </Tooltip>
@@ -103,14 +103,14 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                         withinPortal
                         label={
                             (
-                                <Group noWrap>
+                                <Group wrap="nowrap">
                                     <Text>Switch to Difference View</Text>
                                     <Kbd style={kbdStyle}>3</Kbd>
                                 </Group>
                             )
                         }
                     >
-                        <Group justify="flex-start" gap={4} noWrap data-check="diff-view">
+                        <Group justify="flex-start" gap={4} wrap="nowrap" data-check="diff-view">
                             <IconArrowsExchange2 stroke={1} style={labelIconStyle} />
                         </Group>
                     </Tooltip>
@@ -125,14 +125,14 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                         withinPortal
                         label={
                             (
-                                <Group noWrap>
+                                <Group wrap="nowrap">
                                     <Text>Switch to Slider View</Text>
                                     <Kbd style={kbdStyle}>4</Kbd>
                                 </Group>
                             )
                         }
                     >
-                        <Group justify="flex-start" gap={4} noWrap data-check="slider-view">
+                        <Group justify="flex-start" gap={4} wrap="nowrap" data-check="slider-view">
                             <IconSquareHalf stroke={1} style={labelIconStyle} />
                         </Group>
                     </Tooltip>

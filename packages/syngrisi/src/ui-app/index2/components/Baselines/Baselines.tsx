@@ -134,7 +134,7 @@ export default function Baselines({ updateToolbar }: Props) {
     );
 
     return (
-        <Group justify="space-between" align="start" noWrap>
+        <Group justify="space-between" align="start" wrap="nowrap">
             <BaselinesTable
                 updateToolbar={updateToolbar}
                 firstPageQuery={firstPageQuery}

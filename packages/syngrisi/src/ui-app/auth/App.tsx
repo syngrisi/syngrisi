@@ -53,6 +53,9 @@ function App() {
                 forceColorScheme={colorScheme}
                 theme={{
                     fontSizes: { md: '24px' },
+                    components: {
+                        Text: { defaultProps: { component: 'div' } },
+                    },
                 }}
             >
                 <ToggleThemeButton colorScheme={colorScheme} toggleColorScheme={toggleColorScheme} />

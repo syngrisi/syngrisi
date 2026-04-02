@@ -30,7 +30,7 @@ function RelativeDrawer(
                 }}
                 >
                     <Paper p="md" m={8} shadow="sm" radius="xs" withBorder>
-                        <Group justify="space-between" align="start" noWrap>
+                        <Group justify="space-between" align="start" wrap="nowrap">
                             <Text size="sm" pb={24}>{title}</Text>
                             <ActionIcon
                                 size="sm"

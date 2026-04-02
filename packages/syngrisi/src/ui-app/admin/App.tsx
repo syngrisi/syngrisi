@@ -78,6 +78,9 @@ function App() {
                     theme={{
                         fontSizes: { md: '1.5rem' },
                         primaryColor: 'green',
+                        components: {
+                            Text: { defaultProps: { component: 'div' } },
+                        },
                     }}
                 >
                     <Spotlight

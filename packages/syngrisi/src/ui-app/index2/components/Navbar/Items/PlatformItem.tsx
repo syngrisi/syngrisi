@@ -18,7 +18,7 @@ export function PlatformItem({ item, index, handlerItemClick, className }: Props
             className={className}
             style={{ cursor: 'pointer', width: '100%' }}
         >
-            <Group noWrap pl={8} justify="space-between" gap={0} style={{ width: '100%' }}>
+            <Group wrap="nowrap" pl={8} justify="space-between" gap={0} style={{ width: '100%' }}>
                 <Stack gap={0} style={{ width: '100%' }}>
                     <Group justify="flex-start" style={{ width: '100%' }}>
                         <Tooltip label={item.name} multiline withinPortal>

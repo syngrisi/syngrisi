@@ -186,7 +186,7 @@ export function RegionsToolbar({
             <Tooltip
                 label={
                     (
-                        <Group noWrap>
+                        <Group wrap="nowrap">
                             <Text>Remove selected ignore regions</Text>
                             <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>Del</Kbd>
                             {' or '}
@@ -211,13 +211,13 @@ export function RegionsToolbar({
                 label={
                     (
                         <Stack gap={4}>
-                            <Group noWrap gap={4}>
+                            <Group wrap="nowrap" gap={4}>
                                 <Text>Add ignore region</Text>
                                 <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>A</Kbd>
                             </Group>
                             {
                                 !baselineId && (
-                                    <Group noWrap gap={4}>
+                                    <Group wrap="nowrap" gap={4}>
                                         <Text c="orange">&#9888;</Text>
                                         <Text> First you need to accept this check</Text>
                                     </Group>
@@ -249,14 +249,14 @@ export function RegionsToolbar({
                 label={
                     (
                         <Stack gap={4}>
-                            <Group noWrap gap={4}>
+                            <Group wrap="nowrap" gap={4}>
                                 <Text>Auto ignore regions from diff</Text>
                                 <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>R</Kbd>
                             </Group>
                             <Text size="xs" c="dimmed">Create ignore regions for all diff areas</Text>
                             {
                                 !baselineId && (
-                                    <Group noWrap gap={4}>
+                                    <Group wrap="nowrap" gap={4}>
                                         <Text c="orange">&#9888;</Text>
                                         <Text> First you need to accept this check</Text>
                                     </Group>
@@ -264,7 +264,7 @@ export function RegionsToolbar({
                             }
                             {
                                 baselineId && !hasDiff && (
-                                    <Group noWrap gap={4}>
+                                    <Group wrap="nowrap" gap={4}>
                                         <Text c="dimmed">&#8505;</Text>
                                         <Text c="dimmed"> No diff available</Text>
                                     </Group>
@@ -292,14 +292,14 @@ export function RegionsToolbar({
                 label={
                     (
                         <Stack gap={4}>
-                            <Group noWrap gap={4}>
+                            <Group wrap="nowrap" gap={4}>
                                 <Text>Checked area only</Text>
                                 <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>B</Kbd>
                             </Group>
                             <Text size="xs" c="dimmed">Compare only within this region</Text>
                             {
                                 !baselineId && (
-                                    <Group noWrap gap={4}>
+                                    <Group wrap="nowrap" gap={4}>
                                         <Text c="orange">&#9888;</Text>
                                         <Text> First you need to accept this check</Text>
                                     </Group>
@@ -307,7 +307,7 @@ export function RegionsToolbar({
                             }
                             {
                                 baselineId && hasBoundRegion && (
-                                    <Group noWrap gap={4}>
+                                    <Group wrap="nowrap" gap={4}>
                                         <Text c="orange">&#9888;</Text>
                                         <Text> Bound region already exists</Text>
                                     </Group>
@@ -335,7 +335,7 @@ export function RegionsToolbar({
                     (
                         <Group>
                             <Text>Save regions</Text>
-                            <Group align="left" gap={4} noWrap>
+                            <Group align="left" gap={4} wrap="nowrap">
 
                                 <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>Alt</Kbd>
                                 +
