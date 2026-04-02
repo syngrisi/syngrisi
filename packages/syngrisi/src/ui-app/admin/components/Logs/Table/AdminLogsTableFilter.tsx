@@ -120,7 +120,7 @@ function AdminLogsTableFilter(
             title="Filter"
             width={560}
         >
-            <ScrollArea.Autosize maxHeight="80vh" mr={-12} style={{ height: '80vh' }}>
+            <ScrollArea.Autosize mah="80vh" mr={-12} style={{ height: '80vh' }}>
                 <Box style={{ paddingRight: 16, marginBottom: 100 }}>
                     <Stack>
                         <LogicalGroup

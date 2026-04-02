@@ -131,7 +131,7 @@ function Filter(
             title="Filter"
             width={isMobile ? '100%' : 420}
         >
-            <ScrollArea.Autosize maxHeight="80vh" style={{ height: '80vh' }}>
+            <ScrollArea.Autosize mah="80vh" style={{ height: '80vh' }}>
                 <Box style={{ paddingRight: 60, marginBottom: 100 }}>
                     <Stack>
                         <LogicalGroup
