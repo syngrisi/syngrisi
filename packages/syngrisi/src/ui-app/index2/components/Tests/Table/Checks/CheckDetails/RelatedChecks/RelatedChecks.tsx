@@ -132,7 +132,7 @@ export function RelatedChecks(
                 {
                     openedFilter && (
                         <Group mb="xs" mt="xs" ml={-10} mr={-10} gap={4}>
-                            <Group justify="space-between" align="center" noWrap>
+                            <Group justify="space-between" align="center" wrap="nowrap">
                                 <Text size="sm" mb={-8}>
                                     Show checks with same parameters
                                 </Text>

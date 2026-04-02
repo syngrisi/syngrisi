@@ -163,7 +163,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
     }
 
     return (
-        <Group align="start" noWrap gap={0} style={{ width: '100%' }}>
+        <Group align="start" wrap="nowrap" gap={0} style={{ width: '100%' }}>
             <TestsTable
                 updateToolbar={updateToolbar}
                 firstPageQuery={firstPageQuery}

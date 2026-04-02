@@ -166,7 +166,7 @@ export function ZoomToolbar(
 
             <Popover position="bottom" withArrow shadow="md" opened={openedZoomPopover}>
                 <Popover.Target>
-                    <Group gap={0} justify="center" onClick={zoomPopoverHandler.toggle} noWrap style={{ cursor: 'pointer' }} data-check="open-zoom-dropdown">
+                    <Group gap={0} justify="center" onClick={zoomPopoverHandler.toggle} wrap="nowrap" style={{ cursor: 'pointer' }} data-check="open-zoom-dropdown">
                         <Text
                             size="lg"
                             fw={400}
@@ -195,7 +195,7 @@ export function ZoomToolbar(
                                 zoomPopoverHandler.close();
                             }}
                         >
-                            <Group justify="space-between" noWrap>50%</Group>
+                            <Group justify="space-between" wrap="nowrap">50%</Group>
                         </Button>
                         <Button
                             pl={8}
@@ -211,7 +211,7 @@ export function ZoomToolbar(
                                 zoomPopoverHandler.close();
                             }}
                         >
-                            <Group justify="space-between" noWrap>100%</Group>
+                            <Group justify="space-between" wrap="nowrap">100%</Group>
                         </Button>
                         <Button
                             pl={8}
@@ -227,7 +227,7 @@ export function ZoomToolbar(
                                 zoomPopoverHandler.close();
                             }}
                         >
-                            <Group justify="space-between" noWrap>200%</Group>
+                            <Group justify="space-between" wrap="nowrap">200%</Group>
                         </Button>
                         <Button
                             styles={{
@@ -248,7 +248,7 @@ export function ZoomToolbar(
                                 fitImageByWith(`${view}Image`);
                             }}
                         >
-                            <Group style={{ width: '100%' }} justify="space-between" noWrap>
+                            <Group style={{ width: '100%' }} justify="space-between" wrap="nowrap">
                                 Fit by width <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>9</Kbd>
                             </Group>
                         </Button>
@@ -272,7 +272,7 @@ export function ZoomToolbar(
                                 fitImageToCanvasIfNeeded(`${view}Image`);
                             }}
                         >
-                            <Group style={{ width: '100%' }} justify="space-between" noWrap>
+                            <Group style={{ width: '100%' }} justify="space-between" wrap="nowrap">
                                 Fit to canvas <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>0</Kbd>
                             </Group>
                         </Button>

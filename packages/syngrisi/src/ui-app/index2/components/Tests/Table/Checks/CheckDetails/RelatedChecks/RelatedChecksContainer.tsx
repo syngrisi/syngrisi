@@ -31,7 +31,7 @@ export function RelatedChecksContainer({
     });
 
     return (
-        <Group align="start" noWrap>
+        <Group align="start" wrap="nowrap">
             <RelatedChecks
                 currentCheck={currentCheck}
                 related={related}

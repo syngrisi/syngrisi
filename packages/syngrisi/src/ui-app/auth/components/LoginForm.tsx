@@ -199,8 +199,7 @@ export default function LoginForm() {
                     </Button>
                     <LoadingOverlay
                         visible={loader}
-                        transitionDuration={300}
-                        overlayBlur={1}
+                        overlayProps={{ blur: 1 }}
                         loaderProps={{ color: 'green' }}
                     />
                 </form>

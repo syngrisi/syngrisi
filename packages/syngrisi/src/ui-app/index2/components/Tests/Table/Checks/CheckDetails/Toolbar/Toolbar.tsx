@@ -121,12 +121,12 @@ export function Toolbar(
 
     return (
         <>
-            <Group justify="space-between" noWrap data-check="toolbar" data-navigation-ready={navigationReady ? 'true' : 'false'}>
+            <Group justify="space-between" wrap="nowrap" data-check="toolbar" data-navigation-ready={navigationReady ? 'true' : 'false'}>
                 {/* Left side: Navigation arrows (fixed position) + ScreenshotDetails */}
-                <Group gap="sm" noWrap>
+                <Group gap="sm" wrap="nowrap">
                     {!isShareMode && (
                         <>
-                            <Group gap={2} noWrap>
+                            <Group gap={2} wrap="nowrap">
                                 <ActionIcon
                                     onClick={() => onNavigateCheck && onNavigateCheck('prev')}
                                     disabled={isFirstCheck}
@@ -144,7 +144,7 @@ export function Toolbar(
                                     <IconChevronRight size={20} />
                                 </ActionIcon>
                             </Group>
-                            <Group gap={2} noWrap>
+                            <Group gap={2} wrap="nowrap">
                                 <ActionIcon
                                     onClick={() => onNavigateTest && onNavigateTest('prev')}
                                     disabled={isFirstTest}
@@ -171,13 +171,13 @@ export function Toolbar(
                 </Group>
 
                 {/* Right side: Tools and actions */}
-                <Group gap="sm" noWrap>
+                <Group gap="sm" wrap="nowrap">
                     <Group
                         gap={4}
                         style={classes.zoomButtonsWrapper}
                         justify="center"
                         align="center"
-                        noWrap
+                        wrap="nowrap"
                     >
                         <ZoomToolbar mainView={mainView as MainView} view={view} />
                     </Group>
@@ -247,7 +247,7 @@ export function Toolbar(
 
                                 <Menu.Dropdown>
                                     <Menu.Item
-                                        icon={<IconShare size={14} />}
+                                        leftSection={<IconShare size={14} />}
                                         onClick={isShareEnabled ? () => setShareModalOpened(true) : undefined}
                                         data-test="menu-share-check"
                                         data-share-enabled={isShareEnabled.toString()}
@@ -258,7 +258,7 @@ export function Toolbar(
                                     </Menu.Item>
                                     <Menu.Item
                                         color="red"
-                                        icon={<IconTrash size={14} />}
+                                        leftSection={<IconTrash size={14} />}
                                         disabled={!baselineId}
                                         onClick={() => setDeleteModalOpened(true)}
                                         data-test="menu-delete-baseline"
@@ -273,7 +273,7 @@ export function Toolbar(
                     {onToggleRCA && isRCAFeatureEnabled && (
                         <>
                             <Divider orientation="vertical" />
-                            <Group gap={4} noWrap>
+                            <Group gap={4} wrap="nowrap">
                                 <ActionIcon
                                     onClick={onToggleRCA}
                                     title="Root Cause Analysis (D)"

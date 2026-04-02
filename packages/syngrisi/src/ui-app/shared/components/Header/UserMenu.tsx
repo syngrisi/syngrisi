@@ -23,11 +23,11 @@ import { ApiKeyModalResult } from '@shared/components/Header/ApiKeyModalResult';
 import { UserInfoModal } from '@shared/components/Header/UserInfoModal';
 import { AboutModal } from '@shared/components/Header/AboutModal';
 import ToggleThemeButton from '@shared/components/ToggleThemeButton';
-import useColorScheme from '@shared/hooks/useColorSheme';
+import { useMantineColorScheme } from '@mantine/core';
 
 function UserMenu() {
     const theme = useMantineTheme();
-    const [colorScheme, toggleColorScheme] = useColorScheme();
+    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const apiKey = UserHooks.useApiKey();
     const [apiKeyModalAskOpened, setApiKeyModalAskOpened] = useState(false);
     const [apiKeyModalResultOpened, setApiKeyModalResultOpened] = useState(false);
@@ -94,7 +94,7 @@ function UserMenu() {
                     <Menu.Item
                         data-test="userinfo"
                         aria-label="User Details"
-                        icon={<IconId size={14} />}
+                        leftSection={<IconId size={14} />}
                         onClick={() => {
                             setUserInfoModalOpened(true);
                         }}
@@ -103,13 +103,13 @@ function UserMenu() {
                     </Menu.Item>
                     <Menu.Item
                         disabled={!isAdmin}
-                        icon={<IconSettings size={14} />}
+                        leftSection={<IconSettings size={14} />}
                         onClick={() => window.location.assign('/admin/')}
                     >
                         Admin Panel
                     </Menu.Item>
                     <Menu.Item
-                        icon={<IconKey size={14} />}
+                        leftSection={<IconKey size={14} />}
                         component="a"
                         href="/auth/change"
                     >
@@ -118,7 +118,7 @@ function UserMenu() {
                     <Menu.Item
                         id="generate-api"
                         aria-label="Generate API key"
-                        icon={<IconTool size={14} />}
+                        leftSection={<IconTool size={14} />}
                         onClick={() => {
                             setApiKeyModalAskOpened(true);
                         }}
@@ -128,7 +128,7 @@ function UserMenu() {
                     <Menu.Item
                         data-test="about"
                         aria-label="About Syngrisi"
-                        icon={<IconInfoCircle size={14} />}
+                        leftSection={<IconInfoCircle size={14} />}
                         onClick={() => {
                             setAboutModalOpened(true);
                         }}
@@ -137,7 +137,7 @@ function UserMenu() {
                     </Menu.Item>
                     <Menu.Divider />
                     <Menu.Item
-                        icon={<IconLogout size={14} />}
+                        leftSection={<IconLogout size={14} />}
                         component="a"
                         href="/auth/logout"
                     >

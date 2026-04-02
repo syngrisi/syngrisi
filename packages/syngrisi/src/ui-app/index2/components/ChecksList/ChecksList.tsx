@@ -210,9 +210,8 @@ export function ChecksList() {
 
                                         <Image
                                             src={imagePreviewSrc}
-                                            height={getPreviewHeight(previewSize)}
+                                            h={getPreviewHeight(previewSize)}
                                             fit="contain"
-                                            withPlaceholder
                                             alt={check.name}
                                         />
                                     </UnstyledButton>

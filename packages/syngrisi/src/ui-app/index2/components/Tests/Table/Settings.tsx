@@ -53,7 +53,7 @@ function Settings(
             title="Settings"
             width={260}
         >
-            <Group align="end" gap="sm" noWrap>
+            <Group align="end" gap="sm" wrap="nowrap">
                 <SafeSelect
                     label="Sort by"
                     data-test="table-sort-by-select"

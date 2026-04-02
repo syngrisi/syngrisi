@@ -41,7 +41,7 @@ export function BaselinesCellWrapper({ type, baseline, itemValue }: Props) {
         return (
             <td key={type} style={style}>
                 <Tooltip label={itemValue} multiline withinPortal>
-                    <Group gap={6} align="center" noWrap>
+                    <Group gap={6} align="center" wrap="nowrap">
                         <OsIcon size={18} os={itemValue} />
                         <Text lineClamp={1} style={{ wordBreak: 'break-all' }}>
                             {itemValue}
@@ -56,7 +56,7 @@ export function BaselinesCellWrapper({ type, baseline, itemValue }: Props) {
         return (
             <td key={type} style={style}>
                 <Tooltip label={itemValue} multiline withinPortal>
-                    <Group gap={6} align="center" noWrap>
+                    <Group gap={6} align="center" wrap="nowrap">
                         <BrowserIcon size={18} browserName={itemValue} />
                         <Text lineClamp={1} style={{ wordBreak: 'break-all' }}>
                             {itemValue}

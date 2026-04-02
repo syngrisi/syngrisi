@@ -21,7 +21,7 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
                 alignItems: 'center',
             }}
         >
-            <a href="/" style={{ display: 'flex', textDecoration: 'none', alignItems: 'center' }}>
+            <a href="/" style={{ display: 'flex', textDecoration: 'none', alignItems: 'center', color: 'inherit' }}>
                 <Paper
                     data-test="logo-container"
                     aria-label="Logo container"
