@@ -3,14 +3,11 @@ import * as React from 'react';
 import {
     SiFirefox,
     SiGooglechrome,
-    SiInternetexplorer,
-    SiMicrosoftedge,
     SiSafari,
-    SiVisualstudiocode,
 } from 'react-icons/si';
-// import {PiGoogleChromeLogoThin} from 'react-icons/pi'
-import { TbQuestionMark } from 'react-icons/tb';
-import { FaSafari, FiChrome } from 'react-icons/all';
+import { FaSafari } from 'react-icons/fa';
+import { FiChrome } from 'react-icons/fi';
+import { IconBrandEdge, IconQuestionMark, IconBrandVisualStudio, IconWorldWww } from '@tabler/icons-react';
 
 interface Props {
     browser: string
@@ -26,16 +23,16 @@ const browserIconMap = (key: string) => {
         Chrome: SiGooglechrome,
         firefox: SiFirefox,
         Firefox: SiFirefox,
-        msedge: SiMicrosoftedge,
-        Msedge: SiMicrosoftedge,
+        msedge: IconBrandEdge,
+        Msedge: IconBrandEdge,
         Safari: SiSafari,
         safari: SiSafari,
         webkit: FaSafari,
-        'internet explorer': SiInternetexplorer,
-        vscode: SiVisualstudiocode,
-        VSCode: SiVisualstudiocode,
+        'internet explorer': IconWorldWww,
+        vscode: IconBrandVisualStudio,
+        VSCode: IconBrandVisualStudio,
     } as { [key: string]: any };
-    return map[key] || TbQuestionMark;
+    return map[key] || IconQuestionMark;
 };
 
 export function BrowserIcon({ browser, size = 24, color = '', ...rest }: Props) {

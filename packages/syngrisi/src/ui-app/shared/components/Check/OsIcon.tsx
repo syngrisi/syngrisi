@@ -5,9 +5,8 @@ import {
     SiApple,
     SiIos,
     SiLinux,
-    SiWindows,
 } from 'react-icons/si';
-import { TbQuestionMark } from 'react-icons/tb';
+import { IconBrandWindows, IconQuestionMark } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import config from '@config';
@@ -23,8 +22,8 @@ const osIconMap = (key: string) => {
     const map = {
         ios: SiIos,
         android: SiAndroid,
-        windows: SiWindows,
-        win32: SiWindows,
+        windows: IconBrandWindows,
+        win32: IconBrandWindows,
         macintel: SiApple,
         macos: SiApple,
         'linux x86_64': SiLinux,
@@ -61,7 +60,7 @@ export function OsIcon({ os, size = 24, ...rest }: Props) {
 
     const Icon = osIconMap(os)
         || osIconMap(allDevices.find((x: any) => x.device === os)?.os || '')
-        || TbQuestionMark;
+        || IconQuestionMark;
 
     return (
         <Icon
