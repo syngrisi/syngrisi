@@ -1,5 +1,23 @@
 # @syngrisi/syngrisi
 
+## 3.3.0
+
+### Minor Changes
+
+-   [#20](https://github.com/syngrisi/syngrisi/pull/20) [`4f898d3`](https://github.com/syngrisi/syngrisi/commit/4f898d36e51c2f06d9fe3c2163cd7eb4c0731af8) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Optimize React frontend performance: memoization, code splitting, and lazy rendering
+
+    -   Add React.memo to key components (Row, Check, RunItem, SuiteItem, BaseItemWrapper, Header) to prevent cascade re-renders
+    -   Add useCallback/useMemo for stable function references and computed values
+    -   Code-split CheckDetails (with fabric.js) into lazy-loaded chunk, reducing main bundle from 585KB to 147KB (-75%)
+    -   Lazy-load ChecksList route
+    -   Conditionally render Checks only when table row is expanded, preventing unnecessary API queries for collapsed rows
+    -   Fix useMemo dependencies in useInfinityScroll
+
+### Patch Changes
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.3.0
+
 ## 3.2.3
 
 ### Patch Changes
