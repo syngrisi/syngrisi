@@ -8,7 +8,7 @@
 
 ## Test Request Convention
 
-If a user asks to run "syngrisi tests" or "e2e tests", treat that as running `yarn test` from `/Users/vsilakau/Projects/syngrisi/packages/syngrisi`.
+If a user asks to run "syngrisi tests" or "e2e tests", treat that as running `yarn test` from `packages/syngrisi`.
 
 ## Design & Coding Principles
 
