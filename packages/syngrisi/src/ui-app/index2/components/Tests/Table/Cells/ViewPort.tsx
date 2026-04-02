@@ -35,7 +35,7 @@ export function Viewport({ type, test }: Props) {
                 >
                     <Text
                         lineClamp={1}
-                        sx={{ wordBreak: 'break-all' }}
+                        style={{ wordBreak: 'break-all' }}
                     >
                         {resultViewport}
                     </Text>

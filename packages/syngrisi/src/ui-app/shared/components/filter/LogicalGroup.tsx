@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation,prefer-arrow-callback */
-import { ActionIcon, Box, Button, Chip, Group, Paper, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Box, Button, Chip, Group, Paper, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import React from 'react';
 import { IconPlus, IconX } from '@tabler/icons-react';
 import { FilterWrapper } from '@shared/components/filter/FilterWrapper';
@@ -73,19 +73,20 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
         ),
     );
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     return (
         <Paper
             data-test={testAttr}
             withBorder
             mt={24}
             p={16}
-            sx={{ position: 'relative' }}
+            style={{ position: 'relative' }}
         >
             <Box
                 pl={4}
                 pr={4}
-                sx={{
-                    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : 'white',
+                style={{
+                    backgroundColor: colorScheme === 'dark' ? theme.colors.dark[7] : 'white',
                     display: 'inline-block',
                     fontSize: '2rem',
                     position: 'absolute',
@@ -97,7 +98,7 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                     multiple={false}
                     value={groupsData[id]['operator']}
                     onChange={updateGroupOperator}
-                    spacing={6}
+                    gap={6}
                 >
                     <Chip
                         data-test="filter-group-operator-and"
@@ -122,7 +123,7 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
             {
                 id !== 'mainGroup'
                 && (
-                    <Group sx={{ width: '100%' }} position="right" mb={16}>
+                    <Group style={{ width: '100%' }} justify="flex-end" mb={16}>
                         <ActionIcon
                             size={16}
                             onClick={() => removeGroupsData(id)}
@@ -134,7 +135,7 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                 )
             }
 
-            <Group position="right" spacing={8} mt={2} sx={{ width: '100%' }}>
+            <Group justify="flex-end" gap={8} mt={2} style={{ width: '100%' }}>
                 <Button
                     data-test="table-filter-add-rule-button"
                     title="Add filter rule"

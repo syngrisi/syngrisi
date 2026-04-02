@@ -111,11 +111,11 @@ function LogoutForm() {
             <Paper withBorder shadow="md" p={30} mt={30} radius="md" hidden={loading}>
                 {
                     success
-                        ? <Text align="center" color="green"><IconCircleCheck size="6rem" /></Text>
-                        : <Text align="center" color="red"><IconCircleX size="6rem" /></Text>
+                        ? <Text ta="center" c="green"><IconCircleCheck size="6rem" /></Text>
+                        : <Text ta="center" c="red"><IconCircleX size="6rem" /></Text>
                 }
                 <Title align="center">{success ? 'Success!' : 'Failed'}</Title>
-                <Text align="center" size={16} mt="md">
+                <Text ta="center" size={16} mt="md">
                     {success
                         ? 'You have been successfully logged out. Click Sign In to login again.'
                         : errorMessage || 'Something went wrong'}

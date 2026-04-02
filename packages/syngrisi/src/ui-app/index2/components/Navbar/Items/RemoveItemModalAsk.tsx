@@ -52,7 +52,7 @@ export default function RemoveItemModalAsk({ opened, setOpened, infinityQuery, i
             <Text size="sm">
                 Are you sure you want to permanently delete the {type}?
             </Text>
-            <Group position="right">
+            <Group justify="flex-end">
                 <Button
                     data-test="remove-item-modal-button"
                     color="red"

@@ -14,10 +14,10 @@ Stack Trace: ${error.stack}`,
         <Paper role="alert" p="md">
             <Title>Something went wrong</Title>
 
-            <Stack align="center" spacing={8}>
-                <Text size="lg" align="center">Try to:</Text>
+            <Stack align="center" gap={8}>
+                <Text size="lg" ta="center">Try to:</Text>
 
-                <Group position="center">
+                <Group justify="center">
                     <Button
                         leftIcon={<IconRefresh />}
                         variant="outline"
@@ -29,7 +29,7 @@ Stack Trace: ${error.stack}`,
                     >
                         Refresh
                     </Button>
-                    <Text size="lg" align="center">
+                    <Text size="lg" ta="center">
                         or
                     </Text>
                     <Button
@@ -43,7 +43,7 @@ Stack Trace: ${error.stack}`,
                         Go to main page
                     </Button>
                 </Group>
-                <Group position="left" pt={30} w="100%">
+                <Group justify="flex-start" pt={30} w="100%">
                     <Text>Error Details:</Text>
                 </Group>
                 <Paper withBorder p="sm" style={{ backgroundColor: 'black', width: '100%' }}>
@@ -52,7 +52,7 @@ Stack Trace: ${error.stack}`,
                     </Text>
                 </Paper>
             </Stack>
-            <Group position="center" mt="md">
+            <Group justify="center" mt="md">
                 <CopyButton value={errorDetails} timeout={2000}>
                     {({ copied, copy }) => (
                         <Button color={copied ? 'teal' : 'blue'} onClick={copy}>

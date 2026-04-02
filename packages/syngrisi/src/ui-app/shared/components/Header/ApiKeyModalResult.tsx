@@ -43,12 +43,12 @@ export function ApiKeyModalResult({ opened, setOpened, apiKey }: { opened: boole
                             <Group ml={20} mb={20}>
                                 <Text size="sm">Copy the New API key to Clipboard</Text>
                             </Group>
-                            <Group position="center">
+                            <Group justify="center">
                                 <TextInput
                                     data-test="api-key"
                                     id="api-key"
                                     value={apiKey.data.apikey}
-                                    sx={{ width: '340px', display: 'inline' }}
+                                    style={{ width: '340px', display: 'inline' }}
                                     icon={<IconKey />}
                                     style={{ display: 'inline' }}
                                 />
@@ -65,14 +65,14 @@ export function ApiKeyModalResult({ opened, setOpened, apiKey }: { opened: boole
                     : (
                         // eslint-disable-next-line react/jsx-no-useless-fragment
                         <>
-                            {apiKey.isError && <Text color="red" size="sm"> Error loading API key</Text>}
+                            {apiKey.isError && <Text c="red" size="sm"> Error loading API key</Text>}
                         </>
                     )
             }
-            <Group position="center">
+            <Group justify="center">
                 {((apiKey.isFetching || apiKey.isRefetching)) && <Loader />}
             </Group>
-            <Group position="center" pt={30}>
+            <Group justify="center" pt={30}>
                 <Button
                     onClick={() => {
                         setOpened(false);

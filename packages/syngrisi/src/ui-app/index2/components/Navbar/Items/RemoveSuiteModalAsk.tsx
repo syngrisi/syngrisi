@@ -43,7 +43,7 @@ export default function RemoveSuiteModalAsk({ opened, setOpened, infinityQuery, 
             <Text size="sm">
                 Are you sure you want to permanently delete the Suite?
             </Text>
-            <Group position="right">
+            <Group justify="flex-end">
                 <Button
                     color="red"
                     onClick={

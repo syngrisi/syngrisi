@@ -166,21 +166,21 @@ export function ZoomToolbar(
 
             <Popover position="bottom" withArrow shadow="md" opened={openedZoomPopover}>
                 <Popover.Target>
-                    <Group spacing={0} position="center" onClick={zoomPopoverHandler.toggle} noWrap sx={{ cursor: 'pointer' }} data-check="open-zoom-dropdown">
+                    <Group gap={0} justify="center" onClick={zoomPopoverHandler.toggle} noWrap style={{ cursor: 'pointer' }} data-check="open-zoom-dropdown">
                         <Text
                             size="lg"
-                            weight={400}
-                            sx={{ minWidth: '3em' }}
+                            fw={400}
+                            style={{ minWidth: '3em' }}
                         >
                             {Math.round(zoomPercent)}%
                         </Text>
-                        <ActionIcon ml={-10} sx={{ pointerEvents: 'none' }}>
+                        <ActionIcon ml={-10} style={{ pointerEvents: 'none' }}>
                             <IconChevronDown />
                         </ActionIcon>
                     </Group>
                 </Popover.Target>
                 <Popover.Dropdown p={0}>
-                    <Stack spacing={0} data-check="zoom-dropdown">
+                    <Stack gap={0} data-check="zoom-dropdown">
                         <Button
                             pl={8}
                             pr={8}
@@ -195,7 +195,7 @@ export function ZoomToolbar(
                                 zoomPopoverHandler.close();
                             }}
                         >
-                            <Group position="apart" noWrap>50%</Group>
+                            <Group justify="space-between" noWrap>50%</Group>
                         </Button>
                         <Button
                             pl={8}
@@ -211,7 +211,7 @@ export function ZoomToolbar(
                                 zoomPopoverHandler.close();
                             }}
                         >
-                            <Group position="apart" noWrap>100%</Group>
+                            <Group justify="space-between" noWrap>100%</Group>
                         </Button>
                         <Button
                             pl={8}
@@ -227,7 +227,7 @@ export function ZoomToolbar(
                                 zoomPopoverHandler.close();
                             }}
                         >
-                            <Group position="apart" noWrap>200%</Group>
+                            <Group justify="space-between" noWrap>200%</Group>
                         </Button>
                         <Button
                             styles={{
@@ -235,7 +235,7 @@ export function ZoomToolbar(
                                     width: '100%',
                                 },
                             }}
-                            // sx={{ width: '100%' }}
+                            // style={{ width: '100%' }}
                             pl={8}
                             pr={8}
                             variant="subtle"
@@ -248,8 +248,8 @@ export function ZoomToolbar(
                                 fitImageByWith(`${view}Image`);
                             }}
                         >
-                            <Group sx={{ width: '100%' }} position="apart" noWrap>
-                                Fit by width <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>9</Kbd>
+                            <Group style={{ width: '100%' }} justify="space-between" noWrap>
+                                Fit by width <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>9</Kbd>
                             </Group>
                         </Button>
 
@@ -272,8 +272,8 @@ export function ZoomToolbar(
                                 fitImageToCanvasIfNeeded(`${view}Image`);
                             }}
                         >
-                            <Group sx={{ width: '100%' }} position="apart" noWrap>
-                                Fit to canvas <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>0</Kbd>
+                            <Group style={{ width: '100%' }} justify="space-between" noWrap>
+                                Fit to canvas <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>0</Kbd>
                             </Group>
                         </Button>
                     </Stack>

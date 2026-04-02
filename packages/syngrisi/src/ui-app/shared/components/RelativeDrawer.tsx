@@ -22,7 +22,7 @@ function RelativeDrawer(
     return (
         <Transition mounted={open} transition="slide-left" duration={200} timingFunction="ease">
             {(styles: CSSProperties) => (
-                <Box sx={{
+                <Box style={{
                     ...styles as any,
                     minWidth: width,
                     maxWidth: typeof width === 'number' ? width + 60 : width,
@@ -30,7 +30,7 @@ function RelativeDrawer(
                 }}
                 >
                     <Paper p="md" m={8} shadow="sm" radius="xs" withBorder>
-                        <Group position="apart" align="start" noWrap>
+                        <Group justify="space-between" align="start" noWrap>
                             <Text size="sm" pb={24}>{title}</Text>
                             <ActionIcon
                                 size="sm"

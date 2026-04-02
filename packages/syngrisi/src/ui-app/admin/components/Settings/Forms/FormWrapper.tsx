@@ -28,7 +28,7 @@ function FormWrapper({ name, value, label, description, enabled, type, settingsQ
             withBorder
             p={20}
             m={15}
-            sx={{ width: '90%' }}
+            style={{ width: '90%' }}
         >
             <Form
                 name={name}

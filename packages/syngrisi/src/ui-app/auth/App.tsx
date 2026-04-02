@@ -1,4 +1,5 @@
 /* eslint-disable max-len,prefer-arrow-callback */
+import '@mantine/core/styles.css';
 import '@asserts/css/auth/index.css';
 import * as React from 'react';
 
@@ -7,8 +8,6 @@ import {
 } from 'react-router-dom';
 import {
     Box,
-    ColorScheme,
-    ColorSchemeProvider,
     MantineProvider,
 } from '@mantine/core';
 
@@ -24,7 +23,7 @@ const queryClient = new QueryClient();
 
 function App() {
     const routes = useRoutes(routesItems);
-    const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
+    const [colorScheme, setColorScheme] = useLocalStorage<'light' | 'dark'>({
         key: 'mantine-color-scheme',
         defaultValue: 'light',
         getInitialValueInEffect: true,
@@ -41,40 +40,38 @@ function App() {
         document.body.style.setProperty('--before-opacity', '0.7');
     }, [colorScheme]);
 
-    const toggleColorScheme = (value?: ColorScheme) => {
-        setColorScheme(value || (isDark() ? 'light' : 'dark'));
+    const toggleColorScheme = () => {
+        setColorScheme(isDark() ? 'light' : 'dark');
     };
 
     useHotkeys([['mod+J', () => toggleColorScheme()]]);
 
     return (
         <QueryClientProvider client={queryClient}>
-            <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+            <MantineProvider
+                defaultColorScheme="light"
+                forceColorScheme={colorScheme}
+                theme={{
+                    fontSizes: { md: '24px' },
+                }}
+            >
                 <ToggleThemeButton colorScheme={colorScheme} toggleColorScheme={toggleColorScheme} />
-                <MantineProvider
-                    withGlobalStyles
-                    withNormalizeCSS
-                    theme={{
-                        fontSizes: { md: 24 },
-                        colorScheme,
-                    }}
-                >
-                    <Box sx={() => ({
-                        display: 'flex',
-                        justifyContent: 'center',
-                    })}
-                    >
-                        <AuthLogo />
-                    </Box>
 
-                    <Box>
-                        {routes}
-                    </Box>
-                    <Box>
-                        <AuthFooter />
-                    </Box>
-                </MantineProvider>
-            </ColorSchemeProvider>
+                <Box style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                }}
+                >
+                    <AuthLogo />
+                </Box>
+
+                <Box>
+                    {routes}
+                </Box>
+                <Box>
+                    <AuthFooter />
+                </Box>
+            </MantineProvider>
         </QueryClientProvider>
     );
 }

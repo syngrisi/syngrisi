@@ -1,55 +1,32 @@
 /* eslint-disable max-len */
 import * as React from 'react';
-import { ComponentPropsWithoutRef } from 'react';
 import {
-    ColorSchemeProvider,
     MantineProvider,
 } from '@mantine/core';
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
+import '@mantine/nprogress/styles.css';
+import '@mantine/spotlight/styles.css';
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useDocumentTitle } from '@mantine/hooks';
 import { NavigationProgress } from '@mantine/nprogress';
-import { NotificationsProvider } from '@mantine/notifications';
+import { Notifications } from '@mantine/notifications';
 
 import { IconSearch } from '@tabler/icons-react';
-import { SpotlightProvider } from '@mantine/spotlight';
-import { DefaultAction } from '@mantine/spotlight/esm/DefaultAction/DefaultAction';
+import { Spotlight, SpotlightActionData } from '@mantine/spotlight';
 import { AppContext } from '@admin/AppContext';
 
 import AdminLayout from '@admin/AdminLayout';
-import useColorScheme from '@shared/hooks/useColorSheme';
 import { navigationData } from '@shared/navigation/navigationData';
 import { INavDataItem } from '@shared/navigation/interfaces';
-
-const SpotlightActionButton = React.forwardRef<HTMLButtonElement, ComponentPropsWithoutRef<typeof DefaultAction>>(
-    (props, ref) => {
-        const { action, ...others } = props;
-        const ariaLabel = action?.title || 'Spotlight action';
-        const dataTest = action?.title
-            ? `spotlight-action-${action.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
-            : undefined;
-
-        return (
-            <DefaultAction
-                ref={ref}
-                aria-label={ariaLabel}
-                data-test={dataTest}
-                action={action}
-                {...others}
-            />
-        );
-    },
-);
-
-SpotlightActionButton.displayName = 'SpotlightActionButton';
 
 const queryClient = new QueryClient();
 
 function App() {
-    const [colorScheme, toggleColorScheme]: any = useColorScheme();
-
     const [appTitle, setAppTitle] = useState('Syngrisi');
     const [breadCrumbs, setBreadCrumbs] = useState([]);
     const [toolbar, setToolbar]: [any[], any] = useState([]);
@@ -78,9 +55,12 @@ function App() {
     useDocumentTitle(appTitle);
 
     const navigate = useNavigate();
-    const spotlightActions = navigationData().map((item: INavDataItem) => ({
-        ...item,
-        onTrigger: () => {
+    const spotlightActions: SpotlightActionData[] = navigationData().map((item: INavDataItem) => ({
+        id: item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        label: item.title,
+        description: item.description,
+        leftSection: item.icon,
+        onClick: () => {
             setTimeout(
                 () => {
                     window.location.reload();
@@ -93,39 +73,31 @@ function App() {
     return (
         <AppContext.Provider value={appProviderValue}>
             <QueryClientProvider client={queryClient}>
-                <ColorSchemeProvider
-                    colorScheme={colorScheme as any}
-                    toggleColorScheme={toggleColorScheme as any}
+                <MantineProvider
+                    defaultColorScheme="auto"
+                    theme={{
+                        fontSizes: { md: '1.5rem' },
+                        primaryColor: 'green',
+                    }}
                 >
-                    <MantineProvider
-                        withGlobalStyles
-                        withNormalizeCSS
-                        theme={{
-                            fontSizes: { md: 24 },
-                            colorScheme,
-                            primaryColor: 'green',
+                    <Spotlight
+                        actions={spotlightActions}
+                        highlightQuery
+                        searchProps={{
+                            leftSection: <IconSearch size={18} />,
+                            placeholder: 'Search...',
+                            'aria-label': 'Spotlight search',
                         }}
-                    >
-                        <SpotlightProvider
-                            actions={spotlightActions}
-                            actionComponent={SpotlightActionButton}
-                            highlightQuery
-                            searchIcon={<IconSearch size={18} />}
-                            limit={7}
-                            searchPlaceholder="Search..."
-                            searchInputProps={{ 'aria-label': 'Spotlight search' }}
-                            shortcut={['mod + k', 'mod + K']}
-                            nothingFoundMessage="Nothing found..."
-                        >
-                            <NotificationsProvider autoClose={5000} limit={5}>
-                                <NavigationProgress />
-                                <Routes>
-                                    <Route path="/admin/*" element={<AdminLayout />} />
-                                </Routes>
-                            </NotificationsProvider>
-                        </SpotlightProvider>
-                    </MantineProvider>
-                </ColorSchemeProvider>
+                        limit={7}
+                        shortcut={['mod + k', 'mod + K']}
+                        nothingFound="Nothing found..."
+                    />
+                    <Notifications autoClose={5000} limit={5} />
+                    <NavigationProgress />
+                    <Routes>
+                        <Route path="/admin/*" element={<AdminLayout />} />
+                    </Routes>
+                </MantineProvider>
             </QueryClientProvider>
         </AppContext.Provider>
     );

@@ -8,10 +8,9 @@ import {
     Group,
     Button,
     Box,
-    ScrollArea, ActionIcon, useMantineTheme,
+    ScrollArea, ActionIcon, useMantineTheme, useComputedColorScheme,
 } from '@mantine/core';
 import { useContext, useEffect, useState } from 'react';
-import { createStyles } from '@mantine/styles';
 
 import { IconRefresh } from '@tabler/icons-react';
 import { useNavProgressFetchEffect, UserHooks, useSubpageEffect } from '@shared/hooks';
@@ -21,6 +20,11 @@ import IUser from '@shared/interfaces/IUser';
 import UserAddForm from '@admin/components/Users/UserAddForm';
 import { AppContext } from '@admin/AppContext';
 
+const headInputStyle: React.CSSProperties = {
+    paddingLeft: '12px',
+    paddingRight: '12px',
+};
+
 export default function AdminUsers() {
     const { updateToolbar }: any = useContext(AppContext);
     useSubpageEffect('Users');
@@ -28,12 +32,13 @@ export default function AdminUsers() {
     const { isLoading, error, data, refetch, isSuccess, isFetching } = UserHooks.useAllUsers();
     useNavProgressFetchEffect(isFetching);
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme('light');
     // eslint-disable-next-line prefer-arrow-callback
     useEffect(function addReloadIcon() {
         updateToolbar(
             <ActionIcon
                 title="reload users"
-                color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                 variant="subtle"
                 onClick={() => {
                     refetch();
@@ -48,15 +53,6 @@ export default function AdminUsers() {
 
     const [addUser, setAddUser] = useState(false);
 
-    // eslint-disable-next-line no-unused-vars
-    const useStyles = createStyles(() => ({
-        headInput: {
-            paddingLeft: '12px',
-            paddingRight: '12px',
-        },
-    }));
-
-    const { classes } = useStyles();
     if (isLoading) {
         return (
             <LoadingOverlay visible />
@@ -64,7 +60,7 @@ export default function AdminUsers() {
     }
     if (error) {
         return (
-            <Text color="red">
+            <Text c="red">
                 Error:
                 {' '}
                 {error.toString()}
@@ -76,75 +72,75 @@ export default function AdminUsers() {
         return (
             <ScrollArea.Autosize
                 maxHeight="90vh"
-                sx={{ width: '100%' }}
+                style={{ width: '100%' }}
             >
                 <Box p={20}>
                     <Title>Users</Title>
-                    <Group spacing="xs" noWrap mt={40}>
+                    <Group gap="xs" wrap="nowrap" mt={40}>
                         <TextInput
-                            sx={{ width: '11%' }}
+                            style={{ width: '11%' }}
                             readOnly
-                            className={classes.headInput}
+                            styles={{ input: headInputStyle }}
                             variant="unstyled"
                             value="Id"
                         />
                         <TextInput
-                            sx={{ width: '11%' }}
+                            style={{ width: '11%' }}
                             readOnly
-                            className={classes.headInput}
+                            styles={{ input: headInputStyle }}
                             variant="unstyled"
                             value="Username"
                         />
                         <TextInput
-                            sx={{ width: '11%' }}
+                            style={{ width: '11%' }}
                             readOnly
-                            className={classes.headInput}
+                            styles={{ input: headInputStyle }}
                             variant="unstyled"
                             value="First Name"
                         />
                         <TextInput
-                            sx={{ width: '11%' }}
+                            style={{ width: '11%' }}
                             readOnly
-                            className={classes.headInput}
+                            styles={{ input: headInputStyle }}
                             variant="unstyled"
                             value="Last Name"
                         />
                         <TextInput
-                            sx={{ width: '11%' }}
+                            style={{ width: '11%' }}
                             readOnly
-                            className={classes.headInput}
+                            styles={{ input: headInputStyle }}
                             variant="unstyled"
                             value="Role"
                         />
                         <TextInput
-                            sx={{ width: '11%' }}
+                            style={{ width: '11%' }}
                             readOnly
-                            className={classes.headInput}
+                            styles={{ input: headInputStyle }}
                             variant="unstyled"
                             value="Password"
                         />
                         <TextInput
-                            sx={{ width: '11%' }}
+                            style={{ width: '11%' }}
                             readOnly
-                            className={classes.headInput}
+                            styles={{ input: headInputStyle }}
                             variant="unstyled"
                             value="API Key"
                         />
                         <TextInput
-                            sx={{ width: '11%' }}
+                            style={{ width: '11%' }}
                             readOnly
-                            className={classes.headInput}
+                            styles={{ input: headInputStyle }}
                             variant="unstyled"
                             value="Created"
                         />
                         <TextInput
-                            sx={{ width: '11%' }}
+                            style={{ width: '11%' }}
                             readOnly
-                            className={classes.headInput}
+                            styles={{ input: headInputStyle }}
                             variant="unstyled"
                             value="Updated"
                         />
-                        <Box component="div" sx={{ minWidth: '71px' }} />
+                        <Box component="div" style={{ minWidth: '71px' }} />
 
                     </Group>
                     <Group>
@@ -166,10 +162,10 @@ export default function AdminUsers() {
                             ))
                         }
                     </Group>
-                    <Group position="center">
+                    <Group justify="center">
                         {addUser && <UserAddForm setAddUser={setAddUser} refetch={refetch} />}
                     </Group>
-                    <Group position="center" mt={40} mb={150}>
+                    <Group justify="center" mt={40} mb={150}>
                         {!addUser && <Button onClick={() => setAddUser(true)} id="add-new-user" aria-label="Add New User">Add New User</Button>}
                     </Group>
                 </Box>
@@ -177,6 +173,6 @@ export default function AdminUsers() {
         );
     }
     return (
-        <Text color="red">Unknown Error</Text>
+        <Text c="red">Unknown Error</Text>
     );
 }

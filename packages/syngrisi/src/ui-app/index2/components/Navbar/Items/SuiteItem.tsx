@@ -41,30 +41,30 @@ export const SuiteItem = React.memo(function SuiteItem(
                 data-item-name={item.name}
                 onClick={handlerItemClick}
                 className={className}
-                sx={{ cursor: 'pointer', width: '100%' }}
+                style={{ cursor: 'pointer', width: '100%' }}
             >
                 <Group
                     noWrap
                     pl={8}
-                    position="apart"
-                    spacing={0}
+                    justify="space-between"
+                    gap={0}
                 >
-                    <Group sx={{ width: '100%' }} noWrap>
-                        <Stack spacing={0} sx={{ width: '100%' }}>
-                            <Group position="left" sx={{ width: '100%' }}>
+                    <Group style={{ width: '100%' }} noWrap>
+                        <Stack gap={0} style={{ width: '100%' }}>
+                            <Group justify="flex-start" style={{ width: '100%' }}>
                                 <Tooltip label={item.name} multiline withinPortal>
                                     <Text
                                         data-test="navbar-item-name"
                                         size={16}
                                         lineClamp={1}
-                                        sx={{ wordBreak: 'break-all' }}
+                                        style={{ wordBreak: 'break-all' }}
                                     >
                                         {item.name}
                                     </Text>
                                 </Tooltip>
                             </Group>
 
-                            <Group position="right">
+                            <Group justify="flex-end">
                                 <Tooltip
                                     withinPortal
                                     label={
@@ -74,7 +74,7 @@ export const SuiteItem = React.memo(function SuiteItem(
                                     <Text
                                         align="right"
                                         size="xs"
-                                        color="dimmed"
+                                        c="dimmed"
                                     >
                                         {
                                             dateFns.formatDistanceToNow(
@@ -87,7 +87,7 @@ export const SuiteItem = React.memo(function SuiteItem(
                         </Stack>
 
                     </Group>
-                    <Group position="right" spacing={0} noWrap>
+                    <Group justify="flex-end" gap={0} noWrap>
                         <RemoveItemPopover
                             handleRemoveItemClick={handleRemoveItemClick}
                             type={type}

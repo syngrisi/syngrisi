@@ -34,7 +34,7 @@ export function CellWrapper({ type, test, itemValue }: Props) {
             <Tooltip label={test[type]} multiline withinPortal>
                 <Text
                     lineClamp={1}
-                    sx={{ wordBreak: 'break-all' }}
+                    style={{ wordBreak: 'break-all' }}
                     data-testid={type === 'name' ? `test-name-${itemValue}` : undefined}
                     aria-label={type === 'name' ? `Test name: ${itemValue}` : undefined}
                     {

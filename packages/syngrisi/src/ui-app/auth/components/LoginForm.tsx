@@ -118,7 +118,7 @@ export default function LoginForm() {
                     <Title>Sign in</Title>
 
                     {ssoCheckFailed && (
-                        <Text size="xs" color="orange" mb="sm">
+                        <Text size="xs" c="orange" mb="sm">
                             Could not check SSO availability
                         </Text>
                     )}
@@ -163,7 +163,7 @@ export default function LoginForm() {
                         data-test="login-password-input"
                     />
 
-                    <Group position="apart" mt="md">
+                    <Group justify="space-between" mt="md">
                         <Checkbox
                             label="Remember me"
                             onChange={(event) => form.setFieldValue('rememberMe', event.currentTarget.checked)}
@@ -175,7 +175,7 @@ export default function LoginForm() {
                         && (
                             <Text
                                 size="sm"
-                                color="red"
+                                c="red"
                                 mt="md"
                                 id="error-message"
                                 hidden={false}

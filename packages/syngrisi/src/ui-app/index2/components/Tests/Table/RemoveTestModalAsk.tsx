@@ -47,7 +47,7 @@ export default function RemoveTestModalAsk({ opened, setOpened, selection, setSe
             <Text size="sm">
                 Are you sure you want to permanently delete the selected tests?
             </Text>
-            <Group position="right">
+            <Group justify="flex-end">
                 <Button
                     data-test="confirm-remove-test-icon"
                     aria-label="Remove"

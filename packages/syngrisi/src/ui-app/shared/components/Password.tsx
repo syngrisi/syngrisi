@@ -8,8 +8,8 @@ export const Password = {
     Requirement({ meets, label }: { meets: boolean, label: string }) {
         return (
             <Text
-                color={meets ? 'teal' : 'red'}
-                sx={{ display: 'flex', alignItems: 'center' }}
+                c={meets ? 'teal' : 'red'}
+                style={{ display: 'flex', alignItems: 'center' }}
                 mt={7}
                 size="sm"
             >
@@ -54,7 +54,7 @@ export const Password = {
                         }}
                         error={form.getInputProps('password').error}
                         value={form.getInputProps('password').value}
-                        sx={{ width: '16%' }}
+                        style={{ width: '16%' }}
                         placeholder="Your password"
                         disabled={disabled}
                         autoComplete="off"

@@ -48,14 +48,14 @@ export function RelatedChecks(
     }, [filter.length]);
 
     return (
-        <Stack spacing={4} pr={0}>
-            <Stack pr="sm" align="end" sx={{ width: '100%' }} spacing={0}>
+        <Stack gap={4} pr={0}>
+            <Stack pr="sm" align="end" style={{ width: '100%' }} gap={0}>
 
-                <Group position="apart" align="center" sx={{ width: '100%' }} spacing={0}>
+                <Group justify="space-between" align="center" style={{ width: '100%' }} gap={0}>
                     <Group />
                     {
                         related.opened && (
-                            <Group position="left" ml={0}>
+                            <Group justify="flex-start" ml={0}>
                                 <Text size="sm">Related Checks</Text>
                             </Group>
                         )
@@ -80,7 +80,7 @@ export function RelatedChecks(
 
                 {
                     related.opened && (
-                        <Group position="center" spacing="xs" sx={{ width: '100%' }} mb={4}>
+                        <Group justify="center" gap="xs" style={{ width: '100%' }} mb={4}>
                             <Tooltip label={`${openedSort ? 'Close ' : ' Open'} sorting`} withinPortal>
                                 <ActionIcon
                                     data-test="related-check-icon-open-sort"
@@ -118,7 +118,7 @@ export function RelatedChecks(
                     )
                 }
 
-                <Divider sx={{ width: '100%' }} size="xs" p={1} />
+                <Divider style={{ width: '100%' }} size="xs" p={1} />
 
                 <RelatedCheckSort
                     toggleOpenedSort={sortHandler.toggle}
@@ -131,8 +131,8 @@ export function RelatedChecks(
 
                 {
                     openedFilter && (
-                        <Group mb="xs" mt="xs" ml={-10} mr={-10} spacing={4}>
-                            <Group position="apart" align="center" noWrap>
+                        <Group mb="xs" mt="xs" ml={-10} mr={-10} gap={4}>
+                            <Group justify="space-between" align="center" noWrap>
                                 <Text size="sm" mb={-8}>
                                     Show checks with same parameters
                                 </Text>
@@ -141,7 +141,7 @@ export function RelatedChecks(
                                 </ActionIcon>
                             </Group>
 
-                            <Chip.Group spacing={6} value={filter} onChange={updateFilter} multiple>
+                            <Chip.Group gap={6} value={filter} onChange={updateFilter} multiple>
                                 <Chip size="xs" value="name" disabled>Name</Chip>
                                 <Chip size="xs" value="browserName">Browser</Chip>
                                 <Chip size="xs" value="browserVersion">Browser ver.</Chip>
@@ -171,9 +171,9 @@ export function RelatedChecks(
                                             ? (<RelatedChecksSkeleton num={5} infinityQuery={null} scrollRootRef={viewportRef} />)
                                             : (
                                                 related.relatedChecksQuery.infinityQuery.isError
-                                                    ? (<Text size="xs" color="red"> Fail to load</Text>)
+                                                    ? (<Text size="xs" c="red"> Fail to load</Text>)
                                                     : (
-                                                        <Stack spacing={4}>
+                                                        <Stack gap={4}>
                                                             <RelatedChecksItems
                                                                 infinityQuery={related.relatedChecksQuery.infinityQuery}
                                                                 relatedActiveCheckId={related.relatedActiveCheckId}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ThemeIcon, useMantineTheme, Text, Group } from '@mantine/core';
+import { ThemeIcon, useMantineTheme, useComputedColorScheme, Text, Group } from '@mantine/core';
 import { UserHooks } from '@shared/hooks';
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 
 export function LabelUser({ username, dataTest = 'user-label', size = 'xs' }: Props) {
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
 
     const userQuery = UserHooks.useUsersByUsername(username);
 
@@ -26,24 +27,24 @@ export function LabelUser({ username, dataTest = 'user-label', size = 'xs' }: Pr
         userQuery.isLoading
             ? null
             : (
-                <Group spacing={12} p={0} position="apart">
+                <Group gap={12} p={0} justify="space-between">
                     <ThemeIcon
                         data-test="user-icon"
                         p={16}
                         ml={-6}
                         mr={-6}
                         radius="xl"
-                        color={theme.colorScheme === 'dark' ? 'dark' : '#ffffff'}
-                        sx={{
-                            color: theme.colorScheme === 'dark' ? '#ffffff' : '#1a1b1e',
-                            backgroundColor: theme.colorScheme === 'dark' ? '#1a1b1e' : theme.colors.gray[0],
+                        color={colorScheme === 'dark' ? 'dark' : '#ffffff'}
+                        style={{
+                            color: colorScheme === 'dark' ? '#ffffff' : '#1a1b1e',
+                            backgroundColor: colorScheme === 'dark' ? '#1a1b1e' : theme.colors.gray[0],
                             fontWeight: 600,
                             fontSize: '1rem',
                             display: 'flex',
                             // width: '2.6rem',
                             justifyContent: 'center',
                             '&:hover': {
-                                backgroundColor: theme.colorScheme === 'dark' ? '#000000' : '#ffffff',
+                                backgroundColor: colorScheme === 'dark' ? '#000000' : '#ffffff',
                             },
                         }}
                     >

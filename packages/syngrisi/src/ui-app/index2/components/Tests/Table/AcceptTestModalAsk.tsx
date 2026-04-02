@@ -50,7 +50,7 @@ export default function AcceptTestModalAsk({ opened, setOpened, selection, setSe
             <Text size="sm">
                 Are you sure you want to accept the selected tests?
             </Text>
-            <Group position="right">
+            <Group justify="flex-end">
                 <Button
                     data-test="accept-test-confirm-button"
                     aria-label="Accept"

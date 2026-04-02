@@ -1,33 +1,9 @@
 /* eslint-disable */
 import * as React from 'react';
 import { useMemo } from 'react';
-import { Badge, Loader, Tooltip, Group, Text, createStyles, ActionIcon } from '@mantine/core';
+import { Badge, Loader, Tooltip, Group, Text, ActionIcon, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { IconRuler2, IconCalendar, IconPercentage } from '@tabler/icons-react';
 import * as dateFns from 'date-fns';
-
-const useStyles = createStyles((theme) => ({
-    infoBadges: {
-        marginLeft: 4,
-        paddingLeft: 4,
-        paddingRight: 4,
-    },
-    detailsGroup: {
-        '@media (max-width: 700px)': {
-            display: 'none',
-        },
-    },
-    iconLabel: {
-        color: theme.colorScheme === 'dark' ? theme.colors.gray[5] : theme.colors.gray[6],
-        flexShrink: 0,
-    },
-    labelText: {
-        fontSize: theme.fontSizes.sm,
-        whiteSpace: 'nowrap',
-        '@media (max-width: 1400px)': {
-            display: 'none',
-        },
-    },
-}));
 
 interface Props {
     mainView: any
@@ -40,7 +16,22 @@ interface Props {
 export function ScreenshotDetails({
     mainView, check = {}, view = 'actual', apikey, rcaEnabled,
 }: Props) {
-    const { classes } = useStyles();
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
+
+    const infoBadgesStyle: React.CSSProperties = {
+        marginLeft: 4,
+        paddingLeft: 4,
+        paddingRight: 4,
+    };
+    const iconLabelStyle: React.CSSProperties = {
+        color: colorScheme === 'dark' ? theme.colors.gray[5] : theme.colors.gray[6],
+        flexShrink: 0,
+    };
+    const labelTextStyle: React.CSSProperties = {
+        fontSize: theme.fontSizes.sm,
+        whiteSpace: 'nowrap',
+    };
 
     const checkResult = check.result ? JSON.parse(check.result) : null;
     let diffPercent = checkResult?.misMatchPercentage ? checkResult.misMatchPercentage : '';
@@ -71,7 +62,7 @@ export function ScreenshotDetails({
                     withinPortal
                     label={`${viewLabel} screenshot size: ${image.width}x${image.height}, click to open in a new tab`}
                 >
-                    <Badge color="blue" radius={'sm'} className={classes.infoBadges} data-check="image-size">
+                    <Badge color="blue" radius={'sm'} style={infoBadgesStyle} data-check="image-size">
                         <a
                             href={imgSrc}
                             target="_blank"
@@ -85,7 +76,7 @@ export function ScreenshotDetails({
             );
         }
         return (
-            <Badge color="blue" radius={'sm'} className={classes.infoBadges}>
+            <Badge color="blue" radius={'sm'} style={infoBadgesStyle}>
                 <Loader size="xs" color="blue" variant="dots" />
             </Badge>
         );
@@ -103,21 +94,21 @@ export function ScreenshotDetails({
     const hasDiff = diffPercent !== undefined && diffPercent !== null && diffPercent !== '';
 
     return (
-        <Group spacing="xs" noWrap className={classes.detailsGroup}>
+        <Group gap="xs" noWrap style={{ '@media (max-width: 700px)': { display: 'none' } }} className="screenshot-details-group">
             <Tooltip label="Actual image size" withinPortal>
-                <Group spacing={2} noWrap>
-                    <IconRuler2 size={16} className={classes.iconLabel} />
-                    <Text className={classes.labelText}>Size:</Text>
+                <Group gap={2} noWrap>
+                    <IconRuler2 size={16} style={iconLabelStyle} />
+                    <Text style={labelTextStyle}>Size:</Text>
                     {imageSize}
                 </Group>
             </Tooltip>
 
             {!rcaEnabled && (
                 <Tooltip label={`Actual image date: ${actualDateFull}`} withinPortal>
-                    <Group spacing={2} noWrap>
-                        <IconCalendar size={16} className={classes.iconLabel} />
-                        <Text className={classes.labelText}>Date:</Text>
-                        <Badge color="blue" radius="sm" className={classes.infoBadges} data-check="image-date">
+                    <Group gap={2} noWrap>
+                        <IconCalendar size={16} style={iconLabelStyle} />
+                        <Text style={labelTextStyle}>Date:</Text>
+                        <Badge c="blue" radius="sm" style={infoBadgesStyle} data-check="image-date">
                             {actualDateShort}
                         </Badge>
                     </Group>
@@ -126,15 +117,14 @@ export function ScreenshotDetails({
 
             {hasDiff && (
                 <Tooltip label={`Images difference: ${diffPercent}%`} withinPortal>
-                    <Group spacing={2} noWrap>
-                        <IconPercentage size={16} className={classes.iconLabel} />
-                        <Text className={classes.labelText}>Diff:</Text>
+                    <Group gap={2} noWrap>
+                        <IconPercentage size={16} style={iconLabelStyle} />
+                        <Text style={labelTextStyle}>Diff:</Text>
                         <Badge
-                            color="blue"
+                            c="blue"
                             radius="sm"
-                            sx={{ maxWidth: 80 }}
+                            style={{ ...infoBadgesStyle, maxWidth: 80 }}
                             data-check="diff-percent"
-                            className={classes.infoBadges}
                         >
                             {diffPercent}%
                         </Badge>

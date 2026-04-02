@@ -30,11 +30,11 @@ export function RelatedCheckSort(
             timingFunction="ease"
         >
             {(styles) => (
-                <Group align="end" spacing={4} pr={10} ml={-10} mr={-10} noWrap style={styles}>
+                <Group align="end" gap={4} pr={10} ml={-10} mr={-10} noWrap style={styles}>
                     <SafeSelect
                         label="Sort by"
                         data-test="navbar-sort-by-select"
-                        // sx={{ width: '230px' }}
+                        // style={{ width: '230px' }}
                         value={sortBy}
                         onChange={(value: string) => setSortBy(() => value)}
                         optionsData={
@@ -46,7 +46,7 @@ export function RelatedCheckSort(
                             ]
                         }
                     />
-                    <Group spacing={2} position="right" noWrap>
+                    <Group gap={2} justify="flex-end" noWrap>
                         <ActionIcon
                             title="Sort Order"
                             data-test="navbar-sort-by-order"

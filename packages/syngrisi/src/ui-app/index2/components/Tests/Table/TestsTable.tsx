@@ -1,10 +1,11 @@
 /* eslint-disable indent,react/jsx-indent,prefer-arrow-callback */
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
-    createStyles,
     Table,
     ScrollArea,
     Text,
+    useMantineTheme,
+    useComputedColorScheme,
 } from '@mantine/core';
 
 import InfinityScrollSkeleton from '@index/components/Tests/Table/InfinityScrollSkeleton';
@@ -17,8 +18,6 @@ import { CheckModal } from '@index/components/Tests/Table/Checks/CheckModal';
 import RemoveTestsButton from '@index/components/Tests/Table/RemoveTestsButton';
 import AcceptTestsButton from '@index/components/Tests/Table/AcceptTestsButton';
 import { useParams } from '@hooks/useParams';
-
-const useStyles = createStyles(testsCreateStyle as any);
 
 interface Props {
     infinityQuery: any
@@ -46,8 +45,9 @@ export default function TestsTable(
         [data],
     );
 
-    // eslint-disable-next-line no-unused-vars
-    const { classes } = useStyles();
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
+    const styles = testsCreateStyle(theme, colorScheme);
     const [selection, setSelection]: [string[], any] = useState([]);
 
     useEffect(function resetSelection() {
@@ -103,20 +103,19 @@ export default function TestsTable(
                 ref={scrollAreaRef}
                 viewportRef={viewportRef}
                 maxHeight="100vh"
-                sx={{ width: size }}
+                style={{ width: size }}
                 pb={124}
                 styles={{ scrollbar: { marginTop: '46px' } }}
             >
 
                 <Table
-                    sx={{ width: '100%' }}
+                    style={{ width: '100%' }}
                     // mb={100}
                     verticalSpacing="sm"
                     highlightOnHover
                 >
                     <thead
-                        style={{ zIndex: 10 }}
-                        className={classes.header}
+                        style={{ zIndex: 10, ...styles.header }}
                     >
                     <Heads
                         data={data}
@@ -132,13 +131,13 @@ export default function TestsTable(
                             ? (<InfinityScrollSkeleton infinityQuery={null} visibleFields={visibleFields} scrollRootRef={viewportRef} />)
                             : infinityQuery.isError
                                 ? (
-                                    <Text color="red">
+                                    <Text c="red">
                                         Error:
                                         {infinityQuery.error.message}
                                     </Text>
                                 )
                                 : (
-                                    <tbody className={classes.tableBody}>
+                                    <tbody style={styles.tableBody}>
                                     <Rows
                                         updateToolbar={updateToolbar}
                                         infinityQuery={infinityQuery}

@@ -16,9 +16,9 @@ export default function ChangePasswordSuccessForm() {
         <Container size={420} my={40}>
 
             <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-                <Text align="center" color="green"><IconCircleCheck size="6rem" /></Text>
+                <Text ta="center" c="green"><IconCircleCheck size="6rem" /></Text>
                 <Title align="center">Success!</Title>
-                <Text align="center" size={16} mt="md">
+                <Text ta="center" size={16} mt="md">
                     Your Password has been changed. Please use your new password to login!
                 </Text>
                 <Button

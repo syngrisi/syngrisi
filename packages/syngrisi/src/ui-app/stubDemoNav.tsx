@@ -2,30 +2,18 @@
 import * as React from 'react';
 import {
     Title,
-    createStyles,
     NavLink,
 } from '@mantine/core';
 
 import { IconFingerprint } from '@tabler/icons-react';
 
 function DemoNav() {
-    const useStyles = createStyles((theme) => ({
-        navLink: {
-            color: theme.colors.pink[5],
-        },
-        link: {
-            textDecoration: 'none',
-        },
-    }));
-
-    const { classes } = useStyles();
-
     return (
         <>
             <Title>Navigation</Title>
-            <a href="/auth/" className={classes.link}>
+            <a href="/auth/" style={{ textDecoration: 'none' }}>
                 <NavLink
-                    className={classes.navLink}
+                    style={{ color: 'var(--mantine-color-pink-5)' }}
                     key={1}
                     label="Xxxx"
                     description="Decsription"

@@ -39,7 +39,7 @@ export function IdFilter({ label, groupRules, updateGroupRules, id }: Props) {
                 <SafeSelect
                     label=""
                     data-test="table-filter-operator"
-                    sx={{ width: '130px' }}
+                    style={{ width: '130px' }}
                     optionsData={[
                         { value: 'eq', label: 'equals' },
                         { value: 'ne', label: 'not equals' },

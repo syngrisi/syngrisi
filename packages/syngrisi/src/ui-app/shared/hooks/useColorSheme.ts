@@ -1,13 +1,14 @@
-import { ColorScheme } from '@mantine/core';
 import { useHotkeys, useLocalStorage } from '@mantine/hooks';
 
+type ColorSchemeValue = 'light' | 'dark';
+
 export default function useColorScheme() {
-    const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
+    const [colorScheme, setColorScheme] = useLocalStorage<ColorSchemeValue>({
         key: 'mantine-color-scheme',
         defaultValue: 'light',
         getInitialValueInEffect: true,
     });
-    const toggleColorScheme = (value?: ColorScheme | undefined): void => {
+    const toggleColorScheme = (value?: ColorSchemeValue | undefined): void => {
         const isDark = () => colorScheme === 'dark';
         setColorScheme(value || (isDark() ? 'light' : 'dark'));
         if (isDark()) {

@@ -1,14 +1,12 @@
 import * as React from 'react';
-import { Group, Kbd, SegmentedControl, Text, Tooltip, createStyles } from '@mantine/core';
+import { Group, Kbd, SegmentedControl, Text, Tooltip } from '@mantine/core';
 import { IconArrowsExchange2, IconSquareHalf, IconSquareLetterA, IconSquareLetterE } from '@tabler/icons-react';
 import { useHotkeys } from '@mantine/hooks';
 import { useEffect, useRef } from 'react';
 
-const useStyles = createStyles(() => ({
-    labelIcon: {
-        minWidth: 18,
-    },
-}));
+const labelIconStyle: React.CSSProperties = {
+    minWidth: 18,
+};
 
 interface Props {
     view: string
@@ -17,7 +15,6 @@ interface Props {
 }
 
 export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
-    const { classes } = useStyles();
     const segmentRef = useRef<HTMLDivElement>(null);
 
     const isExpectedDisabled = currentCheck?.status[0] === 'new';
@@ -55,6 +52,8 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
         });
     }, [view, isExpectedDisabled, isDiffDisabled, isSliderDisabled]);
 
+    const kbdStyle: React.CSSProperties = { fontSize: 11, borderBottomWidth: 1 };
+
     const viewSegmentData = [
         {
             label: (
@@ -64,13 +63,13 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                         (
                             <Group noWrap>
                                 <Text>Switch to Expected View</Text>
-                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>1</Kbd>
+                                <Kbd style={kbdStyle}>1</Kbd>
                             </Group>
                         )
                     }
                 >
-                    <Group position="left" spacing={4} noWrap data-check="expected-view">
-                        <IconSquareLetterE stroke={1} className={classes.labelIcon} />
+                    <Group justify="flex-start" gap={4} noWrap data-check="expected-view">
+                        <IconSquareLetterE stroke={1} style={labelIconStyle} />
                     </Group>
                 </Tooltip>
             ),
@@ -85,13 +84,13 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                         (
                             <Group noWrap>
                                 <Text>Switch to Actual View</Text>
-                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>2</Kbd>
+                                <Kbd style={kbdStyle}>2</Kbd>
                             </Group>
                         )
                     }
                 >
-                    <Group position="left" spacing={4} noWrap data-check="actual-view">
-                        <IconSquareLetterA stroke={1} className={classes.labelIcon} />
+                    <Group justify="flex-start" gap={4} noWrap data-check="actual-view">
+                        <IconSquareLetterA stroke={1} style={labelIconStyle} />
                     </Group>
                 </Tooltip>
             ),
@@ -106,13 +105,13 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                             (
                                 <Group noWrap>
                                     <Text>Switch to Difference View</Text>
-                                    <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>3</Kbd>
+                                    <Kbd style={kbdStyle}>3</Kbd>
                                 </Group>
                             )
                         }
                     >
-                        <Group position="left" spacing={4} noWrap data-check="diff-view">
-                            <IconArrowsExchange2 stroke={1} className={classes.labelIcon} />
+                        <Group justify="flex-start" gap={4} noWrap data-check="diff-view">
+                            <IconArrowsExchange2 stroke={1} style={labelIconStyle} />
                         </Group>
                     </Tooltip>
                 ),
@@ -128,13 +127,13 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                             (
                                 <Group noWrap>
                                     <Text>Switch to Slider View</Text>
-                                    <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>4</Kbd>
+                                    <Kbd style={kbdStyle}>4</Kbd>
                                 </Group>
                             )
                         }
                     >
-                        <Group position="left" spacing={4} noWrap data-check="slider-view">
-                            <IconSquareHalf stroke={1} className={classes.labelIcon} />
+                        <Group justify="flex-start" gap={4} noWrap data-check="slider-view">
+                            <IconSquareHalf stroke={1} style={labelIconStyle} />
                         </Group>
                     </Tooltip>
                 ),
@@ -147,13 +146,12 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
         <div ref={segmentRef}>
             <SegmentedControl
                 data-check="view-segment"
-                sx={{ minWidth: 0, minHeight: 0 }}
+                style={{ minWidth: 0, minHeight: 0 }}
                 styles={
                     {
                         label: {
                             minWidth: 0,
                             minHeight: 0,
-                            // overflow: 'hidden',
                             fontSize: 'calc(0.1em + 0.55vw)',
                             maxWidth: '7vw',
                             textOverflow: 'ellipsis',

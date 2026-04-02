@@ -52,7 +52,7 @@ function SkeletonWrapper({ infinityQuery, itemType, num, itemClass, scrollRootRe
 
     const DummySkeleton = DummySkeletons(itemType!);
     return (
-        <Stack ref={ref} spacing={0}>
+        <Stack ref={ref} gap={0}>
             {
                 (infinityQuery === null || infinityQuery.hasNextPage)
                 && (

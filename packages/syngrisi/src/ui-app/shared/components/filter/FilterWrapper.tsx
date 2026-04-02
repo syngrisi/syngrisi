@@ -42,7 +42,7 @@ export function FilterWrapper(
             <SafeSelect
                 data-test="table-filter-column-name"
                 aria-label="Filter column"
-                sx={{ width: '130px' }}
+                style={{ width: '130px' }}
                 optionsData={optionsData}
                 value={selectValue}
                 onChange={setSelectValue}
@@ -72,7 +72,7 @@ export function FilterWrapper(
                         </ActionIcon>
                     )
                     : (
-                        <Box sx={{ width: 18 }}>
+                        <Box style={{ width: 18 }}>
                         </Box>
                     )
             }
