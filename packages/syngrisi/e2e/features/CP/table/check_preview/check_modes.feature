@@ -18,15 +18,15 @@ Feature: Checks Preview Modes
 
         When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
         When I wait for "3" seconds
-        Then the css attribute "max-height" from element "[data-test-preview-image='CheckName'] img" is "153.6px"
+        Then the css attribute "max-height" from element "img[data-test-preview-image='CheckName']" is "153.6px"
 
         When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[text()='normal']"
         When I wait for "1" seconds
-        Then the css attribute "max-height" from element "[data-test-preview-image='CheckName'] img" is "none"
+        Then the css attribute "max-height" from element "img[data-test-preview-image='CheckName']" is "none"
 
         When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[text()='list']"
         When I wait for "1" seconds
-        Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "76.7969px"
+        Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "76.7969px"
 
     Scenario: Checks Preview Sizes on Bounded mode
         Given I create "1" tests with:
@@ -40,16 +40,16 @@ Feature: Checks Preview Modes
 
         When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
         When I wait for "1" seconds
-        Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "113.75px"
+        Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "113.75px"
 
         When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='small']"
         When I wait for "0.5" seconds
-        Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "69.5938px"
+        Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "69.5938px"
 
         When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='large']"
         When I wait for "0.5" seconds
-        Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "202.07px"
+        Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "202.07px"
 
         When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='xlarge']"
         When I wait for "0.5" seconds
-        Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "290.383px"
+        Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "290.383px"
