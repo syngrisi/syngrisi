@@ -1,10 +1,11 @@
-import React, { useRef } from 'react';
+import React, { lazy, Suspense, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
-import { CheckDetails } from '@index/components/Tests/Table/Checks/CheckDetails/CheckDetails';
 import { useParams } from '@hooks/useParams';
 import { LoadingOverlay, Stack, Text, Group, useMantineTheme } from '@mantine/core';
 import { errorMsg } from '@shared/utils';
+
+const CheckDetails = lazy(() => import('@index/components/Tests/Table/Checks/CheckDetails/CheckDetails').then(m => ({ default: m.CheckDetails })));
 
 export default function SharedCheckLayout() {
     const pollCountRef = useRef(0);
@@ -85,14 +86,16 @@ export default function SharedCheckLayout() {
             justifyContent: 'center',
             alignItems: 'center',
         }}>
-             <CheckDetails
-                initCheckData={checkData}
-                checkQuery={checkQuery}
-                closeHandler={() => {}}
-                relatedRendered={false}
-                testList={[]}
-                apikey={shareToken}
-            />
+            <Suspense fallback={<Stack mt={60} align="center"><LoadingOverlay visible /><Text>Loading check details...</Text></Stack>}>
+                <CheckDetails
+                    initCheckData={checkData}
+                    checkQuery={checkQuery}
+                    closeHandler={() => {}}
+                    relatedRendered={false}
+                    testList={[]}
+                    apikey={shareToken}
+                />
+            </Suspense>
         </div>
     );
 }
