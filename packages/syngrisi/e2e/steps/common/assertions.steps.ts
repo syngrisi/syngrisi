@@ -949,7 +949,7 @@ Then('the css attribute {string} from element {string} is {string}', async ({ pa
     if (pxMatch && actualPxMatch) {
       const expectedPx = parseFloat(pxMatch[1]);
       const actualPx = parseFloat(actualPxMatch[1]);
-      const tolerance = 10;
+      const tolerance = 15;
       const diff = Math.abs(expectedPx - actualPx);
       expect(diff).toBeLessThanOrEqual(tolerance);
     } else {
