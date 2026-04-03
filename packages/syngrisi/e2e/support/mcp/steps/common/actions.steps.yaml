@@ -1,6 +1,6 @@
 metadata:
   category: common/actions
-  generatedAt: '2026-04-01T19:43:00.554Z'
+  generatedAt: '2026-04-03T08:36:15.855Z'
   totalFiles: 2
   totalSteps: 36
   sourceFiles:
@@ -23,7 +23,7 @@ steps:
       ```gherkin
       When I wait 3 seconds
       ```
-    line: 455
+    line: 470
   - pattern: I click element with {target} {string}
     description: |-
       Step definition: `When I click element with {target} {string}`
@@ -40,10 +40,10 @@ steps:
       When I click element with label "Email"
       When I click element with locator "//button[@type='submit']"
       ```
-    line: 179
+    line: 191
   - pattern: I click on the element {string} via js
     description: ''
-    line: 1060
+    line: 1092
   - pattern: I click the {ordinal} {role} {string}
     description: |-
       Step definition: `When I click the {ordinal} {role} {string}`
@@ -57,13 +57,13 @@ steps:
       ```gherkin
       When I click the 1st button "Open Check"
       ```
-    line: 1147
+    line: 1179
   - pattern: I delete the cookie {string}
     description: ''
-    line: 1044
+    line: 1076
   - pattern: I drag the element with {target} {string} by offset {int}, {int}
     description: 'Step definition: `When I drag the element with {target} {string} by offset {int}, {int}`'
-    line: 1183
+    line: 1215
   - pattern: 'I execute javascript code:'
     description: |-
       Step definition: `When I execute javascript code:`
@@ -80,10 +80,10 @@ steps:
         return document.querySelector('h1').textContent
         """
       ```
-    line: 747
+    line: 762
   - pattern: 'I execute javascript OLD code:'
     description: ''
-    line: 584
+    line: 599
   - pattern: I fill {string} into {ordinal} element with label {string}
     description: |-
       Step definition: `When I fill {string} into {ordinal} element with label {string}`
@@ -96,7 +96,7 @@ steps:
       ```gherkin
       When I fill "42" into 2nd element with label "Quantity"
       ```
-    line: 337
+    line: 352
   - pattern: I fill {string} into {role} {string}
     description: |-
       Step definition: `When I fill {string} into {role} {string}`
@@ -109,7 +109,7 @@ steps:
       ```gherkin
       When I fill "user" into textbox "Username"
       ```
-    line: 359
+    line: 374
   - pattern: I fill {string} into element with {target} {string}
     description: |-
       Step definition: `When I fill {string} into element with {target} {string}`
@@ -124,28 +124,28 @@ steps:
       ```gherkin
       When I fill "john@example.com" into element with label "Email"
       ```
-    line: 303
+    line: 318
   - pattern: I fill {string} into element with placeholder {string}
     description: ''
-    line: 369
+    line: 384
   - pattern: I force click element with locator {string}
     description: ''
-    line: 1067
+    line: 1099
   - pattern: I hold key {string}
     description: ''
-    line: 1052
+    line: 1084
   - pattern: I hover over {string} and wait for tooltip {string}
     description: ''
-    line: 1093
+    line: 1125
   - pattern: I move to element {string}
     description: ''
-    line: 1079
+    line: 1111
   - pattern: I move to element {string} with an offset of {int},{int}
     description: ''
-    line: 1126
+    line: 1158
   - pattern: I press {string}
     description: ''
-    line: 1048
+    line: 1080
   - pattern: I press the {string} key
     description: |-
       Step definition: `When I press the {string} key`
@@ -156,28 +156,28 @@ steps:
       ```gherkin
       When I press the "Escape" key
       ```
-    line: 476
+    line: 491
   - pattern: I real click element with locator {string}
     description: ''
-    line: 1073
+    line: 1105
   - pattern: I refresh page
     description: ''
-    line: 527
+    line: 542
   - pattern: I release key {string}
     description: ''
-    line: 1056
+    line: 1088
   - pattern: I reload session
     description: ''
-    line: 1030
+    line: 1062
   - pattern: I safely click element with {target} {string}
     description: ''
-    line: 1156
+    line: 1188
   - pattern: I scroll container {string} to bottom
     description: ''
-    line: 777
+    line: 792
   - pattern: I scroll to element {string}
     description: ''
-    line: 765
+    line: 780
   - pattern: I select dropdown option {string} by clicking div for element {string}
     description: |-
       Step definition: `When I select dropdown option {string} by clicking div for element {string}`
@@ -193,16 +193,16 @@ steps:
       ```gherkin
       When I select dropdown option "Failed" by clicking div for element "[data-test='table-filter-value']"
       ```
-    line: 915
+    line: 930
   - pattern: I select the option with the text {string} for element {string}
     description: ''
-    line: 827
+    line: 842
   - pattern: I set {string} to the inputfield {string}
     description: ''
-    line: 958
+    line: 990
   - pattern: 'I set window size: {string}'
     description: ''
-    line: 522
+    line: 537
   - pattern: I wait for "(.+)" second(?:s)?
     description: |-
       Step definition: `When I wait for "{string}" seconds`
@@ -215,16 +215,16 @@ steps:
       ```gherkin
       When I wait for "1" seconds
       ```
-    line: 398
+    line: 413
   - pattern: I wait for canvas to be ready
     description: ''
-    line: 531
+    line: 546
   - pattern: I wait for viewportTransform to stabilize
     description: ''
-    line: 545
+    line: 560
   - pattern: 'I wait up to {int} seconds for javascript condition:'
     description: ''
-    line: 409
+    line: 424
   - pattern: the element with placeholder {string} should be visible for {int} sec
     description: ''
-    line: 378
+    line: 393
