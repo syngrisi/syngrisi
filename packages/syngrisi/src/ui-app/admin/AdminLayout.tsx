@@ -19,12 +19,12 @@ export default function AdminLayout() {
             style={{
                 display: 'flex',
                 flexDirection: 'column',
-                minHeight: '100vh',
+                height: '100vh',
                 backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
             }}
         >
             <AdminHeader />
-            <Box style={{ display: 'flex', flex: 1 }}>
+            <Box style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
                 <AdminNavBar />
                 <Box component="main" style={{ flex: 1, padding: 8 }}>
                     <ReactQueryDevtools initialIsOpen={false} />

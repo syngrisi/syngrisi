@@ -106,6 +106,11 @@ export default function TestsTable(
                 style={{ width: size }}
                 pb={124}
                 scrollbarSize={8}
+                onBottomReached={() => {
+                    if (infinityQuery.hasNextPage && !infinityQuery.isFetchingNextPage) {
+                        infinityQuery.fetchNextPage();
+                    }
+                }}
             >
 
                 <Table

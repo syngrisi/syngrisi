@@ -231,6 +231,9 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                 paddingRight: 2,
                 paddingLeft: 8,
                 zIndex: 20,
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
             }}
         >
             <style>{getNavbarStyles(theme, colorScheme)}</style>
@@ -241,6 +244,11 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                 pb={90}
                 data-test="navbar-scroll-area"
                 style={{ flexGrow: 1, height: '100%' }}
+                onBottomReached={() => {
+                    if (infinityQuery.hasNextPage && !infinityQuery.isFetchingNextPage) {
+                        infinityQuery.fetchNextPage();
+                    }
+                }}
             >
                 <Group
                     justify="space-between"
