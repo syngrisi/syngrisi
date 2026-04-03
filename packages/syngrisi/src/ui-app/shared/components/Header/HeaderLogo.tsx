@@ -21,7 +21,7 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
                 alignItems: 'center',
             }}
         >
-            <a href="/" style={{ display: 'flex', textDecoration: 'none', alignItems: 'center', color: 'inherit' }}>
+            <a href="/" style={{ display: 'flex', alignItems: 'center' }}>
                 <Paper
                     data-test="logo-container"
                     aria-label="Logo container"
@@ -60,8 +60,8 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
                         <Text
                             data-test="logo-text"
                             aria-label="Syngrisi"
-                            c={(colorScheme === 'dark' ? 'white' : '#262626')}
                             className="syngrisi-logo-text"
+                            inherit
                         >
                             Syngrisi
                         </Text>

@@ -76,7 +76,7 @@ function App() {
                 <MantineProvider
                     defaultColorScheme="auto"
                     theme={{
-                        fontSizes: { md: '1.5rem' },
+                        fontSizes: { md: '1rem' },
                         primaryColor: 'green',
                         components: {
                             Text: { defaultProps: { component: 'div' } },

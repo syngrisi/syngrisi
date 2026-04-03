@@ -40,7 +40,7 @@ export function PlatformItem({ item, index, handlerItemClick, className }: Props
                                 <OsIcon os={item.name} size={20} />
                                 <Text
                                     component="span" data-test="navbar-item-name"
-                                    size={16}
+                                    fz={16}
                                     lineClamp={1}
                                     style={{ wordBreak: 'break-all' }}
                                 >
