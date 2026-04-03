@@ -79,19 +79,19 @@ Feature: Check Preview - Display and Icons
 
     When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
 
-    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "113.75px"
+    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "126.547px"
 
     When I click element with locator "//*[@data-test='preview-size-segment-control']//label[.='small']"
 
-    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "69.5938px"
+    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "77.5938px"
 
     When I click element with locator "//*[@data-test='preview-size-segment-control']//label[.='large']"
 
-    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "202.07px"
+    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "224.469px"
 
     When I click element with locator "//*[@data-test='preview-size-segment-control']//label[.='xlarge']"
 
-    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "290.383px"
+    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "322.391px"
 
   Scenario: Checks Preview images visibilities
     Given I create "1" tests with:
