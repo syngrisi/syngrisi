@@ -168,13 +168,9 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                             <td style={{ padding: 0, border: 0, width: 'auto' }} colSpan={1000}>
                                 <Collapse
                                     in={collapse.includes(item.id!)}
-                                    pl={10}
-                                    pr={10}
-                                    pt={10}
-                                    pb={10}
                                     data-test="table-item-collapsed-row"
                                 >
-                                    <Paper p={20}>
+                                    <Paper p={20} m={10}>
                                         <Text
                                             size={16}
                                             c={logLevelColorMap[item.level!]}
