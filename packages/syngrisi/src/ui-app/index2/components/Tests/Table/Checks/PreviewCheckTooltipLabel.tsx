@@ -24,7 +24,7 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
             data-check-tooltip-name={check.name}
         >
             <Group>
-                <Text size={16} lineClamp={1}>
+                <Text fz={16} lineClamp={1}>
                     {check.name}
                 </Text>
             </Group>

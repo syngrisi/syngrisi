@@ -114,7 +114,7 @@ function LogoutForm() {
                         : <Text ta="center" c="red"><IconCircleX size="6rem" /></Text>
                 }
                 <Title ta="center">{success ? 'Success!' : 'Failed'}</Title>
-                <Text ta="center" size={16} mt="md">
+                <Text ta="center" fz={16} mt="md">
                     {success
                         ? 'You have been successfully logged out. Click Sign In to login again.'
                         : errorMessage || 'Something went wrong'}
