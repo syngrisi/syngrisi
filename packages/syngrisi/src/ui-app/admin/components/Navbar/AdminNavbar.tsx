@@ -45,7 +45,7 @@ export default function AdminNavbar() {
     const links = navbarItems.map((item) => <LinksGroup {...item} key={item.label} />);
 
     return (
-        <Box component="nav" pl="md" pr="md" pt="sm" pb="md" style={{ ...navbarStyle, height: '100%', width: 300 }}>
+        <Box component="nav" pl="md" pr="md" pt="sm" pb="md" style={{ ...navbarStyle, height: '100vh', width: 300 }}>
             <ScrollArea style={{ ...linksStyle, flexGrow: 1 }}>
                 <div style={linksInnerStyle}>{links}</div>
             </ScrollArea>

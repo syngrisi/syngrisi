@@ -172,7 +172,7 @@ function App() {
         <MantineProvider
             defaultColorScheme="light"
             theme={{
-                fontSizes: { md: '24px' },
+                fontSizes: { md: '1rem' },
                 primaryColor: 'green',
                 breakpoints: {
                     xs: '31.25em',

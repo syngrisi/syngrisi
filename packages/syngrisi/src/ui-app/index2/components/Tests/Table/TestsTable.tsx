@@ -115,11 +115,10 @@ export default function TestsTable(
 
                 <Table
                     style={{ width: '100%' }}
-                    // mb={100}
                     verticalSpacing="sm"
                     highlightOnHover
                 >
-                    <thead
+                    <Table.Thead
                         style={{ zIndex: 10, ...styles.header }}
                     >
                     <Heads
@@ -128,7 +127,7 @@ export default function TestsTable(
                         selection={selection}
                         visibleFields={visibleFields}
                     />
-                    </thead>
+                    </Table.Thead>
 
                     {
                         // eslint-disable-next-line no-nested-ternary
@@ -142,7 +141,7 @@ export default function TestsTable(
                                     </Text>
                                 )
                                 : (
-                                    <tbody style={styles.tableBody}>
+                                    <Table.Tbody style={styles.tableBody}>
                                     <Rows
                                         updateToolbar={updateToolbar}
                                         infinityQuery={infinityQuery}
@@ -150,7 +149,7 @@ export default function TestsTable(
                                         setSelection={setSelection}
                                         visibleFields={visibleFields}
                                     />
-                                    </tbody>
+                                    </Table.Tbody>
                                 )
                     }
                     <InfinityScrollSkeleton infinityQuery={infinityQuery} visibleFields={visibleFields} scrollRootRef={viewportRef} />

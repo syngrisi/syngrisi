@@ -122,7 +122,7 @@ export const Header = React.memo(function Header(
                     >
                         <Text
                             data-check="check-name"
-                            size={14}
+                            fz={14}
                             style={{ flexShrink: 1, minWidth: 0, ...classes.checkPathFragment }}
                             lineClamp={1}
                         >
@@ -242,7 +242,7 @@ export const Header = React.memo(function Header(
                         <Text
                             data-check="browser"
                             lineClamp={1}
-                            size={12}
+                            fz={12}
                         >
 
                             {currentCheck?.browserName}

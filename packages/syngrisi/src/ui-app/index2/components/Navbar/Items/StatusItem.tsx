@@ -40,7 +40,7 @@ export function StatusItem({ item, index, handlerItemClick, className }: Props) 
                                 <StatusIcon status={item.name} size={44} />
                                 <Text
                                     component="span" data-test="navbar-item-name"
-                                    size={16}
+                                    fz={16}
                                     lineClamp={1}
                                     style={{ wordBreak: 'break-all' }}
                                 >

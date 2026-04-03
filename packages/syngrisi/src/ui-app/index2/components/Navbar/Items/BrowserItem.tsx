@@ -40,7 +40,7 @@ export function BrowserItem({ item, index, handlerItemClick, className }: Props)
                                 <BrowserIcon browser={item.name} size={20} />
                                 <Text
                                     component="span" data-test="navbar-item-name"
-                                    size={16}
+                                    fz={16}
                                     lineClamp={1}
                                     style={{ wordBreak: 'break-all' }}
                                 >

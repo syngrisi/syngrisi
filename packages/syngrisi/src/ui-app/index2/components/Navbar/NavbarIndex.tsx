@@ -224,7 +224,7 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
             data-test="navbar-resizable-root"
             className="syngrisi-navbar"
             style={{
-                height: '100%',
+                height: '100vh',
                 width: navbarWidth,
                 position: 'relative',
                 paddingTop: 0,
@@ -234,6 +234,7 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden',
+                borderRight: '1px solid var(--mantine-color-gray-2)',
             }}
         >
             <style>{getNavbarStyles(theme, colorScheme)}</style>
@@ -266,6 +267,8 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                         <ActionIcon
                             data-test="navbar-icon-open-filter"
                             aria-label="Open filter"
+                            variant="subtle"
+                            color="gray"
                             onClick={() => toggleOpenedFilter()}
                             mb={4}
                         >
@@ -274,6 +277,8 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                         <ActionIcon
                             data-test="navbar-icon-open-sort"
                             aria-label="Open sort"
+                            variant="subtle"
+                            color="gray"
                             onClick={() => toggleOpenedSort()}
                             mb={4}
                         >
@@ -283,6 +288,8 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                         <ActionIcon
                             data-test="navbar-icon-refresh"
                             aria-label="Refresh"
+                            variant="subtle"
+                            color="gray"
                             onClick={() => refreshIconClickHandler()}
                             mb={4}
                         >

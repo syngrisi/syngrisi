@@ -60,6 +60,7 @@ export const SuiteItem = React.memo(function SuiteItem(
                     pl={8}
                     justify="space-between"
                     gap={0}
+                    style={{ paddingTop: 4, paddingBottom: 4 }}
                 >
                     <Group style={{ width: '100%' }} wrap="nowrap">
                         <Stack gap={0} style={{ width: '100%' }}>
@@ -67,7 +68,7 @@ export const SuiteItem = React.memo(function SuiteItem(
                                 <Tooltip label={item.name} multiline withinPortal>
                                     <Text
                                         component="span" data-test="navbar-item-name"
-                                        size={16}
+                                        fz={16}
                                         lineClamp={1}
                                         style={{ wordBreak: 'break-all' }}
                                     >

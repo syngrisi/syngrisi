@@ -172,14 +172,14 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                                 >
                                     <Paper p={20} m={10}>
                                         <Text
-                                            size={16}
+                                            fz={16}
                                             c={logLevelColorMap[item.level!]}
                                             component="span"
                                         >
                                             {item.level}{': '}
                                         </Text>
                                         <Text
-                                            size={16}
+                                            fz={16}
                                             style={{ wordBreak: 'break-all' }}
                                             c={logLevelColorMap[item.level!]}
                                             component="span"

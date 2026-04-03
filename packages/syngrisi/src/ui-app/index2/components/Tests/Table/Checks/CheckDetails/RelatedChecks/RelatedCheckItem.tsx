@@ -142,7 +142,7 @@ export function RelatedCheckItem({ checkData, activeCheckId, setRelatedActiveChe
                                     data-related-check-browser-name={check.browserName}
                                     data-related-check="browser-icon"
                                     browser={check.browserName}
-                                    size={14}
+                                    fz={14}
                                 />
                                 <Text
                                     size="xs"
