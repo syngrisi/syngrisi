@@ -42,7 +42,7 @@ export function AcceptStatusItem({ item, index, handlerItemClick, className }: P
                                 <Text
                                     component="span" data-test="navbar-item-name"
                                     data-testid={`accept-status-${item.name.toLowerCase()}`}
-                                    size={16}
+                                    fz={16}
                                     lineClamp={1}
                                     style={{ wordBreak: 'break-all' }}
                                 >

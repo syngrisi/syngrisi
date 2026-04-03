@@ -81,7 +81,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             }}
                             justify="space-between"
                         >
-                            <Paper shadow="md" pb={0}>
+                            <Paper shadow="0" pb={0}>
                                 <Tooltip.Floating
                                     multiline
                                     zIndex={1000}
@@ -121,6 +121,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             <Tooltip label={check.name} multiline withinPortal>
                                 <Text
                                     lineClamp={2}
+                                    fz={14}
                                     style={{ width: '50%' }}
                                     data-table-check-name={check.name}
                                 >
@@ -175,6 +176,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                 p="sm"
                                 ml={0}
                                 mr={0}
+                                shadow="0"
                                 style={{
                                     backgroundColor: (colorScheme === 'dark')
                                         ? theme.colors.dark[8]
@@ -189,6 +191,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                 >
                                     <Text
                                         lineClamp={1}
+                                        fz={14}
                                         data-table-check-name={check.name}
                                     >
                                         {check.name}
@@ -223,6 +226,8 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                                 fit="contain"
                                                 alt={check.name}
                                                 fallbackSrc=""
+                                                w="100%"
+                                                h="auto"
                                                 style={{
                                                     maxHeight: checksViewMode === 'bounded' ? `${imageWeight * 8}px` : undefined,
                                                 }}

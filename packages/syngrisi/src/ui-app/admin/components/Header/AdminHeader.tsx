@@ -75,7 +75,7 @@ export default function AdminHeader() {
     return (
         <Box
             component="header"
-            style={{ height: 100, paddingLeft: 0, paddingRight: 0, marginBottom: 120 }}
+            style={{ height: 100, paddingLeft: 0, paddingRight: 0, backgroundColor: 'var(--mantine-color-body)', borderBottom: '1px solid var(--mantine-color-gray-2)' }}
         >
             <Container style={innerStyle} fluid>
                 <Group>

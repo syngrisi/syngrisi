@@ -67,7 +67,7 @@ export function RelatedChecks(
                                 styles={{
                                     // burger
                                 }}
-                                size={16}
+                                fz={16}
                                 onClick={() => {
                                     hideRelatedChecks();
                                 }}

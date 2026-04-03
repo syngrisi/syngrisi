@@ -42,8 +42,15 @@ export default function IndexLayout() {
                 backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
             }}
         >
-            <HeaderIndex breadCrumbs={breadCrumbs} toolbar={toolbar} />
-            <Box style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+            <style>{`
+                .mantine-Table-table td, .mantine-Table-table th { padding: 12px 10px; }
+                .mantine-Table-table thead th { border-bottom: 1px solid var(--mantine-color-gray-2); color: rgb(73, 80, 87); }
+                .mantine-List-itemWrapper, .mantine-List-itemLabel { width: 100%; }
+            `}</style>
+            <Box style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
+                <HeaderIndex breadCrumbs={breadCrumbs} toolbar={toolbar} />
+            </Box>
+            <Box style={{ display: 'flex', height: '100vh', overflow: 'hidden', paddingTop: 100 }}>
                 <NavBarIndex
                     setBreadCrumbs={setBreadCrumbs}
                     navbarWidth={navbarWidth}
