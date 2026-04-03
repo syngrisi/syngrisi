@@ -84,8 +84,7 @@ export const Header = React.memo(function Header(
                         <Text
                             data-check="app-name"
                             size="sm"
-                            style={{ flexShrink: 1, minWidth: 0 }}
-                            style={classes.checkPathFragment}
+                            style={{ flexShrink: 1, minWidth: 0, ...classes.checkPathFragment }}
                         >
                             {currentCheck?.app?.name}
                         </Text>
@@ -97,8 +96,7 @@ export const Header = React.memo(function Header(
                         <Text
                             data-check="suite-name"
                             size="sm"
-                            style={{ flexShrink: 500, minWidth: 0 }}
-                            style={classes.checkPathFragment}
+                            style={{ flexShrink: 500, minWidth: 0, ...classes.checkPathFragment }}
                         >
                             &nbsp;/&nbsp;
                             {currentCheck?.suite?.name}
@@ -111,8 +109,7 @@ export const Header = React.memo(function Header(
                         <Text
                             data-check="test-name"
                             size="sm"
-                            style={{ flexShrink: 5, minWidth: 0 }}
-                            style={classes.checkPathFragment}
+                            style={{ flexShrink: 5, minWidth: 0, ...classes.checkPathFragment }}
                         >
                             &nbsp;/&nbsp;
                             {currentCheck?.test?.name}
@@ -126,9 +123,8 @@ export const Header = React.memo(function Header(
                         <Text
                             data-check="check-name"
                             size={14}
-                            style={{ flexShrink: 1, minWidth: 0 }}
+                            style={{ flexShrink: 1, minWidth: 0, ...classes.checkPathFragment }}
                             lineClamp={1}
-                            style={classes.checkPathFragment}
                         >
                             &nbsp;/&nbsp;
                             {currentCheck.name || textLoader}
