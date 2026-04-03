@@ -133,7 +133,7 @@ export function QuickFilter() {
                     .syngrisi-quick-filter { display: none; }
                 }
             `}</style>
-            <Text size={14}>Quick Filter: </Text>
+            <Text fz={14}>Quick Filter: </Text>
             <TextInput
                 value={quickFilter}
                 data-test="table-quick-filter"
@@ -191,7 +191,7 @@ export function QuickFilter() {
                             style={{ height: '45vh' }}
                         >
                             <Stack gap={8} justify="flex-start">
-                                <Text size={10} c="gray.6" fw={600} tt="uppercase">Browsers:</Text>
+                                <Text fz={10} c="gray.6" fw={600} tt="uppercase">Browsers:</Text>
                                 <Chip.Group
                                     gap={4}
                                     multiple
@@ -211,7 +211,7 @@ export function QuickFilter() {
                                     }
                                 </Chip.Group>
 
-                                <Text size={10} c="gray.6" fw={600} tt="uppercase">Platforms:</Text>
+                                <Text fz={10} c="gray.6" fw={600} tt="uppercase">Platforms:</Text>
                                 <Chip.Group
                                     gap={4}
                                     multiple
@@ -231,7 +231,7 @@ export function QuickFilter() {
                                     }
                                 </Chip.Group>
 
-                                <Text size={10} c="gray.6" fw={600} tt="uppercase">Viewports:</Text>
+                                <Text fz={10} c="gray.6" fw={600} tt="uppercase">Viewports:</Text>
                                 <Chip.Group
                                     value={viewportChipsData}
                                     onChange={setViewportChipsData}
@@ -251,7 +251,7 @@ export function QuickFilter() {
                                     }
                                 </Chip.Group>
 
-                                <Text size={10} c="gray.6" fw={600} tt="uppercase">Status:</Text>
+                                <Text fz={10} c="gray.6" fw={600} tt="uppercase">Status:</Text>
                                 <Chip.Group
                                     value={statusesChipsData}
                                     onChange={setStatusesChipsData}
@@ -271,7 +271,7 @@ export function QuickFilter() {
                                     }
                                 </Chip.Group>
 
-                                <Text size={10} c="gray.6" fw={600} tt="uppercase">Accepted:</Text>
+                                <Text fz={10} c="gray.6" fw={600} tt="uppercase">Accepted:</Text>
                                 <Chip.Group
                                     value={acceptedStatusChipsData}
                                     onChange={setAcceptedStatusChipsData}
