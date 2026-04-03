@@ -1,6 +1,6 @@
 metadata:
   category: domain/app
-  generatedAt: '2026-04-01T19:43:00.554Z'
+  generatedAt: '2026-04-03T08:36:15.855Z'
   totalFiles: 26
   totalSteps: 211
   sourceFiles:
@@ -33,46 +33,46 @@ metadata:
 steps:
   - pattern: I create a database backup archive fixture stored as {string}
     description: ''
-    line: 218
+    line: 255
   - pattern: 'I create a screenshots restore archive stored as {string}:'
     description: ''
-    line: 227
+    line: 264
   - pattern: 'I create an invalid tar.gz archive stored as {string}:'
     description: ''
-    line: 237
+    line: 274
   - pattern: I create screenshot file {string} with content {string}
     description: ''
-    line: 247
+    line: 284
   - pattern: I download the {string} link and store it as {string}
     description: ''
-    line: 310
+    line: 347
   - pattern: I download the latest {string} archive and store it as {string}
     description: ''
-    line: 323
+    line: 360
   - pattern: I set the checkbox {string} to {string}
     description: ''
-    line: 275
+    line: 312
   - pattern: I start admin data job {string} via api
     description: ''
-    line: 293
+    line: 330
   - pattern: I upload stored file {string} into file input {string}
     description: ''
-    line: 256
+    line: 293
   - pattern: the admin data jobs count should be {int}
     description: ''
-    line: 375
+    line: 412
   - pattern: the latest admin data job {string} should have status {string} with message containing {string}
     description: ''
-    line: 387
+    line: 419
   - pattern: the screenshot file {string} should contain {string}
     description: ''
-    line: 366
+    line: 403
   - pattern: the stored file {string} should exist
     description: ''
-    line: 345
+    line: 382
   - pattern: 'the stored tar.gz file {string} should contain entries:'
     description: ''
-    line: 353
+    line: 390
   - pattern: I batch accept {string} via AI endpoint
     description: ''
     line: 57
@@ -509,43 +509,43 @@ steps:
     line: 40
   - pattern: I create RCA actual check with {string}
     description: ''
-    line: 277
+    line: 325
   - pattern: I create RCA actual check with {string} with DOM collection enabled
     description: ''
-    line: 291
+    line: 339
   - pattern: I create RCA actual check with {string} without DOM data
     description: ''
-    line: 284
+    line: 332
   - pattern: I create RCA test with {string} as baseline
     description: ''
-    line: 179
+    line: 227
   - pattern: I create RCA test with {string} as baseline with DOM collection enabled
     description: ''
-    line: 193
+    line: 241
   - pattern: I create RCA test with {string} as baseline without DOM data
     description: ''
-    line: 186
+    line: 234
   - pattern: I wait for RCA data to be ready
     description: ''
-    line: 298
+    line: 346
   - pattern: the RCA panel should show added elements
     description: ''
-    line: 420
+    line: 601
   - pattern: the RCA panel should show changes summary
     description: ''
-    line: 512
+    line: 693
   - pattern: the RCA panel should show no DOM data message
     description: ''
-    line: 488
+    line: 669
   - pattern: the RCA panel should show removed elements
     description: ''
-    line: 437
+    line: 618
   - pattern: the RCA panel should show style changes
     description: ''
-    line: 471
+    line: 652
   - pattern: the RCA panel should show text changes
     description: ''
-    line: 454
+    line: 635
   - pattern: I create RCA demo actual check with DOM changes
     description: Accepts the baseline and creates actual check with broken state
     line: 271

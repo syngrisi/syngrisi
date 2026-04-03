@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import { Group, List, Stack, Text, Tooltip } from '@mantine/core';
 import { StatusIcon } from '@shared/components/Check/StatusIcon';
 
@@ -11,10 +12,23 @@ interface Props {
 }
 
 export function StatusItem({ item, index, handlerItemClick, className }: Props) {
+    const itemRef = useRef<HTMLLIElement>(null);
+    const handlerRef = useRef(handlerItemClick);
+    handlerRef.current = handlerItemClick;
+
+    useEffect(() => {
+        const el = itemRef.current;
+        if (!el) return;
+        const handler = (e: MouseEvent) => handlerRef.current(e);
+        el.addEventListener('click', handler);
+        return () => el.removeEventListener('click', handler);
+    }, []);
+
     return (
         <List.Item
+            ref={itemRef}
             data-test={`navbar_item_${index}`}
-            onClick={handlerItemClick}
+            data-item-name={item.name}
             className={className}
             style={{ cursor: 'pointer', width: '100%' }}
         >
@@ -25,7 +39,7 @@ export function StatusItem({ item, index, handlerItemClick, className }: Props) 
                             <Group gap={8}>
                                 <StatusIcon status={item.name} size={44} />
                                 <Text
-                                    data-test="navbar-item-name"
+                                    component="span" data-test="navbar-item-name"
                                     size={16}
                                     lineClamp={1}
                                     style={{ wordBreak: 'break-all' }}
