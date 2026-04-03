@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Group, List, Loader, Stack, Text, Tooltip } from '@mantine/core';
 import * as dateFns from 'date-fns';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import RemoveItemModalAsk from '@index/components/Navbar/Items/RemoveItemModalAsk';
 import { StatusesRing } from '@shared/components/Tests/StatusesRing';
@@ -39,12 +39,26 @@ export const RunItem = React.memo(function RunItem(
         close();
     };
 
+    // Mantine 7 List.Item does not forward onClick to DOM.
+    // Use ref + native listener as workaround.
+    const itemRef = useRef<HTMLLIElement>(null);
+    const handlerRef = useRef(handlerItemClick);
+    handlerRef.current = handlerItemClick;
+
+    useEffect(() => {
+        const el = itemRef.current;
+        if (!el) return;
+        const handler = (e: MouseEvent) => handlerRef.current(e);
+        el.addEventListener('click', handler);
+        return () => el.removeEventListener('click', handler);
+    }, []);
+
     return (
         <>
             <List.Item
+                ref={itemRef}
                 data-test={`navbar_item_${index}`}
                 data-item-name={item.name}
-                onClick={handlerItemClick}
                 className={className}
                 style={{ cursor: 'pointer', width: '100%' }}
             >
@@ -59,7 +73,7 @@ export const RunItem = React.memo(function RunItem(
                             <Group justify="flex-start" style={{ width: '100%' }}>
                                 <Tooltip label={item.name} multiline withinPortal>
                                     <Text
-                                        data-test="navbar-item-name"
+                                        component="span" data-test="navbar-item-name"
                                         size={16}
                                         lineClamp={1}
                                         style={{ wordBreak: 'break-all' }}

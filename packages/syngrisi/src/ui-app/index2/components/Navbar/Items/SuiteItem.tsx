@@ -1,8 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Group, List, Stack, Text, Tooltip } from '@mantine/core';
 import * as dateFns from 'date-fns';
-import { useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import RemoveItemModalAsk from '@index/components/Navbar/Items/RemoveItemModalAsk';
 import { RemoveItemPopover } from '@index/components/Navbar/Items/RemoveItemPopover';
@@ -29,6 +29,18 @@ export const SuiteItem = React.memo(function SuiteItem(
     const [modalOpen, setModalOpen] = useState(false);
     const [opened, { toggle, close }] = useDisclosure(false);
 
+    const itemRef = useRef<HTMLLIElement>(null);
+    const handlerRef = useRef(handlerItemClick);
+    handlerRef.current = handlerItemClick;
+
+    useEffect(() => {
+        const el = itemRef.current;
+        if (!el) return;
+        const handler = (e: MouseEvent) => handlerRef.current(e);
+        el.addEventListener('click', handler);
+        return () => el.removeEventListener('click', handler);
+    }, []);
+
     const handleRemoveItemClick = () => {
         setModalOpen(true);
         close();
@@ -37,9 +49,9 @@ export const SuiteItem = React.memo(function SuiteItem(
     return (
         <>
             <List.Item
+                ref={itemRef}
                 data-test={`navbar_item_${index}`}
                 data-item-name={item.name}
-                onClick={handlerItemClick}
                 className={className}
                 style={{ cursor: 'pointer', width: '100%' }}
             >
@@ -54,7 +66,7 @@ export const SuiteItem = React.memo(function SuiteItem(
                             <Group justify="flex-start" style={{ width: '100%' }}>
                                 <Tooltip label={item.name} multiline withinPortal>
                                     <Text
-                                        data-test="navbar-item-name"
+                                        component="span" data-test="navbar-item-name"
                                         size={16}
                                         lineClamp={1}
                                         style={{ wordBreak: 'break-all' }}
