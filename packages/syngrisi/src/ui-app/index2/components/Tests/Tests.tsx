@@ -2,12 +2,12 @@
 import * as React from 'react';
 import {
     Group,
-    useMantineTheme, useComputedColorScheme,
+    useMantineTheme,
     ActionIcon,
 } from '@mantine/core';
 import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage, useMediaQuery } from '@mantine/hooks';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { IconAdjustments, IconFilter } from '@tabler/icons-react';
 import RefreshActionIcon from '@index/components/Tests/Table/RefreshActionIcon';
 import useInfinityScroll from '@shared/hooks/useInfinityScroll';
@@ -26,7 +26,6 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
     const { query } = useParams();
 
     const theme = useMantineTheme();
-    const colorScheme = useComputedColorScheme();
     // useIndexSubpageEffect('By Runs');
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -69,7 +68,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                 <ActionIcon
                     title="Table settings, sorting, and columns visibility"
                     aria-label="Table settings, sorting, and columns visibility"
-                    color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                    color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-sorting"
                     variant="subtle"
                     onClick={() => {
@@ -86,7 +85,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                 <ActionIcon
                     title="Filter the Table Data"
                     aria-label="Filter the Table Data"
-                    color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                    color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-filtering"
                     variant="subtle"
                     onClick={() => {
@@ -118,37 +117,24 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
         [
             newestItemsQuery?.data?.results.length,
             newestItemsQuery.status,
-            colorScheme,
+            theme.colorScheme,
         ],
     );
 
-    // Debounce refetch to prevent race conditions when filters change rapidly
-    const refetchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
+    // When filters change, force firstPageQuery refetch to get new timestamp,
+    // which cascades to infinityQuery via queryKey dependency.
     useEffect(
         function refetchData() {
-            // Clear any pending refetch
-            if (refetchTimeoutRef.current) {
-                clearTimeout(refetchTimeoutRef.current);
-            }
-
-            // Debounce the refetch by 100ms to prevent multiple rapid refetches
-            refetchTimeoutRef.current = setTimeout(() => {
-                refresh();
-            }, 100);
-
-            return () => {
-                if (refetchTimeoutRef.current) {
-                    clearTimeout(refetchTimeoutRef.current);
-                }
-            };
+            firstPageQuery.refetch();
         }, [
-            query.base_filter,
-            query.quick_filter,
-            query.filter,
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            JSON.stringify(query.base_filter),
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            JSON.stringify(query.quick_filter),
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            JSON.stringify(query.filter),
             query.app,
             query.sortBy,
-            refresh,
         ],
     );
 
@@ -163,7 +149,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
     }
 
     return (
-        <Group align="start" wrap="nowrap" gap={0} style={{ width: '100%' }}>
+        <Group align="start" noWrap spacing={0} sx={{ width: '100%' }}>
             <TestsTable
                 updateToolbar={updateToolbar}
                 firstPageQuery={firstPageQuery}
