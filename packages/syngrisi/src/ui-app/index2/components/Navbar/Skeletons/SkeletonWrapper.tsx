@@ -47,29 +47,46 @@ function SkeletonWrapper({ infinityQuery, itemType, num, itemClass, scrollRootRe
     // Handle case when content doesn't overflow the scroll container.
     // When content fits entirely, the user cannot scroll, so onBottomReached on
     // ScrollArea won't fire. In that case, auto-fetch the next page.
+    // Also use IntersectionObserver as fallback for scroll-triggered loading.
     useEffect(() => {
-        if (!root || infinityQuery === null) return;
+        if (infinityQuery === null) return;
+        if (!infinityQuery.hasNextPage || infinityQuery.isFetchingNextPage) return;
 
+        // Strategy 1: If no scroll root yet, or content fits — auto-fetch
         const checkShouldLoad = () => {
-            if (!root) return;
             if (!infinityQuery.hasNextPage || infinityQuery.isFetchingNextPage) return;
-
+            if (!root) {
+                // No root yet — fetch to fill initial viewport
+                infinityQuery.fetchNextPage();
+                return;
+            }
             const { scrollHeight, clientHeight } = root;
-            // Only auto-fetch if content doesn't overflow
             if (scrollHeight <= clientHeight + 5) {
                 infinityQuery.fetchNextPage();
             }
         };
 
-        // Delay to let DOM render before measuring
         const rafId = requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                checkShouldLoad();
-            });
+            requestAnimationFrame(checkShouldLoad);
         });
+
+        // Strategy 2: IntersectionObserver on skeleton as fallback
+        let observer: IntersectionObserver | null = null;
+        if (skeletonRef.current && root) {
+            observer = new IntersectionObserver(
+                (entries) => {
+                    if (entries[0]?.isIntersecting && infinityQuery.hasNextPage && !infinityQuery.isFetchingNextPage) {
+                        infinityQuery.fetchNextPage();
+                    }
+                },
+                { root, rootMargin: '200px', threshold: 0 },
+            );
+            observer.observe(skeletonRef.current);
+        }
 
         return () => {
             cancelAnimationFrame(rafId);
+            observer?.disconnect();
         };
     }, [root, infinityQuery?.hasNextPage, infinityQuery?.isFetchingNextPage]);
 

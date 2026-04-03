@@ -155,9 +155,9 @@ export const Header = React.memo(function Header(
                                 data-tolerance-source={toleranceSource || 'baseline'}
                             >
                                 <ActionIcon size={24} variant="filled" color={toleranceSource === 'api' ? 'violet' : 'orange'}>
-                                    <Text size={11} fw={700}>%</Text>
+                                    <Text fz={11} fw={700}>%</Text>
                                 </ActionIcon>
-                                <Text size={12} c={toleranceSource === 'api' ? 'violet' : 'orange'}>
+                                <Text fz={12} c={toleranceSource === 'api' ? 'violet' : 'orange'}>
                                     Tol {Number(toleranceThreshold).toFixed(2)}%
                                 </Text>
                             </Group>
@@ -212,7 +212,7 @@ export const Header = React.memo(function Header(
                                     : textLoader
                             }
                         </ActionIcon>
-                        <Text data-check="os" size={12} lineClamp={1}>{currentCheck?.os}</Text>
+                        <Text data-check="os" fz={12} lineClamp={1}>{currentCheck?.os}</Text>
                     </Group>
                 </Tooltip>
 
