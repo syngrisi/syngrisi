@@ -638,6 +638,7 @@ export function CheckDetails({
 
     return (
         <Group style={{ width: '96vw' }} gap={4}>
+            <style>{`.syngrisi-rca-resize-handle:hover { background-color: var(--mantine-color-blue-5) !important; }`}</style>
             <Stack style={{ width: '100%' }}>
                 {/* Header */}
                 <Header
@@ -715,6 +716,7 @@ export function CheckDetails({
                                 {/* Resize Handle */}
                                 <Box
                                     data-test="rca-panel-resize-handle"
+                                    className="syngrisi-rca-resize-handle"
                                     onMouseDown={(e: React.MouseEvent) => {
                                         e.preventDefault();
                                         setIsResizing(true);
@@ -732,11 +734,6 @@ export function CheckDetails({
                                         zIndex: 10,
                                         transition: 'background-color 0.2s',
                                         flexShrink: 0,
-                                    }}
-                                    style={{
-                                        '&:hover': {
-                                            backgroundColor: 'var(--mantine-color-blue-5) !important',
-                                        },
                                     }}
                                 />
                                 <Box

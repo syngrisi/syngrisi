@@ -80,8 +80,8 @@ Feature: Bulk Operations - Apply and Delete
     When I click element with locator "[data-test-checkbox-name=TestName-BulkDelete-1]"
     When I wait 10 seconds for the element with locator "[aria-label='Remove selected tests']" to be visible
     When I click element with locator "[aria-label='Remove selected tests']"
-    Then the element with locator ".mantine-Modal-modal" should have contains text "Remove selected tests?"
-    Then the element with locator ".mantine-Modal-modal" should have contains text "Are you sure you want to permanently delete the selected tests?"
+    Then the element with locator ".mantine-Modal-content" should have contains text "Remove selected tests?"
+    Then the element with locator ".mantine-Modal-content" should have contains text "Are you sure you want to permanently delete the selected tests?"
     When I wait 10 seconds for the element with locator "[aria-label='Remove']" to be visible
 
     When I click element with locator "[aria-label='Remove']"

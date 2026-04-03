@@ -20,11 +20,11 @@ Feature: Checks Preview Modes
         When I wait for "3" seconds
         Then the css attribute "max-height" from element "img[data-test-preview-image='CheckName']" is "153.6px"
 
-        When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[text()='normal']"
+        When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[.='normal']"
         When I wait for "1" seconds
         Then the css attribute "max-height" from element "img[data-test-preview-image='CheckName']" is "none"
 
-        When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[text()='list']"
+        When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[.='list']"
         When I wait for "1" seconds
         Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "76.7969px"
 
@@ -42,14 +42,14 @@ Feature: Checks Preview Modes
         When I wait for "1" seconds
         Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "113.75px"
 
-        When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='small']"
+        When I click element with locator "//*[@data-test='preview-size-segment-control']//label[.='small']"
         When I wait for "0.5" seconds
         Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "69.5938px"
 
-        When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='large']"
+        When I click element with locator "//*[@data-test='preview-size-segment-control']//label[.='large']"
         When I wait for "0.5" seconds
         Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "202.07px"
 
-        When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='xlarge']"
+        When I click element with locator "//*[@data-test='preview-size-segment-control']//label[.='xlarge']"
         When I wait for "0.5" seconds
         Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "290.383px"
