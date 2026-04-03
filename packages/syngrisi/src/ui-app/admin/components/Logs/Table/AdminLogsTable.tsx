@@ -42,13 +42,17 @@ export default function AdminLogsTable({ infinityQuery, visibleFields }: Props) 
     );
     return (
         <>
-            <ScrollArea.Autosize
+            <ScrollArea
                 data-test="table-scroll-area"
                 ref={scrollAreaRef}
                 viewportRef={viewportRef}
-                maxHeight="100vh"
-                style={{ width: '100%', paddingBottom: 115 }}
+                style={{ width: '100%', paddingBottom: 115, height: 'calc(100vh - 100px)' }}
                 styles={{ scrollbar: { marginTop: '46px' } }}
+                onBottomReached={() => {
+                    if (infinityQuery.hasNextPage && !infinityQuery.isFetchingNextPage) {
+                        infinityQuery.fetchNextPage();
+                    }
+                }}
             >
 
                 <Table style={{ width: '100%', paddingBottom: 500 }} verticalSpacing="sm" highlightOnHover>
@@ -77,7 +81,7 @@ export default function AdminLogsTable({ infinityQuery, visibleFields }: Props) 
                     </tbody>
                     <InfinityScrollSkeleton infinityQuery={infinityQuery} visibleFields={visibleFields} scrollRootRef={viewportRef} />
                 </Table>
-            </ScrollArea.Autosize>
+            </ScrollArea>
             <PagesCountAffix
                 loaded={infinityQuery.data?.pages?.length.toString()}
                 total={infinityQuery.data?.pages && infinityQuery.data?.pages[0].totalPages}

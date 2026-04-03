@@ -38,12 +38,12 @@ export default function IndexLayout() {
             style={{
                 display: 'flex',
                 flexDirection: 'column',
-                minHeight: '100vh',
+                height: '100vh',
                 backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
             }}
         >
             <HeaderIndex breadCrumbs={breadCrumbs} toolbar={toolbar} />
-            <Box style={{ display: 'flex', flex: 1 }}>
+            <Box style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
                 <NavBarIndex
                     setBreadCrumbs={setBreadCrumbs}
                     navbarWidth={navbarWidth}

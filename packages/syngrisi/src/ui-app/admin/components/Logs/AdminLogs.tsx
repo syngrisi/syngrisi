@@ -56,7 +56,7 @@ export default function AdminLogs() {
     useNavProgressFetchEffect(infinityQuery.isFetching);
 
     const [visibleFields, setVisibleFields] = useLocalStorage({
-        key: 'visibleFields', defaultValue: ['_id', 'level', 'message', 'timestamp', 'meta.user'],
+        key: 'adminLogsVisibleFields', defaultValue: ['_id', 'level', 'message', 'timestamp', 'meta.user'],
     });
 
     useEffect(function oneTime() {
