@@ -132,6 +132,12 @@ export function Toolbar(
                                     disabled={isFirstCheck}
                                     title="Previous Check"
                                     variant="transparent"
+                                    color="gray"
+                                    styles={{
+                                        root: {
+                                            backgroundColor: 'transparent',
+                                        },
+                                    }}
                                 >
                                     <IconChevronLeft size={20} />
                                 </ActionIcon>
@@ -140,6 +146,12 @@ export function Toolbar(
                                     disabled={isLastCheck}
                                     title="Next Check"
                                     variant="transparent"
+                                    color="gray"
+                                    styles={{
+                                        root: {
+                                            backgroundColor: 'transparent',
+                                        },
+                                    }}
                                 >
                                     <IconChevronRight size={20} />
                                 </ActionIcon>
@@ -150,6 +162,12 @@ export function Toolbar(
                                     disabled={isFirstTest}
                                     title="Previous Test"
                                     variant="transparent"
+                                    color="gray"
+                                    styles={{
+                                        root: {
+                                            backgroundColor: 'transparent',
+                                        },
+                                    }}
                                 >
                                     <IconChevronUp size={20} />
                                 </ActionIcon>
@@ -158,6 +176,12 @@ export function Toolbar(
                                     disabled={isLastTest}
                                     title="Next Test"
                                     variant="transparent"
+                                    color="gray"
+                                    styles={{
+                                        root: {
+                                            backgroundColor: 'transparent',
+                                        },
+                                    }}
                                 >
                                     <IconChevronDown size={20} />
                                 </ActionIcon>
@@ -240,7 +264,7 @@ export function Toolbar(
                         !isShareMode && (
                             <Menu shadow="md" width={200} withinPortal>
                                 <Menu.Target>
-                                    <ActionIcon data-test="check-details-menu">
+                                    <ActionIcon data-test="check-details-menu" variant="transparent" color="gray">
                                         <IconDotsVertical size={20} />
                                     </ActionIcon>
                                 </Menu.Target>

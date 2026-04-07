@@ -199,6 +199,8 @@ export function RegionsToolbar({
                     data-check="remove-ignore-region"
                     data-disabled={!visibleRegionRemoveButton ? "true" : undefined}
                     disabled={!visibleRegionRemoveButton}
+                    variant="transparent"
+                    color="gray"
                     onClick={() => mainView.removeActiveIgnoreRegions()}
                 >
                     <IconShapeOff size={24} stroke={1} />
@@ -232,6 +234,8 @@ export function RegionsToolbar({
                         data-check="add-ignore-region"
                         data-disabled={((view === 'slider') || !baselineId) ? "true" : undefined}
                         disabled={(view === 'slider') || !baselineId}
+                        variant="transparent"
+                        color="gray"
                         onClick={() => {
                             // @ts-ignore - Sync window.mainView for E2E tests before calling method
                             if (mainView) window.mainView = mainView;
@@ -279,6 +283,8 @@ export function RegionsToolbar({
                         data-check="auto-ignore-region"
                         data-disabled={((view === 'slider') || !baselineId || !hasDiff) ? "true" : undefined}
                         disabled={(view === 'slider') || !baselineId || !hasDiff}
+                        variant="transparent"
+                        color="gray"
                         onClick={handleAutoRegion}
                     >
                         <IconWand size={24} stroke={1} />
@@ -322,6 +328,8 @@ export function RegionsToolbar({
                         data-check="add-bound-region"
                         data-disabled={((view === 'slider') || !baselineId || hasBoundRegion) ? "true" : undefined}
                         disabled={(view === 'slider') || !baselineId || hasBoundRegion}
+                        variant="transparent"
+                        color="gray"
                         onClick={() => mainView.addBoundingRegion('bound_rect')}
                     >
                         <IconBoxMargin size={24} stroke={1} />
@@ -349,6 +357,8 @@ export function RegionsToolbar({
                     data-check="save-ignore-region"
                     data-disabled={(!hasAnyRegion && !isDirty) ? "true" : undefined}
                     disabled={!hasAnyRegion && !isDirty}
+                    variant="transparent"
+                    color="gray"
                     onClick={() => {
                         saveRegionsAndSyncCache();
                     }}

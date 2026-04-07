@@ -142,16 +142,33 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
             className="modal"
             opened={checkModalOpened}
             centered
-            size="auto"
+            size="calc(100vw - 15px)"
             onClose={closeHandler}
-            style={{ marginTop: -25 }}
-            styles={{ title: { width: '100%', paddingRight: 35 } }}
+            style={{ marginTop: 43 }}
+            styles={{
+                inner: {
+                    padding: '78px 7px 48px',
+                },
+                title: { width: '100%', paddingRight: 35 },
+                content: {
+                    padding: '20px 20px 10px',
+                    maxHeight: 'none',
+                },
+                body: {
+                    padding: 0,
+                },
+                overlay: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                },
+            }}
             withCloseButton={false}
         >
             {/* Close Button */}
             <ActionIcon
                 data-test="close-check-detail-icon"
                 style={{ position: 'fixed', right: 10, top: 10 }}
+                variant="transparent"
+                color="gray"
                 onClick={
                     () => {
                         closeHandler();

@@ -22,7 +22,12 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
 
     return (
         <form onSubmit={form.onSubmit((values) => handleSubmit({ ...values, name }))}>
-            <Title size="sm" pb={20}>{label}</Title>
+            <Title
+                pb={20}
+                style={{ fontSize: '24px', lineHeight: '31.2px' }}
+            >
+                {label}
+            </Title>
             <Group gap="xl">
                 <SafeSelect
                     data-test={`settings_value_${name}`}
@@ -39,12 +44,18 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
                     data-test={`settings_enabled_${name}`}
                     size="md"
                     label="enabled"
+                    styles={{
+                        label: {
+                            fontSize: '24px',
+                            lineHeight: '24px',
+                        },
+                    }}
                     aria-label={`Enable ${label}`}
                     {...form.getInputProps('enabled', { type: 'checkbox' })}
                 />
             </Group>
 
-            <Text>{description}</Text>
+            <Text style={{ fontSize: '24px', lineHeight: '37.2px' }}>{description}</Text>
 
             <Group justify="flex-end" mt="md">
                 <Button

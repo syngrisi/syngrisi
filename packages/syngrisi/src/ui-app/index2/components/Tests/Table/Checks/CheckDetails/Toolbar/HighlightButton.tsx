@@ -41,6 +41,8 @@ export function HighlightButton({ mainView, disabled = false }: Props) {
                     data-disabled={disabled ? "true" : undefined}
                     disabled={disabled}
                     loading={loadHighlights}
+                    variant="transparent"
+                    color="gray"
                     onClick={async () => {
                         setLoadHighlights(() => true);
                         const { groups, diffImageData } = await highlightDiff(mainView, highlightsGroups, imageData);

@@ -177,7 +177,7 @@ export const Header = React.memo(function Header(
                                 ? (
                                     <ViewPortLabel
                                         check={currentCheck}
-                                        c="blue"
+                                        color="blue"
                                         sizes={sizes}
                                         size="lg"
                                         checksViewSize={checksViewSize}
