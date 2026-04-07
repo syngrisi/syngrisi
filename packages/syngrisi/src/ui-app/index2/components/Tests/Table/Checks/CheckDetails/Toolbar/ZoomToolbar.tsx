@@ -174,7 +174,7 @@ export function ZoomToolbar(
                         >
                             {Math.round(zoomPercent)}%
                         </Text>
-                        <ActionIcon ml={-10} style={{ pointerEvents: 'none' }}>
+                        <ActionIcon ml={-10} style={{ pointerEvents: 'none' }} variant="transparent" color="gray">
                             <IconChevronDown />
                         </ActionIcon>
                     </Group>

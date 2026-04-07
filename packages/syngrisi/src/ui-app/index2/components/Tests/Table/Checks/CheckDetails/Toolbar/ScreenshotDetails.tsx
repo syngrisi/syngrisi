@@ -23,6 +23,9 @@ export function ScreenshotDetails({
         marginLeft: 4,
         paddingLeft: 4,
         paddingRight: 4,
+        backgroundColor: colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.blue[0],
+        color: colorScheme === 'dark' ? theme.colors.blue[2] : theme.colors.blue[6],
+        border: '1px solid transparent',
     };
     const iconLabelStyle: React.CSSProperties = {
         color: colorScheme === 'dark' ? theme.colors.gray[5] : theme.colors.gray[6],
@@ -62,7 +65,7 @@ export function ScreenshotDetails({
                     withinPortal
                     label={`${viewLabel} screenshot size: ${image.width}x${image.height}, click to open in a new tab`}
                 >
-                    <Badge color="blue" radius={'sm'} style={infoBadgesStyle} data-check="image-size">
+                    <Badge color="blue" variant="light" radius={'sm'} style={infoBadgesStyle} data-check="image-size">
                         <a
                             href={imgSrc}
                             target="_blank"
@@ -76,7 +79,7 @@ export function ScreenshotDetails({
             );
         }
         return (
-            <Badge color="blue" radius={'sm'} style={infoBadgesStyle}>
+            <Badge color="blue" variant="light" radius={'sm'} style={infoBadgesStyle}>
                 <Loader size="xs" color="blue" variant="dots" />
             </Badge>
         );
@@ -94,11 +97,23 @@ export function ScreenshotDetails({
     const hasDiff = diffPercent !== undefined && diffPercent !== null && diffPercent !== '';
 
     return (
-        <Group gap="xs" wrap="nowrap" style={{ '@media (max-width: 700px)': { display: 'none' } }} className="screenshot-details-group">
+        <Group gap="xs" wrap="nowrap" className="screenshot-details-group">
+            <style>{`
+                @media (max-width: 700px) {
+                    .screenshot-details-group {
+                        display: none;
+                    }
+                }
+                @media (max-width: 1400px) {
+                    .screenshot-details-label {
+                        display: none;
+                    }
+                }
+            `}</style>
             <Tooltip label="Actual image size" withinPortal>
                 <Group gap={2} wrap="nowrap">
                     <IconRuler2 size={16} style={iconLabelStyle} />
-                    <Text style={labelTextStyle}>Size:</Text>
+                    <Text className="screenshot-details-label" style={labelTextStyle}>Size:</Text>
                     {imageSize}
                 </Group>
             </Tooltip>
@@ -107,8 +122,8 @@ export function ScreenshotDetails({
                 <Tooltip label={`Actual image date: ${actualDateFull}`} withinPortal>
                     <Group gap={2} wrap="nowrap">
                         <IconCalendar size={16} style={iconLabelStyle} />
-                        <Text style={labelTextStyle}>Date:</Text>
-                        <Badge c="blue" radius="sm" style={infoBadgesStyle} data-check="image-date">
+                        <Text className="screenshot-details-label" style={labelTextStyle}>Date:</Text>
+                        <Badge color="blue" variant="light" radius="sm" style={infoBadgesStyle} data-check="image-date">
                             {actualDateShort}
                         </Badge>
                     </Group>
@@ -119,9 +134,10 @@ export function ScreenshotDetails({
                 <Tooltip label={`Images difference: ${diffPercent}%`} withinPortal>
                     <Group gap={2} wrap="nowrap">
                         <IconPercentage size={16} style={iconLabelStyle} />
-                        <Text style={labelTextStyle}>Diff:</Text>
+                        <Text className="screenshot-details-label" style={labelTextStyle}>Diff:</Text>
                         <Badge
-                            c="blue"
+                            color="blue"
+                            variant="light"
                             radius="sm"
                             style={{ ...infoBadgesStyle, maxWidth: 80 }}
                             data-check="diff-percent"

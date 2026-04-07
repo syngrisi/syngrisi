@@ -191,7 +191,7 @@ export default function UserForm(
                                     />
                                 </Group>
                             )
-                            : (<ActionIcon style={{ minWidth: '60px' }} />)
+                            : (<div style={{ minWidth: '60px', height: '28px' }} />)
                     }
                 </Group>
             </form>

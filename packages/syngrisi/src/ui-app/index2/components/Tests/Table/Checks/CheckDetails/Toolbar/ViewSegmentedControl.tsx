@@ -45,9 +45,13 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
         Object.entries(segmentMap).forEach(([value, { disabled }]) => {
             const segmentElement = segmentRef.current?.querySelector(`[data-check="${value}-view"]`)?.closest('label');
             if (segmentElement) {
+                const isActive = value === view;
                 segmentElement.setAttribute('data-segment-value', value);
-                segmentElement.setAttribute('data-segment-active', value === view ? 'true' : 'false');
+                segmentElement.setAttribute('data-segment-active', isActive ? 'true' : 'false');
                 segmentElement.setAttribute('data-segment-disabled', disabled ? 'true' : 'false');
+                segmentElement.style.color = disabled
+                    ? 'var(--mantine-color-gray-4)'
+                    : (isActive ? 'var(--mantine-color-black)' : 'var(--mantine-color-dark-4)');
             }
         });
     }, [view, isExpectedDisabled, isDiffDisabled, isSliderDisabled]);
@@ -146,9 +150,13 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
         <div ref={segmentRef}>
             <SegmentedControl
                 data-check="view-segment"
+                color="gray"
                 style={{ minWidth: 0, minHeight: 0 }}
                 styles={
                     {
+                        control: {
+                            borderColor: 'var(--mantine-color-gray-3)',
+                        },
                         label: {
                             minWidth: 0,
                             minHeight: 0,
@@ -156,6 +164,10 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                             maxWidth: '7vw',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',
+                        },
+                        indicator: {
+                            backgroundColor: 'white',
+                            border: '1px solid var(--mantine-color-gray-3)',
                         },
                     }
                 }

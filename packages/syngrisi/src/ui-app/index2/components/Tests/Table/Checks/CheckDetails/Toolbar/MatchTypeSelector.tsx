@@ -200,6 +200,8 @@ export function MatchTypeSelector({
                         data-check="match-type-selector"
                         disabled={!baselineId}
                         loading={loading}
+                        variant="transparent"
+                        color="gray"
                     >
                         <IconAdjustments size={24} stroke={1} />
                     </ActionIcon>

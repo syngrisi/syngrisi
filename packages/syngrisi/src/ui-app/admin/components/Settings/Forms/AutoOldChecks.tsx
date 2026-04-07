@@ -63,7 +63,7 @@ export function AutoOldChecks({ name, value, label, description, enabled, update
     return (
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
             <Stack gap="sm">
-                <Title size="sm">{label}</Title>
+                <Title style={{ fontSize: '24px', lineHeight: '31.2px' }}>{label}</Title>
                 <Group gap="xl" align="flex-end">
                     <NumberInput
                         data-test={`settings_value_${name}_days`}

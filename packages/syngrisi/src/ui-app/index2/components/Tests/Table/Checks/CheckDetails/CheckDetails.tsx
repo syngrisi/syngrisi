@@ -408,7 +408,7 @@ export function CheckDetails({
 
             const actual = currentCheck.actualSnapshotId || null;
             if (canvasContainerRef.current) {
-                canvasContainerRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
+                canvasContainerRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 1}px`;
             }
 
             const MV = new MainView(

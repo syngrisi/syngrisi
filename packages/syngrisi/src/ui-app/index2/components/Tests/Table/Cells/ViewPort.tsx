@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Badge, Text, Tooltip } from '@mantine/core';
+import { Badge, Tooltip } from '@mantine/core';
 import { tableColumns } from '@index/components/Tests/Table/tableColumns';
 
 interface Props {
@@ -32,13 +32,20 @@ export function Viewport({ type, test }: Props) {
                 <Badge
                     size="md"
                     color="blue"
+                    variant="light"
+                    styles={{
+                        root: {
+                            borderRadius: '32px',
+                            paddingLeft: '10.6667px',
+                            paddingRight: '10.6667px',
+                        },
+                        label: {
+                            overflow: 'visible',
+                            whiteSpace: 'nowrap',
+                        },
+                    }}
                 >
-                    <Text
-                        lineClamp={1}
-                        style={{ wordBreak: 'break-all' }}
-                    >
-                        {resultViewport}
-                    </Text>
+                    {resultViewport}
                 </Badge>
             </Tooltip>
         </td>

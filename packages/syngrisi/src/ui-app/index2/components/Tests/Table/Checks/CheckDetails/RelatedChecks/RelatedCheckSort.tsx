@@ -51,6 +51,8 @@ export function RelatedCheckSort(
                             title="Sort Order"
                             data-test="navbar-sort-by-order"
                             mb={4}
+                            variant="transparent"
+                            color="gray"
                             onClick={
                                 () => {
                                     if (sortOrder === 'asc') {
@@ -69,6 +71,8 @@ export function RelatedCheckSort(
                         </ActionIcon>
                         <ActionIcon
                             mb={4}
+                            variant="transparent"
+                            color="gray"
                             onClick={() => toggleOpenedSort()}
                         >
                             <IconX stroke={1} />

@@ -154,7 +154,7 @@ function AppInner() {
                 nothingFound="Nothing found..."
             />
             <Notifications autoClose={5000} limit={5} />
-            <NavigationProgress />
+            <NavigationProgress size={0} color="transparent" />
 
             <Suspense fallback={null}>
                 <Routes>
