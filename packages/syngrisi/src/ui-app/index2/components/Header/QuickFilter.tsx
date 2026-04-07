@@ -147,6 +147,8 @@ export function QuickFilter() {
                         <ActionIcon
                             title="clear filter"
                             aria-label="Clear quick filter"
+                            variant="transparent"
+                            color="gray"
                             onClick={() => {
                                 resetQuickFilter();
                             }}
@@ -178,6 +180,8 @@ export function QuickFilter() {
                                 ml={-14}
                                 aria-label="Open quick filter options"
                                 aria-expanded={opened}
+                                variant="transparent"
+                                color="gray"
                                 onClick={toggle}
                             >
                                 <IconChevronDown size={16} />

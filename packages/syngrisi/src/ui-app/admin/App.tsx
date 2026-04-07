@@ -96,7 +96,7 @@ function App() {
                         nothingFound="Nothing found..."
                     />
                     <Notifications autoClose={5000} limit={5} />
-                    <NavigationProgress />
+                    <NavigationProgress size={0} color="transparent" />
                     <Routes>
                         <Route path="/admin/*" element={<AdminLayout />} />
                     </Routes>

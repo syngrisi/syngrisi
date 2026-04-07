@@ -68,6 +68,7 @@ export function RelatedChecks(
                                     // burger
                                 }}
                                 fz={16}
+                                color="gray"
                                 onClick={() => {
                                     hideRelatedChecks();
                                 }}
@@ -80,12 +81,14 @@ export function RelatedChecks(
 
                 {
                     related.opened && (
-                        <Group justify="center" gap="xs" style={{ width: '100%' }} mb={4}>
+                        <Group justify="center" gap="xs" style={{ width: '100%' }} mt={-6} mb={4}>
                             <Tooltip label={`${openedSort ? 'Close ' : ' Open'} sorting`} withinPortal>
                                 <ActionIcon
                                     data-test="related-check-icon-open-sort"
                                     onClick={() => sortHandler.toggle()}
                                     mb={4}
+                                    variant="transparent"
+                                    color="gray"
                                 >
                                     <IconArrowsSort stroke={1} />
                                 </ActionIcon>
@@ -96,6 +99,8 @@ export function RelatedChecks(
                                     data-test="related-check-icon-open-filter"
                                     onClick={() => filterHandler.toggle()}
                                     mb={4}
+                                    variant="transparent"
+                                    color="gray"
                                 >
                                     <IconFilter stroke={1} />
                                 </ActionIcon>
@@ -110,6 +115,8 @@ export function RelatedChecks(
                                         }
                                     }
                                     mb={4}
+                                    variant="transparent"
+                                    color="gray"
                                 >
                                     <IconRefresh stroke={1} />
                                 </ActionIcon>
@@ -136,7 +143,7 @@ export function RelatedChecks(
                                 <Text size="sm" mb={-8}>
                                     Show checks with same parameters
                                 </Text>
-                                <ActionIcon onClick={filterHandler.close}>
+                                <ActionIcon onClick={filterHandler.close} variant="transparent" color="gray">
                                     <IconX size={24} stroke={1} />
                                 </ActionIcon>
                             </Group>
@@ -161,7 +168,7 @@ export function RelatedChecks(
                             (styles: any) => (
 
                                 <ScrollArea
-                                    mt={4}
+                                    mt={3}
                                     style={{ height: '75vh' }}
                                     styles={styles}
                                     viewportRef={viewportRef}
