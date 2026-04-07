@@ -15,12 +15,10 @@ function ToggleThemeButton({ colorScheme, toggleColorScheme }: any): ReactElemen
                 data-test="theme-button"
                 size="md"
                 color={dark ? 'yellow' : 'blue'}
-                // color={colorScheme === 'dark' ? 'gray' : 'dark'}
-                checked={colorScheme === 'light'}
+                checked={dark}
                 onChange={(event) => {
-                    toggleColorScheme();
-                    event.preventDefault();
                     event.stopPropagation();
+                    toggleColorScheme();
                 }}
                 onLabel={<IconSun size={16} stroke={2.5} color={theme.colors.yellow[4]} />}
                 offLabel={<IconMoonStars size={16} stroke={2.5} color={theme.colors.blue[6]} />}
