@@ -81,7 +81,14 @@ export function CommonDistinctFilter({ label, updateGroupRules, id, resource }: 
                     label=""
                     data-test="table-filter-operator"
                     aria-label="Filter operator"
-                    style={{ width: '130px' }}
+                    style={{ width: '120px' }}
+                    styles={{
+                        input: {
+                            minHeight: 36,
+                            height: 36,
+                            fontSize: 14,
+                        },
+                    }}
                     optionsData={[
                         { value: 'eq', label: 'equals' },
                         { value: 'ne', label: 'not equals' },
@@ -94,10 +101,16 @@ export function CommonDistinctFilter({ label, updateGroupRules, id, resource }: 
                 <SafeSelect
                     data-test="table-filter-value"
                     aria-label="Filter value"
-                    // style={{ width: '150px' }}
                     title={form.getInputProps('value').value}
                     optionsData={items}
                     loaded={distinctQuery.isLoading}
+                    styles={{
+                        input: {
+                            minHeight: 36,
+                            height: 36,
+                            fontSize: 14,
+                        },
+                    }}
                     {...form.getInputProps('value')}
                 />
             </Group>

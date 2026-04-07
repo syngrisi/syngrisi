@@ -234,7 +234,7 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden',
-                borderRight: '1px solid var(--mantine-color-gray-2)',
+                borderRight: `1px solid ${colorScheme === 'dark' ? theme.colors.dark[4] : 'var(--mantine-color-gray-2)'}`,
             }}
         >
             <style>{getNavbarStyles(theme, colorScheme)}</style>

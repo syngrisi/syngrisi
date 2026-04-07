@@ -44,7 +44,10 @@ export default function IndexLayout() {
         >
             <style>{`
                 .mantine-Table-table td, .mantine-Table-table th { padding: 12px 10px; }
-                .mantine-Table-table thead th { border-bottom: 1px solid var(--mantine-color-gray-2); color: rgb(73, 80, 87); }
+                .mantine-Table-table thead th {
+                    border-bottom: 1px solid ${colorScheme === 'dark' ? theme.colors.dark[4] : 'var(--mantine-color-gray-2)'};
+                    color: ${colorScheme === 'dark' ? theme.colors.gray[4] : 'rgb(73, 80, 87)'};
+                }
                 .mantine-List-itemWrapper, .mantine-List-itemLabel { width: 100%; }
             `}</style>
             <Box style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>

@@ -132,7 +132,13 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
     return (
         <Box
             component="header"
-            style={{ height: 100, paddingLeft: 0, paddingRight: 0, borderBottom: '1px solid var(--mantine-color-gray-2)', backgroundColor: 'var(--mantine-color-body)' }}
+            style={{
+                height: 100,
+                paddingLeft: 0,
+                paddingRight: 0,
+                borderBottom: `1px solid ${colorScheme === 'dark' ? theme.colors.dark[4] : 'var(--mantine-color-gray-2)'}`,
+                backgroundColor: 'var(--mantine-color-body)',
+            }}
         >
             <Container style={innerStyle} fluid>
                 <Group>

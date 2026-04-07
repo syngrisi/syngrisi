@@ -132,7 +132,7 @@ function Filter(
             width={isMobile ? '100%' : 420}
         >
             <ScrollArea.Autosize mah="80vh" style={{ height: '80vh' }}>
-                <Box style={{ paddingRight: 60, marginBottom: 100 }}>
+                <Box style={{ paddingRight: 24, marginBottom: 32 }}>
                     <Stack>
                         <LogicalGroup
                             id="mainGroup"
@@ -153,6 +153,7 @@ function Filter(
                             aria-label="Reset filter"
                             variant="light"
                             color="red"
+                            style={{ backgroundColor: '#fff5f5' }}
                         >
                             Reset
                         </Button>
@@ -162,14 +163,16 @@ function Filter(
                                 aria-label="Cancel filter"
                                 variant="light"
                                 color="gray"
+                                style={{ backgroundColor: '#f8f9fa' }}
                                 onClick={() => setOpen(false)}
                             >
                                 Cancel
                             </Button>
                             <Button
-                            mr={10}
+                                mr={0}
                                 data-test="table-filter-apply"
                                 aria-label="Apply filter"
+                                style={{ marginRight: 10 }}
                                 onClick={() => {
                                     applyFilter();
                                 }}
