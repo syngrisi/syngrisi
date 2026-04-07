@@ -23,7 +23,7 @@ function ToggleThemeButton({ colorScheme, toggleColorScheme }: any): ReactElemen
                     },
                 }}
                 color="gray.8"
-                checked={colorScheme === 'light'}
+                checked={dark}
                 onChange={() => {
                     toggleColorScheme();
                 }}
