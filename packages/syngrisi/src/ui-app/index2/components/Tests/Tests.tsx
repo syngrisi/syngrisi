@@ -70,7 +70,10 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                     aria-label="Table settings, sorting, and columns visibility"
                     color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-sorting"
-                    variant="subtle"
+                    variant={sortOpen ? 'light' : 'transparent'}
+                    style={{
+                        backgroundColor: sortOpen ? '#ebfbee' : 'transparent',
+                    }}
                     onClick={() => {
                         setIsFilterDrawerOpen(false);
                         setSortOpen((prev) => !prev);
@@ -87,7 +90,10 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                     aria-label="Filter the Table Data"
                     color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-filtering"
-                    variant="subtle"
+                    variant={isFilterDrawerOpen ? 'light' : 'transparent'}
+                    style={{
+                        backgroundColor: isFilterDrawerOpen ? '#ebfbee' : 'transparent',
+                    }}
                     onClick={() => {
                         setSortOpen(false);
                         setIsFilterDrawerOpen((prev) => !prev);
@@ -98,7 +104,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                 47,
             );
         },
-        [],
+        [sortOpen, isFilterDrawerOpen, theme.colorScheme],
     );
 
     useEffect(
@@ -139,7 +145,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
     );
 
     const filterWidth = isMobile ? '100%' : '420px';
-    const settingsWidth = '260px';
+    const settingsWidth = '300px';
 
     let tableWidth = '100%';
     if (isFilterDrawerOpen) {
@@ -149,7 +155,12 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
     }
 
     return (
-        <Group align="start" noWrap spacing={0} sx={{ width: '100%' }}>
+        <Group
+            align="start"
+            wrap="nowrap"
+            gap={0}
+            style={{ width: '100%' }}
+        >
             <TestsTable
                 updateToolbar={updateToolbar}
                 firstPageQuery={firstPageQuery}
