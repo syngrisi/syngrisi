@@ -80,7 +80,12 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
             withBorder
             mt={24}
             p={16}
-            style={{ position: 'relative' }}
+            radius={0}
+            style={{
+                position: 'relative',
+                fontSize: 14,
+                lineHeight: '21.7px',
+            }}
         >
             <Box
                 pl={4}
@@ -90,7 +95,7 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                     display: 'inline-block',
                     fontSize: '2rem',
                     position: 'absolute',
-                    top: '-30px',
+                    top: '-22px',
                     left: '5%',
                 }}
             >
@@ -98,25 +103,26 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                     multiple={false}
                     value={groupsData[id]['operator']}
                     onChange={updateGroupOperator}
-                    gap={6}
                 >
-                    <Chip
-                        data-test="filter-group-operator-and"
-                        size="sm"
-                        checked={groupsData[id]['operator'] === 'and'}
-                        value="$and"
-                    >
-                        And
-                    </Chip>
-                    <Chip
-                        data-test="filter-group-operator-or"
-                        size="sm"
-                        ml={0}
-                        checked={groupsData[id]['operator'] === 'or'}
-                        value="$or"
-                    >
-                        Or
-                    </Chip>
+                    <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        <Chip
+                            data-test="filter-group-operator-and"
+                            size="sm"
+                            checked={groupsData[id]['operator'] === 'and'}
+                            value="$and"
+                        >
+                            And
+                        </Chip>
+                        <Chip
+                            data-test="filter-group-operator-or"
+                            size="sm"
+                            ml={0}
+                            checked={groupsData[id]['operator'] === 'or'}
+                            value="$or"
+                        >
+                            Or
+                        </Chip>
+                    </Box>
                 </Chip.Group>
             </Box>
 
@@ -142,6 +148,7 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                     compact
                     onClick={() => updateGroupRules(uuid(), {})}
                     variant="light"
+                    color="green"
                     leftIcon={<IconPlus size={16} />}
                     styles={
                         { leftIcon: { marginRight: 4 } }
@@ -159,6 +166,7 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                             onClick={() => updateGroupsData(uuid(), initGroupObject)}
                             title="Add another group"
                             variant="light"
+                            color="green"
                             leftIcon={<IconPlus size={16} />}
                             styles={
                                 { leftIcon: { marginRight: 4 } }
