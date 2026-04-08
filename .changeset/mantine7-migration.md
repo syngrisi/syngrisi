@@ -2,6 +2,12 @@
 "@syngrisi/syngrisi": minor
 ---
 
-Migrate Mantine UI library from v5 to v7
+Major frontend dependency updates
 
-Complete migration of the React UI component library across 150+ files. Key changes include removal of createStyles/sx in favor of inline styles, new provider architecture (Spotlight, Notifications, ColorScheme), prop renames (position→justify, spacing→gap, color→c, weight→fw), ScrollArea infinity scroll via onBottomReached, and List.Item onClick workaround via native DOM listeners.
+- Mantine UI: 5 → 9 (complete migration across 150+ files)
+- React: 18 → 19
+- TanStack React Query: 4 → 5
+- React Router: 6 → 7 (react-router-dom → react-router)
+- Replaced react-icons with @tabler/icons-react
+- Replaced use-query-params with custom useSearchParams-based hook
+- Removed ESLint legacy config from ui-app (unified with root ESLint 9)
