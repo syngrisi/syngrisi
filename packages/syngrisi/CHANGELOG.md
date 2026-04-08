@@ -1,5 +1,24 @@
 # @syngrisi/syngrisi
 
+## 3.4.0
+
+### Minor Changes
+
+-   [#24](https://github.com/syngrisi/syngrisi/pull/24) [`a9fcff8`](https://github.com/syngrisi/syngrisi/commit/a9fcff8cb03680a54b6088e318db1d3449afbdde) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Major frontend dependency updates
+
+    -   Mantine UI: 5 → 9 (complete migration across 150+ files)
+    -   React: 18 → 19
+    -   TanStack React Query: 4 → 5
+    -   React Router: 6 → 7 (react-router-dom → react-router)
+    -   Replaced react-icons with @tabler/icons-react
+    -   Replaced use-query-params with custom useSearchParams-based hook
+    -   Removed ESLint legacy config from ui-app (unified with root ESLint 9)
+
+### Patch Changes
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.4.0
+
 ## 3.3.1
 
 ### Patch Changes
