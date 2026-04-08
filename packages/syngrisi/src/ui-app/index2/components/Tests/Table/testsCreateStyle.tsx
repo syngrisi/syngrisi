@@ -2,6 +2,12 @@ import type { CSSProperties } from 'react';
 import type { MantineTheme } from '@mantine/core';
 
 export const testsCreateStyle = (theme: MantineTheme, colorScheme: 'light' | 'dark') => ({
+    rowHover: {
+        backgroundColor:
+            colorScheme === 'dark'
+                ? 'rgba(255, 255, 255, 0.06)'
+                : theme.colors.gray[1],
+    } as CSSProperties,
     rowSelected: {
         backgroundColor:
             colorScheme === 'dark'

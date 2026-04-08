@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {
     Group,
-    useMantineTheme,
+    useComputedColorScheme,
     ActionIcon,
 } from '@mantine/core';
 import { useSearchParams } from 'react-router';
@@ -25,7 +25,7 @@ interface Props {
 export default function Tests({ updateToolbar, navbarWidth }: Props) {
     const { query } = useParams();
 
-    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     // useIndexSubpageEffect('By Runs');
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -68,11 +68,15 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                 <ActionIcon
                     title="Table settings, sorting, and columns visibility"
                     aria-label="Table settings, sorting, and columns visibility"
-                    color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                    color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-sorting"
                     variant={sortOpen ? 'light' : 'transparent'}
                     style={{
-                        backgroundColor: sortOpen ? '#ebfbee' : 'transparent',
+                        backgroundColor: sortOpen
+                            ? colorScheme === 'dark'
+                                ? 'rgba(47, 158, 68, 0.18)'
+                                : '#ebfbee'
+                            : 'transparent',
                     }}
                     onClick={() => {
                         setIsFilterDrawerOpen(false);
@@ -88,11 +92,15 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                 <ActionIcon
                     title="Filter the Table Data"
                     aria-label="Filter the Table Data"
-                    color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                    color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-filtering"
                     variant={isFilterDrawerOpen ? 'light' : 'transparent'}
                     style={{
-                        backgroundColor: isFilterDrawerOpen ? '#ebfbee' : 'transparent',
+                        backgroundColor: isFilterDrawerOpen
+                            ? colorScheme === 'dark'
+                                ? 'rgba(47, 158, 68, 0.18)'
+                                : '#ebfbee'
+                            : 'transparent',
                     }}
                     onClick={() => {
                         setSortOpen(false);
@@ -104,7 +112,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                 47,
             );
         },
-        [sortOpen, isFilterDrawerOpen, theme.colorScheme],
+        [sortOpen, isFilterDrawerOpen, colorScheme],
     );
 
     useEffect(
@@ -123,7 +131,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
         [
             newestItemsQuery?.data?.results.length,
             newestItemsQuery.status,
-            theme.colorScheme,
+            colorScheme,
         ],
     );
 

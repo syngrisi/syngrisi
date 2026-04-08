@@ -74,6 +74,27 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
     );
     const theme = useMantineTheme();
     const colorScheme = useComputedColorScheme();
+    const operatorChipStyles = {
+        label: {},
+    };
+
+    const operatorChipsCss = `
+        [data-test="filter-group-operator-and"] + .mantine-Chip-label,
+        [data-test="filter-group-operator-or"] + .mantine-Chip-label {
+            border: 1px solid ${colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[3]} !important;
+            background-color: ${colorScheme === 'dark' ? theme.colors.dark[6] : theme.white} !important;
+            color: ${colorScheme === 'dark' ? theme.colors.gray[2] : theme.colors.dark[6]} !important;
+        }
+
+        [data-test="filter-group-operator-and"]:checked + .mantine-Chip-label,
+        [data-test="filter-group-operator-or"]:checked + .mantine-Chip-label,
+        [data-test="filter-group-operator-and"] + .mantine-Chip-label[data-checked="true"],
+        [data-test="filter-group-operator-or"] + .mantine-Chip-label[data-checked="true"] {
+            border-color: ${theme.colors.green[5]} !important;
+            background-color: ${colorScheme === 'dark' ? 'rgba(64, 192, 87, 0.14)' : '#ebfbee'} !important;
+            color: ${colorScheme === 'dark' ? theme.white : theme.colors.green[8]} !important;
+        }
+    `;
     return (
         <Paper
             data-test={testAttr}
@@ -87,6 +108,7 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                 lineHeight: '21.7px',
             }}
         >
+            <style>{operatorChipsCss}</style>
             <Box
                 pl={4}
                 pr={4}
@@ -110,6 +132,7 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                             size="sm"
                             checked={groupsData[id]['operator'] === 'and'}
                             value="$and"
+                            styles={operatorChipStyles}
                         >
                             And
                         </Chip>
@@ -119,6 +142,7 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                             ml={0}
                             checked={groupsData[id]['operator'] === 'or'}
                             value="$or"
+                            styles={operatorChipStyles}
                         >
                             Or
                         </Chip>
