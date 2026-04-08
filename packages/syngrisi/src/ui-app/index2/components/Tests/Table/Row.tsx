@@ -116,7 +116,7 @@ export const Row = memo(function Row(
             <tr>
                 <td style={{ padding: 0, border: 0, width: 'auto' }} colSpan={1000}>
                     <Collapse
-                        in={collapsed}
+                        expanded={collapsed}
                         pl={10}
                         pr={10}
                         pt={10}

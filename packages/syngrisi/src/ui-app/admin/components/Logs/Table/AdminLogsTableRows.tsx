@@ -167,7 +167,7 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                         <tr>
                             <td style={{ padding: 0, border: 0, width: 'auto' }} colSpan={1000}>
                                 <Collapse
-                                    in={collapse.includes(item.id!)}
+                                    expanded={collapse.includes(item.id!)}
                                     data-test="table-item-collapsed-row"
                                 >
                                     <Paper p={20} m={10}>
