@@ -31,7 +31,11 @@ export function RelatedChecksContainer({
     });
 
     return (
-        <Group align="start" noWrap>
+        <Group
+            align="start"
+            wrap="nowrap"
+            style={{ width: opened ? '163px' : '40px', flexShrink: 0 }}
+        >
             <RelatedChecks
                 currentCheck={currentCheck}
                 related={related}

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+import React, { useEffect, useState, useRef } from 'react';
 import { Stack } from '@mantine/core';
 import { SuitesDummySkeleton } from '@index/components/Navbar/Skeletons/SuitesDummySkeleton';
 import { RunsDummySkeleton } from '@index/components/Navbar/Skeletons/RunsDummySkeleton';
@@ -14,27 +13,82 @@ interface Props {
 }
 
 function SkeletonWrapper({ infinityQuery, itemType, num, itemClass, scrollRootRef }: Props) {
-    const [scrollRoot, setScrollRoot] = useState<HTMLElement | null>(null);
+    const [root, setRoot] = useState<HTMLElement | null>(null);
+    const checkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const skeletonRef = useRef<HTMLDivElement | null>(null);
 
+    // Poll for scrollRootRef.current until it becomes available
     useEffect(() => {
-        if (typeof document === 'undefined') return;
+        if (root) return;
 
-        if (scrollRootRef?.current) {
-            setScrollRoot(scrollRootRef.current);
-            return;
+        const checkForRoot = () => {
+            if (scrollRootRef?.current && scrollRootRef.current !== root) {
+                setRoot(scrollRootRef.current);
+                if (checkIntervalRef.current) {
+                    clearInterval(checkIntervalRef.current);
+                    checkIntervalRef.current = null;
+                }
+            }
+        };
+
+        checkForRoot();
+
+        if (!root) {
+            checkIntervalRef.current = setInterval(checkForRoot, 250);
         }
 
-        const fallbackRoot = document.querySelector('[data-test="navbar-scroll-area"]');
-        if (fallbackRoot instanceof HTMLElement) {
-            setScrollRoot(fallbackRoot);
-        }
-    }, [scrollRootRef]);
+        return () => {
+            if (checkIntervalRef.current) {
+                clearInterval(checkIntervalRef.current);
+            }
+        };
+    }, [scrollRootRef, root]);
 
-    const { ref, inView } = useInView({
-        root: scrollRoot,
-        rootMargin: '0px',
-        threshold: 0.1,
-    });
+    // Handle case when content doesn't overflow the scroll container.
+    // When content fits entirely, the user cannot scroll, so onBottomReached on
+    // ScrollArea won't fire. In that case, auto-fetch the next page.
+    // Also use IntersectionObserver as fallback for scroll-triggered loading.
+    useEffect(() => {
+        if (infinityQuery === null) return;
+        if (!infinityQuery.hasNextPage || infinityQuery.isFetchingNextPage) return;
+
+        // Strategy 1: If no scroll root yet, or content fits — auto-fetch
+        const checkShouldLoad = () => {
+            if (!infinityQuery.hasNextPage || infinityQuery.isFetchingNextPage) return;
+            if (!root) {
+                // No root yet — fetch to fill initial viewport
+                infinityQuery.fetchNextPage();
+                return;
+            }
+            const { scrollHeight, clientHeight } = root;
+            if (scrollHeight <= clientHeight + 5) {
+                infinityQuery.fetchNextPage();
+            }
+        };
+
+        const rafId = requestAnimationFrame(() => {
+            requestAnimationFrame(checkShouldLoad);
+        });
+
+        // Strategy 2: IntersectionObserver on skeleton as fallback
+        let observer: IntersectionObserver | null = null;
+        if (skeletonRef.current && root) {
+            observer = new IntersectionObserver(
+                (entries) => {
+                    if (entries[0]?.isIntersecting && infinityQuery.hasNextPage && !infinityQuery.isFetchingNextPage) {
+                        infinityQuery.fetchNextPage();
+                    }
+                },
+                { root, rootMargin: '200px', threshold: 0 },
+            );
+            observer.observe(skeletonRef.current);
+        }
+
+        return () => {
+            cancelAnimationFrame(rafId);
+            observer?.disconnect();
+        };
+    }, [root, infinityQuery?.hasNextPage, infinityQuery?.isFetchingNextPage]);
 
     const DummySkeletons = (key: string) => {
         const map: { [key: string]: any } = {
@@ -44,15 +98,9 @@ function SkeletonWrapper({ infinityQuery, itemType, num, itemClass, scrollRootRe
         return map[key] || SimpleDummySkeleton;
     };
 
-    useEffect(() => {
-        if (inView && infinityQuery && !infinityQuery.isFetchingNextPage) {
-            infinityQuery.fetchNextPage();
-        }
-    }, [inView, infinityQuery?.isFetchingNextPage]);
-
     const DummySkeleton = DummySkeletons(itemType!);
     return (
-        <Stack ref={ref} spacing={0}>
+        <Stack ref={skeletonRef} gap={0}>
             {
                 (infinityQuery === null || infinityQuery.hasNextPage)
                 && (

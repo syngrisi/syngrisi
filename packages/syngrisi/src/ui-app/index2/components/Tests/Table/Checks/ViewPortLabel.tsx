@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Badge, BadgeVariant, Text, Tooltip, useMantineTheme } from '@mantine/core';
+import { Badge, Text, Tooltip, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 
 interface Props {
     check: any
     sizes: any
     size?: any
     checksViewSize: string
-    variant?: BadgeVariant
+    variant?: string
     fontSize?: string
     displayed?: boolean
     color?: string
@@ -25,6 +25,7 @@ export function ViewPortLabel(
     }: Props,
 ) {
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     const wrongSizeIcon = check.failReasons.includes('wrong_dimensions')
         ? (
             <Tooltip
@@ -37,12 +38,12 @@ export function ViewPortLabel(
                     pr={4}
                     pt={6}
                     pb={6}
-                    // weight={900}
+                    // fw={900}
                     color="yellow"
                     variant="filled"
                     radius="xl"
                     data-test="check-wrong-images-size-error-icon"
-                    sx={{
+                    style={{
                         zIndex: 100,
                         fontSize: '12px',
                         position: 'absolute',
@@ -53,7 +54,7 @@ export function ViewPortLabel(
                         fontFamily: '"Roboto","Arial",sans-serif',
                         border: '2px',
                         borderStyle: 'solid',
-                        borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : 'white',
+                        borderColor: colorScheme === 'dark' ? theme.colors.dark[6] : 'white',
                     }}
                 >
                     !
@@ -65,13 +66,11 @@ export function ViewPortLabel(
     return (
         <Text
             lineClamp={1}
-            sx={
-                {
-                    display: displayed ? 'block' : 'none',
-                    position: 'relative',
-                    overflow: 'visible',
-                }
-            }
+            style={{
+                display: displayed ? 'block' : 'none',
+                position: 'relative',
+                overflow: 'visible',
+            }}
         >
             <Badge
                 color={color}
@@ -79,12 +78,10 @@ export function ViewPortLabel(
                 size={sizes[checksViewSize]?.viewportText || size}
                 data-viewport-badge-name={check.name}
                 title="Viewport size"
-                sx={
-                    {
-                        fontSize: sizes[checksViewSize]?.viewportFontSize || fontSize,
-                        display: displayed ? 'block' : 'none',
-                    }
-                }
+                style={{
+                    fontSize: sizes[checksViewSize]?.viewportFontSize || fontSize,
+                    display: displayed ? 'block' : 'none',
+                }}
             >
                 {check.viewport}
             </Badge>

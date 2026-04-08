@@ -4,11 +4,12 @@ import {
     Box,
     Container,
     Paper,
-    Text, useMantineTheme,
+    Text, useMantineTheme, useComputedColorScheme,
 } from '@mantine/core';
 
 function HeaderLogo({ size }: { size?: number | undefined }) {
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     return (
         <Container
             pl={0}
@@ -20,20 +21,31 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
                 alignItems: 'center',
             }}
         >
-            <a href="/" style={{ display: 'flex', textDecoration: 'none', alignItems: 'center' }}>
+            <a
+                href="/"
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                }}
+            >
                 <Paper
                     data-test="logo-container"
                     aria-label="Logo container"
-                    sx={{
+                    style={{
                         justifyContent: 'center',
                         height: 44,
                         width: 44,
                         display: 'flex',
                         alignItems: 'center',
                         borderRadius: '2px 20px 2px 20px',
-                        // backgroundColor:theme.colorScheme === 'dark' ? '#262626' : theme.colors.gray[0],
-                        '&:hover': {
-                            backgroundColor: theme.colorScheme === 'dark' ? '#000000' : theme.colors.gray[0],
+                    }}
+                    styles={{
+                        root: {
+                            '&:hover': {
+                                backgroundColor: colorScheme === 'dark' ? '#000000' : theme.colors.gray[0],
+                            },
                         },
                     }}
                 >
@@ -58,19 +70,19 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
                 }}
                 >
                     <Paper
-                        sx={{ backgroundColor: 'rgba(0, 0, 0, 0)' }}
+                        style={{ backgroundColor: 'rgba(0, 0, 0, 0)' }}
                     >
                         <Text
                             data-test="logo-text"
                             aria-label="Syngrisi"
-                            color={(theme.colorScheme === 'dark' ? 'white' : '#262626')}
-                            sx={
-                                {
-                                    '&:hover': {
-                                        color: theme.colorScheme === 'dark' ? theme.colors.gray[4] : theme.colors.dark[3],
-                                    },
-                                }
-                            }
+                            c={colorScheme === 'dark' ? 'white' : '#262626'}
+                            style={{
+                                textDecoration: 'none',
+                                fontSize: 'inherit',
+                                lineHeight: 'inherit',
+                                fontWeight: 'inherit',
+                                letterSpacing: 'inherit',
+                            }}
                         >
                             Syngrisi
                         </Text>

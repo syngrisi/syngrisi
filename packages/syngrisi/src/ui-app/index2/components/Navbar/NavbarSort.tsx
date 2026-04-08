@@ -61,17 +61,17 @@ export function NavbarSort(
             timingFunction="ease"
         >
             {(styles) => (
-                <Group align="end" position="apart" noWrap sx={{ width: '100%' }} style={styles}>
+                <Group align="end" justify="space-between" wrap="nowrap" style={{ width: '100%', ...styles }}>
                     <SafeSelect
                         label="Sort by"
                         data-test="navbar-sort-by-select"
                         aria-label="Sort by"
-                        sx={{ minWidth: '230px', marginTop: theme.spacing.md }}
+                        style={{ minWidth: '230px', marginTop: theme.spacing.md }}
                         value={sortBy}
                         onChange={(value: string) => setSortBy(() => value)}
                         optionsData={sortOptionsData(groupBy)}
                     />
-                    <Group spacing={6} position="right">
+                    <Group gap={6} justify="flex-end">
                         <ActionIcon
                             title="Sort Order"
                             aria-label="Sort Order"

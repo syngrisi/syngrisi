@@ -4,7 +4,7 @@ import { Title, LoadingOverlay, Text, Box, ScrollArea } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useSubpageEffect, useNavProgressFetchEffect } from '@shared/hooks';
 import { ISettingForm } from '@admin/components/Settings/Forms/interfaces';
-import { errorMsg, log } from '@shared/utils';
+
 import { FormWrapper } from '@admin/components/Settings/Forms/FormWrapper';
 import { GenericService } from '@shared/services';
 
@@ -12,22 +12,16 @@ import { SsoSettingsForm } from './SsoSettingsForm';
 
 export default function AdminSettings() {
     useSubpageEffect('Settings');
-    const settingsQuery: any = useQuery(
-        ['settings'],
-        () => GenericService.get('settings'),
-        {
-            enabled: true,
-            onError: (err: any) => {
-                errorMsg({ error: err });
-                log.error(err);
-            },
-        },
-    );
+    const settingsQuery: any = useQuery({
+        queryKey: ['settings'],
+        queryFn: () => GenericService.get('settings'),
+        enabled: true,
+    });
     useNavProgressFetchEffect(settingsQuery.isFetching);
 
     return (
         <ScrollArea type="auto" h="calc(100vh - 120px)">
-            <Box p={10} sx={{ minHeight: '100%' }}>
+            <Box p={10} style={{ minHeight: '100%' }}>
                 <Title>Admin Settings</Title>
                 {
                     settingsQuery.isLoading
@@ -54,7 +48,7 @@ export default function AdminSettings() {
                                         )}
                                 </>
                             )
-                            : <Text color="red"> Cannot load data: {settingsQuery.error.toString()}</Text>
+                            : <Text c="red"> Cannot load data: {settingsQuery.error.toString()}</Text>
                 }
             </Box>
         </ScrollArea>

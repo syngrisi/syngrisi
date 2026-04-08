@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Group, List, Loader, Stack, Text, Tooltip } from '@mantine/core';
 import * as dateFns from 'date-fns';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import RemoveItemModalAsk from '@index/components/Navbar/Items/RemoveItemModalAsk';
 import { StatusesRing } from '@shared/components/Tests/StatusesRing';
@@ -39,37 +39,52 @@ export const RunItem = React.memo(function RunItem(
         close();
     };
 
+    // Mantine 7 List.Item does not forward onClick to DOM.
+    // Use ref + native listener as workaround.
+    const itemRef = useRef<HTMLLIElement>(null);
+    const handlerRef = useRef(handlerItemClick);
+    handlerRef.current = handlerItemClick;
+
+    useEffect(() => {
+        const el = itemRef.current;
+        if (!el) return;
+        const handler = (e: MouseEvent) => handlerRef.current(e);
+        el.addEventListener('click', handler);
+        return () => el.removeEventListener('click', handler);
+    }, []);
+
     return (
         <>
             <List.Item
+                ref={itemRef}
                 data-test={`navbar_item_${index}`}
                 data-item-name={item.name}
-                onClick={handlerItemClick}
                 className={className}
-                sx={{ cursor: 'pointer', width: '100%' }}
+                style={{ cursor: 'pointer', width: '100%' }}
             >
                 <Group
-                    noWrap
+                    wrap="nowrap"
                     pl={8}
-                    position="apart"
-                    spacing={0}
+                    justify="space-between"
+                    gap={0}
+                    style={{ paddingTop: 4, paddingBottom: 4 }}
                 >
-                    <Group sx={{ width: '100%' }} noWrap>
-                        <Stack spacing={0} sx={{ width: '100%' }}>
-                            <Group position="left" sx={{ width: '100%' }}>
+                    <Group style={{ width: '100%' }} wrap="nowrap">
+                        <Stack gap={0} style={{ width: '100%' }}>
+                            <Group justify="flex-start" style={{ width: '100%' }}>
                                 <Tooltip label={item.name} multiline withinPortal>
                                     <Text
-                                        data-test="navbar-item-name"
-                                        size={16}
+                                        component="span" data-test="navbar-item-name"
+                                        fz={16}
                                         lineClamp={1}
-                                        sx={{ wordBreak: 'break-all' }}
+                                        style={{ wordBreak: 'break-all' }}
                                     >
                                         {item.name}
                                     </Text>
                                 </Tooltip>
                             </Group>
 
-                            <Group position="right">
+                            <Group justify="flex-end">
                                 <Tooltip
                                     withinPortal
                                     label={
@@ -77,9 +92,9 @@ export const RunItem = React.memo(function RunItem(
                                     }
                                 >
                                     <Text
-                                        align="right"
+                                        ta="right"
                                         size="xs"
-                                        color="dimmed"
+                                        c="dimmed"
                                     >
                                         {
                                             dateFns.formatDistanceToNow(
@@ -92,7 +107,7 @@ export const RunItem = React.memo(function RunItem(
                         </Stack>
 
                     </Group>
-                    <Group position="right" spacing={0} noWrap>
+                    <Group justify="flex-end" gap={0} wrap="nowrap">
                         {
                             !statusesLoaded
                                 ? (<Loader variant="dots" color="blue" size="xs" mr={16} />)

@@ -10,7 +10,7 @@ import {
 } from '@mantine/core';
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { useDocumentTitle } from '@mantine/hooks';
 import { log } from '@shared/utils';
 import config from '@config';
@@ -185,21 +185,20 @@ export default function ChangePasswordForm() {
                     {checks}
 
                     {errorMessage
-                    && <Text size="sm" color="red" mt="md" id="error-message" hidden={false}>{errorMessage}</Text>}
+                    && <Text size="sm" c="red" mt="md" id="error-message" hidden={false}>{errorMessage}</Text>}
 
                     <Button
                         fullWidth
                         id="change-password"
                         mt="xl"
-                        color="green"
+                        c="green"
                         type="submit"
                     >
                         Update password
                     </Button>
                     <LoadingOverlay
                         visible={loader}
-                        transitionDuration={300}
-                        overlayBlur={1}
+                        overlayProps={{ blur: 1 }}
                         loaderProps={{ color: 'green' }}
                     />
                 </form>

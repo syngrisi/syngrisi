@@ -82,8 +82,8 @@ export function Toolbar(
     const isShareMode = !!query.share;
 
     const mutationRemoveBaseline = useMutation(
-        (id: string) => GenericService.delete('baselines', id),
         {
+            mutationFn: (id: string) => GenericService.delete('baselines', id),
             onSuccess: async () => {
                 successMsg({ message: 'Baseline has been successfully removed' });
                 setDeleteModalOpened(false);
@@ -121,17 +121,23 @@ export function Toolbar(
 
     return (
         <>
-            <Group position="apart" noWrap data-check="toolbar" data-navigation-ready={navigationReady ? 'true' : 'false'}>
+            <Group justify="space-between" wrap="nowrap" data-check="toolbar" data-navigation-ready={navigationReady ? 'true' : 'false'}>
                 {/* Left side: Navigation arrows (fixed position) + ScreenshotDetails */}
-                <Group spacing="sm" noWrap>
+                <Group gap="sm" wrap="nowrap">
                     {!isShareMode && (
                         <>
-                            <Group spacing={2} noWrap>
+                            <Group gap={2} wrap="nowrap">
                                 <ActionIcon
                                     onClick={() => onNavigateCheck && onNavigateCheck('prev')}
                                     disabled={isFirstCheck}
                                     title="Previous Check"
                                     variant="transparent"
+                                    color="gray"
+                                    styles={{
+                                        root: {
+                                            backgroundColor: 'transparent',
+                                        },
+                                    }}
                                 >
                                     <IconChevronLeft size={20} />
                                 </ActionIcon>
@@ -140,16 +146,28 @@ export function Toolbar(
                                     disabled={isLastCheck}
                                     title="Next Check"
                                     variant="transparent"
+                                    color="gray"
+                                    styles={{
+                                        root: {
+                                            backgroundColor: 'transparent',
+                                        },
+                                    }}
                                 >
                                     <IconChevronRight size={20} />
                                 </ActionIcon>
                             </Group>
-                            <Group spacing={2} noWrap>
+                            <Group gap={2} wrap="nowrap">
                                 <ActionIcon
                                     onClick={() => onNavigateTest && onNavigateTest('prev')}
                                     disabled={isFirstTest}
                                     title="Previous Test"
                                     variant="transparent"
+                                    color="gray"
+                                    styles={{
+                                        root: {
+                                            backgroundColor: 'transparent',
+                                        },
+                                    }}
                                 >
                                     <IconChevronUp size={20} />
                                 </ActionIcon>
@@ -158,6 +176,12 @@ export function Toolbar(
                                     disabled={isLastTest}
                                     title="Next Test"
                                     variant="transparent"
+                                    color="gray"
+                                    styles={{
+                                        root: {
+                                            backgroundColor: 'transparent',
+                                        },
+                                    }}
                                 >
                                     <IconChevronDown size={20} />
                                 </ActionIcon>
@@ -171,13 +195,13 @@ export function Toolbar(
                 </Group>
 
                 {/* Right side: Tools and actions */}
-                <Group spacing="sm" noWrap>
+                <Group gap="sm" wrap="nowrap">
                     <Group
-                        spacing={4}
-                        className={classes.zoomButtonsWrapper}
-                        position="center"
+                        gap={4}
+                        style={classes.zoomButtonsWrapper}
+                        justify="center"
                         align="center"
-                        noWrap
+                        wrap="nowrap"
                     >
                         <ZoomToolbar mainView={mainView as MainView} view={view} />
                     </Group>
@@ -240,14 +264,14 @@ export function Toolbar(
                         !isShareMode && (
                             <Menu shadow="md" width={200} withinPortal>
                                 <Menu.Target>
-                                    <ActionIcon data-test="check-details-menu">
+                                    <ActionIcon data-test="check-details-menu" variant="transparent" color="gray">
                                         <IconDotsVertical size={20} />
                                     </ActionIcon>
                                 </Menu.Target>
 
                                 <Menu.Dropdown>
                                     <Menu.Item
-                                        icon={<IconShare size={14} />}
+                                        leftSection={<IconShare size={14} />}
                                         onClick={isShareEnabled ? () => setShareModalOpened(true) : undefined}
                                         data-test="menu-share-check"
                                         data-share-enabled={isShareEnabled.toString()}
@@ -258,7 +282,7 @@ export function Toolbar(
                                     </Menu.Item>
                                     <Menu.Item
                                         color="red"
-                                        icon={<IconTrash size={14} />}
+                                        leftSection={<IconTrash size={14} />}
                                         disabled={!baselineId}
                                         onClick={() => setDeleteModalOpened(true)}
                                         data-test="menu-delete-baseline"
@@ -273,7 +297,7 @@ export function Toolbar(
                     {onToggleRCA && isRCAFeatureEnabled && (
                         <>
                             <Divider orientation="vertical" />
-                            <Group spacing={4} noWrap>
+                            <Group gap={4} wrap="nowrap">
                                 <ActionIcon
                                     onClick={onToggleRCA}
                                     title="Root Cause Analysis (D)"
@@ -297,7 +321,7 @@ export function Toolbar(
                                 )}
 
                                 {rcaEnabled && rcaStats && (
-                                    <Group spacing={4} ml={4}>
+                                    <Group gap={4} ml={4}>
                                         <MantineTooltip label="Total changes" withinPortal>
                                             <div style={{ display: 'flex' }}>
                                                 <Badge

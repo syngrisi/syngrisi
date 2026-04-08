@@ -17,8 +17,8 @@ export default function AcceptTestModalAsk({ opened, setOpened, selection, setSe
     const queryClient = useQueryClient();
 
     const mutationAcceptTest = useMutation(
-        (data: { id: string }) => TestsService.acceptTest(data),
         {
+            mutationFn: (data: { id: string }) => TestsService.acceptTest(data),
             onSuccess: async (resp: { resp: any, id: string }) => {
                 successMsg({ message: 'Test has been successfully accepted' });
                 await queryClient.invalidateQueries({ queryKey: ['preview_checks', resp.id] });
@@ -50,7 +50,7 @@ export default function AcceptTestModalAsk({ opened, setOpened, selection, setSe
             <Text size="sm">
                 Are you sure you want to accept the selected tests?
             </Text>
-            <Group position="right">
+            <Group justify="flex-end">
                 <Button
                     data-test="accept-test-confirm-button"
                     aria-label="Accept"

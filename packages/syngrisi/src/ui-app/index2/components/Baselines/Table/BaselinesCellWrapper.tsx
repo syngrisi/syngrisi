@@ -29,7 +29,7 @@ export function BaselinesCellWrapper({ type, baseline, itemValue }: Props) {
         return (
             <td key={type} style={style}>
                 <Tooltip label={itemValue} withinPortal>
-                    <Text lineClamp={1} sx={{ wordBreak: 'break-all' }}>
+                    <Text lineClamp={1} style={{ wordBreak: 'break-all' }}>
                         {itemValue ? dateFns.format(dateFns.parseISO(itemValue), 'yyyy-MM-dd HH:mm:ss') : ''}
                     </Text>
                 </Tooltip>
@@ -41,9 +41,9 @@ export function BaselinesCellWrapper({ type, baseline, itemValue }: Props) {
         return (
             <td key={type} style={style}>
                 <Tooltip label={itemValue} multiline withinPortal>
-                    <Group spacing={6} align="center" noWrap>
+                    <Group gap={6} align="center" wrap="nowrap">
                         <OsIcon size={18} os={itemValue} />
-                        <Text lineClamp={1} sx={{ wordBreak: 'break-all' }}>
+                        <Text lineClamp={1} style={{ wordBreak: 'break-all' }}>
                             {itemValue}
                         </Text>
                     </Group>
@@ -56,9 +56,9 @@ export function BaselinesCellWrapper({ type, baseline, itemValue }: Props) {
         return (
             <td key={type} style={style}>
                 <Tooltip label={itemValue} multiline withinPortal>
-                    <Group spacing={6} align="center" noWrap>
+                    <Group gap={6} align="center" wrap="nowrap">
                         <BrowserIcon size={18} browserName={itemValue} />
-                        <Text lineClamp={1} sx={{ wordBreak: 'break-all' }}>
+                        <Text lineClamp={1} style={{ wordBreak: 'break-all' }}>
                             {itemValue}
                         </Text>
                     </Group>
@@ -78,7 +78,7 @@ export function BaselinesCellWrapper({ type, baseline, itemValue }: Props) {
             <Tooltip label={itemValue} multiline withinPortal>
                 <Text
                     lineClamp={1}
-                    sx={{ wordBreak: 'break-all' }}
+                    style={{ wordBreak: 'break-all' }}
                     data-testid={type === 'name' ? `baseline-name-${itemValue}` : undefined}
                 >
                     {itemValue}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ActionIcon, Group, Loader, Text, Tooltip, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Group, Loader, Text, Tooltip, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { useMemo } from 'react';
 import { Status } from '@shared/components/Check/Status';
@@ -25,36 +25,37 @@ export const Header = React.memo(function Header(
     }: Props,
 ) {
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
     const textLoader = <Loader size="xs" color="blue" variant="dots" />;
     const statusMsg = currentCheck.status ? getStatusMessage(currentCheck) : textLoader;
 
     const iconsColor = useMemo(
-        () => (theme.colorScheme === 'dark'
+        () => (colorScheme === 'dark'
             ? theme.colors.gray[3]
-            : theme.colors.dark[9]), [theme.colorScheme],
+            : theme.colors.dark[9]), [colorScheme],
     );
 
     return (
         <Group
-            position="apart"
-            sx={{ width: 'calc(100% - 56px)', minWidth: 0 }}
+            justify="space-between"
+            style={{ width: 'calc(100% - 56px)', minWidth: 0 }}
             data-check-header-name={currentCheck.name}
             data-check-header-ready={currentCheck.name && currentCheck.status ? 'true' : 'false'}
-            noWrap
+            wrap="nowrap"
         >
             <Group
-                position="left"
+                justify="flex-start"
                 align="center"
-                spacing="xs"
-                sx={{ position: 'relative', flex: 1, minWidth: 0 }}
-                noWrap
+                gap="xs"
+                style={{ position: 'relative', flex: 1, minWidth: 0 }}
+                wrap="nowrap"
                 data-test="full-check-path"
             >
                 <Tooltip
                     label={
                         (
-                            <Group spacing={4}>
+                            <Group gap={4}>
                                 {
                                     currentCheck.status
                                         ? (<Status size="lg" check={currentCheck} variant="filled" />)
@@ -72,9 +73,9 @@ export const Header = React.memo(function Header(
                 </Tooltip>
 
                 <Group
-                    noWrap
-                    spacing={0}
-                    sx={{ minWidth: 0, flex: 1 }}
+                    wrap="nowrap"
+                    gap={0}
+                    style={{ minWidth: 0, flex: 1 }}
                 >
                     <Tooltip
                         withinPortal
@@ -83,8 +84,7 @@ export const Header = React.memo(function Header(
                         <Text
                             data-check="app-name"
                             size="sm"
-                            sx={{ flexShrink: 1, minWidth: 0 }}
-                            className={classes.checkPathFragment}
+                            style={{ flexShrink: 1, minWidth: 0, ...classes.checkPathFragment }}
                         >
                             {currentCheck?.app?.name}
                         </Text>
@@ -96,8 +96,7 @@ export const Header = React.memo(function Header(
                         <Text
                             data-check="suite-name"
                             size="sm"
-                            sx={{ flexShrink: 500, minWidth: 0 }}
-                            className={classes.checkPathFragment}
+                            style={{ flexShrink: 500, minWidth: 0, ...classes.checkPathFragment }}
                         >
                             &nbsp;/&nbsp;
                             {currentCheck?.suite?.name}
@@ -110,8 +109,7 @@ export const Header = React.memo(function Header(
                         <Text
                             data-check="test-name"
                             size="sm"
-                            sx={{ flexShrink: 5, minWidth: 0 }}
-                            className={classes.checkPathFragment}
+                            style={{ flexShrink: 5, minWidth: 0, ...classes.checkPathFragment }}
                         >
                             &nbsp;/&nbsp;
                             {currentCheck?.test?.name}
@@ -124,10 +122,9 @@ export const Header = React.memo(function Header(
                     >
                         <Text
                             data-check="check-name"
-                            size={14}
-                            sx={{ flexShrink: 1, minWidth: 0 }}
+                            fz={14}
+                            style={{ flexShrink: 1, minWidth: 0, ...classes.checkPathFragment }}
                             lineClamp={1}
-                            className={classes.checkPathFragment}
                         >
                             &nbsp;/&nbsp;
                             {currentCheck.name || textLoader}
@@ -137,9 +134,9 @@ export const Header = React.memo(function Header(
             </Group>
 
             <Group
-                noWrap
-                spacing="xs"
-                sx={{ flexShrink: 0 }}
+                wrap="nowrap"
+                gap="xs"
+                style={{ flexShrink: 0 }}
             >
                 {
                     toleranceThreshold > 0 && (
@@ -152,15 +149,15 @@ export const Header = React.memo(function Header(
                             withinPortal
                         >
                             <Group
-                                spacing={6}
-                                noWrap
+                                gap={6}
+                                wrap="nowrap"
                                 data-check="tolerance-indicator"
                                 data-tolerance-source={toleranceSource || 'baseline'}
                             >
                                 <ActionIcon size={24} variant="filled" color={toleranceSource === 'api' ? 'violet' : 'orange'}>
-                                    <Text size={11} weight={700}>%</Text>
+                                    <Text fz={11} fw={700}>%</Text>
                                 </ActionIcon>
-                                <Text size={12} color={toleranceSource === 'api' ? 'violet' : 'orange'}>
+                                <Text fz={12} c={toleranceSource === 'api' ? 'violet' : 'orange'}>
                                     Tol {Number(toleranceThreshold).toFixed(2)}%
                                 </Text>
                             </Group>
@@ -174,7 +171,7 @@ export const Header = React.memo(function Header(
                     }
                     withinPortal
                 >
-                    <Text lineClamp={1} sx={{ overflow: 'visible' }} data-check="viewport">
+                    <Text lineClamp={1} style={{ overflow: 'visible' }} data-check="viewport">
                         {
                             currentCheck?.viewport
                                 ? (
@@ -200,7 +197,7 @@ export const Header = React.memo(function Header(
                     }
                     withinPortal
                 >
-                    <Group spacing={8} noWrap>
+                    <Group gap={8} wrap="nowrap">
                         <ActionIcon variant="light" size={32} p={4} ml={4}>
                             {
                                 currentCheck?.os
@@ -215,7 +212,7 @@ export const Header = React.memo(function Header(
                                     : textLoader
                             }
                         </ActionIcon>
-                        <Text data-check="os" size={12} lineClamp={1}>{currentCheck?.os}</Text>
+                        <Text data-check="os" fz={12} lineClamp={1}>{currentCheck?.os}</Text>
                     </Group>
                 </Tooltip>
 
@@ -227,7 +224,7 @@ export const Header = React.memo(function Header(
                     }
                     withinPortal
                 >
-                    <Group spacing={8} noWrap>
+                    <Group gap={8} wrap="nowrap">
                         <ActionIcon variant="light" size={32} p={4}>
                             {
                                 currentCheck?.browserName
@@ -245,7 +242,7 @@ export const Header = React.memo(function Header(
                         <Text
                             data-check="browser"
                             lineClamp={1}
-                            size={12}
+                            fz={12}
                         >
 
                             {currentCheck?.browserName}

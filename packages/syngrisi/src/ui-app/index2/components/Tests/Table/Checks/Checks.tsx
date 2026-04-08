@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Group, Stack, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { GenericService } from '@shared/services';
-import { errorMsg } from '@shared/utils';
+
 import { ChecksSkeleton } from '@index/components/Tests/Table/Checks/ChecksSkeleton';
 import { Check } from '@index/components/Tests/Table/Checks/Check';
 import { useImagePreloadBatch } from '@shared/hooks';
@@ -19,12 +19,12 @@ export function Checks({ item, testUpdateQuery }: Props) {
     // eslint-disable-next-line no-unused-vars
     const [checksViewMode, setChecksViewMode] = useLocalStorage({ key: 'check-view-mode', defaultValue: 'bounded' });
 
-    const checksQuery = useQuery(
-        [
+    const checksQuery = useQuery({
+        queryKey: [
             'preview_checks',
             item._id,
         ],
-        () => GenericService.get(
+        queryFn: () => GenericService.get(
             'checks',
             { test: item._id },
             {
@@ -35,16 +35,9 @@ export function Checks({ item, testUpdateQuery }: Props) {
             },
             'checksByIds',
         ),
-        {
-            refetchOnWindowFocus: false,
-            staleTime: 30 * 1000,
-            onSuccess: () => {
-            },
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
-        },
-    );
+        refetchOnWindowFocus: false,
+        staleTime: 30 * 1000,
+    });
 
     // const checksQuery = useQuery(
     //     [
@@ -92,7 +85,7 @@ export function Checks({ item, testUpdateQuery }: Props) {
                     : (
                         checksQuery.isError
                             ? (
-                                <Text color="red" size="md">
+                                <Text c="red" size="md">
                                     Cannot load the data
                                 </Text>
                             )

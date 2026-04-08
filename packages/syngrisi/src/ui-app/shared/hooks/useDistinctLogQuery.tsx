@@ -1,13 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
-import { errorMsg } from '@shared/utils';
 
 interface Props {
     resource: string
     field: string
     keys?: any
-    onSuccess?: any
-    onError?: any
+    select?: (data: any) => any
 }
 
 export function useDistinctLogQuery(
@@ -15,19 +13,17 @@ export function useDistinctLogQuery(
         resource,
         field,
         keys = [],
-        onSuccess,
-        onError = (e: any) => errorMsg({ error: e }),
+        select,
     }: Props,
 ) {
     return useQuery(
-        [resource, field, 'distinct', ...keys],
-        () => GenericService.distinct(resource, field),
         {
+            queryKey: [resource, field, 'distinct', ...keys],
+            queryFn: () => GenericService.distinct(resource, field),
             enabled: true,
             refetchOnWindowFocus: false,
             refetchOnReconnect: false,
-            onSuccess,
-            onError,
+            select,
         },
     );
 }

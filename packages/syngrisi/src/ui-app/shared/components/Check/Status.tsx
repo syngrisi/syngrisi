@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react';
-import { Badge, BadgeVariant, Loader } from '@mantine/core';
+import { Badge, Loader } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
 
@@ -15,7 +15,7 @@ const statusColor = (status: string) => {
 
 interface Props {
     check: any,
-    variant?: BadgeVariant
+    variant?: string
     size?: number | string,
 }
 

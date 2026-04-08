@@ -8,19 +8,17 @@ function ToggleThemeButton({ colorScheme, toggleColorScheme }: any): ReactElemen
     const theme = useMantineTheme();
     return (
         <Group
-            position="center"
+            justify="center"
             title={`Switch to ${dark ? 'light' : 'dark'} theme`}
         >
             <Switch
                 data-test="theme-button"
                 size="md"
                 color={dark ? 'yellow' : 'blue'}
-                // color={theme.colorScheme === 'dark' ? 'gray' : 'dark'}
-                checked={colorScheme === 'light'}
+                checked={dark}
                 onChange={(event) => {
-                    toggleColorScheme();
-                    event.preventDefault();
                     event.stopPropagation();
+                    toggleColorScheme();
                 }}
                 onLabel={<IconSun size={16} stroke={2.5} color={theme.colors.yellow[4]} />}
                 offLabel={<IconMoonStars size={16} stroke={2.5} color={theme.colors.blue[6]} />}

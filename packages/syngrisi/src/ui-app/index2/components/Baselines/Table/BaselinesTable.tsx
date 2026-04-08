@@ -1,10 +1,11 @@
 /* eslint-disable indent,react/jsx-indent,prefer-arrow-callback */
 import React, { useState, useRef, useEffect } from 'react';
 import {
-    createStyles,
     Table,
     ScrollArea,
     Text,
+    useMantineTheme,
+    useComputedColorScheme,
 } from '@mantine/core';
 
 import InfinityScrollSkeleton from '@index/components/Tests/Table/InfinityScrollSkeleton';
@@ -14,8 +15,6 @@ import BaselinesRows from './BaselinesRows';
 import BaselinesHeads from './BaselinesHeads';
 import RemoveBaselinesButton from './RemoveBaselinesButton';
 import { useParams } from '@hooks/useParams';
-
-const useStyles = createStyles(testsCreateStyle as any);
 
 interface Props {
     infinityQuery: any
@@ -38,7 +37,9 @@ export default function BaselinesTable(
     const { data } = infinityQuery;
     const flatData = data ? data.pages.flat().map((x: any) => x.results).flat() : [];
 
-    const { classes } = useStyles();
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
+    const styles = testsCreateStyle(theme, colorScheme);
     const [selection, setSelection]: [string[], any] = useState([]);
 
     useEffect(function resetSelection() {
@@ -65,19 +66,18 @@ export default function BaselinesTable(
                 data-test="table-scroll-area"
                 ref={scrollAreaRef}
                 maxHeight="100vh"
-                sx={{ width: size }}
+                style={{ width: size }}
                 pb={124}
                 styles={{ scrollbar: { marginTop: '46px' } }}
             >
 
                 <Table
-                    sx={{ width: '100%' }}
+                    style={{ width: '100%' }}
                     verticalSpacing="sm"
                     highlightOnHover
                 >
                     <thead
-                        style={{ zIndex: 10 }}
-                        className={classes.header}
+                        style={{ zIndex: 10, ...styles.header }}
                     >
                     <BaselinesHeads
                         flatData={flatData}
@@ -92,13 +92,13 @@ export default function BaselinesTable(
                             ? (<InfinityScrollSkeleton infinityQuery={null} visibleFields={visibleFields} />)
                             : infinityQuery.isError
                                 ? (
-                                    <Text color="red">
+                                    <Text c="red">
                                         Error:
                                         {infinityQuery.error.message}
                                     </Text>
                                 )
                                 : (
-                                    <tbody className={classes.tableBody}>
+                                    <tbody style={styles.tableBody}>
                                     <BaselinesRows
                                         updateToolbar={updateToolbar}
                                         infinityQuery={infinityQuery}

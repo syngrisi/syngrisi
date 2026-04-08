@@ -1,6 +1,6 @@
-import { Paper, AppShell } from '@mantine/core';
+import { Paper, Box, useComputedColorScheme, useMantineTheme } from '@mantine/core';
 import * as React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import AdminHeader from '@admin/components/Header/AdminHeader';
 import AdminNavBar from '@admin/components/Navbar/AdminNavbar';
@@ -12,31 +12,41 @@ import AdminPluginSettings from '@admin/components/PluginSettings/AdminPluginSet
 import AdminDataManagement from '@admin/components/DataManagement/AdminDataManagement';
 
 export default function AdminLayout() {
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     return (
-        <AppShell
-            padding={8}
-            navbar={<AdminNavBar />}
-            header={<AdminHeader />}
-            styles={(theme) => ({
-                main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
-            })}
+        <Box
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100vh',
+                backgroundColor: colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+            }}
         >
-            <ReactQueryDevtools initialIsOpen={false} />
-            <Paper>
-                <Routes>
-                    <Route path="" element={<AdminUsers />} />
-                    <Route path="users" element={<AdminUsers />} />
-                    <Route path="settings" element={<AdminSettings />} />
-                    <Route path="plugins" element={<AdminPluginSettings />} />
-                    <Route path="logs" element={<AdminLogs />} />
-                    <Route path="data" element={<AdminDataManagement />} />
-                </Routes>
-                <Routes>
-                    <Route path="/tasks/">
-                        <Route path=":task" element={<TaskWrapper />} />
-                    </Route>
-                </Routes>
-            </Paper>
-        </AppShell>
+            <Box style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
+                <AdminHeader />
+            </Box>
+            <Box style={{ display: 'flex', height: '100vh', overflow: 'hidden', paddingTop: 100 }}>
+                <AdminNavBar />
+                <Box component="main" style={{ flex: 1, padding: 8 }}>
+                    <ReactQueryDevtools initialIsOpen={false} />
+                    <Paper>
+                        <Routes>
+                            <Route path="" element={<AdminUsers />} />
+                            <Route path="users" element={<AdminUsers />} />
+                            <Route path="settings" element={<AdminSettings />} />
+                            <Route path="plugins" element={<AdminPluginSettings />} />
+                            <Route path="logs" element={<AdminLogs />} />
+                            <Route path="data" element={<AdminDataManagement />} />
+                        </Routes>
+                        <Routes>
+                            <Route path="/tasks/">
+                                <Route path=":task" element={<TaskWrapper />} />
+                            </Route>
+                        </Routes>
+                    </Paper>
+                </Box>
+            </Box>
+        </Box>
     );
 }

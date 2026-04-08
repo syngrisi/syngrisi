@@ -6,6 +6,8 @@ interface Props {
     children: any,
     title?: string,
     width?: string | number,
+    exactWidth?: boolean,
+    padding?: string | number,
     open?: boolean,
     setOpen: any,
 }
@@ -17,33 +19,41 @@ function RelativeDrawer(
         open = false,
         setOpen,
         width = 300,
+        exactWidth = false,
+        padding = 24,
     }: Props,
 ) {
     return (
         <Transition mounted={open} transition="slide-left" duration={200} timingFunction="ease">
             {(styles: CSSProperties) => (
-                <Box sx={{
+                <Box style={{
                     ...styles as any,
+                    width: exactWidth ? width : undefined,
                     minWidth: width,
-                    maxWidth: typeof width === 'number' ? width + 60 : width,
+                    maxWidth: exactWidth ? width : typeof width === 'number' ? width + 60 : width,
                     zIndex: 20,
                 }}
                 >
-                    <Paper p="md" m={8} shadow="sm" radius="xs" withBorder>
-                        <Group position="apart" align="start" noWrap>
-                            <Text size="sm" pb={24}>{title}</Text>
+                    <Paper p={padding} m={8} shadow="sm" radius={0} withBorder>
+                        <Group justify="space-between" align="start" wrap="nowrap" mb={20}>
+                            <Text style={{ fontSize: 14, lineHeight: '21.7px', fontWeight: 400 }}>
+                                {title}
+                            </Text>
                             <ActionIcon
-                                size="sm"
+                                size={22}
                                 onClick={() => setOpen(false)}
                                 data-test="relative-wrapper-icon"
                                 aria-label="Close"
+                                variant="transparent"
+                                color="gray"
+                                style={{ fontSize: 24, lineHeight: '24px' }}
                             >
-                                <IconX stroke={1} size={16} />
+                                <IconX stroke={1} size={22} />
                             </ActionIcon>
                         </Group>
-                        <Text size="sm">
+                        <Box>
                             {children}
-                        </Text>
+                        </Box>
                     </Paper>
                 </Box>
             )}

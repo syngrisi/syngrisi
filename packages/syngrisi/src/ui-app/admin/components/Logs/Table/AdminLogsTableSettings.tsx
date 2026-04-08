@@ -46,7 +46,7 @@ function AdminLogsTableSettings(
             title="Settings"
             width={260}
         >
-            <Group align="end" spacing="sm" noWrap>
+            <Group align="end" gap="sm" wrap="nowrap">
                 <SafeSelect
                     label="Sort by"
                     data-test="table-sort-by-select"
@@ -67,7 +67,7 @@ function AdminLogsTableSettings(
                 </ActionIcon>
             </Group>
 
-            <Text pt="xl" weight={500}>Visible fields</Text>
+            <Text pt="xl" fw={500}>Visible fields</Text>
             <Chip.Group
                 align="self-start"
                 p={8}

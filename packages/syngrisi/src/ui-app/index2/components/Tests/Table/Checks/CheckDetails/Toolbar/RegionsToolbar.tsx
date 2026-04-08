@@ -186,11 +186,11 @@ export function RegionsToolbar({
             <Tooltip
                 label={
                     (
-                        <Group noWrap>
+                        <Group wrap="nowrap">
                             <Text>Remove selected ignore regions</Text>
-                            <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>Del</Kbd>
+                            <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>Del</Kbd>
                             {' or '}
-                            <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>Backspace</Kbd>
+                            <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>Backspace</Kbd>
                         </Group>
                     )
                 }
@@ -199,6 +199,8 @@ export function RegionsToolbar({
                     data-check="remove-ignore-region"
                     data-disabled={!visibleRegionRemoveButton ? "true" : undefined}
                     disabled={!visibleRegionRemoveButton}
+                    variant="transparent"
+                    color="gray"
                     onClick={() => mainView.removeActiveIgnoreRegions()}
                 >
                     <IconShapeOff size={24} stroke={1} />
@@ -210,15 +212,15 @@ export function RegionsToolbar({
                 withinPortal
                 label={
                     (
-                        <Stack spacing={4}>
-                            <Group noWrap spacing={4}>
+                        <Stack gap={4}>
+                            <Group wrap="nowrap" gap={4}>
                                 <Text>Add ignore region</Text>
-                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>A</Kbd>
+                                <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>A</Kbd>
                             </Group>
                             {
                                 !baselineId && (
-                                    <Group noWrap spacing={4}>
-                                        <Text color="orange">&#9888;</Text>
+                                    <Group wrap="nowrap" gap={4}>
+                                        <Text c="orange">&#9888;</Text>
                                         <Text> First you need to accept this check</Text>
                                     </Group>
                                 )
@@ -232,6 +234,8 @@ export function RegionsToolbar({
                         data-check="add-ignore-region"
                         data-disabled={((view === 'slider') || !baselineId) ? "true" : undefined}
                         disabled={(view === 'slider') || !baselineId}
+                        variant="transparent"
+                        color="gray"
                         onClick={() => {
                             // @ts-ignore - Sync window.mainView for E2E tests before calling method
                             if (mainView) window.mainView = mainView;
@@ -248,25 +252,25 @@ export function RegionsToolbar({
                 withinPortal
                 label={
                     (
-                        <Stack spacing={4}>
-                            <Group noWrap spacing={4}>
+                        <Stack gap={4}>
+                            <Group wrap="nowrap" gap={4}>
                                 <Text>Auto ignore regions from diff</Text>
-                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>R</Kbd>
+                                <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>R</Kbd>
                             </Group>
-                            <Text size="xs" color="dimmed">Create ignore regions for all diff areas</Text>
+                            <Text size="xs" c="dimmed">Create ignore regions for all diff areas</Text>
                             {
                                 !baselineId && (
-                                    <Group noWrap spacing={4}>
-                                        <Text color="orange">&#9888;</Text>
+                                    <Group wrap="nowrap" gap={4}>
+                                        <Text c="orange">&#9888;</Text>
                                         <Text> First you need to accept this check</Text>
                                     </Group>
                                 )
                             }
                             {
                                 baselineId && !hasDiff && (
-                                    <Group noWrap spacing={4}>
-                                        <Text color="dimmed">&#8505;</Text>
-                                        <Text color="dimmed"> No diff available</Text>
+                                    <Group wrap="nowrap" gap={4}>
+                                        <Text c="dimmed">&#8505;</Text>
+                                        <Text c="dimmed"> No diff available</Text>
                                     </Group>
                                 )
                             }
@@ -279,6 +283,8 @@ export function RegionsToolbar({
                         data-check="auto-ignore-region"
                         data-disabled={((view === 'slider') || !baselineId || !hasDiff) ? "true" : undefined}
                         disabled={(view === 'slider') || !baselineId || !hasDiff}
+                        variant="transparent"
+                        color="gray"
                         onClick={handleAutoRegion}
                     >
                         <IconWand size={24} stroke={1} />
@@ -291,24 +297,24 @@ export function RegionsToolbar({
                 withinPortal
                 label={
                     (
-                        <Stack spacing={4}>
-                            <Group noWrap spacing={4}>
+                        <Stack gap={4}>
+                            <Group wrap="nowrap" gap={4}>
                                 <Text>Checked area only</Text>
-                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>B</Kbd>
+                                <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>B</Kbd>
                             </Group>
-                            <Text size="xs" color="dimmed">Compare only within this region</Text>
+                            <Text size="xs" c="dimmed">Compare only within this region</Text>
                             {
                                 !baselineId && (
-                                    <Group noWrap spacing={4}>
-                                        <Text color="orange">&#9888;</Text>
+                                    <Group wrap="nowrap" gap={4}>
+                                        <Text c="orange">&#9888;</Text>
                                         <Text> First you need to accept this check</Text>
                                     </Group>
                                 )
                             }
                             {
                                 baselineId && hasBoundRegion && (
-                                    <Group noWrap spacing={4}>
-                                        <Text color="orange">&#9888;</Text>
+                                    <Group wrap="nowrap" gap={4}>
+                                        <Text c="orange">&#9888;</Text>
                                         <Text> Bound region already exists</Text>
                                     </Group>
                                 )
@@ -322,6 +328,8 @@ export function RegionsToolbar({
                         data-check="add-bound-region"
                         data-disabled={((view === 'slider') || !baselineId || hasBoundRegion) ? "true" : undefined}
                         disabled={(view === 'slider') || !baselineId || hasBoundRegion}
+                        variant="transparent"
+                        color="gray"
                         onClick={() => mainView.addBoundingRegion('bound_rect')}
                     >
                         <IconBoxMargin size={24} stroke={1} />
@@ -335,11 +343,11 @@ export function RegionsToolbar({
                     (
                         <Group>
                             <Text>Save regions</Text>
-                            <Group align="left" spacing={4} noWrap>
+                            <Group align="left" gap={4} wrap="nowrap">
 
-                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>Alt</Kbd>
+                                <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>Alt</Kbd>
                                 +
-                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>S</Kbd>
+                                <Kbd style={{ fontSize: 11, borderBottomWidth: 1 }}>S</Kbd>
                             </Group>
                         </Group>
                     )
@@ -349,6 +357,8 @@ export function RegionsToolbar({
                     data-check="save-ignore-region"
                     data-disabled={(!hasAnyRegion && !isDirty) ? "true" : undefined}
                     disabled={!hasAnyRegion && !isDirty}
+                    variant="transparent"
+                    color="gray"
                     onClick={() => {
                         saveRegionsAndSyncCache();
                     }}

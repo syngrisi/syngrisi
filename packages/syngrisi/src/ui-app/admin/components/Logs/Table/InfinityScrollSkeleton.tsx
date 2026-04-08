@@ -42,37 +42,43 @@ function InfinityScrollSkeleton({ infinityQuery, visibleFields, scrollRootRef }:
         };
     }, [scrollRootRef, root]);
 
-    // Use scroll-based detection instead of IntersectionObserver for better reliability
+    // Scroll-based detection for loading more items
     useEffect(() => {
         if (!root || infinityQuery === null) return;
 
         const checkShouldLoad = () => {
-            if (!tfootRef.current || !root) return;
+            if (!root) return;
             if (!infinityQuery.hasNextPage || infinityQuery.isFetchingNextPage) return;
 
-            const rootRect = root.getBoundingClientRect();
-            const tfootRect = tfootRef.current.getBoundingClientRect();
+            const { scrollHeight, scrollTop, clientHeight } = root;
 
-            // Load more if tfoot is within 400px of viewport
-            const margin = 400;
-            const isNearViewport = tfootRect.top < rootRect.bottom + margin;
-
-            if (isNearViewport) {
+            if (scrollHeight <= clientHeight + 5) {
+                // Content fits within viewport: fetch next page
                 infinityQuery.fetchNextPage();
+            } else {
+                // Content overflows: fetch if scrolled near bottom
+                const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+                if (distanceFromBottom < 600) {
+                    infinityQuery.fetchNextPage();
+                }
             }
         };
 
-        // Check on scroll
         const handleScroll = () => {
             checkShouldLoad();
         };
 
-        // Check immediately on mount/update
-        checkShouldLoad();
+        // Delay initial check to let DOM render
+        const rafId = requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                checkShouldLoad();
+            });
+        });
 
         root.addEventListener('scroll', handleScroll, { passive: true });
 
         return () => {
+            cancelAnimationFrame(rafId);
             root.removeEventListener('scroll', handleScroll);
         };
     }, [root, infinityQuery?.hasNextPage, infinityQuery?.isFetchingNextPage]);

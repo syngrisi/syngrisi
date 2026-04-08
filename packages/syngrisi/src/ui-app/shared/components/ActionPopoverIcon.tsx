@@ -3,11 +3,10 @@ import {
     ActionIcon,
     Popover,
     Button,
-    MantineNumberSize,
     Tooltip,
-    MantineColor,
     Box,
 } from '@mantine/core';
+import type { MantineColor } from '@mantine/core';
 import React, { ReactElement } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 
@@ -22,9 +21,9 @@ interface IActionPopoverIcon {
     testAttr: string
     loading: boolean
     variant?: string
-    sx?: any
+    style?: React.CSSProperties
     paused?: boolean
-    size?: MantineNumberSize | undefined
+    size?: number | string | undefined
     withinPortal?: boolean
     disabled?: boolean
     testAttrName?: string
@@ -46,7 +45,7 @@ export default function ActionPopoverIcon(
         disabled = false,
         withinPortal = true,
         size = 24,
-        sx,
+        style: styleProp,
         ...rest
     }: IActionPopoverIcon,
 ): ReactElement {
@@ -102,14 +101,16 @@ export default function ActionPopoverIcon(
                                 handlers.toggle();
                             }
                         }}
-                        sx={[
-                            {
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                cursor: disabled ? 'not-allowed' : 'pointer',
-                            },
-                            ...(sx ? (Array.isArray(sx) ? sx : [sx]) : []),
-                        ]}
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: disabled ? 'not-allowed' : 'pointer',
+                            overflow: 'visible',
+                            position: 'relative',
+                            lineHeight: 1,
+                            ...(styleProp || {}),
+                        }}
                     >
                         <ActionIcon
                             disabled={disabled}
@@ -121,6 +122,13 @@ export default function ActionPopoverIcon(
 
                             style={{
                                 pointerEvents: 'none',
+                                overflow: 'visible',
+                                position: 'relative',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                lineHeight: 1,
+                                flexShrink: 0,
                             }}
                             {...rest}
                         >

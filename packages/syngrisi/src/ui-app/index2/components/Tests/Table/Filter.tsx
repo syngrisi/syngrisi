@@ -131,8 +131,8 @@ function Filter(
             title="Filter"
             width={isMobile ? '100%' : 420}
         >
-            <ScrollArea.Autosize maxHeight="80vh" sx={{ height: '80vh' }}>
-                <Box sx={{ paddingRight: 60, marginBottom: 100 }}>
+            <ScrollArea.Autosize mah="80vh" style={{ height: '80vh' }}>
+                <Box style={{ paddingRight: 24, marginBottom: 32 }}>
                     <Stack>
                         <LogicalGroup
                             id="mainGroup"
@@ -146,30 +146,33 @@ function Filter(
                         </LogicalGroup>
                     </Stack>
 
-                    <Group mt={24} position="apart">
+                    <Group mt={24} justify="space-between">
                         <Button
                             onClick={() => resetAll()}
                             data-test="table-filter-reset"
                             aria-label="Reset filter"
                             variant="light"
                             color="red"
+                            style={{ backgroundColor: '#fff5f5' }}
                         >
                             Reset
                         </Button>
-                        <Group spacing="sm">
+                        <Group gap="sm">
                             <Button
                                 data-test="table-filter-cancel"
                                 aria-label="Cancel filter"
                                 variant="light"
                                 color="gray"
+                                style={{ backgroundColor: '#f8f9fa' }}
                                 onClick={() => setOpen(false)}
                             >
                                 Cancel
                             </Button>
                             <Button
-                            mr={10}
+                                mr={0}
                                 data-test="table-filter-apply"
                                 aria-label="Apply filter"
+                                style={{ marginRight: 10 }}
                                 onClick={() => {
                                     applyFilter();
                                 }}

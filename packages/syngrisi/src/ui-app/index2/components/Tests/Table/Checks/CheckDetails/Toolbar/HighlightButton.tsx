@@ -16,7 +16,7 @@ export function HighlightButton({ mainView, disabled = false }: Props) {
     const [imageData, setImageData] = useState(null);
     const label = disabled
         ? (
-            <Group noWrap>
+            <Group wrap="nowrap">
                 <Text>
                     Difference highlighting, active in diff mode when
                     the difference is less than 5%
@@ -24,7 +24,7 @@ export function HighlightButton({ mainView, disabled = false }: Props) {
             </Group>
         )
         : (
-            <Group noWrap>
+            <Group wrap="nowrap">
                 <Text>Difference highlighting</Text>
             </Group>
         );
@@ -41,6 +41,8 @@ export function HighlightButton({ mainView, disabled = false }: Props) {
                     data-disabled={disabled ? "true" : undefined}
                     disabled={disabled}
                     loading={loadHighlights}
+                    variant="transparent"
+                    color="gray"
                     onClick={async () => {
                         setLoadHighlights(() => true);
                         const { groups, diffImageData } = await highlightDiff(mainView, highlightsGroups, imageData);

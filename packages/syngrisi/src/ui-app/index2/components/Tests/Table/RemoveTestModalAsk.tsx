@@ -15,8 +15,8 @@ interface Props {
 
 export default function RemoveTestModalAsk({ opened, setOpened, selection, setSelection, infinityQuery }: Props) {
     const mutationRemoveTest = useMutation(
-        (data: { id: string }) => TestsService.removeTest(data),
         {
+            mutationFn: (data: { id: string }) => TestsService.removeTest(data),
             onSuccess: async () => {
                 successMsg({ message: 'Test has been successfully removed' });
             },
@@ -47,7 +47,7 @@ export default function RemoveTestModalAsk({ opened, setOpened, selection, setSe
             <Text size="sm">
                 Are you sure you want to permanently delete the selected tests?
             </Text>
-            <Group position="right">
+            <Group justify="flex-end">
                 <Button
                     data-test="confirm-remove-test-icon"
                     aria-label="Remove"

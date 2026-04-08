@@ -29,12 +29,19 @@ export function StringFilter({ label, groupRules, updateGroupRules, id }: Props)
 
     return (
         <form>
-            <Group align="start" noWrap>
+            <Group align="start" wrap="nowrap">
                 <SafeSelect
                     label=""
                     data-test="table-filter-operator"
                     aria-label="Filter operator"
-                    sx={{ width: '130px' }}
+                    style={{ width: '120px' }}
+                    styles={{
+                        input: {
+                            minHeight: 36,
+                            height: 36,
+                            fontSize: 14,
+                        },
+                    }}
                     optionsData={[
                         { value: 'eq', label: 'equals' },
                         { value: 'ne', label: 'not equals' },
@@ -49,6 +56,13 @@ export function StringFilter({ label, groupRules, updateGroupRules, id }: Props)
                     aria-label="Filter value"
                     title={form.getInputProps('value').value}
                     placeholder="value"
+                    styles={{
+                        input: {
+                            minHeight: 36,
+                            height: 36,
+                            fontSize: 14,
+                        },
+                    }}
                     {...form.getInputProps('value')}
                 />
             </Group>

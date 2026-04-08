@@ -13,7 +13,7 @@ export default function ApiKeyModalAsk({ opened, setOpened, apiKey, setResultOpe
                 Are you sure you want to generate a new API key?
                 After generation, you must add corresponding changes in your test solution.
             </Text>
-            <Group position="right">
+            <Group justify="flex-end">
                 <Button onClick={
                     () => {
                         apiKey.refetch();

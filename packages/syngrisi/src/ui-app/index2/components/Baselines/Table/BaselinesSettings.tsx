@@ -56,7 +56,7 @@ function BaselinesSettings(
             title="Settings"
             width={260}
         >
-            <Group align="end" spacing="sm" noWrap>
+            <Group align="end" gap="sm" wrap="nowrap">
                 <SafeSelect
                     label="Sort by"
                     data-test="table-sort-by-select"
@@ -79,7 +79,7 @@ function BaselinesSettings(
                 </ActionIcon>
             </Group>
 
-            <Text pt="xl" weight={500}>Visible fields</Text>
+            <Text pt="xl" fw={500}>Visible fields</Text>
             <Chip.Group
                 align="self-start"
                 p={8}
@@ -101,8 +101,8 @@ function BaselinesSettings(
                 }
             </Chip.Group>
 
-            <Text mt="md" weight={500} pb="xs">Appearance of Baselines</Text>
-            <Group position="center">
+            <Text mt="md" fw={500} pb="xs">Appearance of Baselines</Text>
+            <Group justify="center">
                 <SegmentedControl
                     data-test="preview-mode-segment-control"
                     data={['bounded', 'normal', 'list']}
@@ -110,7 +110,7 @@ function BaselinesSettings(
                     onChange={setChecksViewMode}
                 />
             </Group>
-            <Group position="center" mt="md">
+            <Group justify="center" mt="md">
                 <SegmentedControl
                     data-test="preview-size-segment-control"
                     data={['small', 'medium', 'large', 'xlarge']}

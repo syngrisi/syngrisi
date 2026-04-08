@@ -3,93 +3,28 @@ import {
     Breadcrumbs,
     Container,
     Group,
-    Header,
+    Box,
     Kbd,
     Paper,
     Button,
     Text,
     useMantineTheme,
+    useComputedColorScheme,
 } from '@mantine/core';
 import * as React from 'react';
 import { useLocalStorage, useOs } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
-import { createStyles } from '@mantine/styles';
 import { useEffect } from 'react';
 import { openSpotlight } from '@mantine/spotlight';
 import { useQuery } from '@tanstack/react-query';
 import HeaderLogo from '@shared/components/Header/HeaderLogo';
-import { errorMsg } from '@shared/utils';
+
 import UserMenu from '@shared/components/Header/UserMenu';
 import { links } from '@shared/components/heaserLinks';
 import SafeSelect from '@shared/components/SafeSelect';
 import { GenericService } from '@shared/services';
 import { useParams } from '@hooks/useParams';
 import { QuickFilter } from '@index/components/Header/QuickFilter';
-
-const useStyles = createStyles((theme) => ({
-    quickFilter: {
-        '@media (max-width: 1024px)': {
-            display: 'none',
-        },
-    },
-    header: {
-        paddingLeft: 0,
-        paddingRight: 0,
-        marginBottom: 120,
-    },
-    inner: {
-        height: 56,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2],
-    },
-    links: {
-        [theme.fn.smallerThan('md')]: {
-            display: 'none',
-        },
-    },
-    search: {
-        [theme.fn.smallerThan('xs')]: {
-            display: 'none',
-        },
-    },
-    link: {
-        display: 'block',
-        lineHeight: 1,
-        padding: '8px 12px',
-        borderRadius: theme.radius.sm,
-        textDecoration: 'none',
-        color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
-        fontSize: theme.fontSizes.sm,
-        fontWeight: 500,
-
-        '&:hover': {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-        },
-    },
-    subheader: {
-        height: 42,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        // paddingLeft: 25,
-    },
-    spotLight: {
-        minWidth: 200,
-        display: 'flex',
-        paddingLeft: 12,
-        paddingRight: 8,
-        backgroundColor: theme.colorScheme === 'dark'
-            ? theme.colors.dark[6]
-            : theme.colors.gray[0],
-        '&:hover': {
-            backgroundColor: theme.colorScheme === 'dark'
-                ? theme.colors.dark[6]
-                : theme.colors.gray[0],
-        },
-    },
-}));
 
 interface Props {
     breadCrumbs: any
@@ -98,15 +33,50 @@ interface Props {
 
 export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
 
-    const { classes } = useStyles();
+    const innerStyle: React.CSSProperties = {
+        height: 56,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2],
+    };
+
+    const subheaderStyle: React.CSSProperties = {
+        height: 42,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    };
+
+    const spotLightStyle: React.CSSProperties = {
+        minWidth: 200,
+        display: 'flex',
+        paddingLeft: 12,
+        paddingRight: 8,
+        backgroundColor: colorScheme === 'dark'
+            ? theme.colors.dark[6]
+            : theme.colors.gray[0],
+    };
+
+    const linkStyle: React.CSSProperties = {
+        display: 'block',
+        lineHeight: 1,
+        padding: '8px 12px',
+        borderRadius: theme.radius.sm,
+        textDecoration: 'none',
+        color: colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
+        fontSize: theme.fontSizes.sm,
+        fontWeight: 500,
+    };
 
     // eslint-disable-next-line no-unused-vars
     const headerLinks = links.map((link) => (
         <a
             key={link.label}
             href={link.link}
-            className={classes.link}
+            style={linkStyle}
         >
             {link.label}
         </a>
@@ -122,25 +92,20 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
         },
     );
 
-    const projectsQuery = useQuery(
-        ['projects'],
-        () => GenericService.get(
+    const projectsQuery = useQuery({
+        queryKey: ['projects'],
+        queryFn: () => GenericService.get(
             'app',
             {},
             {
                 limit: '0',
             },
         ),
-        {
-            enabled: true,
-            staleTime: 5 * 60 * 1000,
-            cacheTime: 10 * 60 * 1000,
-            refetchOnWindowFocus: false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
-        },
-    );
+        enabled: true,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
 
     let projectSelectData: any = [];
     if (projectsQuery.data) {
@@ -160,11 +125,17 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
     }, [currentProjectLS]);
 
     return (
-        <Header
-            height={100}
-            className={classes.header}
+        <Box
+            component="header"
+            style={{
+                height: 100,
+                paddingLeft: 0,
+                paddingRight: 0,
+                borderBottom: `1px solid ${colorScheme === 'dark' ? theme.colors.dark[4] : 'var(--mantine-color-gray-2)'}`,
+                backgroundColor: 'var(--mantine-color-body)',
+            }}
         >
-            <Container className={classes.inner} fluid>
+            <Container style={innerStyle} fluid>
                 <Group>
                     <Group>
                         {/* <Burger opened={opened} onClick={toggle} size="sm" /> */}
@@ -174,10 +145,10 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
                 </Group>
 
                 <Group>
-                    {/* <Group ml={50} spacing={5} className={classes.links}> */}
+                    {/* <Group ml={50} gap={5}> */}
                     {/*    {headerLinks} */}
                     {/* </Group> */}
-                    <Group spacing="sm">
+                    <Group gap="sm">
                         <Text size="sm">Project:</Text>
                         <SafeSelect
                             searchable
@@ -186,11 +157,11 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
                             variant="unstyled"
                             data-test="current-project"
                             aria-label="Project"
-                            sx={{
+                            style={{
                                 minWidth: '150px',
                                 borderWidth: '0px 0 1px 0',
                                 borderStyle: 'solid',
-                                borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4],
+                                borderColor: colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4],
                             }}
                             styles={{
                                 input: { paddingRight: '20px' },
@@ -203,22 +174,22 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
                     <Button
                         onClick={() => openSpotlight()}
                         variant="default"
-                        className={classes.spotLight}
+                        style={spotLightStyle}
                         data-test="spotlight-button"
                         aria-label="Search"
                     >
-                        <Group position="apart" sx={{ minWidth: 200 }}>
+                        <Group justify="space-between" style={{ minWidth: 200 }}>
                             <Group>
                                 <IconSearch size={16} stroke={1} />
-                                <Text color="dimmed" weight={400}>Search</Text>
+                                <Text c="dimmed" fw={400}>Search</Text>
                             </Group>
 
                             <Kbd
-                                sx={{ fontSize: 11, borderBottomWidth: 1 }}
+                                style={{ fontSize: 11, borderBottomWidth: 1 }}
                             >
                                 {
                                     useOs() === 'macos'
-                                        ? (<>⌘ + K</>)
+                                        ? (<>&#8984; + K</>)
                                         : (<>Ctrl + K</>)
                                 }
                             </Kbd>
@@ -226,26 +197,26 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
 
                     </Button>
 
-                    <Group spacing={7}>
+                    <Group gap={7}>
                         <UserMenu />
                     </Group>
                 </Group>
             </Container>
             <Paper shadow="">
-                <Container className={classes.subheader} fluid>
+                <Container style={subheaderStyle} fluid>
                     <Group>
-                        <Group sx={{ paddingLeft: 16, width: 350 }}>
+                        <Group style={{ paddingLeft: 16, width: 350 }}>
                             <Breadcrumbs data-test="bread-crumbs">{breadCrumbs}</Breadcrumbs>
                         </Group>
                         <Group>
                             <QuickFilter />
                         </Group>
                     </Group>
-                    <Group spacing={4} mr="md" position="right" noWrap>
+                    <Group gap={4} mr="md" justify="flex-end" wrap="nowrap">
                         {toolbar}
                     </Group>
                 </Container>
             </Paper>
-        </Header>
+        </Box>
     );
 }

@@ -1,4 +1,4 @@
-import { ActionIcon, Transition, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Transition, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { IconArrowsVertical, IconFold } from '@tabler/icons-react';
 import React from 'react';
 import { useToggle } from '@mantine/hooks';
@@ -11,13 +11,14 @@ interface Props {
 
 export default function UnfoldActionIcon({ expandSelected, collapseSelected, mounted }: Props) {
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     const [foldMode, toggleFoldMode] = useToggle([true, false]);
     return (
         <Transition mounted={mounted} transition="fade" duration={400} timingFunction="ease">
             {
                 (styles) => (
                     <ActionIcon
-                        color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                        color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                         data-test="folding-table-items"
                         variant="subtle"
                         onClick={() => {

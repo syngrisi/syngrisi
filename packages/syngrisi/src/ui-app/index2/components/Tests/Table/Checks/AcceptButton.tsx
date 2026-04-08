@@ -1,9 +1,9 @@
 /* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line */
 import * as React from 'react';
-import { Badge, useMantineTheme, Text, Stack } from '@mantine/core';
-import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/bs';
+import { Box, useMantineTheme, useComputedColorScheme, Text, Stack } from '@mantine/core';
+import { IconThumbUp, IconThumbUpFilled } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import ActionPopoverIcon from '@shared/components/ActionPopoverIcon';
 import { ChecksService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -21,6 +21,7 @@ interface Props {
 export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, size = 19 }: Props) {
     const queryClient = useQueryClient();
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     const [searchParams] = useSearchParams();
     const apikey = searchParams.get('apikey') || undefined;
 
@@ -36,7 +37,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
 
     // eslint-disable-next-line no-nested-ternary
     const likeIconColor = (isCurrentlyAccepted || wasAcceptedEarlier)
-        ? theme.colorScheme === 'dark'
+        ? colorScheme === 'dark'
             ? 'green.8'
             : 'green.6'
         : 'gray';
@@ -92,33 +93,36 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
 
     const notAcceptedIcon = check?.failReasons?.includes('not_accepted')
         ? (
-            <Badge
-                component="div"
+            <Box
                 title="The check is not accepted"
-                pl={4}
-                pr={4}
-                pt={6}
-                pb={6}
-                // weight={900}
-                color="yellow"
-                variant="filled"
-                radius="xl"
                 data-test="not-accepted-error-icon"
-                sx={{
-                    fontSize: '12px',
+                style={{
                     position: 'absolute',
                     bottom: 11,
                     left: 12,
-                    lineHeight: '16px',
+                    minWidth: 18,
+                    height: 22,
+                    padding: '0 6px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: theme.colors.yellow[6],
+                    color: theme.white,
+                    borderRadius: 999,
+                    lineHeight: 1,
                     fontWeight: 600,
+                    fontSize: '12px',
                     fontFamily: '"Roboto","Arial",sans-serif',
-                    border: '2px',
-                    borderStyle: 'solid',
-                    borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : 'white',
+                    zIndex: 2,
+                    boxSizing: 'border-box',
+                    overflow: 'visible',
+                    userSelect: 'none',
+                    border: '2px solid',
+                    borderColor: colorScheme === 'dark' ? theme.colors.dark[6] : 'white',
                 }}
             >
                 !
-            </Badge>
+            </Box>
         )
         : '';
     const handleAcceptCheckClick = () => {
@@ -138,7 +142,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
 
     const tooltipLabel = check.markedByUsername
         ? (
-            <Stack spacing="xs" p={5}>
+            <Stack gap="xs" p={5}>
                 <Text data-test="accept-button-tooltip-username">
                     Accepted by: {check.markedByUsername}
                 </Text>
@@ -155,7 +159,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
         <ActionPopoverIcon
             iconColor={likeIconColor}
             buttonColor="green"
-            sx={{
+            style={{
                 cursor: isCurrentlyAccepted ? 'default' : 'pointer',
                 '&:hover': { backgroundColor: isCurrentlyAccepted ? 'rgba(255, 255, 255, 0);' : '' },
             }}
@@ -166,13 +170,13 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
             icon={
                 iconType === 'fill'
                     ? (
-                        <BsHandThumbsUpFill size={size} data-test-icon-type="fill" />
+                        <IconThumbUpFilled size={size} data-test-icon-type="fill" />
                     )
-                    : (<><BsHandThumbsUp size={size} data-test-icon-type="outline" />{notAcceptedIcon}</>)
+                    : (<><IconThumbUp size={size} data-test-icon-type="outline" />{notAcceptedIcon}</>)
             }
             action={handleAcceptCheckClick}
             title={tooltipLabel}
-            loading={mutationAcceptCheck.isLoading}
+            loading={mutationAcceptCheck.isPending}
             confirmLabel="Accept"
             size={size}
         />

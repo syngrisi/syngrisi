@@ -34,12 +34,14 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
 
     // Fetch secrets configuration status from server
     const { data: secretsStatus } = useQuery<SecretsStatus>(
-        ['sso-secrets-status'],
-        async () => {
-            const resp = await http.get(`${config.baseUri}/v1/auth/sso/secrets-status`, {}, 'SsoSettingsForm.secretsStatus');
-            return resp.json() as Promise<SecretsStatus>;
-        },
-        { refetchOnWindowFocus: false }
+        {
+            queryKey: ['sso-secrets-status'],
+            queryFn: async () => {
+                const resp = await http.get(`${config.baseUri}/v1/auth/sso/secrets-status`, {}, 'SsoSettingsForm.secretsStatus');
+                return resp.json() as Promise<SecretsStatus>;
+            },
+            refetchOnWindowFocus: false,
+        }
     );
 
     useEffect(() => {
@@ -51,8 +53,8 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
     }, [settings]);
 
     const updateSetting = useMutation(
-        (data: { name: string, value: any }) => GenericService.update('settings', data),
         {
+            mutationFn: (data: { name: string, value: any }) => GenericService.update('settings', data),
             onError: (e: any) => errorMsg({ error: e }),
         }
     );
@@ -87,7 +89,7 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
     };
 
     return (
-        <Paper withBorder p={20} m={15} sx={{ width: '90%' }}>
+        <Paper withBorder p={20} m={15} style={{ width: '90%' }}>
             <Title order={4} mb="md">SSO Configuration</Title>
             <Switch
                 label="Enable SSO"
@@ -117,9 +119,9 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
                                 onChange={(e) => setClientId(e.currentTarget.value)}
                                 mb="sm"
                             />
-                            <Group spacing="xs" mb="sm">
+                            <Group gap="xs" mb="sm">
                                 <Text size="sm">Client Secret:</Text>
-                                <Badge color={secretsStatus?.clientSecretConfigured ? 'green' : 'red'}>
+                                <Badge c={secretsStatus?.clientSecretConfigured ? 'green' : 'red'}>
                                     {secretsStatus?.clientSecretConfigured ? 'Configured via ENV' : 'Not configured'}
                                 </Badge>
                             </Group>
@@ -149,9 +151,9 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
                                 onChange={(e) => setIssuer(e.currentTarget.value)}
                                 mb="sm"
                             />
-                            <Group spacing="xs" mb="sm">
+                            <Group gap="xs" mb="sm">
                                 <Text size="sm">Certificate:</Text>
-                                <Badge color={secretsStatus?.certConfigured ? 'green' : 'red'}>
+                                <Badge c={secretsStatus?.certConfigured ? 'green' : 'red'}>
                                     {secretsStatus?.certConfigured ? 'Configured via ENV' : 'Not configured'}
                                 </Badge>
                             </Group>

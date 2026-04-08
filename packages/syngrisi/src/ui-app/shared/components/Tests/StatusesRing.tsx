@@ -46,10 +46,10 @@ export function StatusesRing({ statuses, name = '', ...rest }: Props) {
 
     const tooltipLabel = (
         <>
-            {statusesObject.group.new && (<Text color="blue">New: {statusesObject.group.new}</Text>)}
-            {statusesObject.group.passed && (<Text color="green">Passed: {statusesObject.group.passed}</Text>)}
-            {statusesObject.group.failed && (<Text color="red">Failed: {statusesObject.group.failed}</Text>)}
-            {statusesObject.group.running && (<Text color="grape.6">Running: {statusesObject.group.running}</Text>)}
+            {statusesObject.group.new && (<Text c="blue">New: {statusesObject.group.new}</Text>)}
+            {statusesObject.group.passed && (<Text c="green">Passed: {statusesObject.group.passed}</Text>)}
+            {statusesObject.group.failed && (<Text c="red">Failed: {statusesObject.group.failed}</Text>)}
+            {statusesObject.group.running && (<Text c="grape.6">Running: {statusesObject.group.running}</Text>)}
         </>
     );
 

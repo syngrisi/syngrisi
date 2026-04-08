@@ -48,8 +48,8 @@ export default function UserForm(
     });
 
     const updateUser = useMutation(
-        (data: IUser) => GenericService.update('users', data),
         {
+            mutationFn: (data: IUser) => GenericService.update('users', data),
             onSuccess: async (result: any) => {
                 successMsg({ message: `User: '${result.username}' has been successfully updated` });
                 log.debug({ result });
@@ -63,8 +63,8 @@ export default function UserForm(
     );
 
     const deleteUser = useMutation(
-        (userId: string) => GenericService.delete('users', userId),
         {
+            mutationFn: (userId: string) => GenericService.delete('users', userId),
             onSuccess: async () => {
                 successMsg({ message: 'User has been successfully removed' });
                 refetch();
@@ -89,22 +89,22 @@ export default function UserForm(
     return (
         <Group>
             <form>
-                <Group noWrap spacing="xs" align="center" data-test={username}>
+                <Group wrap="nowrap" gap="xs" align="center" data-test={username}>
                     <TextInput
-                        sx={{ width: '11%' }}
+                        style={{ width: '11%' }}
                         data-test="user-list-id"
                         value={id}
                         disabled
                     />
                     <TextInput
-                        sx={{ width: '11%' }}
+                        style={{ width: '11%' }}
                         data-test="user-list-email"
                         value={username}
                         disabled
                         {...form.getInputProps('username')}
                     />
                     <TextInput
-                        sx={{ width: '11%' }}
+                        style={{ width: '11%' }}
                         data-test="user-list-first-name"
                         aria-label="First Name"
                         value={firstName}
@@ -112,7 +112,7 @@ export default function UserForm(
                         {...form.getInputProps('firstName')}
                     />
                     <TextInput
-                        sx={{ width: '11%' }}
+                        style={{ width: '11%' }}
                         data-test="user-list-last-name"
                         aria-label="Last Name"
                         value={lastName}
@@ -120,7 +120,7 @@ export default function UserForm(
                         {...form.getInputProps('lastName')}
                     />
                     <SafeSelect
-                        sx={{ width: '11%' }}
+                        style={{ width: '11%' }}
                         data-test="user-list-role"
                         aria-label="Role"
                         optionsData={[
@@ -135,25 +135,25 @@ export default function UserForm(
                     />
 
                     <Password.Popover
-                        sx={{ width: '11%' }}
+                        style={{ width: '11%' }}
                         data-test="user-list-password"
                         disabled={!editMode}
                         form={form}
                     />
                     <TextInput
-                        sx={{ width: '11%' }}
+                        style={{ width: '11%' }}
                         data-test="user-list-api-key"
                         value={apiKey}
                         disabled
                     />
                     <TextInput
-                        sx={{ width: '11%' }}
+                        style={{ width: '11%' }}
                         data-test="user-list-created-date"
                         value={createdDate}
                         disabled
                     />
                     <TextInput
-                        sx={{ width: '11%' }}
+                        style={{ width: '11%' }}
                         data-test="user-list-updated-date"
                         value={updatedDate}
                         disabled
@@ -161,7 +161,7 @@ export default function UserForm(
                     {
                         ((username !== 'Administrator') && (username !== 'Guest'))
                             ? (
-                                <Group noWrap spacing={4} align="center">
+                                <Group wrap="nowrap" gap={4} align="center">
                                     <ActionIcon
                                         name="editUser"
                                         data-test={!editMode ? 'user-list-update-button' : 'user-list-send-button'}
@@ -171,7 +171,7 @@ export default function UserForm(
                                         // type={edit && "submit"}
                                         color="green"
                                         title={editMode ? 'Send changes' : 'Edit User'}
-                                        loading={updateUser.isLoading}
+                                        loading={updateUser.isPending}
                                     >
                                         {
                                             editMode
@@ -185,13 +185,13 @@ export default function UserForm(
                                         action={removeUser}
                                         title="Remove user"
                                         size={28}
-                                        loading={deleteUser.isLoading}
+                                        loading={deleteUser.isPending}
                                         confirmLabel="Delete"
                                         withinPortal={false}
                                     />
                                 </Group>
                             )
-                            : (<ActionIcon sx={{ minWidth: '60px' }} />)
+                            : (<div style={{ minWidth: '60px', height: '28px' }} />)
                     }
                 </Group>
             </form>
