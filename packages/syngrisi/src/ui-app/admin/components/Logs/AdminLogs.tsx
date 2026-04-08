@@ -9,7 +9,7 @@ import {
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useContext, useState } from 'react';
 import { IconAdjustments, IconFilter } from '@tabler/icons-react';
-import { JsonParam, StringParam, useQueryParams } from 'use-query-params';
+import { JsonParam, StringParam, useQueryParams } from '@shared/hooks/useQueryParams';
 import { useSubpageEffect, useNavProgressFetchEffect } from '@shared/hooks';
 import { AppContext } from '@admin/AppContext';
 import RefreshActionIcon from '@admin/components/Logs/RefreshActionIcon';
