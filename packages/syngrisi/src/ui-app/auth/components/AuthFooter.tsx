@@ -21,11 +21,13 @@ function AuthFooter() {
         data,
         error,
     } = useQuery<AppInfo>(
-        ['version'],
-        async () => {
-            const res = await fetch(`${config.baseUri}/v1/app/info`);
-            if (!res.ok) throw new Error(`[AuthFooter] Failed to fetch app info: ${res.status}`);
-            return res.json();
+        {
+            queryKey: ['version'],
+            queryFn: async () => {
+                const res = await fetch(`${config.baseUri}/v1/app/info`);
+                if (!res.ok) throw new Error(`[AuthFooter] Failed to fetch app info: ${res.status}`);
+                return res.json();
+            },
         },
     );
 

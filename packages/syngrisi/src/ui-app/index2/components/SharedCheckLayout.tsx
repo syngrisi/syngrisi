@@ -43,9 +43,6 @@ export default function SharedCheckLayout() {
                 return false;
             },
             refetchOnWindowFocus: false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
         },
     );
 

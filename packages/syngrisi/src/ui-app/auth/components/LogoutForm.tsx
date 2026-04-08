@@ -43,16 +43,16 @@ function LogoutForm() {
     useDocumentTitle('Logout page');
 
     const logoutInfo = useQuery<SafeResponse<Record<string, unknown>>>(
-        ['logout'],
-        () => fetchWithContentTypeCheck<Record<string, unknown>>(`${config.baseUri}/v1/auth/logout`, 'LogoutForm.logout'),
         {
+            queryKey: ['logout'],
+            queryFn: () => fetchWithContentTypeCheck<Record<string, unknown>>(`${config.baseUri}/v1/auth/logout`, 'LogoutForm.logout'),
             refetchOnWindowFocus: false,
         },
     );
     const userInfo = useQuery<SafeResponse<Record<string, unknown>>>(
-        ['current_user', logoutInfo.data?.status],
-        () => fetchWithContentTypeCheck<Record<string, unknown>>(`${config.baseUri}/v1/users/current`, 'LogoutForm.userInfo'),
         {
+            queryKey: ['current_user', logoutInfo.data?.status],
+            queryFn: () => fetchWithContentTypeCheck<Record<string, unknown>>(`${config.baseUri}/v1/users/current`, 'LogoutForm.userInfo'),
             refetchOnWindowFocus: false,
             enabled: logoutInfo.isSuccess,
         },

@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { IconTrash } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import ActionPopoverIcon from '@shared/components/ActionPopoverIcon';
 import { ChecksService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -23,8 +23,8 @@ export function RemoveButton({ testUpdateQuery, check, closeHandler, initCheck, 
     const apikey = searchParams.get('apikey') || undefined;
 
     const mutationRemoveCheck = useMutation(
-        (data: { id: string }) => ChecksService.removeCheck({ ...data, apikey }),
         {
+            mutationFn: (data: { id: string }) => ChecksService.removeCheck({ ...data, apikey }),
             onSuccess: async () => {
                 successMsg({ message: 'Check has been successfully removed' });
 
@@ -67,7 +67,7 @@ export function RemoveButton({ testUpdateQuery, check, closeHandler, initCheck, 
             action={handleRemoveCheckClick}
             title="Delete check"
             testAttrName={check?.name}
-            loading={mutationRemoveCheck.isLoading}
+            loading={mutationRemoveCheck.isPending}
             confirmLabel="Delete"
             size={size}
             color="red"

@@ -15,8 +15,8 @@ interface Props {
 
 export default function RemoveTestModalAsk({ opened, setOpened, selection, setSelection, infinityQuery }: Props) {
     const mutationRemoveTest = useMutation(
-        (data: { id: string }) => TestsService.removeTest(data),
         {
+            mutationFn: (data: { id: string }) => TestsService.removeTest(data),
             onSuccess: async () => {
                 successMsg({ message: 'Test has been successfully removed' });
             },

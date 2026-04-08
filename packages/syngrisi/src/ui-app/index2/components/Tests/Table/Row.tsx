@@ -46,26 +46,23 @@ export const Row = memo(function Row(
     }, [collapsed]);
 
     const testUpdateQuery = useQuery(
-        [
-            'testUpdateQuery',
-            item._id,
-        ],
-        () => GenericService.get(
-            'tests',
-            { _id: item._id },
-            {
-                populate: 'checks',
-                limit: '0',
-            },
-            'testUpdateQuery',
-        ),
         {
+            queryKey: [
+                'testUpdateQuery',
+                item._id,
+            ],
+            queryFn: () => GenericService.get(
+                'tests',
+                { _id: item._id },
+                {
+                    populate: 'checks',
+                    limit: '0',
+                },
+                'testUpdateQuery',
+            ),
             enabled: false,
             refetchOnWindowFocus: false,
             refetchOnReconnect: false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
         },
     );
 

@@ -82,8 +82,8 @@ export function Toolbar(
     const isShareMode = !!query.share;
 
     const mutationRemoveBaseline = useMutation(
-        (id: string) => GenericService.delete('baselines', id),
         {
+            mutationFn: (id: string) => GenericService.delete('baselines', id),
             onSuccess: async () => {
                 successMsg({ message: 'Baseline has been successfully removed' });
                 setDeleteModalOpened(false);

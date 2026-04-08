@@ -18,7 +18,7 @@ import { useEffect } from 'react';
 import { openSpotlight } from '@mantine/spotlight';
 import { useQuery } from '@tanstack/react-query';
 import HeaderLogo from '@shared/components/Header/HeaderLogo';
-import { errorMsg } from '@shared/utils';
+
 import UserMenu from '@shared/components/Header/UserMenu';
 import { links } from '@shared/components/heaserLinks';
 import SafeSelect from '@shared/components/SafeSelect';
@@ -92,25 +92,20 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
         },
     );
 
-    const projectsQuery = useQuery(
-        ['projects'],
-        () => GenericService.get(
+    const projectsQuery = useQuery({
+        queryKey: ['projects'],
+        queryFn: () => GenericService.get(
             'app',
             {},
             {
                 limit: '0',
             },
         ),
-        {
-            enabled: true,
-            staleTime: 5 * 60 * 1000,
-            cacheTime: 10 * 60 * 1000,
-            refetchOnWindowFocus: false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
-        },
-    );
+        enabled: true,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
+    });
 
     let projectSelectData: any = [];
     if (projectsQuery.data) {
