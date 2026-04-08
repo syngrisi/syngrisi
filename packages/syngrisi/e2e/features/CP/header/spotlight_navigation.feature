@@ -33,7 +33,7 @@ Feature: Spotlight
     When I wait 30 seconds for the element with locator ".mantine-Spotlight-content" to be visible
     When I wait 30 seconds for the element with locator ".mantine-Spotlight-search" to be visible
 
-    When I set "<keyword>" to the inputfield ".mantine-Spotlight-search"
+    When I set "<keyword>" to the inputfield ".mantine-Spotlight-search input"
     And I press "Enter"
 
     And I wait on element ".mantine-Spotlight-content" to not be displayed
@@ -58,7 +58,7 @@ Feature: Spotlight
 
     # switch theme
     When I wait 30 seconds for the element with locator ".mantine-Spotlight-search" to be visible
-    When I set "theme" to the inputfield ".mantine-Spotlight-search"
+    When I set "theme" to the inputfield ".mantine-Spotlight-search input"
     And I press "Enter"
     And I wait on element ".mantine-Spotlight-content" to not be displayed
 
