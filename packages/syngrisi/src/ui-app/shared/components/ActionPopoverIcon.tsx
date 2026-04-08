@@ -104,7 +104,11 @@ export default function ActionPopoverIcon(
                         style={{
                             display: 'inline-flex',
                             alignItems: 'center',
+                            justifyContent: 'center',
                             cursor: disabled ? 'not-allowed' : 'pointer',
+                            overflow: 'visible',
+                            position: 'relative',
+                            lineHeight: 1,
                             ...(styleProp || {}),
                         }}
                     >
@@ -118,6 +122,13 @@ export default function ActionPopoverIcon(
 
                             style={{
                                 pointerEvents: 'none',
+                                overflow: 'visible',
+                                position: 'relative',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                lineHeight: 1,
+                                flexShrink: 0,
                             }}
                             {...rest}
                         >
