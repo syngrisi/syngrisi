@@ -1,9 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
-import { QueryParamProvider } from 'use-query-params';
-import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
-import { parse, stringify } from '@shared/utils/queryParams';
 import { ErrorBoundary } from 'react-error-boundary';
 import { ErrorFallback } from '@shared/components/errors/ErrorFallback';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -30,15 +27,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         >
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
-                    <QueryParamProvider
-                        adapter={ReactRouter6Adapter}
-                        options={{
-                            searchStringToObject: parse,
-                            objectToSearchString: stringify,
-                        }}
-                    >
-                        <App />
-                    </QueryParamProvider>
+                    <App />
                 </BrowserRouter>
             </QueryClientProvider>
         </ErrorBoundary>
