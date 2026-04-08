@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { FunctionComponent } from 'react';
-import { ActionIcon, Badge, useMantineTheme, useComputedColorScheme } from '@mantine/core';
+import { ActionIcon, Box, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 
 interface Props {
@@ -23,6 +23,7 @@ const RefreshActionIcon: FunctionComponent<Props> = ({ newestItemsQuery, firstPa
                 color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                 data-test="table-refresh-icon"
                 variant="subtle"
+                style={{ overflow: 'visible', position: 'relative' }}
                 onClick={() => {
                     if (refresh) {
                         refresh();
@@ -36,34 +37,37 @@ const RefreshActionIcon: FunctionComponent<Props> = ({ newestItemsQuery, firstPa
                 {
                     newestItemsQuery?.data?.results?.length !== undefined && newestItemsQuery?.data?.results?.length > 0
                     && (
-                        <Badge
-                            component="div"
+                        <Box
                             title={` You have ${newestItems} new item${pluralCharset}, refresh the page to see them`}
-                            pl={4}
-                            pr={4}
-                            pt={6}
-                            pb={6}
-                            color="red"
-                            variant="filled"
-                            radius="xl"
                             data-test="table-refresh-icon-badge"
                             style={{
-                                fontSize: '12px',
                                 position: 'absolute',
                                 bottom: 11,
                                 left: 14,
-                                lineHeight: '16px',
+                                minWidth: 18,
+                                height: 22,
+                                padding: '0 6px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: theme.colors.red[6],
+                                color: theme.white,
+                                borderRadius: 999,
+                                lineHeight: 1,
                                 fontWeight: 400,
+                                fontSize: '12px',
                                 fontFamily: '"Roboto","Arial",sans-serif',
-                                border: `2px`,
-                                borderStyle: 'solid',
+                                boxSizing: 'border-box',
+                                overflow: 'visible',
+                                zIndex: 2,
+                                border: '2px solid',
                                 borderColor: colorScheme === 'dark' ? theme.colors.dark[7] : 'white',
                             }}
                         >
                             {
                                 newestItems
                             }
-                        </Badge>
+                        </Box>
                     )
                 }
             </ActionIcon>
