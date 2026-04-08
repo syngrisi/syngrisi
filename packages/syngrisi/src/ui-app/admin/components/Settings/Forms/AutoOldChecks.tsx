@@ -62,9 +62,9 @@ export function AutoOldChecks({ name, value, label, description, enabled, update
 
     return (
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-            <Stack spacing="sm">
-                <Title size="sm">{label}</Title>
-                <Group spacing="xl" align="flex-end">
+            <Stack gap="sm">
+                <Title style={{ fontSize: '24px', lineHeight: '31.2px' }}>{label}</Title>
+                <Group gap="xl" align="flex-end">
                     <NumberInput
                         data-test={`settings_value_${name}_days`}
                         aria-label={labels.aria}
@@ -81,10 +81,10 @@ export function AutoOldChecks({ name, value, label, description, enabled, update
                     />
                 </Group>
                 <Text size="sm">{description}</Text>
-                <Text size="xs" color="dimmed" data-test={`settings_value_${name}_last_run`}>
+                <Text size="xs" c="dimmed" data-test={`settings_value_${name}_last_run`}>
                     {lastRunLabel}
                 </Text>
-                <Group position="right">
+                <Group justify="flex-end">
                     <Button
                         type="submit"
                         data-test={`settings_update_button_${name}`}

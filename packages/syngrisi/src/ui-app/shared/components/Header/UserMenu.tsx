@@ -23,11 +23,11 @@ import { ApiKeyModalResult } from '@shared/components/Header/ApiKeyModalResult';
 import { UserInfoModal } from '@shared/components/Header/UserInfoModal';
 import { AboutModal } from '@shared/components/Header/AboutModal';
 import ToggleThemeButton from '@shared/components/ToggleThemeButton';
-import useColorScheme from '@shared/hooks/useColorSheme';
+import { useMantineColorScheme } from '@mantine/core';
 
 function UserMenu() {
     const theme = useMantineTheme();
-    const [colorScheme, toggleColorScheme] = useColorScheme();
+    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const apiKey = UserHooks.useApiKey();
     const [apiKeyModalAskOpened, setApiKeyModalAskOpened] = useState(false);
     const [apiKeyModalResultOpened, setApiKeyModalResultOpened] = useState(false);
@@ -49,17 +49,17 @@ function UserMenu() {
                         p={0}
                         radius="xl"
                         size="md"
-                        color={theme.colorScheme === 'dark' ? 'dark' : '#ffffff'}
-                        sx={{
-                            color: theme.colorScheme === 'dark' ? '#ffffff' : '#1a1b1e',
-                            backgroundColor: theme.colorScheme === 'dark' ? '#1a1b1e' : theme.colors.gray[0],
+                        color={colorScheme === 'dark' ? 'dark' : '#ffffff'}
+                        style={{
+                            color: colorScheme === 'dark' ? '#ffffff' : '#1a1b1e',
+                            backgroundColor: colorScheme === 'dark' ? '#1a1b1e' : theme.colors.gray[0],
                             fontWeight: 600,
                             fontSize: '1rem',
                             display: 'flex',
                             width: '2.6rem',
                             justifyContent: 'center',
                             '&:hover': {
-                                backgroundColor: theme.colorScheme === 'dark' ? '#000000' : '#ffffff',
+                                backgroundColor: colorScheme === 'dark' ? '#000000' : '#ffffff',
                             },
                         }}
                     >
@@ -71,7 +71,7 @@ function UserMenu() {
                 <Menu.Dropdown>
                     <Menu.Label
                         data-test="user-short-details"
-                        sx={{
+                        style={{
                             fontSize: '14px',
                             fontWeight: 700,
                             display: 'flex',
@@ -79,8 +79,8 @@ function UserMenu() {
                             color: theme.colors.blue[5],
                         }}
                     >
-                        <Group position="apart" sx={{ width: '100%' }}>
-                            <Group spacing={0}>
+                        <Group justify="space-between" style={{ width: '100%' }}>
+                            <Group gap={0}>
                                 <IconUser size="14px" stroke={3} style={{ marginRight: '10px' }} />
                                 {currentUser?.data?.firstName}
                                 {' '}
@@ -94,7 +94,7 @@ function UserMenu() {
                     <Menu.Item
                         data-test="userinfo"
                         aria-label="User Details"
-                        icon={<IconId size={14} />}
+                        leftSection={<IconId size={14} />}
                         onClick={() => {
                             setUserInfoModalOpened(true);
                         }}
@@ -103,13 +103,13 @@ function UserMenu() {
                     </Menu.Item>
                     <Menu.Item
                         disabled={!isAdmin}
-                        icon={<IconSettings size={14} />}
+                        leftSection={<IconSettings size={14} />}
                         onClick={() => window.location.assign('/admin/')}
                     >
                         Admin Panel
                     </Menu.Item>
                     <Menu.Item
-                        icon={<IconKey size={14} />}
+                        leftSection={<IconKey size={14} />}
                         component="a"
                         href="/auth/change"
                     >
@@ -118,7 +118,7 @@ function UserMenu() {
                     <Menu.Item
                         id="generate-api"
                         aria-label="Generate API key"
-                        icon={<IconTool size={14} />}
+                        leftSection={<IconTool size={14} />}
                         onClick={() => {
                             setApiKeyModalAskOpened(true);
                         }}
@@ -128,7 +128,7 @@ function UserMenu() {
                     <Menu.Item
                         data-test="about"
                         aria-label="About Syngrisi"
-                        icon={<IconInfoCircle size={14} />}
+                        leftSection={<IconInfoCircle size={14} />}
                         onClick={() => {
                             setAboutModalOpened(true);
                         }}
@@ -137,7 +137,7 @@ function UserMenu() {
                     </Menu.Item>
                     <Menu.Divider />
                     <Menu.Item
-                        icon={<IconLogout size={14} />}
+                        leftSection={<IconLogout size={14} />}
                         component="a"
                         href="/auth/logout"
                     >

@@ -16,8 +16,9 @@ import {
     Stack,
     Text,
     Divider,
+    useMantineTheme,
+    useComputedColorScheme,
 } from '@mantine/core';
-import { createStyles } from '@mantine/styles';
 import { useQuery } from '@tanstack/react-query';
 import config from '@config';
 import { UserHooks } from '@shared/hooks';
@@ -33,43 +34,43 @@ interface SystemInfo {
 
 export function AboutModal({ opened, setOpened }: { opened: boolean, setOpened: (opened: boolean) => void }) {
     const user = UserHooks.useCurrentUser();
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
 
     const { isLoading, data } = useQuery<SystemInfo>(
-        ['systemInfo'],
-        async () => {
-            const res = await fetch(`${config.baseUri}/v1/app/system-info`);
-            if (!res.ok) throw new Error(`[AboutModal] Failed to fetch system info: ${res.status}`);
-            return res.json();
-        },
-        { enabled: opened }
+        {
+            queryKey: ['systemInfo'],
+            queryFn: async () => {
+                const res = await fetch(`${config.baseUri}/v1/app/system-info`);
+                if (!res.ok) throw new Error(`[AboutModal] Failed to fetch system info: ${res.status}`);
+                return res.json();
+            },
+            enabled: opened,
+        }
     );
 
-    const useStyles = createStyles((theme) => ({
-        label: {
-            color: theme.colorScheme === 'dark' ? theme.colors.dark[2] : theme.colors.gray[6],
-            fontSize: theme.fontSizes.sm,
-            fontWeight: 500,
-        },
-        value: {
-            fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-            fontSize: theme.fontSizes.sm,
-        },
-        row: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: theme.spacing.sm,
-        },
-        icon: {
-            color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[5],
-        },
-        link: {
-            display: 'flex',
-            alignItems: 'center',
-            gap: 4,
-        },
-    }));
-
-    const { classes } = useStyles();
+    const labelStyle: React.CSSProperties = {
+        color: colorScheme === 'dark' ? theme.colors.dark[2] : theme.colors.gray[6],
+        fontSize: theme.fontSizes.sm,
+        fontWeight: 500,
+    };
+    const valueStyle: React.CSSProperties = {
+        fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+        fontSize: theme.fontSizes.sm,
+    };
+    const rowStyle: React.CSSProperties = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: theme.spacing.sm,
+    };
+    const iconStyle: React.CSSProperties = {
+        color: colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[5],
+    };
+    const linkStyle: React.CSSProperties = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 4,
+    };
 
     const tagUrl = data?.version ? `https://github.com/syngrisi/syngrisi/releases/tag/v${data.version}` : '#';
     const commitUrl = data?.commitHash ? `https://github.com/syngrisi/syngrisi/commit/${data.commitHash}` : null;
@@ -80,25 +81,25 @@ export function AboutModal({ opened, setOpened }: { opened: boolean, setOpened: 
             opened={opened}
             onClose={() => setOpened(false)}
             title="About Syngrisi"
-            data-test="about-modal"
         >
+            <div data-test="about-modal" style={{ display: 'contents' }}>
             {isLoading ? (
-                <Group position="center" py="xl">
+                <Group justify="center" py="xl">
                     <Loader />
                 </Group>
             ) : (
-                <Stack spacing="md" data-test="about-modal-content">
-                    <Group className={classes.row} data-test="about-version-row">
-                        <IconBrandGithub size={20} className={classes.icon} />
-                        <Text className={classes.label}>Version:</Text>
-                        <Anchor href={tagUrl} target="_blank" className={classes.link} data-test="about-version">
+                <Stack gap="md" data-test="about-modal-content">
+                    <Group style={rowStyle} data-test="about-version-row">
+                        <IconBrandGithub size={20} style={iconStyle} />
+                        <Text style={labelStyle}>Version:</Text>
+                        <Anchor href={tagUrl} target="_blank" style={linkStyle} data-test="about-version">
                             v{data?.version}
                             <IconExternalLink size={14} />
                         </Anchor>
                         {data?.commitHash && (
                             <>
-                                <Text color="dimmed">|</Text>
-                                <Anchor href={commitUrl!} target="_blank" className={classes.link} data-test="about-commit">
+                                <Text c="dimmed">|</Text>
+                                <Anchor href={commitUrl!} target="_blank" style={linkStyle} data-test="about-commit">
                                     {data.commitHash}
                                     <IconExternalLink size={14} />
                                 </Anchor>
@@ -108,24 +109,24 @@ export function AboutModal({ opened, setOpened }: { opened: boolean, setOpened: 
 
                     <Divider />
 
-                    <Group className={classes.row} data-test="about-node-row">
-                        <IconServer size={20} className={classes.icon} />
-                        <Text className={classes.label}>Node.js:</Text>
-                        <Text className={classes.value} data-test="about-node-version">{data?.nodeVersion}</Text>
+                    <Group style={rowStyle} data-test="about-node-row">
+                        <IconServer size={20} style={iconStyle} />
+                        <Text style={labelStyle}>Node.js:</Text>
+                        <Text style={valueStyle} data-test="about-node-version">{data?.nodeVersion}</Text>
                     </Group>
 
-                    <Group className={classes.row} data-test="about-mongo-row">
-                        <IconDatabase size={20} className={classes.icon} />
-                        <Text className={classes.label}>MongoDB:</Text>
-                        <Text className={classes.value} data-test="about-mongo-version">{data?.mongoVersion}</Text>
+                    <Group style={rowStyle} data-test="about-mongo-row">
+                        <IconDatabase size={20} style={iconStyle} />
+                        <Text style={labelStyle}>MongoDB:</Text>
+                        <Text style={valueStyle} data-test="about-mongo-version">{data?.mongoVersion}</Text>
                     </Group>
 
                     <Divider />
 
-                    <Group className={classes.row} data-test="about-auth-row">
-                        <IconKey size={20} className={classes.icon} />
-                        <Text className={classes.label}>Authentication:</Text>
-                        <Text className={classes.value} data-test="about-auth-type">
+                    <Group style={rowStyle} data-test="about-auth-row">
+                        <IconKey size={20} style={iconStyle} />
+                        <Text style={labelStyle}>Authentication:</Text>
+                        <Text style={valueStyle} data-test="about-auth-type">
                             {data?.authEnabled ? data?.authType : 'Disabled'}
                         </Text>
                     </Group>
@@ -133,26 +134,27 @@ export function AboutModal({ opened, setOpened }: { opened: boolean, setOpened: 
                     {user.isSuccess && user.data && (
                         <>
                             <Divider />
-                            <Group className={classes.row} data-test="about-user-row">
-                                <IconUser size={20} className={classes.icon} />
-                                <Text className={classes.label}>Current User:</Text>
-                                <Text className={classes.value} data-test="about-user-name">
+                            <Group style={rowStyle} data-test="about-user-row">
+                                <IconUser size={20} style={iconStyle} />
+                                <Text style={labelStyle}>Current User:</Text>
+                                <Text style={valueStyle} data-test="about-user-name">
                                     {user.data.firstName} {user.data.lastName}
                                 </Text>
-                                <Text color="dimmed" size="sm" data-test="about-user-role">
+                                <Text c="dimmed" size="sm" data-test="about-user-role">
                                     ({user.data.role})
                                 </Text>
                             </Group>
                         </>
                     )}
 
-                    <Group position="center" pt="md">
+                    <Group justify="center" pt="md">
                         <Button onClick={() => setOpened(false)} data-test="about-close-button">
                             Close
                         </Button>
                     </Group>
                 </Stack>
             )}
+            </div>
         </Modal>
     );
 }

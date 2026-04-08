@@ -38,7 +38,7 @@ export default function Bars({ value }: { value: string }) {
             />
         ));
     return (
-        <Group spacing={5} grow mt="xs" mb="md">
+        <Group gap={5} grow mt="xs" mb="md">
             {bars}
         </Group>
     );

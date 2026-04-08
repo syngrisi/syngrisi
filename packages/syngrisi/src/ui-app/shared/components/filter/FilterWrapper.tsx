@@ -34,15 +34,16 @@ export function FilterWrapper(
     const Filter = Filters[fields[selectValue].type];
     return (
         <Group
-            pt={16}
+            pt={12}
             align="start"
-            noWrap
+            wrap="nowrap"
             data-test={testAttr}
+            gap={12}
         >
             <SafeSelect
                 data-test="table-filter-column-name"
                 aria-label="Filter column"
-                sx={{ width: '130px' }}
+                style={{ width: '120px' }}
                 optionsData={optionsData}
                 value={selectValue}
                 onChange={setSelectValue}
@@ -64,7 +65,7 @@ export function FilterWrapper(
                             onClick={() => removeGroupRule(id)}
                             size={24}
                             mt={4}
-                            ml={-8}
+                            ml={-4}
                         >
                             {/*<ThemeIcon color="red" size={24} variant="light">*/}
                             <IconMinus stroke={1} />
@@ -72,7 +73,7 @@ export function FilterWrapper(
                         </ActionIcon>
                     )
                     : (
-                        <Box sx={{ width: 18 }}>
+                        <Box style={{ width: 18 }}>
                         </Box>
                     )
             }

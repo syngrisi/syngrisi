@@ -1,63 +1,39 @@
 /* eslint-disable max-len */
 import * as React from 'react';
-import { useMemo, ComponentPropsWithoutRef, lazy, Suspense } from 'react';
+import { useMemo, lazy, Suspense } from 'react';
 
 import {
-    ColorSchemeProvider,
     MantineProvider,
     useMantineTheme,
+    useMantineColorScheme,
+    v8CssVariablesResolver,
 } from '@mantine/core';
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import '@mantine/core/styles.css';
 
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router';
 import { NavigationProgress } from '@mantine/nprogress';
-import { NotificationsProvider } from '@mantine/notifications';
+import '@mantine/nprogress/styles.css';
+import { Notifications } from '@mantine/notifications';
+import '@mantine/notifications/styles.css';
 
 import { IconFilter, IconMoonStars, IconSearch, IconSun } from '@tabler/icons-react';
-import { SpotlightProvider } from '@mantine/spotlight';
-import { DefaultAction } from '@mantine/spotlight/esm/DefaultAction/DefaultAction';
+import { Spotlight, spotlight } from '@mantine/spotlight';
+import '@mantine/spotlight/styles.css';
 import config from '@config';
 
 import IndexLayout from '@index/IndexLayout';
 const ChecksList = lazy(() => import('@index/components/ChecksList/ChecksList').then(m => ({ default: m.ChecksList })));
-import useColorScheme from '@shared/hooks/useColorSheme';
 import { navigationData } from '@shared/navigation/navigationData';
 import { INavDataItem } from '@shared/navigation/interfaces';
 import { useParams } from '@hooks/useParams';
 
-
-
 import { UserHooks } from '@shared/hooks';
 
-const SpotlightActionButton = React.forwardRef<HTMLButtonElement, ComponentPropsWithoutRef<typeof DefaultAction>>(
-    (props, ref) => {
-        const { action, ...others } = props;
-        const ariaLabel = action?.title || 'Spotlight action';
-        const dataTest = action?.title
-            ? `spotlight-action-${action.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
-            : undefined;
-
-        return (
-            <DefaultAction
-                ref={ref}
-                aria-label={ariaLabel}
-                data-test={dataTest}
-                action={action}
-                {...others}
-            />
-        );
-    },
-);
-
-SpotlightActionButton.displayName = 'SpotlightActionButton';
-
-// ... (imports)
-
-function App() {
+function AppInner() {
     const theme = useMantineTheme();
     const { setQuery } = useParams();
 
-    const [colorScheme, toggleColorScheme]: any = useColorScheme();
+    const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const { data: currentUser } = UserHooks.useCurrentUser();
     const role = currentUser?.role || 'guest';
     console.log('App.tsx: Current User Role:', role);
@@ -74,8 +50,11 @@ function App() {
                 return true;
             })
             .map((item: INavDataItem) => ({
-                ...item,
-                onTrigger: () => {
+                id: item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                label: item.title,
+                description: item.description,
+                onClick: () => {
+                    spotlight.close();
                     setTimeout(
                         () => {
                             window.location.reload();
@@ -84,130 +63,148 @@ function App() {
                     );
                     navigate(item.crumbs.slice(-1)[0].href);
                 },
+                leftSection: item.icon,
             }));
 
         actions.push(
             {
-                title: `Switch to ${colorScheme === 'dark' ? 'light' : 'dark'} theme`,
+                id: 'toggle-theme',
+                label: `Switch to ${colorScheme === 'dark' ? 'light' : 'dark'} theme`,
                 description: 'Toggle color theme',
-                onTrigger: () => toggleColorScheme(),
-                icon: colorScheme === 'dark'
+                onClick: () => { spotlight.close(); toggleColorScheme(); },
+                leftSection: colorScheme === 'dark'
                     ? <IconSun size={18} color={theme.colors.yellow[4]} />
                     : <IconMoonStars color={theme.colors.blue[6]} size={18} />,
-            } as any,
+            },
         );
 
         actions.push(
             {
-                title: 'Filter: only successful tests',
+                id: 'filter-successful',
+                label: 'Filter: only successful tests',
                 description: 'Show only New and Passed tests',
-                onTrigger: () => {
+                onClick: () => {
                     setQuery(
                         {
                             filter: { $or: [{ status: { $eq: 'Passed' } }, { status: { $eq: 'New' } }] },
                         },
                     );
                 },
-                icon: <IconFilter size={18} />,
-            } as any,
+                leftSection: <IconFilter size={18} />,
+            },
         );
 
         actions.push(
             {
-                title: 'Filter: only failed tests',
+                id: 'filter-failed',
+                label: 'Filter: only failed tests',
                 description: 'Show only Failed tests',
-                onTrigger: () => {
+                onClick: () => {
                     setQuery(
                         {
                             filter: { $or: [{ status: { $eq: 'Failed' } }] },
                         },
                     );
                 },
-                icon: <IconFilter size={18} />,
-            } as any,
+                leftSection: <IconFilter size={18} />,
+            },
         );
 
         actions.push(
             {
-                title: 'Filter: not accepted tests',
+                id: 'filter-not-accepted',
+                label: 'Filter: not accepted tests',
                 description: 'Show all tests with Unaccepted and Partially accepted status',
-                onTrigger: () => {
+                onClick: () => {
                     setQuery(
                         {
                             filter: { $or: [{ markedAs: { $eq: 'Unaccepted' } }, { status: { $eq: 'Partially' } }] },
                         },
                     );
                 },
-                icon: <IconFilter size={18} />,
-            } as any,
+                leftSection: <IconFilter size={18} />,
+            },
         );
 
         actions.push(
             {
-                title: 'Filter: accepted tests',
+                id: 'filter-accepted',
+                label: 'Filter: accepted tests',
                 description: 'Show all tests with Accepted status',
-                onTrigger: () => {
+                onClick: () => {
                     setQuery(
                         {
                             filter: { $or: [{ markedAs: { $eq: 'Accepted' } }] },
                         },
                     );
                 },
-                icon: <IconFilter size={18} />,
-            } as any,
+                leftSection: <IconFilter size={18} />,
+            },
         );
 
         return actions;
     }, [role, navigate, colorScheme, theme, setQuery, toggleColorScheme]);
 
     return (
+        <>
+            <Spotlight
+                actions={spotlightActions}
+                highlightQuery
+                closeOnActionTrigger
+                searchProps={{
+                    leftSection: <IconSearch size={18} />,
+                    placeholder: 'Search...',
+                    onKeyDown: (e: React.KeyboardEvent) => {
+                        if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+                            // Mantine 9: selectAction(0) is async but triggerSelectedAction is sync.
+                            // Pre-select first action so Enter finds [data-selected].
+                            const actions = document.querySelectorAll('[data-action]');
+                            if (actions.length > 0 && !document.querySelector('[data-selected]')) {
+                                (actions[0] as HTMLElement).setAttribute('data-selected', 'true');
+                            }
+                        }
+                    },
+                }}
+                limit={20}
+                shortcut={['mod + k', 'mod + K']}
+                nothingFound="Nothing found..."
+            />
+            <Notifications autoClose={5000} limit={5} />
+            <NavigationProgress size={0} color="transparent" />
 
-            <ColorSchemeProvider
-                colorScheme={colorScheme as any}
-                toggleColorScheme={toggleColorScheme as any}
-            >
-                <MantineProvider
-                    withGlobalStyles
-                    withNormalizeCSS
-                    theme={{
-                        fontSizes: { md: 24 },
-                        colorScheme,
-                        primaryColor: 'green',
-                        breakpoints: {
-                            xs: 500,
-                            sm: 800,
-                            md: 1000,
-                            lg: 1200,
-                            xl: 1400,
-                        },
-                    }}
-                >
-                    <SpotlightProvider
-                        actions={spotlightActions}
-                        actionComponent={SpotlightActionButton}
-                        highlightQuery
-                        searchIcon={<IconSearch size={18} />}
-                        limit={20}
-                        searchPlaceholder="Search..."
-                        searchInputProps={{ 'aria-label': 'Spotlight search' }}
-                        shortcut={['mod + k', 'mod + K']}
-                        nothingFoundMessage="Nothing found..."
-                    >
-                        <NotificationsProvider autoClose={5000} limit={5}>
-                            <NavigationProgress />
+            <Suspense fallback={null}>
+                <Routes>
+                    <Route path={config.indexRoute} element={<IndexLayout />} />
+                    <Route path="/baselines" element={<IndexLayout />} />
+                    <Route path="/checks-list" element={<ChecksList />} />
+                </Routes>
+            </Suspense>
+        </>
+    );
+}
 
-                            <Suspense fallback={null}>
-                                <Routes>
-                                    <Route path={config.indexRoute} element={<IndexLayout />} />
-                                    <Route path="/baselines" element={<IndexLayout />} />
-                                    <Route path="/checks-list" element={<ChecksList />} />
-                                </Routes>
-                            </Suspense>
-                        </NotificationsProvider>
-                    </SpotlightProvider>
-                </MantineProvider>
-            </ColorSchemeProvider>
-
+function App() {
+    return (
+        <MantineProvider
+            defaultColorScheme="light"
+            cssVariablesResolver={v8CssVariablesResolver}
+            theme={{
+                fontSizes: { md: '1rem' },
+                primaryColor: 'green',
+                breakpoints: {
+                    xs: '31.25em',
+                    sm: '50em',
+                    md: '62.5em',
+                    lg: '75em',
+                    xl: '87.5em',
+                },
+                components: {
+                    Text: { defaultProps: { component: 'div' } },
+                },
+            }}
+        >
+            <AppInner />
+        </MantineProvider>
     );
 }
 

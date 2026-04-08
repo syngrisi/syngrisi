@@ -42,38 +42,32 @@ function InfinityScrollSkeleton({ infinityQuery, visibleFields, scrollRootRef }:
         };
     }, [scrollRootRef, root]);
 
-    // Use scroll-based detection instead of IntersectionObserver
+    // Fetch next page via onBottomReached on ScrollArea (parent component).
+    // This skeleton only handles the "content doesn't overflow" case where
+    // the user can't scroll and onBottomReached won't fire.
     useEffect(() => {
         if (!root || infinityQuery === null) return;
 
         const checkShouldLoad = () => {
-            if (!tfootRef.current || !root) return;
+            if (!root) return;
             if (!infinityQuery.hasNextPage || infinityQuery.isFetchingNextPage) return;
 
-            const rootRect = root.getBoundingClientRect();
-            const tfootRect = tfootRef.current.getBoundingClientRect();
-
-            // Load more if tfoot is within 400px of viewport
-            const margin = 400;
-            const isNearViewport = tfootRect.top < rootRect.bottom + margin;
-
-            if (isNearViewport) {
+            // Only auto-fetch if content doesn't overflow the scroll container
+            const { scrollHeight, clientHeight } = root;
+            if (scrollHeight <= clientHeight + 5) {
                 infinityQuery.fetchNextPage();
             }
         };
 
-        // Check on scroll
-        const handleScroll = () => {
-            checkShouldLoad();
-        };
-
-        // Check immediately on mount/update
-        checkShouldLoad();
-
-        root.addEventListener('scroll', handleScroll, { passive: true });
+        // Delay to let DOM render before measuring
+        const rafId = requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                checkShouldLoad();
+            });
+        });
 
         return () => {
-            root.removeEventListener('scroll', handleScroll);
+            cancelAnimationFrame(rafId);
         };
     }, [root, infinityQuery?.hasNextPage, infinityQuery?.isFetchingNextPage]);
 

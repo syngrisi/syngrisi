@@ -56,15 +56,15 @@ Feature: Check Preview - Display and Icons
 
     When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
 
-    Then the css attribute "max-height" from element "[data-test-preview-image='CheckName'] img" is "153.6px"
+    Then the css attribute "max-height" from element "img[data-test-preview-image='CheckName']" is "153.6px"
 
-    When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[text()='normal']"
+    When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[.='normal']"
 
-    Then the css attribute "max-height" from element "[data-test-preview-image='CheckName'] img" is "none"
+    Then the css attribute "max-height" from element "img[data-test-preview-image='CheckName']" is "none"
 
-    When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[text()='list']"
+    When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[.='list']"
 
-    Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "76.7969px"
+    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "76.7969px"
 
   Scenario: Checks Preview Sizes on Bounded mode
     Given I create "1" tests with:
@@ -79,19 +79,19 @@ Feature: Check Preview - Display and Icons
 
     When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
 
-    Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "113.75px"
+    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "126.547px"
 
-    When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='small']"
+    When I click element with locator "//*[@data-test='preview-size-segment-control']//label[.='small']"
 
-    Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "69.5938px"
+    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "77.5938px"
 
-    When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='large']"
+    When I click element with locator "//*[@data-test='preview-size-segment-control']//label[.='large']"
 
-    Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "202.07px"
+    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "224.469px"
 
-    When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='xlarge']"
+    When I click element with locator "//*[@data-test='preview-size-segment-control']//label[.='xlarge']"
 
-    Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "290.383px"
+    Then the css attribute "width" from element "img[data-test-preview-image='CheckName']" is "322.391px"
 
   Scenario: Checks Preview images visibilities
     Given I create "1" tests with:

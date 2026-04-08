@@ -4,10 +4,10 @@ import {
     Box,
     Group,
     List,
-    Navbar,
     ScrollArea,
     Text,
     useMantineTheme,
+    useComputedColorScheme,
 } from '@mantine/core';
 import * as React from 'react';
 import {
@@ -15,7 +15,6 @@ import {
     IconFilter,
     IconRefresh,
 } from '@tabler/icons-react';
-import { createStyles } from '@mantine/styles';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useToggle } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
@@ -31,34 +30,35 @@ import { NavbarGroupBySelect } from '@index/components/Navbar/NavbarGroupBySelec
 import { useNavbarActiveItems } from '@hooks/useNavbarActiveItems';
 import { errorMsg } from '@shared/utils';
 
-const useStyles = createStyles((theme) => ({
-    navbar: {
-        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
-        paddingLeft: theme.spacing.md,
-        paddingRight: theme.spacing.xs,
-        paddingTop: theme.spacing.sm,
-        paddingBottom: theme.spacing.md,
-    },
-    navbarItem: {
-        display: 'block',
-        textDecoration: 'none',
-        color: theme.colorScheme === 'dark' ? theme.colors.red[0] : theme.black,
-        borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]
-            }`,
-        '&:hover': {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
-            color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-        },
-    },
-    activeNavbarItem: {
-        backgroundColor: theme.colorScheme === 'dark' ? 'rgba(47, 158, 68, 0.2)' : 'rgba(235, 251, 238, 1)',
-        color: theme.colorScheme === 'dark' ? theme.colors.green[2] : theme.colors.green[6],
-        '&:hover': {
-            backgroundColor: theme.colorScheme === 'dark' ? 'rgba(47, 158, 68, 0.2)' : 'rgba(235, 251, 238, 1)',
-            color: theme.colorScheme === 'dark' ? theme.colors.green[2] : theme.colors.green[6],
-        },
-    },
-}));
+function getNavbarStyles(theme: any, colorScheme: 'light' | 'dark') {
+    return `
+        .syngrisi-navbar {
+            background-color: ${colorScheme === 'dark' ? theme.colors.dark[6] : theme.white};
+            padding-left: ${theme.spacing.md};
+            padding-right: ${theme.spacing.xs};
+            padding-top: ${theme.spacing.sm};
+            padding-bottom: ${theme.spacing.md};
+        }
+        .syngrisi-navbar-item {
+            display: block;
+            text-decoration: none;
+            color: ${colorScheme === 'dark' ? theme.colors.red[0] : theme.black};
+            border-bottom: 1px solid ${colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]};
+        }
+        .syngrisi-navbar-item:hover {
+            background-color: ${colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0]};
+            color: ${colorScheme === 'dark' ? theme.white : theme.black};
+        }
+        .syngrisi-navbar-active-item {
+            background-color: ${colorScheme === 'dark' ? 'rgba(47, 158, 68, 0.2)' : 'rgba(235, 251, 238, 1)'};
+            color: ${colorScheme === 'dark' ? theme.colors.green[2] : theme.colors.green[6]};
+        }
+        .syngrisi-navbar-active-item:hover {
+            background-color: ${colorScheme === 'dark' ? 'rgba(47, 158, 68, 0.2)' : 'rgba(235, 251, 238, 1)'};
+            color: ${colorScheme === 'dark' ? theme.colors.green[2] : theme.colors.green[6]};
+        }
+    `;
+}
 
 interface Props {
     setBreadCrumbs: any
@@ -68,7 +68,13 @@ interface Props {
 
 export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidth }: Props) {
     const theme = useMantineTheme();
-    const { classes } = useStyles();
+    const colorScheme = useComputedColorScheme();
+
+    const classes = {
+        navbarItem: 'syngrisi-navbar-item',
+        activeNavbarItem: 'syngrisi-navbar-active-item',
+    };
+
     const { query, setQuery } = useParams();
 
     const scrollViewportRef = useRef<HTMLDivElement>(null);
@@ -116,12 +122,12 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
         ))
         : [];
 
-    const runStatusesQuery = useQuery(
-        [
+    const runStatusesQuery = useQuery({
+        queryKey: [
             'navbar_run_statuses',
             visibleRunIds.join(','),
         ],
-        () => GenericService.get(
+        queryFn: () => GenericService.get(
             'tests',
             {
                 run: { $in: visibleRunIds },
@@ -131,15 +137,10 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
             },
             'navbar_run_statuses',
         ),
-        {
-            enabled: groupByValue === 'runs' && visibleRunIds.length > 0,
-            staleTime: 30 * 1000,
-            refetchOnWindowFocus: false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
-        },
-    );
+        enabled: groupByValue === 'runs' && visibleRunIds.length > 0,
+        staleTime: 30 * 1000,
+        refetchOnWindowFocus: false,
+    });
 
     const testsStatusesByRun = React.useMemo(() => {
         const map: Record<string, string[]> = {};
@@ -202,45 +203,53 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
         };
     }, [isResizing]);
 
+    const stickyGroupStyle: React.CSSProperties = {
+        width: '100%',
+        position: 'sticky',
+        top: 0,
+        zIndex: 20,
+        backgroundColor: colorScheme === 'dark'
+            ? theme.colors.dark[6]
+            : theme.white,
+    };
+
     return (
-        <Navbar
-            height="100%"
-            width={{ sm: navbarWidth }}
+        <Box
+            component="nav"
             data-test="navbar-resizable-root"
-            className={classes.navbar}
-            pt={0}
-            pr={2}
-            pl={8}
-            zIndex={10}
-            styles={{
-                root: {
-                    zIndex: 20,
-                },
+            className="syngrisi-navbar"
+            style={{
+                height: '100vh',
+                width: navbarWidth,
+                position: 'relative',
+                paddingTop: 0,
+                paddingRight: 2,
+                paddingLeft: 8,
+                zIndex: 20,
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                borderRight: `1px solid ${colorScheme === 'dark' ? theme.colors.dark[4] : 'var(--mantine-color-gray-2)'}`,
             }}
         >
-            <Navbar.Section
-                grow
-                component={ScrollArea}
+            <style>{getNavbarStyles(theme, colorScheme)}</style>
+            <ScrollArea
                 viewportRef={scrollViewportRef}
                 styles={{ scrollbar: { marginTop: '74px' } }}
                 pr={12}
                 pb={90}
                 data-test="navbar-scroll-area"
+                style={{ flexGrow: 1, height: '100%' }}
+                onBottomReached={() => {
+                    if (infinityQuery.hasNextPage && !infinityQuery.isFetchingNextPage) {
+                        infinityQuery.fetchNextPage();
+                    }
+                }}
             >
                 <Group
-                    position="apart"
+                    justify="space-between"
                     align="end"
-                    sx={
-                        {
-                            width: '100%',
-                            position: 'sticky',
-                            top: 0,
-                            zIndex: 20,
-                            backgroundColor: theme.colorScheme === 'dark'
-                                ? theme.colors.dark[6]
-                                : theme.white,
-                        }
-                    }
+                    style={stickyGroupStyle}
                 >
                     <NavbarGroupBySelect
                         setBreadCrumbs={setBreadCrumbs}
@@ -249,10 +258,12 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                         setGroupByValue={setGroupByValue}
                     />
 
-                    <Group spacing={4}>
+                    <Group gap={4}>
                         <ActionIcon
                             data-test="navbar-icon-open-filter"
                             aria-label="Open filter"
+                            variant="subtle"
+                            color="gray"
                             onClick={() => toggleOpenedFilter()}
                             mb={4}
                         >
@@ -261,6 +272,8 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                         <ActionIcon
                             data-test="navbar-icon-open-sort"
                             aria-label="Open sort"
+                            variant="subtle"
+                            color="gray"
                             onClick={() => toggleOpenedSort()}
                             mb={4}
                         >
@@ -270,6 +283,8 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                         <ActionIcon
                             data-test="navbar-icon-refresh"
                             aria-label="Refresh"
+                            variant="subtle"
+                            color="gray"
                             onClick={() => refreshIconClickHandler()}
                             mb={4}
                         >
@@ -278,7 +293,7 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                     </Group>
                 </Group>
 
-                <Group sx={{ width: '100%' }}>
+                <Group style={{ width: '100%' }}>
                     <NavbarSort
                         groupBy={groupByValue}
                         toggleOpenedSort={toggleOpenedSort}
@@ -286,7 +301,7 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                     />
                 </Group>
 
-                <Group sx={{ width: '100%' }}>
+                <Group style={{ width: '100%' }}>
                     <NavbarFilter
                         openedFilter={openedFilter}
                         setQuickFilterObject={setQuickFilterObject}
@@ -297,7 +312,7 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                 </Group>
 
                 {
-                    infinityQuery.status === 'loading'
+                    infinityQuery.status === 'pending'
                         ? (
                             <SkeletonWrapper
                                 infinityQuery={null}
@@ -308,12 +323,12 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                             />
                         )
                         : infinityQuery.status === 'error'
-                            ? (<Text color="red">Error: {infinityQuery.error.message}</Text>)
+                            ? (<Text c="red">Error: {infinityQuery.error.message}</Text>)
                             : (
                                 <List
                                     size="md"
                                     listStyleType="none"
-                                    sx={{ width: '100%' }}
+                                    style={{ width: '100%' }}
                                     styles={{ itemWrapper: { width: '100%' } }}
                                     pt={4}
                                     data-test-navbar-ready={!infinityQuery.isFetching ? 'true' : 'false'}
@@ -334,7 +349,7 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                     itemClass={classes.navbarItem}
                     scrollRootRef={scrollViewportRef}
                 />
-            </Navbar.Section>
+            </ScrollArea>
             <Box
                 data-test="navbar-resize-handle"
                 onMouseDown={(e: React.MouseEvent) => {
@@ -345,6 +360,7 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                     document.body.style.userSelect = 'none';
                     document.body.style.cursor = 'col-resize';
                 }}
+                className="syngrisi-navbar-resize-handle"
                 style={{
                     position: 'absolute',
                     top: 0,
@@ -356,12 +372,12 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                     backgroundColor: isResizing ? 'var(--mantine-color-blue-6)' : 'transparent',
                     transition: 'background-color 0.2s',
                 }}
-                sx={{
-                    '&:hover': {
-                        backgroundColor: 'var(--mantine-color-blue-5)',
-                    },
-                }}
             />
-        </Navbar>
+            <style>{`
+                .syngrisi-navbar-resize-handle:hover {
+                    background-color: var(--mantine-color-blue-5);
+                }
+            `}</style>
+        </Box>
     );
 }

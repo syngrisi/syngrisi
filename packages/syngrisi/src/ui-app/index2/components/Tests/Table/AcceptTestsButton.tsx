@@ -1,4 +1,4 @@
-import { ActionIcon, Transition, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Transition, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { IconThumbUp } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import AcceptTestModalAsk from '@index/components/Tests/Table/AcceptTestModalAsk';
@@ -12,6 +12,7 @@ interface Props {
 
 export default function AcceptTestsButton({ selection, setSelection, infinityQuery }: Props) {
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     const [opened, setOpened] = useState(false);
     return (
         <>
@@ -19,7 +20,7 @@ export default function AcceptTestsButton({ selection, setSelection, infinityQue
                 {
                     (styles) => (
                         <ActionIcon
-                            color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                            color={colorScheme === 'dark' ? 'green.8' : 'green.6'}
                             data-test="table-accept-tests"
                             aria-label="Accept selected tests"
                             variant="subtle"

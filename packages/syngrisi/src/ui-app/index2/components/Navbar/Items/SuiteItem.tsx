@@ -1,8 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Group, List, Stack, Text, Tooltip } from '@mantine/core';
 import * as dateFns from 'date-fns';
-import { useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import RemoveItemModalAsk from '@index/components/Navbar/Items/RemoveItemModalAsk';
 import { RemoveItemPopover } from '@index/components/Navbar/Items/RemoveItemPopover';
@@ -29,6 +29,18 @@ export const SuiteItem = React.memo(function SuiteItem(
     const [modalOpen, setModalOpen] = useState(false);
     const [opened, { toggle, close }] = useDisclosure(false);
 
+    const itemRef = useRef<HTMLLIElement>(null);
+    const handlerRef = useRef(handlerItemClick);
+    handlerRef.current = handlerItemClick;
+
+    useEffect(() => {
+        const el = itemRef.current;
+        if (!el) return;
+        const handler = (e: MouseEvent) => handlerRef.current(e);
+        el.addEventListener('click', handler);
+        return () => el.removeEventListener('click', handler);
+    }, []);
+
     const handleRemoveItemClick = () => {
         setModalOpen(true);
         close();
@@ -37,34 +49,35 @@ export const SuiteItem = React.memo(function SuiteItem(
     return (
         <>
             <List.Item
+                ref={itemRef}
                 data-test={`navbar_item_${index}`}
                 data-item-name={item.name}
-                onClick={handlerItemClick}
                 className={className}
-                sx={{ cursor: 'pointer', width: '100%' }}
+                style={{ cursor: 'pointer', width: '100%' }}
             >
                 <Group
-                    noWrap
+                    wrap="nowrap"
                     pl={8}
-                    position="apart"
-                    spacing={0}
+                    justify="space-between"
+                    gap={0}
+                    style={{ paddingTop: 4, paddingBottom: 4 }}
                 >
-                    <Group sx={{ width: '100%' }} noWrap>
-                        <Stack spacing={0} sx={{ width: '100%' }}>
-                            <Group position="left" sx={{ width: '100%' }}>
+                    <Group style={{ width: '100%' }} wrap="nowrap">
+                        <Stack gap={0} style={{ width: '100%' }}>
+                            <Group justify="flex-start" style={{ width: '100%' }}>
                                 <Tooltip label={item.name} multiline withinPortal>
                                     <Text
-                                        data-test="navbar-item-name"
-                                        size={16}
+                                        component="span" data-test="navbar-item-name"
+                                        fz={16}
                                         lineClamp={1}
-                                        sx={{ wordBreak: 'break-all' }}
+                                        style={{ wordBreak: 'break-all' }}
                                     >
                                         {item.name}
                                     </Text>
                                 </Tooltip>
                             </Group>
 
-                            <Group position="right">
+                            <Group justify="flex-end">
                                 <Tooltip
                                     withinPortal
                                     label={
@@ -72,9 +85,9 @@ export const SuiteItem = React.memo(function SuiteItem(
                                     }
                                 >
                                     <Text
-                                        align="right"
+                                        ta="right"
                                         size="xs"
-                                        color="dimmed"
+                                        c="dimmed"
                                     >
                                         {
                                             dateFns.formatDistanceToNow(
@@ -87,7 +100,7 @@ export const SuiteItem = React.memo(function SuiteItem(
                         </Stack>
 
                     </Group>
-                    <Group position="right" spacing={0} noWrap>
+                    <Group justify="flex-end" gap={0} wrap="nowrap">
                         <RemoveItemPopover
                             handleRemoveItemClick={handleRemoveItemClick}
                             type={type}

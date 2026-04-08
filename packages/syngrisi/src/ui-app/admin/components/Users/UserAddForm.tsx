@@ -44,8 +44,8 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
     });
 
     const addUser = useMutation(
-        (data: IUser) => GenericService.create<IUser>('users', data),
         {
+            mutationFn: (data: IUser) => GenericService.create<IUser>('users', data),
             onSuccess: async (result: any) => {
                 successMsg({ message: `User: '${result.username}' has been successfully created` });
                 log.debug({ result });
@@ -65,7 +65,7 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
 
     return (
         <form onSubmit={form.onSubmit((values) => formSubmitHandler(values))}>
-            <Group noWrap spacing="xs" position="right" align="start" sx={{ width: '100%' }} mt="lg">
+            <Group wrap="nowrap" gap="xs" justify="flex-end" align="start" style={{ width: '100%' }} mt="lg">
                 <Email.DuplicationFree
                     data-test="user-add-email"
                     form={form}
@@ -79,7 +79,7 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
                     aria-label="First Name"
                     placeholder="John"
                     {...form.getInputProps('firstName')}
-                    icon={<IconUser size={16} />}
+                    leftSection={<IconUser size={16} />}
                     disabled={!!form.errors.username || emailIsFetchingStatus}
                     required
                 />
@@ -89,7 +89,7 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
                     aria-label="Last Name"
                     placeholder="Smith"
                     {...form.getInputProps('lastName')}
-                    icon={<IconUser size={16} />}
+                    leftSection={<IconUser size={16} />}
                     disabled={!!form.errors.username || emailIsFetchingStatus}
                     required
                 />
@@ -116,7 +116,7 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
                 />
             </Group>
 
-            <Group spacing="xs" align="flex-end" position="center" mt="lg" noWrap>
+            <Group gap="xs" align="flex-end" justify="center" mt="lg" wrap="nowrap">
                 <Button
                     onClick={() => setAddUser(false)}
                     leftIcon={<IconX size={18} />}

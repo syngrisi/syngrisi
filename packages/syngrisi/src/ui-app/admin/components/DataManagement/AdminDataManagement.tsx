@@ -83,8 +83,8 @@ export default function AdminDataManagement() {
     const jobsQuery = useQuery({
         queryKey: ['admin-data-jobs'],
         queryFn: () => adminDataService.listJobs(),
-        refetchInterval: (data) => {
-            const jobs = data?.jobs || [];
+        refetchInterval: (query) => {
+            const jobs = query.state.data?.jobs || [];
             return jobs.some((job) => ACTIVE_STATUSES.has(job.status)) ? 2000 : 10000;
         },
     });
@@ -210,11 +210,11 @@ export default function AdminDataManagement() {
 
     return (
         <ScrollArea type="auto" h="calc(100vh - 120px)">
-        <Stack spacing="lg">
-            <Group position="apart">
+        <Stack gap="lg">
+            <Group justify="space-between">
                 <div>
                     <Title order={2}>Data Management</Title>
-                    <Text color="dimmed">Backup and restore database dumps and screenshots through background jobs.</Text>
+                    <Text c="dimmed">Backup and restore database dumps and screenshots through background jobs.</Text>
                 </div>
                 <Button
                     variant="outline"
@@ -233,7 +233,7 @@ export default function AdminDataManagement() {
                             <IconDatabaseExport size={18} />
                             <Title order={4}>Database Backup</Title>
                         </Group>
-                        <Text size="sm" color="dimmed">Create a MongoDB archive on the server and download it when the job completes.</Text>
+                        <Text size="sm" c="dimmed">Create a MongoDB archive on the server and download it when the job completes.</Text>
                         <Button onClick={() => dbBackupMutation.mutate()} loading={dbBackupMutation.isPending} disabled={isBusy}>
                             Start Database Backup
                         </Button>
@@ -267,7 +267,7 @@ export default function AdminDataManagement() {
                             <IconPhotoUp size={18} />
                             <Title order={4}>Screenshots Backup</Title>
                         </Group>
-                        <Text size="sm" color="dimmed">Create a tar.gz archive of current screenshots and download it when ready.</Text>
+                        <Text size="sm" c="dimmed">Create a tar.gz archive of current screenshots and download it when ready.</Text>
                         <Button onClick={() => screenshotsBackupMutation.mutate()} loading={screenshotsBackupMutation.isPending} disabled={isBusy}>
                             Start Screenshots Backup
                         </Button>
@@ -299,10 +299,10 @@ export default function AdminDataManagement() {
             </SimpleGrid>
 
             <Paper withBorder p="md">
-                <Group position="apart" mb="md">
+                <Group justify="space-between" mb="md">
                     <div>
                         <Title order={4}>Job History</Title>
-                        <Text size="sm" color="dimmed">Background jobs for backup and restore operations.</Text>
+                        <Text size="sm" c="dimmed">Background jobs for backup and restore operations.</Text>
                     </div>
                     {jobsQuery.isLoading && <Loader size="sm" />}
                 </Group>
@@ -322,16 +322,16 @@ export default function AdminDataManagement() {
                         {(jobsQuery.data?.jobs || []).map((job) => (
                             <tr key={job.id} onClick={() => setSelectedJobId(job.id)} style={{ cursor: 'pointer' }}>
                                 <td>
-                                    <Text weight={500}>{getJobLabel(job.type)}</Text>
-                                    <Text size="xs" color="dimmed"><Code>{job.id}</Code></Text>
+                                    <Text fw={500}>{getJobLabel(job.type)}</Text>
+                                    <Text size="xs" c="dimmed"><Code>{job.id}</Code></Text>
                                 </td>
                                 <td>
                                     <Badge color={getStatusColor(job.status)}>{job.status}</Badge>
-                                    <Text size="xs" color="dimmed">{job.message}</Text>
+                                    <Text size="xs" c="dimmed">{job.message}</Text>
                                 </td>
                                 <td style={{ minWidth: 180 }}>
                                     <Progress value={job.progress.percent || 0} size="lg" />
-                                    <Text size="xs" color="dimmed">
+                                    <Text size="xs" c="dimmed">
                                         {job.progress.stage}
                                         {typeof job.progress.current === 'number' && typeof job.progress.total === 'number'
                                             ? ` (${job.progress.current}/${job.progress.total})`
@@ -341,7 +341,7 @@ export default function AdminDataManagement() {
                                 <td>
                                     <Text size="sm">Archive: {formatBytes(job.stats.archiveSizeBytes)}</Text>
                                     {'processedFiles' in job.stats && (
-                                        <Text size="xs" color="dimmed">
+                                        <Text size="xs" c="dimmed">
                                             Processed: {job.stats.processedFiles || 0}
                                             {job.stats.importedFiles !== undefined ? `, imported ${job.stats.importedFiles}` : ''}
                                             {job.stats.skippedFiles !== undefined ? `, skipped ${job.stats.skippedFiles}` : ''}
@@ -350,7 +350,7 @@ export default function AdminDataManagement() {
                                     )}
                                 </td>
                                 <td>
-                                    <Group spacing="xs">
+                                    <Group gap="xs">
                                         {job.downloadAvailable && (
                                             <Button
                                                 component="a"
@@ -400,17 +400,17 @@ export default function AdminDataManagement() {
             </Paper>
 
             <Paper withBorder p="md">
-                <Group position="apart" mb="md">
+                <Group justify="space-between" mb="md">
                     <div>
                         <Title order={4}>Selected Job Details</Title>
-                        {selectedJob && <Text size="sm" color="dimmed">{getJobLabel(selectedJob.type)} ({selectedJob.id})</Text>}
+                        {selectedJob && <Text size="sm" c="dimmed">{getJobLabel(selectedJob.type)} ({selectedJob.id})</Text>}
                     </div>
                 </Group>
                 {selectedJob ? (
-                    <Stack spacing="sm">
-                        <Text>Status: <Badge color={getStatusColor(selectedJob.status)}>{selectedJob.status}</Badge></Text>
+                    <Stack gap="sm">
+                        <Text>Status: <Badge c={getStatusColor(selectedJob.status)}>{selectedJob.status}</Badge></Text>
                         {selectedJob.error && (
-                            <Alert color="red">{selectedJob.error}</Alert>
+                            <Alert c="red">{selectedJob.error}</Alert>
                         )}
                         <Text size="sm">Progress stage: <Code>{selectedJob.progress.stage}</Code></Text>
                         <textarea
@@ -428,7 +428,7 @@ export default function AdminDataManagement() {
                         />
                     </Stack>
                 ) : (
-                    <Text color="dimmed">No jobs yet.</Text>
+                    <Text c="dimmed">No jobs yet.</Text>
                 )}
             </Paper>
         </Stack>

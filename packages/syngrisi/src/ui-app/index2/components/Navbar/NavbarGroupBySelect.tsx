@@ -68,6 +68,19 @@ export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupBy
             label="Group by"
             data-test="navbar-group-by"
             aria-label="Group by"
+            style={{ width: '198px' }}
+            styles={{
+                root: {
+                    paddingTop: '9px',
+                },
+                label: {
+                    marginBottom: '4px',
+                },
+                input: {
+                    paddingTop: '1px',
+                    paddingBottom: '1px',
+                },
+            }}
             value={groupByValue}
             onChange={handleGroupBySelect}
             optionsData={[

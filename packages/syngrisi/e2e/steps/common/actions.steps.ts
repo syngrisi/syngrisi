@@ -939,33 +939,50 @@ When(
     await selectLocator.first().waitFor({ state: 'attached', timeout: 5000 });
 
     // Click on select to open dropdown
-    await selectLocator.first().click();
+    // In Mantine 7, Select uses Combobox which requires clicking the input element
+    const inputInside = selectLocator.first().locator('input').first();
+    const hasInput = await inputInside.count() > 0;
+    if (hasInput) {
+      await inputInside.click();
+    } else {
+      await selectLocator.first().click();
+    }
     await page.waitForTimeout(500); // Wait for dropdown to open
 
-    // Click on the div option - prioritize role="option" to match actual dropdown items
-    // and avoid matching parent containers with common text like "false"
-    // Use try-catch to attempt specific selector first
+    // Click on the option - prioritize role="option" in the Mantine Combobox dropdown
     const roleOptionSelector = `[role="option"]:has-text("${renderedOptionText}")`;
-    const genericDivSelector = `div:has-text("${renderedOptionText}")`;
 
     try {
       const optionLocator = page.locator(roleOptionSelector).first();
-      await optionLocator.waitFor({ state: 'visible', timeout: 2000 });
+      await optionLocator.waitFor({ state: 'visible', timeout: 3000 });
       await optionLocator.click();
     } catch (e) {
-      logger.warn(`Could not find role="option" with text "${renderedOptionText}", falling back to generic div`);
-      const optionLocator = page.locator(genericDivSelector).first();
-      await optionLocator.waitFor({ state: 'visible', timeout: 5000 });
-      await optionLocator.click();
+      logger.warn(`Could not find role="option" with text "${renderedOptionText}", trying combobox option`);
+      // Try Mantine 7 Combobox option selector
+      const comboboxOptionSelector = `.mantine-Combobox-option:has-text("${renderedOptionText}")`;
+      try {
+        const comboboxOption = page.locator(comboboxOptionSelector).first();
+        await comboboxOption.waitFor({ state: 'visible', timeout: 3000 });
+        await comboboxOption.click();
+      } catch (e2) {
+        logger.warn(`Could not find Mantine Combobox option, falling back to generic div`);
+        const genericDivSelector = `div:has-text("${renderedOptionText}")`;
+        const optionLocator = page.locator(genericDivSelector).first();
+        await optionLocator.waitFor({ state: 'visible', timeout: 5000 });
+        await optionLocator.click();
+      }
     }
 
-    // Also set value via selectOption as fallback to ensure value is properly set
+    // Also set value via selectOption on hidden native select as fallback
     try {
-      await page.waitForTimeout(300); // Small delay to ensure dropdown closed
-      await selectLocator.first().selectOption({ label: renderedOptionText });
+      await page.waitForTimeout(300);
+      // Find hidden native select with same data-test
+      const nativeSelect = page.locator(`select${renderedSelector}`).first();
+      if (await nativeSelect.count() > 0) {
+        await nativeSelect.selectOption({ label: renderedOptionText });
+      }
     } catch (error) {
-      // If selectOption fails, that's okay - we already clicked the div
-      logger.debug(`selectOption fallback failed for "${renderedOptionText}", but div click succeeded`);
+      logger.debug(`selectOption fallback failed for "${renderedOptionText}"`);
     }
   }
 );

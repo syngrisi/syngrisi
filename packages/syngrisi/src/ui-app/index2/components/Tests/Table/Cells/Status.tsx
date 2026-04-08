@@ -29,7 +29,7 @@ export function Status({ type, test }: Props) {
                 paddingLeft: '2px',
             }}
         >
-            <Group position="left" spacing={0} noWrap>
+            <Group justify="flex-start" gap={0} wrap="nowrap">
                 <StatusesRing
                     statuses={checkStatuses.length > 0 ? checkStatuses : [test.status]}
                     name={test.name}
@@ -39,7 +39,7 @@ export function Status({ type, test }: Props) {
                 <Tooltip label={test[type]} multiline withinPortal>
                     <Text
                         lineClamp={1}
-                        sx={{ wordBreak: 'break-all' }}
+                        style={{ wordBreak: 'break-all' }}
                     >
                         {test.status}
                     </Text>

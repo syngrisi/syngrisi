@@ -191,7 +191,7 @@ export function MatchTypeSelector({
             <Menu.Target>
                 <Tooltip
                     label={
-                        <Group spacing={4}>
+                        <Group gap={4}>
                             <Text>Auto-ignore mode: {currentOption?.label}</Text>
                         </Group>
                     }
@@ -200,6 +200,8 @@ export function MatchTypeSelector({
                         data-check="match-type-selector"
                         disabled={!baselineId}
                         loading={loading}
+                        variant="transparent"
+                        color="gray"
                     >
                         <IconAdjustments size={24} stroke={1} />
                     </ActionIcon>
@@ -211,20 +213,20 @@ export function MatchTypeSelector({
                 {MATCH_TYPE_OPTIONS.map((option) => (
                     <Menu.Item
                         key={option.value}
-                        icon={matchType === option.value ? <IconCheck size={14} /> : null}
+                        leftSection={matchType === option.value ? <IconCheck size={14} /> : null}
                         onClick={() => setMatchType(option.value)}
                     >
-                        <Text size="sm" weight={matchType === option.value ? 600 : 400}>
+                        <Text size="sm" fw={matchType === option.value ? 600 : 400}>
                             {option.label}
                         </Text>
-                        <Text size="xs" color="dimmed">
+                        <Text size="xs" c="dimmed">
                             {option.description}
                         </Text>
                     </Menu.Item>
                 ))}
                 <Divider my="xs" />
-                <Stack spacing="xs" px="xs" pb="xs">
-                    <Text size="xs" color="dimmed">Tolerance threshold (%)</Text>
+                <Stack gap="xs" px="xs" pb="xs">
+                    <Text size="xs" c="dimmed">Tolerance threshold (%)</Text>
                     <NumberInput
                         data-check="tolerance-threshold-input"
                         value={toleranceThreshold}

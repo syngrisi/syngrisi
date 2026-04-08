@@ -1,23 +1,19 @@
 import * as React from 'react';
 import { IconAt, IconUser } from '@tabler/icons-react';
-import { Avatar, Button, Group, Loader, Modal, Text } from '@mantine/core';
-import { createStyles } from '@mantine/styles';
+import { Avatar, Button, Group, Loader, Modal, Text, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { UserHooks } from '@shared/hooks';
 
 export function UserInfoModal({ opened, setOpened }: { opened: boolean, setOpened: any }) {
     const user = UserHooks.useCurrentUser();
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
 
-    const useStyles = createStyles((theme) => ({
-        icon: {
-            color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[5],
-        },
-
-        name: {
-            fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-        },
-    }));
-
-    const { classes } = useStyles();
+    const iconStyle: React.CSSProperties = {
+        color: colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[5],
+    };
+    const nameStyle: React.CSSProperties = {
+        fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    };
 
     return (
         <Modal
@@ -31,16 +27,16 @@ export function UserInfoModal({ opened, setOpened }: { opened: boolean, setOpene
             {
                 (user.isSuccess && user.data)
                     ? (
-                        <Group noWrap>
+                        <Group wrap="nowrap">
                             <Avatar src={null} color="white" size={120} radius={70}>
                                 <IconUser stroke={1} size={120} radius="md" />
                             </Avatar>
                             <div>
                                 <Text
                                     size="xs"
-                                    sx={{ textTransform: 'uppercase' }}
-                                    weight={700}
-                                    color="dimmed"
+                                    style={{ textTransform: 'uppercase' }}
+                                    fw={700}
+                                    c="dimmed"
                                     data-test="userinfo-role"
                                 >
                                     {user.data.role}
@@ -48,8 +44,8 @@ export function UserInfoModal({ opened, setOpened }: { opened: boolean, setOpene
 
                                 <Text
                                     size="lg"
-                                    weight={500}
-                                    className={classes.name}
+                                    fw={500}
+                                    style={nameStyle}
                                     data-test="userinfo-name"
                                 >
                                     {user.data.firstName}
@@ -58,12 +54,12 @@ export function UserInfoModal({ opened, setOpened }: { opened: boolean, setOpene
                                 </Text>
 
                                 <Group
-                                    noWrap
-                                    spacing={5}
+                                    wrap="nowrap"
+                                    gap={5}
                                     mt={3}
                                 >
-                                    <IconAt stroke={1.5} size={16} className={classes.icon} />
-                                    <Text size="xs" color="dimmed" data-test="userinfo-username">
+                                    <IconAt stroke={1.5} size={16} style={iconStyle} />
+                                    <Text size="xs" c="dimmed" data-test="userinfo-username">
                                         {user.data.username}
                                     </Text>
                                 </Group>
@@ -78,7 +74,7 @@ export function UserInfoModal({ opened, setOpened }: { opened: boolean, setOpene
                     )
             }
 
-            <Group position="center" pt={30}>
+            <Group justify="center" pt={30}>
                 <Button
                     onClick={() => {
                         setOpened(false);

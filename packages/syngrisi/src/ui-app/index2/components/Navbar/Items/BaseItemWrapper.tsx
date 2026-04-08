@@ -17,7 +17,7 @@ interface Props {
     testsStatusesByRun?: Record<string, string[]>
 }
 
-export const BaseItemWrapper = React.memo(function BaseItemWrapper(
+export function BaseItemWrapper(
     {
         item,
         itemType,
@@ -95,4 +95,4 @@ export const BaseItemWrapper = React.memo(function BaseItemWrapper(
         ),
     };
     return (itemsComponentsMap[itemType]);
-});
+}

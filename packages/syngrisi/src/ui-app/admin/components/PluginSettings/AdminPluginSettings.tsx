@@ -146,14 +146,14 @@ function PluginSettingsForm({
 
     if (plugin.settingsSchema.length === 0) {
         return (
-            <Text color="dimmed" size="sm">
+            <Text c="dimmed" size="sm">
                 No configurable settings for this plugin.
             </Text>
         );
     }
 
     return (
-        <Stack spacing="md">
+        <Stack gap="md">
             {plugin.settingsSchema.map((field) => {
                 const effectiveValue = plugin.effectiveConfig[field.key];
                 const dbValue = localSettings[field.key];
@@ -161,13 +161,13 @@ function PluginSettingsForm({
 
                 return (
                     <Paper key={field.key} p="sm" withBorder>
-                        <Group position="apart" mb="xs">
-                            <Text weight={500}>{field.label}</Text>
+                        <Group justify="space-between" mb="xs">
+                            <Text fw={500}>{field.label}</Text>
                             {effectiveValue && getSourceBadge(hasDbValue ? 'db' : effectiveValue.source)}
                         </Group>
                         
                         {field.description && (
-                            <Text size="xs" color="dimmed" mb="xs">
+                            <Text size="xs" c="dimmed" mb="xs">
                                 {field.description}
                             </Text>
                         )}
@@ -233,7 +233,7 @@ function PluginSettingsForm({
                         </Group>
 
                         {field.envVariable && (
-                            <Text size="xs" color="dimmed" mt="xs">
+                            <Text size="xs" c="dimmed" mt="xs">
                                 ENV: <Code>{field.envVariable}</Code>
                             </Text>
                         )}
@@ -252,7 +252,7 @@ function EffectiveConfigView({ plugin }: { plugin: PluginInfo }) {
     const entries = Object.entries(plugin.effectiveConfig);
     
     if (entries.length === 0) {
-        return <Text color="dimmed" size="sm">No configuration values.</Text>;
+        return <Text c="dimmed" size="sm">No configuration values.</Text>;
     }
 
     return (
@@ -340,8 +340,8 @@ export default function AdminPluginSettings() {
     const plugins = data?.plugins || [];
 
     return (
-        <Stack spacing="lg" p="md">
-            <Group position="apart">
+        <Stack gap="lg" p="md">
+            <Group justify="space-between">
                 <Group>
                     <IconPlugConnected size={24} />
                     <Title order={3}>Plugin Settings</Title>
@@ -355,7 +355,7 @@ export default function AdminPluginSettings() {
                 </Button>
             </Group>
 
-            <Text color="dimmed" size="sm">
+            <Text c="dimmed" size="sm">
                 Configure plugins here. UI settings have priority over environment variables.
                 Changes may require a server restart to take effect.
             </Text>
@@ -371,9 +371,9 @@ export default function AdminPluginSettings() {
                     {plugins.map((plugin) => (
                         <Accordion.Item key={plugin.pluginName} value={plugin.pluginName} data-value={plugin.pluginName}>
                             <Accordion.Control>
-                                <Group position="apart" noWrap>
+                                <Group justify="space-between" wrap="nowrap">
                                     <Group>
-                                        <Text weight={500}>{plugin.displayName}</Text>
+                                        <Text fw={500}>{plugin.displayName}</Text>
                                         {plugin.version && (
                                             <Badge variant="outline" size="sm">
                                                 v{plugin.version}
@@ -397,9 +397,9 @@ export default function AdminPluginSettings() {
                                 </Group>
                             </Accordion.Control>
                             <Accordion.Panel>
-                                <Stack spacing="md">
+                                <Stack gap="md">
                                     {plugin.description && (
-                                        <Text size="sm" color="dimmed">{plugin.description}</Text>
+                                        <Text size="sm" c="dimmed">{plugin.description}</Text>
                                     )}
 
                                     <Title order={5}>Configuration</Title>
@@ -411,7 +411,7 @@ export default function AdminPluginSettings() {
                                     <Divider my="sm" />
 
                                     <Title order={5}>Effective Configuration</Title>
-                                    <Text size="xs" color="dimmed">
+                                    <Text size="xs" c="dimmed">
                                         These are the actual values being used by the plugin (merged from UI and ENV).
                                     </Text>
                                     <EffectiveConfigView plugin={plugin} />

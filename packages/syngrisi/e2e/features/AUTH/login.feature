@@ -55,7 +55,7 @@ Feature: Login
 
   Scenario: Login - Invalid email
     When I login with user:"asd" password "PasswordInvEmail-567"
-    Then the element with locator ".mantine-Input-wrapper + div.mantine-InputWrapper-error" should have contains text "Invalid email"
+    Then the element with locator ".mantine-InputWrapper-error" should have contains text "Invalid email"
 
   @flaky @mode:serial
   Scenario: Redirect via origin url

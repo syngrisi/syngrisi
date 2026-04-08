@@ -47,7 +47,16 @@ function AuthLogo() {
             }}
             >
                 <Paper style={{ backgroundColor: 'rgba(0, 0, 0, 0)' }}>
-                    <Text color={(colorScheme === 'dark' ? 'gray.4' : 'white')}>Syngrisi</Text>
+                    <Text
+                        c={colorScheme === 'dark' ? 'gray.4' : 'white'}
+                        style={{
+                            fontSize: 'inherit',
+                            lineHeight: 'inherit',
+                            fontWeight: 'inherit',
+                        }}
+                    >
+                        Syngrisi
+                    </Text>
                 </Paper>
             </Box>
 
