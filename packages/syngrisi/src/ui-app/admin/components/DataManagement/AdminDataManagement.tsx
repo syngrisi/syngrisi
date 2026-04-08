@@ -83,8 +83,8 @@ export default function AdminDataManagement() {
     const jobsQuery = useQuery({
         queryKey: ['admin-data-jobs'],
         queryFn: () => adminDataService.listJobs(),
-        refetchInterval: (data) => {
-            const jobs = data?.jobs || [];
+        refetchInterval: (query) => {
+            const jobs = query.state.data?.jobs || [];
             return jobs.some((job) => ACTIVE_STATUSES.has(job.status)) ? 2000 : 10000;
         },
     });

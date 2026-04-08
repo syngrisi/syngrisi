@@ -11,8 +11,8 @@ function FormWrapper({ name, value, label, description, enabled, type, settingsQ
     const Form: FC<ISettingForm> = SettingsForms[type as keyof typeof SettingsForms];
 
     const updateSetting = useMutation(
-        (data: ISettingFormUpdateData) => GenericService.update('settings', data),
         {
+            mutationFn: (data: ISettingFormUpdateData) => GenericService.update('settings', data),
             onSuccess: async () => {
                 successMsg({ message: `Parameter '${name}' saved` });
             },

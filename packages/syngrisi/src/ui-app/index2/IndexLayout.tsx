@@ -6,7 +6,7 @@ import HeaderIndex from '@index/components/Header/HeaderIndex';
 import NavBarIndex from '@index/components/Navbar/NavbarIndex';
 import Tests from '@index/components/Tests/Tests';
 import Baselines from '@index/components/Baselines/Baselines';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { useParams } from '@hooks/useParams';
 import SharedCheckLayout from '@index/components/SharedCheckLayout';
 

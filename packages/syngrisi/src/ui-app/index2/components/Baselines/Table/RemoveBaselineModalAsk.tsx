@@ -15,8 +15,8 @@ interface Props {
 
 export default function RemoveBaselineModalAsk({ opened, setOpened, selection, setSelection, infinityQuery }: Props) {
     const mutationRemove = useMutation(
-        (id: string) => GenericService.delete('baselines', id),
         {
+            mutationFn: (id: string) => GenericService.delete('baselines', id),
             onSuccess: async () => {
                 successMsg({ message: 'Baseline has been successfully removed' });
             },

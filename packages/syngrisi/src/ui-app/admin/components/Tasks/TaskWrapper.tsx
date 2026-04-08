@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router';
 import { tasksList } from '@admin/components/Tasks/tasksList';
 import Task from '@admin/components/Tasks/Task';
 import { Text, Paper } from '@mantine/core';

@@ -5,7 +5,7 @@ import { useForm } from '@mantine/form';
 import { useEffect } from 'react';
 import { Group } from '@mantine/core';
 import { GenericService } from '@shared/services';
-import { errorMsg, generateItemFilter } from '@shared/utils';
+import { generateItemFilter } from '@shared/utils';
 import SafeSelect from '@shared/components/SafeSelect';
 
 interface FilterItems {
@@ -36,13 +36,6 @@ export function CommonDistinctFilter({ label, updateGroupRules, id, resource }: 
             // enabled: false,
             staleTime: Infinity,
             refetchOnWindowFocus: false,
-            onError: (e: any) => {
-                errorMsg({ error: e });
-            },
-            // eslint-disable-next-line no-unused-vars
-            onSuccess: (result: any) => {
-
-            },
         },
     );
 

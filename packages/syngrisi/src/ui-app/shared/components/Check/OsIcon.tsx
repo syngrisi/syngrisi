@@ -10,7 +10,7 @@ import { IconBrandWindows, IconQuestionMark } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import config from '@config';
-import { log } from '@shared/utils/Logger';
+
 
 interface Props {
     os: string
@@ -39,20 +39,14 @@ const osIconMap = (key: string) => {
 };
 
 export function OsIcon({ os, size = 24, ...rest }: Props) {
-    const customDevicesQuery = useQuery(
-        ['custom_devices'],
-        () => config.customDevicesProm,
-        {
-            cacheTime: 60 * 60 * 10,
-            staleTime: 60 * 60 * 10,
-            enabled: true,
-            refetchOnWindowFocus: false,
-            onError: (err: any) => {
-                // errorMsg({ error: err });
-                log.error(err);
-            },
-        },
-    );
+    const customDevicesQuery = useQuery({
+        queryKey: ['custom_devices'],
+        queryFn: () => config.customDevicesProm,
+        gcTime: 60 * 60 * 10,
+        staleTime: 60 * 60 * 10,
+        enabled: true,
+        refetchOnWindowFocus: false,
+    });
 
     const customDevices = useMemo(() => customDevicesQuery.data || [], [customDevicesQuery?.data?.length]);
 

@@ -1,6 +1,6 @@
 import { Paper, Box, useComputedColorScheme, useMantineTheme } from '@mantine/core';
 import * as React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import AdminHeader from '@admin/components/Header/AdminHeader';
 import AdminNavBar from '@admin/components/Navbar/AdminNavbar';

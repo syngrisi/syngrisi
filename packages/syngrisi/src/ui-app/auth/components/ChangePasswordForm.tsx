@@ -10,7 +10,7 @@ import {
 } from '@mantine/core';
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { useDocumentTitle } from '@mantine/hooks';
 import { log } from '@shared/utils';
 import config from '@config';

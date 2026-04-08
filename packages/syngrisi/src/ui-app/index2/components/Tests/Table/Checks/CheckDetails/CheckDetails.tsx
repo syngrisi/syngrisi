@@ -7,7 +7,6 @@ import { useDisclosure, useDocumentTitle, useHotkeys } from '@mantine/hooks';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 import { createImageAndWaitForLoad, imageFromUrl, imageFromElement } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/helpers';
-import { errorMsg } from '@shared/utils';
 import { GenericService, imagePreloadService } from '@shared/services';
 import config from '@config';
 import { RelatedChecksContainer } from '@index/components/Tests/Table/Checks/CheckDetails/RelatedChecks/RelatedChecksContainer';
@@ -71,12 +70,12 @@ export function CheckDetails({
 
     // Fetch baseline document to get the correct baselineId (needed for RCA)
     // Note: currentCheck.baselineId._id is the Snapshot ID, not Baseline document ID!
-    const baselineQuery = useQuery(
-        [
+    const baselineQuery = useQuery({
+        queryKey: [
             'baseline_by_snapshot_id',
             currentCheck?.baselineId._id,
         ],
-        () => GenericService.get(
+        queryFn: () => GenericService.get(
             'baselines',
             { snapshootId: currentCheck?.baselineId._id },
             {
@@ -86,14 +85,9 @@ export function CheckDetails({
             },
             'baseline_by_snapshot_id',
         ),
-        {
-            enabled: true,
-            refetchOnWindowFocus: false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
-        },
-    );
+        enabled: true,
+        refetchOnWindowFocus: false,
+    });
 
     // Extract the actual Baseline document ID from the query result
     const baselineId = useMemo<string>(() => {
@@ -188,14 +182,12 @@ export function CheckDetails({
         wasAcceptedEarlier: currentCheck?.wasAcceptedEarlier,
     };
 
-    const settingsQuery = useQuery(
-        ['settings-public'],
-        () => GenericService.get('settings/public'),
-        {
-            refetchOnWindowFocus: false,
-            staleTime: 5 * 60 * 1000,
-        }
-    );
+    const settingsQuery = useQuery({
+        queryKey: ['settings-public'],
+        queryFn: () => GenericService.get('settings/public'),
+        refetchOnWindowFocus: false,
+        staleTime: 5 * 60 * 1000,
+    });
 
     const isShareEnabled = useMemo(() => {
         if (!settingsQuery.data) return true;
@@ -218,9 +210,9 @@ export function CheckDetails({
     const hasInitialSiblingChecks = initialSiblingChecks.length > 0
         && initialSiblingChecks.some((item) => item?._id === currentCheck?._id);
 
-    const siblingChecksQuery = useQuery(
-        ['sibling_checks', currentCheck?.test?._id],
-        () => GenericService.get(
+    const siblingChecksQuery = useQuery({
+        queryKey: ['sibling_checks', currentCheck?.test?._id],
+        queryFn: () => GenericService.get(
             'checks',
             { test: currentCheck?.test?._id },
             {
@@ -231,22 +223,20 @@ export function CheckDetails({
             },
             'sibling_checks_for_nav'
         ),
-        {
-            enabled: !!currentCheck?.test?._id && !hasInitialSiblingChecks,
-            refetchOnWindowFocus: false,
-            initialData: hasInitialSiblingChecks
-                ? {
-                    results: initialSiblingChecks,
-                    page: 1,
-                    limit: initialSiblingChecks.length || 1,
-                    totalPages: 1,
-                    totalResults: initialSiblingChecks.length,
-                    timestamp: Date.now(),
-                }
-                : undefined,
-            staleTime: hasInitialSiblingChecks ? 10 * 1000 : 0,
-        }
-    );
+        enabled: !!currentCheck?.test?._id && !hasInitialSiblingChecks,
+        refetchOnWindowFocus: false,
+        initialData: hasInitialSiblingChecks
+            ? {
+                results: initialSiblingChecks,
+                page: 1,
+                limit: initialSiblingChecks.length || 1,
+                totalPages: 1,
+                totalResults: initialSiblingChecks.length,
+                timestamp: Date.now(),
+            }
+            : undefined,
+        staleTime: hasInitialSiblingChecks ? 10 * 1000 : 0,
+    });
     const siblingChecks = useMemo(() => {
         const checks = siblingChecksQuery.data?.results || [];
         const getTimestamp = (item: any) => {
@@ -316,9 +306,9 @@ export function CheckDetails({
             if (checks.results && checks.results.length > 0) {
                 const targetCheckId = checks.results[0]._id || checks.results[0].id;
                 if (targetCheckId) {
-                    await queryClient.prefetchQuery(
-                        ['check_for_modal', targetCheckId],
-                        () => GenericService.get(
+                    await queryClient.prefetchQuery({
+                        queryKey: ['check_for_modal', targetCheckId],
+                        queryFn: () => GenericService.get(
                             'checks',
                             { _id: targetCheckId },
                             {
@@ -328,7 +318,7 @@ export function CheckDetails({
                             },
                             'prefetch_check_for_test_navigation',
                         ),
-                    );
+                    });
                     setQuery({ checkId: targetCheckId });
                 }
             }

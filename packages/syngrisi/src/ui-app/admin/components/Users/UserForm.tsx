@@ -48,8 +48,8 @@ export default function UserForm(
     });
 
     const updateUser = useMutation(
-        (data: IUser) => GenericService.update('users', data),
         {
+            mutationFn: (data: IUser) => GenericService.update('users', data),
             onSuccess: async (result: any) => {
                 successMsg({ message: `User: '${result.username}' has been successfully updated` });
                 log.debug({ result });
@@ -63,8 +63,8 @@ export default function UserForm(
     );
 
     const deleteUser = useMutation(
-        (userId: string) => GenericService.delete('users', userId),
         {
+            mutationFn: (userId: string) => GenericService.delete('users', userId),
             onSuccess: async () => {
                 successMsg({ message: 'User has been successfully removed' });
                 refetch();
@@ -171,7 +171,7 @@ export default function UserForm(
                                         // type={edit && "submit"}
                                         color="green"
                                         title={editMode ? 'Send changes' : 'Edit User'}
-                                        loading={updateUser.isLoading}
+                                        loading={updateUser.isPending}
                                     >
                                         {
                                             editMode
@@ -185,7 +185,7 @@ export default function UserForm(
                                         action={removeUser}
                                         title="Remove user"
                                         size={28}
-                                        loading={deleteUser.isLoading}
+                                        loading={deleteUser.isPending}
                                         confirmLabel="Delete"
                                         withinPortal={false}
                                     />

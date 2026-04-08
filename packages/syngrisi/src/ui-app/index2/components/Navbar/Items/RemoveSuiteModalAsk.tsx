@@ -17,8 +17,8 @@ interface Props {
 export default function RemoveSuiteModalAsk({ opened, setOpened, infinityQuery, item }: Props) {
     const { setQuery } = useParams();
     const mutationRemoveItem = useMutation(
-        (data: { id: string }) => SuitesService.remove(data),
         {
+            mutationFn: (data: { id: string }) => SuitesService.remove(data),
             onSuccess: async () => {
                 setQuery({ base_filter: undefined });
                 successMsg({ message: 'Suite has been successfully removed' });

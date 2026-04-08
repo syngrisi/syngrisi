@@ -5,7 +5,7 @@ import {
     useMantineTheme, useComputedColorScheme,
     ActionIcon,
 } from '@mantine/core';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { IconAdjustments, IconFilter } from '@tabler/icons-react';

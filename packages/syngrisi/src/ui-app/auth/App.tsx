@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import {
     useRoutes,
-} from 'react-router-dom';
+} from 'react-router';
 import {
     Box,
     MantineProvider,

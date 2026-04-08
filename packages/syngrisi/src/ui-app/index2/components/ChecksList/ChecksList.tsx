@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import {
     Card,
     Group,
@@ -42,19 +42,19 @@ export function ChecksList() {
     const getPreviewHeight = (size: string) => previewHeights[size as keyof typeof previewHeights] || 400;
 
     const checksQuery = useQuery(
-        ['checks_list', checkName],
-        () => GenericService.get(
-            'checks',
-            { name: checkName },
-            {
-                populate: 'baselineId,actualSnapshotId,diffId',
-                limit: '5',
-                sortBy: 'createdDate:desc',
-                apikey: apiKey,
-            },
-            'checksListQuery',
-        ),
         {
+            queryKey: ['checks_list', checkName],
+            queryFn: () => GenericService.get(
+                'checks',
+                { name: checkName },
+                {
+                    populate: 'baselineId,actualSnapshotId,diffId',
+                    limit: '5',
+                    sortBy: 'createdDate:desc',
+                    apikey: apiKey,
+                },
+                'checksListQuery',
+            ),
             enabled: !!checkName,
             refetchOnWindowFocus: false,
         },

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Badge, useMantineTheme, useComputedColorScheme, Text, Stack } from '@mantine/core';
 import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/bs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import ActionPopoverIcon from '@shared/components/ActionPopoverIcon';
 import { ChecksService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -173,7 +173,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
             }
             action={handleAcceptCheckClick}
             title={tooltipLabel}
-            loading={mutationAcceptCheck.isLoading}
+            loading={mutationAcceptCheck.isPending}
             confirmLabel="Accept"
             size={size}
         />

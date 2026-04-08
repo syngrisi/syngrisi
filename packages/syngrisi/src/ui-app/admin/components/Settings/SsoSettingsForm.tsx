@@ -34,12 +34,14 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
 
     // Fetch secrets configuration status from server
     const { data: secretsStatus } = useQuery<SecretsStatus>(
-        ['sso-secrets-status'],
-        async () => {
-            const resp = await http.get(`${config.baseUri}/v1/auth/sso/secrets-status`, {}, 'SsoSettingsForm.secretsStatus');
-            return resp.json() as Promise<SecretsStatus>;
-        },
-        { refetchOnWindowFocus: false }
+        {
+            queryKey: ['sso-secrets-status'],
+            queryFn: async () => {
+                const resp = await http.get(`${config.baseUri}/v1/auth/sso/secrets-status`, {}, 'SsoSettingsForm.secretsStatus');
+                return resp.json() as Promise<SecretsStatus>;
+            },
+            refetchOnWindowFocus: false,
+        }
     );
 
     useEffect(() => {
@@ -51,8 +53,8 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
     }, [settings]);
 
     const updateSetting = useMutation(
-        (data: { name: string, value: any }) => GenericService.update('settings', data),
         {
+            mutationFn: (data: { name: string, value: any }) => GenericService.update('settings', data),
             onError: (e: any) => errorMsg({ error: e }),
         }
     );

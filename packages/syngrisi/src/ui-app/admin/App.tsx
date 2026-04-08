@@ -10,7 +10,7 @@ import '@mantine/spotlight/styles.css';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router';
 import { useState } from 'react';
 import { useDocumentTitle } from '@mantine/hooks';
 import { NavigationProgress } from '@mantine/nprogress';

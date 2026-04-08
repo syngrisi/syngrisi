@@ -122,12 +122,12 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
         ))
         : [];
 
-    const runStatusesQuery = useQuery(
-        [
+    const runStatusesQuery = useQuery({
+        queryKey: [
             'navbar_run_statuses',
             visibleRunIds.join(','),
         ],
-        () => GenericService.get(
+        queryFn: () => GenericService.get(
             'tests',
             {
                 run: { $in: visibleRunIds },
@@ -137,15 +137,10 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
             },
             'navbar_run_statuses',
         ),
-        {
-            enabled: groupByValue === 'runs' && visibleRunIds.length > 0,
-            staleTime: 30 * 1000,
-            refetchOnWindowFocus: false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
-        },
-    );
+        enabled: groupByValue === 'runs' && visibleRunIds.length > 0,
+        staleTime: 30 * 1000,
+        refetchOnWindowFocus: false,
+    });
 
     const testsStatusesByRun = React.useMemo(() => {
         const map: Record<string, string[]> = {};
@@ -317,7 +312,7 @@ export default function NavbarIndex({ setBreadCrumbs, navbarWidth, setNavbarWidt
                 </Group>
 
                 {
-                    infinityQuery.status === 'loading'
+                    infinityQuery.status === 'pending'
                         ? (
                             <SkeletonWrapper
                                 infinityQuery={null}

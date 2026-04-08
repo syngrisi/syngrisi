@@ -4,7 +4,7 @@ import { Checkbox, useMantineTheme, useComputedColorScheme } from '@mantine/core
 import { baselinesTableColumns } from './baselinesTableColumns';
 import { BaselinesCellWrapper } from './BaselinesCellWrapper';
 import { testsCreateStyle } from '@index/components/Tests/Table/testsCreateStyle';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 interface Props {
     item: any

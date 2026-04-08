@@ -44,8 +44,8 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
     });
 
     const addUser = useMutation(
-        (data: IUser) => GenericService.create<IUser>('users', data),
         {
+            mutationFn: (data: IUser) => GenericService.create<IUser>('users', data),
             onSuccess: async (result: any) => {
                 successMsg({ message: `User: '${result.username}' has been successfully created` });
                 log.debug({ result });
