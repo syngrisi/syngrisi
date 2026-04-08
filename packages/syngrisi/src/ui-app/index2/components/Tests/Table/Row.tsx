@@ -85,8 +85,18 @@ export const Row = memo(function Row(
             <tr
                 data-test={`table_row_${index}`}
                 data-row-name={test.name}
-                style={{ ...(selected ? styles.rowSelected : {}), cursor: 'pointer' }}
+                style={{ ...(selected ? styles.rowSelected : {}), cursor: 'pointer', transition: 'background-color 120ms ease' }}
                 onClick={handleRowClick}
+                onMouseEnter={(event) => {
+                    if (!selected) {
+                        event.currentTarget.style.backgroundColor = String(styles.rowHover.backgroundColor);
+                    }
+                }}
+                onMouseLeave={(event) => {
+                    event.currentTarget.style.backgroundColor = selected
+                        ? String(styles.rowSelected.backgroundColor)
+                        : '';
+                }}
             >
 
                 <td>
