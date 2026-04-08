@@ -2,6 +2,7 @@
 import * as React from 'react';
 import {
     ActionIcon,
+    Box,
     Chip,
     Group,
     Popover,
@@ -27,6 +28,12 @@ const chipStyles: any = {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
     },
+};
+
+const chipsRowStyle: React.CSSProperties = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: 4,
 };
 
 export function QuickFilter() {
@@ -202,17 +209,19 @@ export function QuickFilter() {
                                     value={browserChipsData}
                                     onChange={setBrowserChipsData}
                                 >
-                                    {
-                                        browsers.map((item: string) => (
-                                            <Chip
-                                                value={item}
-                                                key={item}
-                                                styles={chipStyles}
-                                            >
-                                                {item}
-                                            </Chip>
-                                        ))
-                                    }
+                                    <Box style={chipsRowStyle}>
+                                        {
+                                            browsers.map((item: string) => (
+                                                <Chip
+                                                    value={item}
+                                                    key={item}
+                                                    styles={chipStyles}
+                                                >
+                                                    {item}
+                                                </Chip>
+                                            ))
+                                        }
+                                    </Box>
                                 </Chip.Group>
 
                                 <Text fz={10} c="gray.6" fw={600} tt="uppercase">Platforms:</Text>
@@ -222,17 +231,19 @@ export function QuickFilter() {
                                     value={platformChipsData}
                                     onChange={setPlatformChipsData}
                                 >
-                                    {
-                                        platforms.map((item: string) => (
-                                            <Chip
-                                                key={item}
-                                                value={item}
-                                                styles={chipStyles}
-                                            >
-                                                {item}
-                                            </Chip>
-                                        ))
-                                    }
+                                    <Box style={chipsRowStyle}>
+                                        {
+                                            platforms.map((item: string) => (
+                                                <Chip
+                                                    key={item}
+                                                    value={item}
+                                                    styles={chipStyles}
+                                                >
+                                                    {item}
+                                                </Chip>
+                                            ))
+                                        }
+                                    </Box>
                                 </Chip.Group>
 
                                 <Text fz={10} c="gray.6" fw={600} tt="uppercase">Viewports:</Text>
@@ -242,17 +253,19 @@ export function QuickFilter() {
                                     gap={4}
                                     multiple
                                 >
-                                    {
-                                        viewports.map((item: string) => (
-                                            <Chip
-                                                value={item}
-                                                key={item}
-                                                styles={chipStyles}
-                                            >
-                                                {item}
-                                            </Chip>
-                                        ))
-                                    }
+                                    <Box style={chipsRowStyle}>
+                                        {
+                                            viewports.map((item: string) => (
+                                                <Chip
+                                                    value={item}
+                                                    key={item}
+                                                    styles={chipStyles}
+                                                >
+                                                    {item}
+                                                </Chip>
+                                            ))
+                                        }
+                                    </Box>
                                 </Chip.Group>
 
                                 <Text fz={10} c="gray.6" fw={600} tt="uppercase">Status:</Text>
@@ -262,17 +275,19 @@ export function QuickFilter() {
                                     gap={4}
                                     multiple
                                 >
-                                    {
-                                        statuses.map((item: string) => (
-                                            <Chip
-                                                value={item}
-                                                key={item}
-                                                styles={chipStyles}
-                                            >
-                                                {item}
-                                            </Chip>
-                                        ))
-                                    }
+                                    <Box style={chipsRowStyle}>
+                                        {
+                                            statuses.map((item: string) => (
+                                                <Chip
+                                                    value={item}
+                                                    key={item}
+                                                    styles={chipStyles}
+                                                >
+                                                    {item}
+                                                </Chip>
+                                            ))
+                                        }
+                                    </Box>
                                 </Chip.Group>
 
                                 <Text fz={10} c="gray.6" fw={600} tt="uppercase">Accepted:</Text>
@@ -282,17 +297,19 @@ export function QuickFilter() {
                                     gap={4}
                                     multiple
                                 >
-                                    {
-                                        acceptStatuses.map((item: string) => (
-                                            <Chip
-                                                value={item}
-                                                key={item}
-                                                styles={chipStyles}
-                                            >
-                                                {item}
-                                            </Chip>
-                                        ))
-                                    }
+                                    <Box style={chipsRowStyle}>
+                                        {
+                                            acceptStatuses.map((item: string) => (
+                                                <Chip
+                                                    value={item}
+                                                    key={item}
+                                                    styles={chipStyles}
+                                                >
+                                                    {item}
+                                                </Chip>
+                                            ))
+                                        }
+                                    </Box>
                                 </Chip.Group>
 
                             </Stack>

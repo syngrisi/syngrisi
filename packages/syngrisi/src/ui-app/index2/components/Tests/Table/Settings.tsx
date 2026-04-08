@@ -6,6 +6,8 @@ import {
     Group,
     SegmentedControl,
     Text,
+    useComputedColorScheme,
+    useMantineTheme,
 } from '@mantine/core';
 import { IconSortAscending, IconSortDescending } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -34,6 +36,8 @@ function Settings(
         setSearchParams,
     }: Props,
 ) {
+    const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
     const [checksViewMode, setChecksViewMode] = useLocalStorage({ key: 'check-view-mode', defaultValue: 'bounded' });
     const [checksViewSize, setChecksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
 
@@ -45,8 +49,8 @@ function Settings(
 
     const segmentedControlStyles = {
         root: {
-            backgroundColor: '#f1f3f5',
-            border: '1px solid #dee2e6',
+            backgroundColor: colorScheme === 'dark' ? theme.colors.dark[6] : '#f1f3f5',
+            border: `1px solid ${colorScheme === 'dark' ? theme.colors.dark[4] : '#dee2e6'}`,
             borderRadius: '4px',
             padding: '4px',
             fontSize: '14px',
@@ -57,22 +61,67 @@ function Settings(
             lineHeight: '21.7px',
         },
         indicator: {
-            backgroundColor: '#ffffff',
-            boxShadow: '0 1px 1px rgba(0, 0, 0, 0.06)',
-            border: '1px solid #dee2e6',
+            backgroundColor: colorScheme === 'dark' ? theme.colors.dark[5] : '#ffffff',
+            boxShadow: colorScheme === 'dark' ? 'none' : '0 1px 1px rgba(0, 0, 0, 0.06)',
+            border: `1px solid ${colorScheme === 'dark' ? theme.colors.dark[3] : '#dee2e6'}`,
             borderRadius: '4px',
         },
         label: {
             fontSize: '14px',
             lineHeight: '21.7px',
             padding: '4px 10px',
-            color: '#495057',
+            color: colorScheme === 'dark' ? theme.colors.gray[3] : '#495057',
         },
         innerLabel: {
             fontSize: '14px',
             lineHeight: '21.7px',
         },
     };
+
+    const visibleFieldChipStyles = {
+        label: {
+            fontSize: '13px',
+            paddingTop: 6,
+            paddingBottom: 6,
+        },
+    };
+
+    const settingsCss = `
+        [data-test="preview-mode-segment-control"],
+        [data-test="preview-size-segment-control"] {
+            background-color: ${colorScheme === 'dark' ? theme.colors.dark[6] : '#f1f3f5'} !important;
+            border: 1px solid ${colorScheme === 'dark' ? theme.colors.dark[4] : '#dee2e6'} !important;
+        }
+
+        [data-test="preview-mode-segment-control"] .mantine-SegmentedControl-indicator,
+        [data-test="preview-size-segment-control"] .mantine-SegmentedControl-indicator {
+            background-color: ${colorScheme === 'dark' ? theme.colors.dark[5] : '#ffffff'} !important;
+            border: 1px solid ${colorScheme === 'dark' ? theme.colors.dark[3] : '#dee2e6'} !important;
+            box-shadow: ${colorScheme === 'dark' ? 'none' : '0 1px 1px rgba(0, 0, 0, 0.06)'} !important;
+        }
+
+        [data-test="preview-mode-segment-control"] .mantine-SegmentedControl-label,
+        [data-test="preview-size-segment-control"] .mantine-SegmentedControl-label {
+            color: ${colorScheme === 'dark' ? theme.colors.gray[3] : '#495057'} !important;
+        }
+
+        [data-test^="settings-visible-columns-"] + .mantine-Chip-label {
+            border: 1px solid ${colorScheme === 'dark' ? theme.colors.dark[3] : '#ced4da'} !important;
+            background-color: ${colorScheme === 'dark' ? theme.colors.dark[6] : '#ffffff'} !important;
+            color: ${colorScheme === 'dark' ? theme.colors.gray[2] : theme.colors.dark[6]} !important;
+        }
+
+        [data-test^="settings-visible-columns-"] + .mantine-Chip-label .mantine-Chip-iconWrapper {
+            color: ${theme.colors.green[5]} !important;
+        }
+
+        [data-test^="settings-visible-columns-"]:checked + .mantine-Chip-label,
+        [data-test^="settings-visible-columns-"] + .mantine-Chip-label[data-checked="true"] {
+            border-color: ${theme.colors.green[5]} !important;
+            background-color: ${colorScheme === 'dark' ? 'rgba(64, 192, 87, 0.14)' : '#ffffff'} !important;
+            color: ${colorScheme === 'dark' ? theme.white : theme.colors.dark[6]} !important;
+        }
+    `;
 
     useEffect(() => {
         SearchParams.changeSorting(searchParams, setSearchParams, sortItemValue, sortOrder);
@@ -87,6 +136,7 @@ function Settings(
             exactWidth
             padding={16}
         >
+            <style>{settingsCss}</style>
             <Group align="end" gap="sm" wrap="nowrap">
                 <SafeSelect
                     label="Sort by"
@@ -152,22 +202,7 @@ function Settings(
                                 color="green"
                                 radius="xl"
                                 variant="outline"
-                                styles={{
-                                    root: {
-                                        borderColor: '#ced4da',
-                                        backgroundColor: '#ffffff',
-                                        marginRight: 0,
-                                        marginBottom: 0,
-                                    },
-                                    iconWrapper: {
-                                        color: '#40c057',
-                                    },
-                                    label: {
-                                        fontSize: '13px',
-                                        paddingTop: 6,
-                                        paddingBottom: 6,
-                                    },
-                                }}
+                                styles={visibleFieldChipStyles}
                                 size="sm"
                             >
                                 {tableColumns[column].label}
