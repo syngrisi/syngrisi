@@ -2,6 +2,7 @@
 import * as React from 'react';
 import {
     MantineProvider,
+    v8CssVariablesResolver,
 } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
@@ -17,7 +18,7 @@ import { NavigationProgress } from '@mantine/nprogress';
 import { Notifications } from '@mantine/notifications';
 
 import { IconSearch } from '@tabler/icons-react';
-import { Spotlight, SpotlightActionData } from '@mantine/spotlight';
+import { Spotlight, SpotlightActionData, spotlight } from '@mantine/spotlight';
 import { AppContext } from '@admin/AppContext';
 
 import AdminLayout from '@admin/AdminLayout';
@@ -61,6 +62,7 @@ function App() {
         description: item.description,
         leftSection: item.icon,
         onClick: () => {
+            spotlight.close();
             setTimeout(
                 () => {
                     window.location.reload();
@@ -75,6 +77,7 @@ function App() {
             <QueryClientProvider client={queryClient}>
                 <MantineProvider
                     defaultColorScheme="auto"
+                    cssVariablesResolver={v8CssVariablesResolver}
                     theme={{
                         fontSizes: { md: '1rem' },
                         primaryColor: 'green',
@@ -86,10 +89,19 @@ function App() {
                     <Spotlight
                         actions={spotlightActions}
                         highlightQuery
+                        closeOnActionTrigger
                         searchProps={{
                             leftSection: <IconSearch size={18} />,
                             placeholder: 'Search...',
                             'aria-label': 'Spotlight search',
+                            onKeyDown: (e: React.KeyboardEvent) => {
+                                if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+                                    const actions = document.querySelectorAll('[data-action]');
+                                    if (actions.length > 0 && !document.querySelector('[data-selected]')) {
+                                        (actions[0] as HTMLElement).setAttribute('data-selected', 'true');
+                                    }
+                                }
+                            },
                         }}
                         limit={7}
                         shortcut={['mod + k', 'mod + K']}

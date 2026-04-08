@@ -6,6 +6,7 @@ import {
     MantineProvider,
     useMantineTheme,
     useMantineColorScheme,
+    v8CssVariablesResolver,
 } from '@mantine/core';
 import '@mantine/core/styles.css';
 
@@ -16,7 +17,7 @@ import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 
 import { IconFilter, IconMoonStars, IconSearch, IconSun } from '@tabler/icons-react';
-import { Spotlight } from '@mantine/spotlight';
+import { Spotlight, spotlight } from '@mantine/spotlight';
 import '@mantine/spotlight/styles.css';
 import config from '@config';
 
@@ -53,6 +54,7 @@ function AppInner() {
                 label: item.title,
                 description: item.description,
                 onClick: () => {
+                    spotlight.close();
                     setTimeout(
                         () => {
                             window.location.reload();
@@ -69,7 +71,7 @@ function AppInner() {
                 id: 'toggle-theme',
                 label: `Switch to ${colorScheme === 'dark' ? 'light' : 'dark'} theme`,
                 description: 'Toggle color theme',
-                onClick: () => toggleColorScheme(),
+                onClick: () => { spotlight.close(); toggleColorScheme(); },
                 leftSection: colorScheme === 'dark'
                     ? <IconSun size={18} color={theme.colors.yellow[4]} />
                     : <IconMoonStars color={theme.colors.blue[6]} size={18} />,
@@ -148,7 +150,21 @@ function AppInner() {
             <Spotlight
                 actions={spotlightActions}
                 highlightQuery
-                searchProps={{ leftSection: <IconSearch size={18} />, placeholder: 'Search...' }}
+                closeOnActionTrigger
+                searchProps={{
+                    leftSection: <IconSearch size={18} />,
+                    placeholder: 'Search...',
+                    onKeyDown: (e: React.KeyboardEvent) => {
+                        if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+                            // Mantine 9: selectAction(0) is async but triggerSelectedAction is sync.
+                            // Pre-select first action so Enter finds [data-selected].
+                            const actions = document.querySelectorAll('[data-action]');
+                            if (actions.length > 0 && !document.querySelector('[data-selected]')) {
+                                (actions[0] as HTMLElement).setAttribute('data-selected', 'true');
+                            }
+                        }
+                    },
+                }}
                 limit={20}
                 shortcut={['mod + k', 'mod + K']}
                 nothingFound="Nothing found..."
@@ -171,6 +187,7 @@ function App() {
     return (
         <MantineProvider
             defaultColorScheme="light"
+            cssVariablesResolver={v8CssVariablesResolver}
             theme={{
                 fontSizes: { md: '1rem' },
                 primaryColor: 'green',

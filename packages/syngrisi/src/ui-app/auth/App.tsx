@@ -9,6 +9,7 @@ import {
 import {
     Box,
     MantineProvider,
+    v8CssVariablesResolver,
 } from '@mantine/core';
 
 import { useHotkeys, useLocalStorage } from '@mantine/hooks';
@@ -50,6 +51,7 @@ function App() {
         <QueryClientProvider client={queryClient}>
             <MantineProvider
                 defaultColorScheme="light"
+                cssVariablesResolver={v8CssVariablesResolver}
                 forceColorScheme={colorScheme}
                 theme={{
                     fontSizes: { md: '24px' },
