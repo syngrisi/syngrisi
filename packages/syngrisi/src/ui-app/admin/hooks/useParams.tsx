@@ -1,4 +1,4 @@
-import { JsonParam, StringParam, useQueryParams } from 'use-query-params';
+import { JsonParam, StringParam, useQueryParams } from '@shared/hooks/useQueryParams';
 
 export function useParams() {
     const [query, setQuery] = useQueryParams({

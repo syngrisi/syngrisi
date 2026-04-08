@@ -68,7 +68,6 @@ const config = {
             '@asserts': path.resolve(__dirname, './src/ui-app/asserts'),
             '@config': path.resolve(__dirname, './src/ui-app/config.ts'),
             '@shared/lib': path.resolve(__dirname, './src/ui-app/shared/lib'),
-            'react-router-dom': 'react-router',
         },
     },
     build: {

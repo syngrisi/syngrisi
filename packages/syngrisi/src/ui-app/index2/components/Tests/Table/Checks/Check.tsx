@@ -12,10 +12,9 @@ import {
     useMantineTheme, useComputedColorScheme,
 } from '@mantine/core';
 
-import { stringify } from '@shared/utils/queryParams';
 import { useLocalStorage } from '@mantine/hooks';
-import { encodeQueryParams } from 'use-query-params';
-import { useParams } from '@hooks/useParams';
+import { useParams, encodeQueryParams } from '@hooks/useParams';
+import { stringify } from '@shared/utils/queryParams';
 import config from '@config';
 import { AcceptButton } from '@index/components/Tests/Table/Checks/AcceptButton';
 import { RemoveButton } from '@index/components/Tests/Table/Checks/RemoveButton';

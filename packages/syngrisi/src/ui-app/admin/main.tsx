@@ -1,24 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
-import { QueryParamProvider } from 'use-query-params';
-import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
-import { parse, stringify } from '@shared/utils/queryParams';
 
 import App from '@admin/App';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <BrowserRouter>
-            <QueryParamProvider
-                adapter={ReactRouter6Adapter}
-                options={{
-                    searchStringToObject: parse,
-                    objectToSearchString: stringify,
-                }}
-            >
-                <App />
-            </QueryParamProvider>
+            <App />
         </BrowserRouter>
     </React.StrictMode>,
 );
