@@ -1,13 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react';
 import {
-    SiFirefox,
-    SiGooglechrome,
-    SiSafari,
-} from 'react-icons/si';
-import { FaSafari } from 'react-icons/fa';
-import { FiChrome } from 'react-icons/fi';
-import { IconBrandEdge, IconQuestionMark, IconBrandVisualStudio, IconWorldWww } from '@tabler/icons-react';
+    IconBrandChrome,
+    IconBrandEdge,
+    IconBrandFirefox,
+    IconBrandSafari,
+    IconBrandVisualStudio,
+    IconQuestionMark,
+    IconWorldWww,
+} from '@tabler/icons-react';
 
 interface Props {
     browser: string
@@ -17,17 +18,17 @@ interface Props {
 
 const browserIconMap = (key: string) => {
     const map = {
-        chrome: SiGooglechrome,
-        chromium: FiChrome,
-        'chrome [HEADLESS]': SiGooglechrome,
-        Chrome: SiGooglechrome,
-        firefox: SiFirefox,
-        Firefox: SiFirefox,
+        chrome: IconBrandChrome,
+        chromium: IconBrandChrome,
+        'chrome [HEADLESS]': IconBrandChrome,
+        Chrome: IconBrandChrome,
+        firefox: IconBrandFirefox,
+        Firefox: IconBrandFirefox,
         msedge: IconBrandEdge,
         Msedge: IconBrandEdge,
-        Safari: SiSafari,
-        safari: SiSafari,
-        webkit: FaSafari,
+        Safari: IconBrandSafari,
+        safari: IconBrandSafari,
+        webkit: IconBrandSafari,
         'internet explorer': IconWorldWww,
         vscode: IconBrandVisualStudio,
         VSCode: IconBrandVisualStudio,

@@ -1,12 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react';
 import {
-    SiAndroid,
-    SiApple,
-    SiIos,
-    SiLinux,
-} from 'react-icons/si';
-import { IconBrandWindows, IconQuestionMark } from '@tabler/icons-react';
+    IconBrandAndroid,
+    IconBrandApple,
+    IconBrandWindows,
+    IconQuestionMark,
+    IconDeviceMobile,
+    IconTerminal2,
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import config from '@config';
@@ -20,20 +21,14 @@ interface Props {
 
 const osIconMap = (key: string) => {
     const map = {
-        ios: SiIos,
-        android: SiAndroid,
+        ios: IconDeviceMobile,
+        android: IconBrandAndroid,
         windows: IconBrandWindows,
         win32: IconBrandWindows,
-        macintel: SiApple,
-        macos: SiApple,
-        'linux x86_64': SiLinux,
-        linux: SiLinux,
-
-        // 'Linux x86_64': SiLinux,
-        // Win32: SiWindows,
-        // WINDOWS: SiWindows,
-        // MacIntel: SiApple,
-        // macOS: SiApple,
+        macintel: IconBrandApple,
+        macos: IconBrandApple,
+        'linux x86_64': IconTerminal2,
+        linux: IconTerminal2,
     } as { [key: string]: any };
     return map[key.toLowerCase()];
 };

@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line */
 import * as React from 'react';
-import { Badge, useMantineTheme, useComputedColorScheme, Text, Stack } from '@mantine/core';
-import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/bs';
+import { Box, useMantineTheme, useComputedColorScheme, Text, Stack } from '@mantine/core';
+import { IconThumbUp, IconThumbUpFilled } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router';
 import ActionPopoverIcon from '@shared/components/ActionPopoverIcon';
@@ -93,33 +93,36 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
 
     const notAcceptedIcon = check?.failReasons?.includes('not_accepted')
         ? (
-            <Badge
-                component="div"
+            <Box
                 title="The check is not accepted"
-                pl={4}
-                pr={4}
-                pt={6}
-                pb={6}
-                // fw={900}
-                color="yellow"
-                variant="filled"
-                radius="xl"
                 data-test="not-accepted-error-icon"
                 style={{
-                    fontSize: '12px',
                     position: 'absolute',
                     bottom: 11,
                     left: 12,
-                    lineHeight: '16px',
+                    minWidth: 18,
+                    height: 22,
+                    padding: '0 6px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: theme.colors.yellow[6],
+                    color: theme.white,
+                    borderRadius: 999,
+                    lineHeight: 1,
                     fontWeight: 600,
+                    fontSize: '12px',
                     fontFamily: '"Roboto","Arial",sans-serif',
-                    border: '2px',
-                    borderStyle: 'solid',
+                    zIndex: 2,
+                    boxSizing: 'border-box',
+                    overflow: 'visible',
+                    userSelect: 'none',
+                    border: '2px solid',
                     borderColor: colorScheme === 'dark' ? theme.colors.dark[6] : 'white',
                 }}
             >
                 !
-            </Badge>
+            </Box>
         )
         : '';
     const handleAcceptCheckClick = () => {
@@ -167,9 +170,9 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
             icon={
                 iconType === 'fill'
                     ? (
-                        <BsHandThumbsUpFill size={size} data-test-icon-type="fill" />
+                        <IconThumbUpFilled size={size} data-test-icon-type="fill" />
                     )
-                    : (<><BsHandThumbsUp size={size} data-test-icon-type="outline" />{notAcceptedIcon}</>)
+                    : (<><IconThumbUp size={size} data-test-icon-type="outline" />{notAcceptedIcon}</>)
             }
             action={handleAcceptCheckClick}
             title={tooltipLabel}
