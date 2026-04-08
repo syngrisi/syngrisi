@@ -99,6 +99,7 @@ export function RelatedCheckItem({ checkData, activeCheckId, setRelatedActiveChe
                     shadow="sm"
                     style={{
                         boxSizing: 'border-box',
+                        overflow: 'visible',
                         width: '139px',
                         minWidth: '139px',
                         maxWidth: '139px',
@@ -113,7 +114,7 @@ export function RelatedCheckItem({ checkData, activeCheckId, setRelatedActiveChe
                     mb={2}
                 >
                     <div
-                        style={{ position: 'relative' }}
+                        style={{ position: 'relative', overflow: 'visible' }}
                         data-related-check-item={check.name}
                     >
                         <Stack align="center" mb={4}>

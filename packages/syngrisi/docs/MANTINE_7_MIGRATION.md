@@ -1,11 +1,16 @@
 # Mantine 5 → 7 Migration Guide
 
+> Historical note: this document describes the Mantine 5 -> 7 migration baseline.
+> The current branch has already moved further and is now on Mantine 8.
+
 ## Context
 
 Branch: `chore/major-dependency-updates`
 PR: syngrisi/syngrisi#24
 
-The Syngrisi frontend was migrated from Mantine UI v5 to v7. This is a massive breaking change — Mantine 7 removed `createStyles`, `sx` prop, `@mantine/styles` package, `ColorSchemeProvider`, and changed APIs of most components. 150+ files were modified.
+The Syngrisi frontend was originally migrated from Mantine UI v5 to v7. This was a massive breaking change: Mantine 7 removed `createStyles`, `sx` prop, `@mantine/styles` package, `ColorSchemeProvider`, and changed APIs of most components.
+
+Current status: the repository has already been migrated further to Mantine 8. Use this document as a visual and behavioral reference baseline for "old vs new" comparisons, not as a statement that the branch is still on Mantine 7.
 
 **Goal:** The new UI must look visually identical to the old one. All E2E tests must pass (303/303).
 
@@ -40,7 +45,7 @@ SYNGRISI_APP_PORT=5555 SYNGRISI_AUTH=false node dist/server/server.js
 
 Open http://localhost:5555
 
-### Start NEW server (Mantine 7, port 3000)
+### Start NEW server (current branch, now Mantine 8, port 3000)
 
 ```bash
 cd /Users/a1/Project/syngrisi/packages/syngrisi
