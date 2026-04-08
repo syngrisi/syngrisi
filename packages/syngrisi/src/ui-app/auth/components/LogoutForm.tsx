@@ -43,16 +43,16 @@ function LogoutForm() {
     useDocumentTitle('Logout page');
 
     const logoutInfo = useQuery<SafeResponse<Record<string, unknown>>>(
-        ['logout'],
-        () => fetchWithContentTypeCheck<Record<string, unknown>>(`${config.baseUri}/v1/auth/logout`, 'LogoutForm.logout'),
         {
+            queryKey: ['logout'],
+            queryFn: () => fetchWithContentTypeCheck<Record<string, unknown>>(`${config.baseUri}/v1/auth/logout`, 'LogoutForm.logout'),
             refetchOnWindowFocus: false,
         },
     );
     const userInfo = useQuery<SafeResponse<Record<string, unknown>>>(
-        ['current_user', logoutInfo.data?.status],
-        () => fetchWithContentTypeCheck<Record<string, unknown>>(`${config.baseUri}/v1/users/current`, 'LogoutForm.userInfo'),
         {
+            queryKey: ['current_user', logoutInfo.data?.status],
+            queryFn: () => fetchWithContentTypeCheck<Record<string, unknown>>(`${config.baseUri}/v1/users/current`, 'LogoutForm.userInfo'),
             refetchOnWindowFocus: false,
             enabled: logoutInfo.isSuccess,
         },
@@ -103,19 +103,18 @@ function LogoutForm() {
 
             <LoadingOverlay
                 visible={loading}
-                transitionDuration={300}
-                overlayBlur={1}
+                overlayProps={{ blur: 1 }}
                 loaderProps={{ color: 'green' }}
             />
 
             <Paper withBorder shadow="md" p={30} mt={30} radius="md" hidden={loading}>
                 {
                     success
-                        ? <Text align="center" color="green"><IconCircleCheck size="6rem" /></Text>
-                        : <Text align="center" color="red"><IconCircleX size="6rem" /></Text>
+                        ? <Text ta="center" c="green"><IconCircleCheck size="6rem" /></Text>
+                        : <Text ta="center" c="red"><IconCircleX size="6rem" /></Text>
                 }
-                <Title align="center">{success ? 'Success!' : 'Failed'}</Title>
-                <Text align="center" size={16} mt="md">
+                <Title ta="center">{success ? 'Success!' : 'Failed'}</Title>
+                <Text ta="center" fz={16} mt="md">
                     {success
                         ? 'You have been successfully logged out. Click Sign In to login again.'
                         : errorMessage || 'Something went wrong'}

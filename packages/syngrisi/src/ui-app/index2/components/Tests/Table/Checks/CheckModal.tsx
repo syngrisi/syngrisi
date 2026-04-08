@@ -15,7 +15,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconX } from '@tabler/icons-react';
 import { useParams } from '@hooks/useParams';
 import { GenericService } from '@shared/services';
-import { errorMsg } from '@shared/utils';
+
 
 const CheckDetails = lazy(() => import('@index/components/Tests/Table/Checks/CheckDetails/CheckDetails').then(m => ({ default: m.CheckDetails })));
 
@@ -119,8 +119,8 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
                 }
                 : undefined,
             staleTime: hasHydratedCachedCheck ? 10 * 1000 : 0,
-            refetchInterval: (data) => {
-                const check = data?.results?.[0];
+            refetchInterval: (query) => {
+                const check = query.state.data?.results?.[0];
                 if (check && !check.diffId && check.status[0] !== 'new' && check.status[0] !== 'passed') {
                     pollCountRef.current += 1;
                     const interval = Math.min(2000 * Math.pow(1.5, pollCountRef.current - 1), 10000);
@@ -130,9 +130,6 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
                 return false;
             },
             refetchOnWindowFocus: false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
         },
     );
 
@@ -142,16 +139,33 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
             className="modal"
             opened={checkModalOpened}
             centered
-            size="auto"
+            size="calc(100vw - 15px)"
             onClose={closeHandler}
-            sx={{ marginTop: -25 }}
-            styles={{ title: { width: '100%', paddingRight: 35 } }}
+            style={{ marginTop: 43 }}
+            styles={{
+                inner: {
+                    padding: '78px 7px 48px',
+                },
+                title: { width: '100%', paddingRight: 35 },
+                content: {
+                    padding: '20px 20px 10px',
+                    maxHeight: 'none',
+                },
+                body: {
+                    padding: 0,
+                },
+                overlay: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                },
+            }}
             withCloseButton={false}
         >
             {/* Close Button */}
             <ActionIcon
                 data-test="close-check-detail-icon"
                 style={{ position: 'fixed', right: 10, top: 10 }}
+                variant="transparent"
+                color="gray"
                 onClick={
                     () => {
                         closeHandler();
@@ -173,7 +187,7 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
                     : checkQuery.isError
                         ? (
                             <Stack mt={40}>
-                                <Text color="red">Error load the check data</Text>
+                                <Text c="red">Error load the check data</Text>
                             </Stack>
                         )
                         : checkData

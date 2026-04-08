@@ -24,7 +24,6 @@ function BaselinesHeads({ flatData, toggleAllRows, selection, visibleFields }: P
                             ? (selection.length > 0 && selection.length !== flatData.length)
                             : false
                     }
-                    transitionDuration={0}
                 />
             </th>
             {
@@ -38,7 +37,7 @@ function BaselinesHeads({ flatData, toggleAllRows, selection, visibleFields }: P
                                     data-test={`table-header-${baselinesTableColumns[column].label}`}
                                     aria-label={`Column ${baselinesTableColumns[column].label}`}
                                 >
-                                    <Text transform="capitalize">
+                                    <Text tt="capitalize">
                                         {baselinesTableColumns[column].label}
                                     </Text>
                                 </th>

@@ -2,7 +2,7 @@ import React, { lazy, Suspense, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { useParams } from '@hooks/useParams';
-import { LoadingOverlay, Stack, Text, Group, useMantineTheme } from '@mantine/core';
+import { LoadingOverlay, Stack, Text, Group, useMantineTheme, useComputedColorScheme } from '@mantine/core';
 import { errorMsg } from '@shared/utils';
 
 const CheckDetails = lazy(() => import('@index/components/Tests/Table/Checks/CheckDetails/CheckDetails').then(m => ({ default: m.CheckDetails })));
@@ -13,6 +13,7 @@ export default function SharedCheckLayout() {
     const checkId = query.checkId;
     const shareToken = query.share;
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
 
     const checkQuery = useQuery(
         {
@@ -42,9 +43,6 @@ export default function SharedCheckLayout() {
                 return false;
             },
             refetchOnWindowFocus: false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
         },
     );
 
@@ -62,14 +60,14 @@ export default function SharedCheckLayout() {
     if (checkQuery.isError) {
         return (
             <Stack mt={40} align="center">
-                <Text color="red">Error load the check data</Text>
+                <Text c="red">Error load the check data</Text>
             </Stack>
         );
     }
 
     if (!checkData) {
         return (
-            <Group mt={60} position="center">
+            <Group mt={60} justify="center">
                 Empty check data
             </Group>
         );
@@ -80,7 +78,7 @@ export default function SharedCheckLayout() {
             height: '100vh',
             width: '100vw',
             overflow: 'hidden',
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+            backgroundColor: colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
             display: 'flex',
             paddingTop: '30px',
             justifyContent: 'center',

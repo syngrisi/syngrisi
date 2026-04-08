@@ -35,11 +35,11 @@ export function IdFilter({ label, groupRules, updateGroupRules, id }: Props) {
 
     return (
         <form>
-            <Group align="start" noWrap>
+            <Group align="start" wrap="nowrap">
                 <SafeSelect
                     label=""
                     data-test="table-filter-operator"
-                    sx={{ width: '130px' }}
+                    style={{ width: '130px' }}
                     optionsData={[
                         { value: 'eq', label: 'equals' },
                         { value: 'ne', label: 'not equals' },

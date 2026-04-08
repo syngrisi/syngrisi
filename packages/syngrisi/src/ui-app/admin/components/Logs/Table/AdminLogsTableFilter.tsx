@@ -120,8 +120,8 @@ function AdminLogsTableFilter(
             title="Filter"
             width={560}
         >
-            <ScrollArea.Autosize maxHeight="80vh" mr={-12} sx={{ height: '80vh' }}>
-                <Box sx={{ paddingRight: 16, marginBottom: 100 }}>
+            <ScrollArea.Autosize mah="80vh" mr={-12} style={{ height: '80vh' }}>
+                <Box style={{ paddingRight: 16, marginBottom: 100 }}>
                     <Stack>
                         <LogicalGroup
                             id="mainGroup"
@@ -135,7 +135,7 @@ function AdminLogsTableFilter(
                         </LogicalGroup>
                     </Stack>
 
-                    <Group mt={24} position="right">
+                    <Group mt={24} justify="flex-end">
                         <Button
                             onClick={() => resetAll()}
                             data-test="table-filter-reset"

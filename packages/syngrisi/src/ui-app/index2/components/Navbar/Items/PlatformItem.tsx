@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import { Group, List, Stack, Text, Tooltip } from '@mantine/core';
 import { OsIcon } from '@shared/components/Check/OsIcon';
 
@@ -11,24 +12,37 @@ interface Props {
 }
 
 export function PlatformItem({ item, index, handlerItemClick, className }: Props) {
+    const itemRef = useRef<HTMLLIElement>(null);
+    const handlerRef = useRef(handlerItemClick);
+    handlerRef.current = handlerItemClick;
+
+    useEffect(() => {
+        const el = itemRef.current;
+        if (!el) return;
+        const handler = (e: MouseEvent) => handlerRef.current(e);
+        el.addEventListener('click', handler);
+        return () => el.removeEventListener('click', handler);
+    }, []);
+
     return (
         <List.Item
+            ref={itemRef}
             data-test={`navbar_item_${index}`}
-            onClick={handlerItemClick}
+            data-item-name={item.name}
             className={className}
-            sx={{ cursor: 'pointer', width: '100%' }}
+            style={{ cursor: 'pointer', width: '100%' }}
         >
-            <Group noWrap pl={8} position="apart" spacing={0} sx={{ width: '100%' }}>
-                <Stack spacing={0} sx={{ width: '100%' }}>
-                    <Group position="left" sx={{ width: '100%' }}>
+            <Group wrap="nowrap" pl={8} justify="space-between" gap={0} style={{ width: '100%' }}>
+                <Stack gap={0} style={{ width: '100%' }}>
+                    <Group justify="flex-start" style={{ width: '100%' }}>
                         <Tooltip label={item.name} multiline withinPortal>
-                            <Group spacing={8}>
+                            <Group gap={8}>
                                 <OsIcon os={item.name} size={20} />
                                 <Text
-                                    data-test="navbar-item-name"
-                                    size={16}
+                                    component="span" data-test="navbar-item-name"
+                                    fz={16}
                                     lineClamp={1}
-                                    sx={{ wordBreak: 'break-all' }}
+                                    style={{ wordBreak: 'break-all' }}
                                 >
                                     {item.name}
                                 </Text>

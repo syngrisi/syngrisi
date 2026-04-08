@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import {
     Card,
     Group,
@@ -42,19 +42,19 @@ export function ChecksList() {
     const getPreviewHeight = (size: string) => previewHeights[size as keyof typeof previewHeights] || 400;
 
     const checksQuery = useQuery(
-        ['checks_list', checkName],
-        () => GenericService.get(
-            'checks',
-            { name: checkName },
-            {
-                populate: 'baselineId,actualSnapshotId,diffId',
-                limit: '5',
-                sortBy: 'createdDate:desc',
-                apikey: apiKey,
-            },
-            'checksListQuery',
-        ),
         {
+            queryKey: ['checks_list', checkName],
+            queryFn: () => GenericService.get(
+                'checks',
+                { name: checkName },
+                {
+                    populate: 'baselineId,actualSnapshotId,diffId',
+                    limit: '5',
+                    sortBy: 'createdDate:desc',
+                    apikey: apiKey,
+                },
+                'checksListQuery',
+            ),
             enabled: !!checkName,
             refetchOnWindowFocus: false,
         },
@@ -69,7 +69,7 @@ export function ChecksList() {
     }
 
     if (checksQuery.isError) {
-        return <Text color="red">Error loading checks</Text>;
+        return <Text c="red">Error loading checks</Text>;
     }
 
     if (!checksQuery.data?.results?.length) {
@@ -83,7 +83,7 @@ export function ChecksList() {
 
     return (
         <Stack p="md" h="100vh">
-            <Group position="apart">
+            <Group justify="space-between">
                 <Title order={2} style={{ maxWidth: '80%' }}>
                     <Text truncate>
                         Latest for:
@@ -98,7 +98,7 @@ export function ChecksList() {
                         {
                             value: 'small',
                             label: (
-                                <Group spacing={4}>
+                                <Group gap={4}>
                                     <Text size="sm">S</Text>
                                 </Group>
                             ),
@@ -106,7 +106,7 @@ export function ChecksList() {
                         {
                             value: 'medium',
                             label: (
-                                <Group spacing={4}>
+                                <Group gap={4}>
                                     <Text size="sm">M</Text>
                                 </Group>
                             ),
@@ -114,7 +114,7 @@ export function ChecksList() {
                         {
                             value: 'large',
                             label: (
-                                <Group spacing={4}>
+                                <Group gap={4}>
                                     <Text size="sm">L</Text>
                                 </Group>
                             ),
@@ -136,19 +136,19 @@ export function ChecksList() {
 
                         return (
                             <Card key={check.id} shadow="sm" p="md" style={{ maxWidth: '900px' }}>
-                                <Group position="apart">
-                                    <Group position="left" mb="xs" mt="xs" spacing={4}>
+                                <Group justify="space-between">
+                                    <Group justify="flex-start" mb="xs" mt="xs" gap={4}>
                                         <Tooltip
                                             withinPortal
                                             label={dateFns.format(new Date(check.createdDate), 'yyyy-MM-dd HH:mm:ss')}
                                         >
-                                            <Text size="sm" color="dimmed">
+                                            <Text size="sm" c="dimmed">
                                                 {dateFns.formatDistanceToNow(new Date(check.createdDate))}
                                                 &nbsp;ago
                                             </Text>
                                         </Tooltip>
                                     </Group>
-                                    <Group position="right">
+                                    <Group justify="flex-end">
                                         <OsIcon os={check.os} size={19} />
                                         <Box style={{ marginTop: 2 }}>
                                             <BrowserIcon browser={check.browserName} size={16} />
@@ -160,7 +160,7 @@ export function ChecksList() {
                                             variant="outline"
                                             title={`Version of browser: ${check.browserVersion}`}
                                         >
-                                            <Text size="xs" color="dimmed">
+                                            <Text size="xs" c="dimmed">
                                                 {check.browserVersion ? `${check.browserVersion}` : ''}
                                             </Text>
                                         </Badge>
@@ -174,10 +174,10 @@ export function ChecksList() {
                                         />
                                     </Group>
                                 </Group>
-                                <Group position="center">
+                                <Group justify="center">
                                     <Group
-                                        spacing={4}
-                                        position="center"
+                                        gap={4}
+                                        justify="center"
                                         style={{
                                             backgroundColor: '#f0f8ff',
                                             borderTopRightRadius: '4px',
@@ -210,9 +210,8 @@ export function ChecksList() {
 
                                         <Image
                                             src={imagePreviewSrc}
-                                            height={getPreviewHeight(previewSize)}
+                                            h={getPreviewHeight(previewSize)}
                                             fit="contain"
-                                            withPlaceholder
                                             alt={check.name}
                                         />
                                     </UnstyledButton>

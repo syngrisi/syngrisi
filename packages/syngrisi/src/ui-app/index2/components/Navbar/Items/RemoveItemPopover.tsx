@@ -23,7 +23,7 @@ export function RemoveItemPopover(
     return (
         <Popover position="bottom" withArrow shadow="md" opened={opened} onChange={toggle}>
             <Popover.Target>
-                <ActionIcon data-item={testAttr}>
+                <ActionIcon data-item={testAttr} variant="transparent" color="gray">
                     <IconDotsVertical
                         onClick={
                             (e) => {
@@ -36,7 +36,7 @@ export function RemoveItemPopover(
                 </ActionIcon>
             </Popover.Target>
             <Popover.Dropdown p={8}>
-                <Group position="center">
+                <Group justify="center">
                     <Button
                         data-item={`${testAttr}_confirm`}
                         onClick={

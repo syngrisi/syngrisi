@@ -1,26 +1,26 @@
 /* eslint-disable max-len,react/no-danger */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 
+import '@mantine/core/styles.css';
 import {
     MantineProvider,
     Paper,
     Text,
     TypographyStylesProvider,
     Container,
-    MantineThemeOverride,
+    createTheme,
 } from '@mantine/core';
 
 import DemoNav from './stubDemoNav';
 import DemoColors from './stubDemoColors';
 
-const syngrisiTheme: MantineThemeOverride = {
+const syngrisiTheme = createTheme({
     colors: {
         // https://maketintsandshades.com/#06ba0e
         s_success: ['#9be39f', '#83dd87', '#6ad66e', '#51cf56', '#38c83e', '#1fc126', '#06ba0e', '#49ba4d', '#41a645', '#39913c'],
     },
-    colorScheme: 'light',
     // primaryColor: 'success',
 };
 
@@ -29,8 +29,7 @@ document.location.href = '/index2/';
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <BrowserRouter>
         <MantineProvider
-            withNormalizeCSS
-            withGlobalStyles
+            defaultColorScheme="light"
             theme={
                 syngrisiTheme
             }

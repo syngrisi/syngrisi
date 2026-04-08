@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types,no-await-in-loop */
 import * as mCore from '@mantine/core';
-import { Title, Text, Group, Stack, Button, Paper, Checkbox, useMantineTheme, Badge, Alert } from '@mantine/core';
+import { Title, Text, Group, Stack, Button, Paper, Checkbox, useMantineTheme, useComputedColorScheme, Badge, Alert } from '@mantine/core';
 import * as React from 'react';
 import { stringify } from '@shared/utils/queryParams';
 import { useForm } from '@mantine/form';
@@ -25,6 +25,7 @@ export default function Task({ item }: { item: ITask }) {
     const outputRef = useRef<HTMLTextAreaElement>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
     const theme = useMantineTheme();
+    const colorScheme = useComputedColorScheme();
 
     // Cleanup on unmount
     useEffect(() => {
@@ -204,13 +205,13 @@ export default function Task({ item }: { item: ITask }) {
 
     return (
         <Paper p={10}>
-            <Group position="apart" mb="sm">
+            <Group justify="space-between" mb="sm">
                 <Title order={3}>{item.label}</Title>
                 {getStatusBadge()}
             </Group>
             <Text size="sm" data-test="task-description">{item.description}</Text>
             {errorMessage && (
-                <Alert color="red" mt={10}>
+                <Alert c="red" mt={10}>
                     {errorMessage}
                 </Alert>
             )}
@@ -258,7 +259,7 @@ export default function Task({ item }: { item: ITask }) {
                             color: 'white',
                             fontSize: '1rem',
                             padding: '10px',
-                            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.dark[6],
+                            backgroundColor: colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.dark[6],
                         }
                     }
                     value={outputField}

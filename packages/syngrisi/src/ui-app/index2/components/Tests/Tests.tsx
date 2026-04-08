@@ -5,9 +5,9 @@ import {
     useMantineTheme,
     ActionIcon,
 } from '@mantine/core';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { useLocalStorage, useMediaQuery } from '@mantine/hooks';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { IconAdjustments, IconFilter } from '@tabler/icons-react';
 import RefreshActionIcon from '@index/components/Tests/Table/RefreshActionIcon';
 import useInfinityScroll from '@shared/hooks/useInfinityScroll';
@@ -70,7 +70,10 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                     aria-label="Table settings, sorting, and columns visibility"
                     color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-sorting"
-                    variant="subtle"
+                    variant={sortOpen ? 'light' : 'transparent'}
+                    style={{
+                        backgroundColor: sortOpen ? '#ebfbee' : 'transparent',
+                    }}
                     onClick={() => {
                         setIsFilterDrawerOpen(false);
                         setSortOpen((prev) => !prev);
@@ -87,7 +90,10 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                     aria-label="Filter the Table Data"
                     color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-filtering"
-                    variant="subtle"
+                    variant={isFilterDrawerOpen ? 'light' : 'transparent'}
+                    style={{
+                        backgroundColor: isFilterDrawerOpen ? '#ebfbee' : 'transparent',
+                    }}
                     onClick={() => {
                         setSortOpen(false);
                         setIsFilterDrawerOpen((prev) => !prev);
@@ -98,7 +104,7 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
                 47,
             );
         },
-        [],
+        [sortOpen, isFilterDrawerOpen, theme.colorScheme],
     );
 
     useEffect(
@@ -121,38 +127,25 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
         ],
     );
 
-    // Debounce refetch to prevent race conditions when filters change rapidly
-    const refetchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
+    // When filters change, force firstPageQuery refetch to get new timestamp,
+    // which cascades to infinityQuery via queryKey dependency.
     useEffect(
         function refetchData() {
-            // Clear any pending refetch
-            if (refetchTimeoutRef.current) {
-                clearTimeout(refetchTimeoutRef.current);
-            }
-
-            // Debounce the refetch by 100ms to prevent multiple rapid refetches
-            refetchTimeoutRef.current = setTimeout(() => {
-                refresh();
-            }, 100);
-
-            return () => {
-                if (refetchTimeoutRef.current) {
-                    clearTimeout(refetchTimeoutRef.current);
-                }
-            };
+            firstPageQuery.refetch();
         }, [
-            query.base_filter,
-            query.quick_filter,
-            query.filter,
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            JSON.stringify(query.base_filter),
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            JSON.stringify(query.quick_filter),
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            JSON.stringify(query.filter),
             query.app,
             query.sortBy,
-            refresh,
         ],
     );
 
     const filterWidth = isMobile ? '100%' : '420px';
-    const settingsWidth = '260px';
+    const settingsWidth = '300px';
 
     let tableWidth = '100%';
     if (isFilterDrawerOpen) {
@@ -162,7 +155,12 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
     }
 
     return (
-        <Group align="start" noWrap spacing={0} sx={{ width: '100%' }}>
+        <Group
+            align="start"
+            wrap="nowrap"
+            gap={0}
+            style={{ width: '100%' }}
+        >
             <TestsTable
                 updateToolbar={updateToolbar}
                 firstPageQuery={firstPageQuery}

@@ -4,7 +4,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { IFirstPagesQuery, IPagesQuery } from '@shared/interfaces/logQueries';
 import ILog from '@shared/interfaces/ILog';
-import { errorMsg } from '@shared/utils';
 import { GenericService } from '@shared/services';
 
 interface IIScrollParams {
@@ -67,14 +66,8 @@ export default function useInfinityScroll(
                 },
                 `firstPageQuery_${firstPageQueryOptions.join('_')}`
             ),
-            // enabled: false,
-            staleTime: 30 * 1000, // 30 seconds - data considered fresh for 30s, then can refetch
+            staleTime: 30 * 1000,
             refetchOnWindowFocus: false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
-            onSuccess: (result) => {
-            }
         },
     ) as IFirstPagesQuery<ILog>;
 
@@ -141,7 +134,7 @@ export default function useInfinityScroll(
                 serializedExtraOptions,
                 refreshNonce,
             ],
-            queryFn: ({ pageParam = 1 }) => GenericService.get(
+            queryFn: ({ pageParam }) => GenericService.get(
                 resourceName,
                 newRequestFilter,
                 {
@@ -153,52 +146,46 @@ export default function useInfinityScroll(
                 },
                 `infinity_pages_${resourceName}_${firstPageData.timestamp}`
             ),
+            initialPageParam: 1,
             getNextPageParam: (lastPage) => {
                 if (lastPage.page >= lastPage.totalPages) return undefined;
                 return lastPage.page + 1;
             },
             refetchOnWindowFocus: false,
             enabled: true,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
         },
     ) as IPagesQuery<ILog>;
 
     const newestItemsQuery = useQuery(
-        [
-            'logs_infinity_newest_pages',
-            resourceName,
-            firstPageData.newestItemsFilterValue,
-            refreshNonce,
-        ],
-        () => {
-            const beforeNewestItemsFilter = (newestItemsFilterKey && firstPageData.newestItemsFilterValue)
-                ? { [newestItemsFilterKey]: { $gt: firstPageData.newestItemsFilterValue } }
-                : {};
-
-            return GenericService.get(
-                resourceName,
-                {
-                    $and: [
-                        beforeNewestItemsFilter,
-                        baseFilterObj,
-                    ],
-                },
-                {
-                    limit: String(0),
-                },
-                'newestItemsQuery'
-            );
-        },
         {
+            queryKey: [
+                'logs_infinity_newest_pages',
+                resourceName,
+                firstPageData.newestItemsFilterValue,
+                refreshNonce,
+            ],
+            queryFn: () => {
+                const beforeNewestItemsFilter = (newestItemsFilterKey && firstPageData.newestItemsFilterValue)
+                    ? { [newestItemsFilterKey]: { $gt: firstPageData.newestItemsFilterValue } }
+                    : {};
+
+                return GenericService.get(
+                    resourceName,
+                    {
+                        $and: [
+                            beforeNewestItemsFilter,
+                            baseFilterObj,
+                        ],
+                    },
+                    {
+                        limit: String(0),
+                    },
+                    'newestItemsQuery'
+                );
+            },
             enabled: newestItemsEnabled && infinityQuery.data?.pages?.length! > 0,
             refetchOnWindowFocus: false,
-            // @ts-ignore
             refetchInterval: newestItemsEnabled ? 15000 : false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
         },
     );
 
