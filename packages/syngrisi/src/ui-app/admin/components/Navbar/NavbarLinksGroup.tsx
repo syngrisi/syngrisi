@@ -4,7 +4,7 @@ import {
     NavLink,
 } from '@mantine/core';
 import { TablerIcon } from '@tabler/icons-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 
 interface LinksGroupProps {
     icon: TablerIcon;

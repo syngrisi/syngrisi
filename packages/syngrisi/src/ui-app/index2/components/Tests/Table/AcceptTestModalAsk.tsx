@@ -17,8 +17,8 @@ export default function AcceptTestModalAsk({ opened, setOpened, selection, setSe
     const queryClient = useQueryClient();
 
     const mutationAcceptTest = useMutation(
-        (data: { id: string }) => TestsService.acceptTest(data),
         {
+            mutationFn: (data: { id: string }) => TestsService.acceptTest(data),
             onSuccess: async (resp: { resp: any, id: string }) => {
                 successMsg({ message: 'Test has been successfully accepted' });
                 await queryClient.invalidateQueries({ queryKey: ['preview_checks', resp.id] });

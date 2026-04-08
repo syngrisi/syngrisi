@@ -12,7 +12,7 @@ import {
     LoadingOverlay,
     Divider,
 } from '@mantine/core';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { useForm } from '@mantine/form';
 import { useDocumentTitle } from '@mantine/hooks';
 import { log } from '@shared/utils';

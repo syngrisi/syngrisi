@@ -38,13 +38,15 @@ export function AboutModal({ opened, setOpened }: { opened: boolean, setOpened: 
     const colorScheme = useComputedColorScheme();
 
     const { isLoading, data } = useQuery<SystemInfo>(
-        ['systemInfo'],
-        async () => {
-            const res = await fetch(`${config.baseUri}/v1/app/system-info`);
-            if (!res.ok) throw new Error(`[AboutModal] Failed to fetch system info: ${res.status}`);
-            return res.json();
-        },
-        { enabled: opened }
+        {
+            queryKey: ['systemInfo'],
+            queryFn: async () => {
+                const res = await fetch(`${config.baseUri}/v1/app/system-info`);
+                if (!res.ok) throw new Error(`[AboutModal] Failed to fetch system info: ${res.status}`);
+                return res.json();
+            },
+            enabled: opened,
+        }
     );
 
     const labelStyle: React.CSSProperties = {

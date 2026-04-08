@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { errorMsg } from '@shared/utils';
 import { GenericService } from '@shared/services';
 
 interface IIScrollParams {
@@ -26,33 +25,30 @@ export default function useInfinityScrollRelatedChecks(
 ) {
 
     const infinityQuery: any = useInfiniteQuery(
-        [
-            'related_checks_infinity_pages',
-            // resourceName,
-            ...infinityUniqueKey,
-            filterObj
-        ],
-        ({ pageParam = 1 }) => GenericService.get(
-            resourceName,
-            filterObj,
-            {
-                limit: String(infinityScrollLimit),
-                page: pageParam,
-                sortBy,
-                populate: 'suite,app,test,baselineId,actualSnapshotId,diffId',
-            },
-            'relatedChecksInfinityQuery'
-        ),
         {
+            queryKey: [
+                'related_checks_infinity_pages',
+                ...infinityUniqueKey,
+                filterObj
+            ],
+            queryFn: ({ pageParam }) => GenericService.get(
+                resourceName,
+                filterObj,
+                {
+                    limit: String(infinityScrollLimit),
+                    page: pageParam,
+                    sortBy,
+                    populate: 'suite,app,test,baselineId,actualSnapshotId,diffId',
+                },
+                'relatedChecksInfinityQuery'
+            ),
+            initialPageParam: 1,
             getNextPageParam: (lastPage) => {
                 if (lastPage.page >= lastPage.totalPages) return undefined;
                 return lastPage.page + 1;
             },
             refetchOnWindowFocus: false,
             enabled: filterObj !== null,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
         },
     ) as any;
 

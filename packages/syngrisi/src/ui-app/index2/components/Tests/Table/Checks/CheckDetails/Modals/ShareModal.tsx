@@ -22,43 +22,37 @@ export function ShareModal({ opened, onClose, checkId }: ShareModalProps) {
     const queryClient = useQueryClient();
 
     // Query existing share tokens
-    const tokensQuery = useQuery(
-        ['shareTokens', checkId],
-        async () => ShareService.getShareTokens(checkId),
-        {
-            enabled: opened && !!checkId,
-        },
-    );
+    const tokensQuery = useQuery({
+        queryKey: ['shareTokens', checkId],
+        queryFn: async () => ShareService.getShareTokens(checkId),
+        enabled: opened && !!checkId,
+    });
 
     // Create share mutation
-    const createShareMutation = useMutation(
-        async () => ShareService.createShareToken(checkId),
-        {
-            onSuccess: (data) => {
-                const fullUrl = `${window.location.origin}${data.shareUrl}`;
-                setShareUrl(fullUrl);
-                queryClient.invalidateQueries(['shareTokens', checkId]);
-                successMsg({ message: 'Share link created' });
-            },
-            onError: () => {
-                errorMsg({ error: 'Failed to create share link' });
-            },
+    const createShareMutation = useMutation({
+        mutationFn: async () => ShareService.createShareToken(checkId),
+        onSuccess: (data) => {
+            const fullUrl = `${window.location.origin}${data.shareUrl}`;
+            setShareUrl(fullUrl);
+            queryClient.invalidateQueries({ queryKey: ['shareTokens', checkId] });
+            successMsg({ message: 'Share link created' });
         },
-    );
+        onError: () => {
+            errorMsg({ error: 'Failed to create share link' });
+        },
+    });
 
     // Revoke mutation
-    const revokeMutation = useMutation(
-        async (tokenId: string) => ShareService.revokeShareToken(tokenId),
-        {
-            onSuccess: () => {
-                queryClient.invalidateQueries(['shareTokens', checkId]);
-                successMsg({ message: 'Share link revoked' });
-            },
-            onError: () => {
-                errorMsg({ error: 'Failed to revoke share link' });
-            },
+    const revokeMutation = useMutation({
+        mutationFn: async (tokenId: string) => ShareService.revokeShareToken(tokenId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['shareTokens', checkId] });
+            successMsg({ message: 'Share link revoked' });
         },
-    );
+        onError: () => {
+            errorMsg({ error: 'Failed to revoke share link' });
+        },
+    });
 
     const handleCopy = () => {
         navigator.clipboard.writeText(shareUrl);
@@ -105,7 +99,7 @@ export function ShareModal({ opened, onClose, checkId }: ShareModalProps) {
                     <Button
                         leftIcon={<IconShare size={16} />}
                         onClick={handleCreateShare}
-                        loading={createShareMutation.isLoading}
+                        loading={createShareMutation.isPending}
                         data-test="create-share-button"
                         color="green"
                         fullWidth
@@ -134,7 +128,7 @@ export function ShareModal({ opened, onClose, checkId }: ShareModalProps) {
                                     color="red"
                                     variant="subtle"
                                     onClick={() => revokeMutation.mutate(token._id)}
-                                    loading={revokeMutation.isLoading}
+                                    loading={revokeMutation.isPending}
                                     data-test={`revoke-token-${token._id}`}
                                 >
                                     <IconTrash size={16} />

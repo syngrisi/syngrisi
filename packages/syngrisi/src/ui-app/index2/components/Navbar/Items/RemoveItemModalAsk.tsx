@@ -24,8 +24,8 @@ export default function RemoveItemModalAsk({ opened, setOpened, infinityQuery, i
     const queryClient = useQueryClient();
 
     const removingMutation = useMutation(
-        (data: { id: string }) => servicesMap[type].remove(data),
         {
+            mutationFn: (data: { id: string }) => servicesMap[type].remove(data),
             onSuccess: async () => {
                 setQuery({ base_filter: undefined });
                 successMsg({ message: `${type} has been successfully removed` });

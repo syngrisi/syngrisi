@@ -28,33 +28,30 @@ export const Email = {
             ...rest
         }: IDuplicationFreeEmail,
     ) {
-        const useEmailCheckQuery = () => useQuery(
-            ['userByEmail', form.values.username],
-            // eslint-disable-next-line arrow-body-style
-            async () => {
-                return GenericService.get('users', { username: form.values.username });
-            },
-            {
-                enabled: !!form.values.username && (/^\S+@\S+$/.test(form.values.username)),
-                refetchOnWindowFocus: false,
-                onSuccess: (data) => {
-                    const { results } = data;
-                    if ((results.length > 0)) {
-                        setEmailError('user with this email already exists');
-                        if (setErrorOnRuntime) form.setFieldError('username', 'user with this email already exists');
-                        return;
-                    }
+        const userByEmailQuery = useQuery({
+            queryKey: ['userByEmail', form.values.username],
+            queryFn: async () => GenericService.get('users', { username: form.values.username }),
+            enabled: !!form.values.username && (/^\S+@\S+$/.test(form.values.username)),
+            refetchOnWindowFocus: false,
+        });
+
+        useEffect(() => {
+            if (userByEmailQuery.isSuccess && userByEmailQuery.data) {
+                const { results } = userByEmailQuery.data;
+                if (results.length > 0) {
+                    setEmailError('user with this email already exists');
+                    if (setErrorOnRuntime) form.setFieldError('username', 'user with this email already exists');
+                } else {
                     setEmailError(null);
                     if (setErrorOnRuntime) form.setFieldError('username', null);
-                },
-                onError: () => {
-                    setEmailError('cannot check the field, connection error');
-                    if (setErrorOnRuntime) form.setFieldError('username', 'cannot check the field, connection error');
-                },
-            },
-        );
+                }
+            }
+            if (userByEmailQuery.isError) {
+                setEmailError('cannot check the field, connection error');
+                if (setErrorOnRuntime) form.setFieldError('username', 'cannot check the field, connection error');
+            }
+        }, [userByEmailQuery.data, userByEmailQuery.isError]);
 
-        const userByEmailQuery = useEmailCheckQuery();
         useEffect(() => {
             setEmailIsFetchingStatus(userByEmailQuery.isFetching);
         }, [userByEmailQuery.isFetching]);
