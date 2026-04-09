@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line */
 import * as React from 'react';
 import { Box, useMantineTheme, useComputedColorScheme, Text, Stack } from '@mantine/core';
-import { IconThumbUp, IconThumbUpFilled } from '@tabler/icons-react';
+import { IconThumbUp } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router';
 import ActionPopoverIcon from '@shared/components/ActionPopoverIcon';
@@ -170,9 +170,25 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
             icon={
                 iconType === 'fill'
                     ? (
-                        <IconThumbUpFilled size={size} data-test-icon-type="fill" />
+                        <IconThumbUp
+                            size={Math.max(size - 1, 16)}
+                            stroke={1.35}
+                            fill="currentColor"
+                            data-test-icon-type="fill"
+                            style={{ display: 'block', transform: 'translateY(0.5px)' }}
+                        />
                     )
-                    : (<><IconThumbUp size={size} data-test-icon-type="outline" />{notAcceptedIcon}</>)
+                    : (
+                        <>
+                            <IconThumbUp
+                                size={size}
+                                stroke={1.35}
+                                data-test-icon-type="outline"
+                                style={{ display: 'block', transform: 'translateY(0.5px)' }}
+                            />
+                            {notAcceptedIcon}
+                        </>
+                    )
             }
             action={handleAcceptCheckClick}
             title={tooltipLabel}
