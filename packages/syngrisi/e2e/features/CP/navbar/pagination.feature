@@ -57,7 +57,7 @@ Feature: Pagination
 
     When I go to "main" page
     When I wait 10 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
-    When I wait 10 seconds for the element with locator "select[data-test='navbar-group-by']" to be visible
+    When I wait 10 seconds for the element with locator "input[data-test='navbar-group-by']" to be visible
     When I select the option with the text "Suites" for element "select[data-test='navbar-group-by']"
     # Wait for initial load with polling
     Then the element "[data-test*='navbar_item_'][data-item-name*='SuiteName-Pagination-2-']" should have exactly 20 items within 15 seconds
