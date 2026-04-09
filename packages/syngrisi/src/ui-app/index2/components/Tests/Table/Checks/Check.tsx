@@ -173,7 +173,8 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             shadow="0"
                         >
                             <Paper
-                                p="sm"
+                                py={10}
+                                px={12}
                                 ml={0}
                                 mr={0}
                                 shadow="0"
@@ -191,12 +192,12 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                 >
                                     <Text
                                         lineClamp={1}
-                                        fw={600}
-                                        fz={13}
+                                        fw={500}
+                                        fz={12}
                                         style={{
-                                            lineHeight: '18px',
-                                            letterSpacing: '-0.01em',
-                                            fontFamily: '"Roboto","Arial",sans-serif',
+                                            lineHeight: '16px',
+                                            letterSpacing: '-0.005em',
+                                            fontFamily: '"Roboto","Helvetica Neue","Arial",sans-serif',
                                         }}
                                         data-table-check-name={check.name}
                                     >
@@ -245,21 +246,21 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             </Card.Section>
 
                             {/* CHECK TOOLBAR */}
-                            <Group justify="space-between" pl="sm" pr="sm" mt={6} mb={8} gap={4} align="center" wrap="nowrap">
-                                <Status check={check} variant="filled" />
+                            <Group justify="space-between" px={12} mt={4} mb={6} gap={6} align="center" wrap="nowrap">
+                                <Status check={check} variant="filled" size="xs" />
 
                                 <ViewPortLabel
                                     check={check}
                                     sizes={sizes}
                                     color="blue"
-                                    size="md"
-                                    fontSize="10px"
+                                    size="xs"
+                                    fontSize="9px"
                                     checksViewSize={checksViewSize}
                                     displayed={(checksViewSize !== 'small')}
                                 />
-                                <Group gap={8} justify="flex-end" wrap="nowrap">
+                                <Group gap={6} justify="flex-end" wrap="nowrap">
                                     <AcceptButton
-                                        size={22}
+                                        size={24}
                                         check={check}
                                         testUpdateQuery={testUpdateQuery}
                                         checksQuery={checksQuery}

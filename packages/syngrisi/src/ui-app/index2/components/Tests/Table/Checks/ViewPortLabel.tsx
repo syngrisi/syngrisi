@@ -80,6 +80,9 @@ export function ViewPortLabel(
                 title="Viewport size"
                 style={{
                     fontSize: sizes[checksViewSize]?.viewportFontSize || fontSize,
+                    fontWeight: 600,
+                    letterSpacing: '0.01em',
+                    paddingInline: 8,
                     display: displayed ? 'block' : 'none',
                 }}
             >

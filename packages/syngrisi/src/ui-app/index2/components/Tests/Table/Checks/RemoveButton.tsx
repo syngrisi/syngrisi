@@ -63,14 +63,15 @@ export function RemoveButton({ testUpdateQuery, check, closeHandler, initCheck, 
         <ActionPopoverIcon
             testAttr="check-remove-icon"
             variant="subtle"
-            icon={<IconTrash stroke={1} size={size} />}
+            icon={<IconTrash stroke={1} size={size} style={{ display: 'block', opacity: 0.88, transform: 'translateY(0.5px)' }} />}
             action={handleRemoveCheckClick}
             title="Delete check"
             testAttrName={check?.name}
             loading={mutationRemoveCheck.isPending}
             confirmLabel="Delete"
             size={size}
-            color="red"
+            color="pink"
+            buttonColor="red"
         />
     );
 }
