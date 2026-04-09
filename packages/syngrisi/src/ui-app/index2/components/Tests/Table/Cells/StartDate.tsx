@@ -22,7 +22,13 @@ export function StartDate({ type, test, itemValue }: Props) {
             <Tooltip label={itemValue} withinPortal>
                 <Text
                     lineClamp={1}
-                    style={{ wordBreak: 'break-all' }}
+                    style={{
+                        wordBreak: 'break-all',
+                        fontSize: '13px',
+                        lineHeight: '18px',
+                        letterSpacing: '-0.01em',
+                        fontFamily: '"Roboto","Arial",sans-serif',
+                    }}
                 >
                     {
                         dateFns.format(dateFns.parseISO(itemValue), 'yyyy-MM-dd HH:mm:ss')

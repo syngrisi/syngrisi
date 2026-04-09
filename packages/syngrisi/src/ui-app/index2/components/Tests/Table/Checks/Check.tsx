@@ -158,18 +158,19 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                         <Card
                             data-check={check.name}
                             onMouseEnter={onHoverPreload}
+                            radius="sm"
                             style={{
                                 width: `${imageWeight}%`,
-                                '&:hover': {
-                                    boxShadow: '0 1px 3px rgb(0 0 0 / 15%), rgb(0 0 0 / 15%) 0px 10px 15px -5px, rgb(0 0 0 / 14%) 0px 7px 7px -5px',
-                                },
+                                overflow: 'hidden',
+                                backgroundColor: colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
+                                transition: 'background-color 140ms ease',
                             }}
                             m={1}
                             pt={0}
                             pb={0}
                             pl={0}
                             pr={0}
-                            shadow="sm"
+                            shadow="0"
                         >
                             <Paper
                                 p="sm"
@@ -177,9 +178,9 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                 mr={0}
                                 shadow="0"
                                 style={{
-                                    backgroundColor: (colorScheme === 'dark')
-                                        ? theme.colors.dark[8]
-                                        : theme.colors.gray[2],
+                                    backgroundColor: colorScheme === 'dark'
+                                        ? theme.colors.dark[6]
+                                        : theme.colors.gray[0],
                                 }}
                                 radius={0}
                             >
@@ -190,14 +191,20 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                 >
                                     <Text
                                         lineClamp={1}
-                                        fz={14}
+                                        fw={600}
+                                        fz={13}
+                                        style={{
+                                            lineHeight: '18px',
+                                            letterSpacing: '-0.01em',
+                                            fontFamily: '"Roboto","Arial",sans-serif',
+                                        }}
                                         data-table-check-name={check.name}
                                     >
                                         {check.name}
                                     </Text>
                                 </Tooltip>
                             </Paper>
-                            <Card.Section m={2}>
+                            <Card.Section m={0}>
                                 <Tooltip
                                     openDelay={300}
                                     multiline
@@ -238,7 +245,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             </Card.Section>
 
                             {/* CHECK TOOLBAR */}
-                            <Group justify="space-between" pl="sm" pr="sm" mt="xs" mb={8} gap={4} align="center" wrap="nowrap">
+                            <Group justify="space-between" pl="sm" pr="sm" mt={6} mb={8} gap={4} align="center" wrap="nowrap">
                                 <Status check={check} variant="filled" />
 
                                 <ViewPortLabel
