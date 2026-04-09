@@ -202,8 +202,9 @@ export function MatchTypeSelector({
                         loading={loading}
                         variant="transparent"
                         color="gray"
+                        size={32}
                     >
-                        <IconAdjustments size={24} stroke={1} />
+                        <IconAdjustments size={20} stroke={1} />
                     </ActionIcon>
                 </Tooltip>
             </Menu.Target>

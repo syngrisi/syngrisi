@@ -13,11 +13,12 @@ interface Props {
     testUpdateQuery: any,
     closeHandler?: any,
     size?: number,
+    buttonSize?: number,
     check: any
     initCheck?: any
 }
 
-export function RemoveButton({ testUpdateQuery, check, closeHandler, initCheck, size = 24 }: Props) {
+export function RemoveButton({ testUpdateQuery, check, closeHandler, initCheck, size = 24, buttonSize }: Props) {
     const queryClient = useQueryClient();
     const [searchParams] = useSearchParams();
     const apikey = searchParams.get('apikey') || undefined;
@@ -69,7 +70,7 @@ export function RemoveButton({ testUpdateQuery, check, closeHandler, initCheck, 
             testAttrName={check?.name}
             loading={mutationRemoveCheck.isPending}
             confirmLabel="Delete"
-            size={size}
+            size={buttonSize ?? size}
             color="pink"
             buttonColor="red"
         />
