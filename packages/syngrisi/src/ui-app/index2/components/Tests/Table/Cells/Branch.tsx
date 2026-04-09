@@ -21,10 +21,18 @@ export function Branch({ type, test, itemValue }: Props) {
                     size="sm"
                     color="dark"
                     leftSection={<IconGitBranch style={{ marginTop: '4' }} size={11} />}
+                    styles={{ label: { fontSize: '12px', fontWeight: 600, lineHeight: '16px', letterSpacing: '0.01em' } }}
                 >
                     <Text
                         lineClamp={1}
-                        style={{ wordBreak: 'break-all', maxWidth: 100 }}
+                        style={{
+                            wordBreak: 'break-all',
+                            maxWidth: 100,
+                            fontSize: '12px',
+                            lineHeight: '16px',
+                            letterSpacing: '-0.01em',
+                            fontFamily: '"Roboto","Arial",sans-serif',
+                        }}
                     >
                         {itemValue}
                     </Text>

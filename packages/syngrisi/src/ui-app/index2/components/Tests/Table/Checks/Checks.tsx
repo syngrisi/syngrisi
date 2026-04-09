@@ -97,7 +97,14 @@ export function Checks({ item, testUpdateQuery }: Props) {
                                         </Text>
                                     )
                                     : (
-                                        <ChecksContainer p={20} align="start" data-test-checks-ready="true">
+                                        <ChecksContainer
+                                            pt={6}
+                                            pb={10}
+                                            px={12}
+                                            gap="md"
+                                            align="start"
+                                            data-test-checks-ready="true"
+                                        >
                                             {
                                                 checksQuery.data.results.map(
                                                     (check: any) => (

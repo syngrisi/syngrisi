@@ -149,7 +149,12 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
                     {/*    {headerLinks} */}
                     {/* </Group> */}
                     <Group gap="sm">
-                        <Text size="sm">Project:</Text>
+                        <Text
+                            fw={500}
+                            style={{ fontSize: '13px', lineHeight: '18px', letterSpacing: '-0.01em' }}
+                        >
+                            Project:
+                        </Text>
                         <SafeSelect
                             searchable
                             clearable
@@ -164,7 +169,12 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
                                 borderColor: colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4],
                             }}
                             styles={{
-                                input: { paddingRight: '20px' },
+                                input: {
+                                    paddingRight: '20px',
+                                    fontSize: '13px',
+                                    lineHeight: '18px',
+                                    letterSpacing: '-0.01em',
+                                },
                             }}
                             value={currentProjectLS || ''}
                             onChange={projectSelectHandler}
@@ -181,7 +191,7 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
                         <Group justify="space-between" style={{ minWidth: 200 }}>
                             <Group>
                                 <IconSearch size={16} stroke={1} />
-                                <Text c="dimmed" fw={400}>Search</Text>
+                                <Text c="dimmed" fw={500} style={{ fontSize: '13px', letterSpacing: '-0.01em' }}>Search</Text>
                             </Group>
 
                             <Kbd

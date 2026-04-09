@@ -27,6 +27,10 @@ const chipStyles: any = {
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
+        fontSize: '12px',
+        fontWeight: 500,
+        lineHeight: '16px',
+        letterSpacing: '0.01em',
     },
 };
 
@@ -34,6 +38,17 @@ const chipsRowStyle: React.CSSProperties = {
     display: 'flex',
     flexWrap: 'wrap',
     gap: 4,
+};
+
+const sectionLabelProps = {
+    fz: 9,
+    c: 'gray.6',
+    fw: 700,
+    tt: 'uppercase' as const,
+    style: {
+        letterSpacing: '0.08em',
+        lineHeight: '14px',
+    },
 };
 
 export function QuickFilter() {
@@ -140,7 +155,13 @@ export function QuickFilter() {
                     .syngrisi-quick-filter { display: none; }
                 }
             `}</style>
-            <Text fz={14}>Quick Filter: </Text>
+            <Text
+                fz={13}
+                fw={500}
+                style={{ lineHeight: '18px', letterSpacing: '-0.01em' }}
+            >
+                Quick Filter:
+            </Text>
             <TextInput
                 value={quickFilter}
                 data-test="table-quick-filter"
@@ -165,7 +186,12 @@ export function QuickFilter() {
                     )
                 }
                 styles={{
-                    input: { width: '300px' },
+                    input: {
+                        width: '300px',
+                        fontSize: '13px',
+                        fontWeight: 400,
+                        letterSpacing: '-0.01em',
+                    },
                 }}
             />
             <div ref={ref}>
@@ -202,7 +228,7 @@ export function QuickFilter() {
                             style={{ height: '45vh' }}
                         >
                             <Stack gap={8} justify="flex-start">
-                                <Text fz={10} c="gray.6" fw={600} tt="uppercase">Browsers:</Text>
+                                <Text {...sectionLabelProps}>Browsers:</Text>
                                 <Chip.Group
                                     gap={4}
                                     multiple
@@ -224,7 +250,7 @@ export function QuickFilter() {
                                     </Box>
                                 </Chip.Group>
 
-                                <Text fz={10} c="gray.6" fw={600} tt="uppercase">Platforms:</Text>
+                                <Text {...sectionLabelProps}>Platforms:</Text>
                                 <Chip.Group
                                     gap={4}
                                     multiple
@@ -246,7 +272,7 @@ export function QuickFilter() {
                                     </Box>
                                 </Chip.Group>
 
-                                <Text fz={10} c="gray.6" fw={600} tt="uppercase">Viewports:</Text>
+                                <Text {...sectionLabelProps}>Viewports:</Text>
                                 <Chip.Group
                                     value={viewportChipsData}
                                     onChange={setViewportChipsData}
@@ -268,7 +294,7 @@ export function QuickFilter() {
                                     </Box>
                                 </Chip.Group>
 
-                                <Text fz={10} c="gray.6" fw={600} tt="uppercase">Status:</Text>
+                                <Text {...sectionLabelProps}>Status:</Text>
                                 <Chip.Group
                                     value={statusesChipsData}
                                     onChange={setStatusesChipsData}
@@ -290,7 +316,7 @@ export function QuickFilter() {
                                     </Box>
                                 </Chip.Group>
 
-                                <Text fz={10} c="gray.6" fw={600} tt="uppercase">Accepted:</Text>
+                                <Text {...sectionLabelProps}>Accepted:</Text>
                                 <Chip.Group
                                     value={acceptedStatusChipsData}
                                     onChange={setAcceptedStatusChipsData}
@@ -316,8 +342,20 @@ export function QuickFilter() {
                         </ScrollArea>
                         <Divider />
                         <Group justify="center" pt={16}>
-                            <Button onClick={resetQuickFilter}>Reset</Button>
-                            <Button onClick={close}>Close</Button>
+                            <Button
+                                size="xs"
+                                styles={{ label: { fontSize: '12px', fontWeight: 600, letterSpacing: '0.01em' } }}
+                                onClick={resetQuickFilter}
+                            >
+                                Reset
+                            </Button>
+                            <Button
+                                size="xs"
+                                styles={{ label: { fontSize: '12px', fontWeight: 600, letterSpacing: '0.01em' } }}
+                                onClick={close}
+                            >
+                                Close
+                            </Button>
                         </Group>
                     </Popover.Dropdown>
                 </Popover>
