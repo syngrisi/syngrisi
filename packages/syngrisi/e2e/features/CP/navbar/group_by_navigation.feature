@@ -11,7 +11,7 @@ Feature: Group by Navigation
         When I go to "main" page
         When I wait 30 seconds for the element with locator "[data-test='bread-crumbs']" to be visible
         # runs
-        When I wait 30 seconds for the element with locator "select[data-test='navbar-group-by']" to be visible
+        When I wait 30 seconds for the element with locator "input[data-test='navbar-group-by']" to be visible
         When I select the option with the text "<groupBy>" for element "select[data-test='navbar-group-by']"
         Then the element "(//*[@data-test='bread-crumbs']//a)[1]" matches the text "Test Results"
         Then the element with locator "(//*[@data-test='bread-crumbs']//a)[1]" should have has attribute "href=/"

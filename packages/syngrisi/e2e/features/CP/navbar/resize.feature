@@ -7,7 +7,7 @@ Feature: Navbar Resize
     When I go to "main" page
 
   Scenario: Resize navbar via drag handle
-    When I wait 10 seconds for the element with locator "select[data-test='navbar-group-by']" to be visible
+    When I wait 10 seconds for the element with locator "input[data-test='navbar-group-by']" to be visible
     Then the element with locator "[data-test='navbar-resize-handle']" should be visible
     Then the css attribute "width" from element "[data-test='navbar-resizable-root']" is "350px"
 

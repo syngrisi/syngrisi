@@ -874,18 +874,38 @@ When(
 
     // Wait for element to be visible and attached
     await targetLocator.waitFor({ state: 'visible', timeout: 30000 });
-    await targetLocator.waitFor({ state: 'attached', timeout: 15000 });
 
-    // Try selectOption first, if it fails, try clicking the select and then the option
-    try {
-      await targetLocator.selectOption({ label: renderedOptionText });
-    } catch (error) {
-      // If selectOption fails, try clicking the select and then clicking the option div
-      await targetLocator.click();
-      await page.waitForTimeout(500); // Wait for dropdown to open
-      const optionLocator = page.locator(`div:has-text('${renderedOptionText}')`).first();
-      await optionLocator.waitFor({ state: 'visible', timeout: 5000 });
-      await optionLocator.click();
+    // Handle native <select> (including Mantine's hidden companion select)
+    // and Mantine Combobox input
+    const tagName = await targetLocator.evaluate(el => el.tagName.toLowerCase());
+
+    if (tagName === 'select') {
+      // Try native selectOption first
+      try {
+        await targetLocator.selectOption({ label: renderedOptionText });
+        // Dispatch change event for React synthetic event system
+        await targetLocator.dispatchEvent('change');
+      } catch {
+        // selectOption may fail on hidden Mantine companion select.
+        // Find the sibling Combobox input and use that instead.
+        const comboboxInput = page.locator(
+          `input[role="combobox"][data-test="${await targetLocator.getAttribute('data-test')}"], ` +
+          `input[role="combobox"][aria-label="${await targetLocator.getAttribute('aria-label') || ''}"]`
+        ).first();
+        if (await comboboxInput.count() > 0) {
+          await comboboxInput.click();
+          await page.waitForTimeout(300);
+          await page.locator('[role="option"]').filter({ hasText: renderedOptionText }).first().click({ timeout: 5000 });
+        }
+      }
+    } else {
+      // Mantine Combobox input or wrapper — click to open, select option
+      const clickTarget = (tagName === 'input')
+        ? targetLocator
+        : targetLocator.locator('input[role="combobox"]').first().or(targetLocator);
+      await clickTarget.click();
+      await page.waitForTimeout(300);
+      await page.locator('[role="option"]').filter({ hasText: renderedOptionText }).first().click({ timeout: 5000 });
     }
 
     // Best-effort wait for the selection to reflect the requested label
