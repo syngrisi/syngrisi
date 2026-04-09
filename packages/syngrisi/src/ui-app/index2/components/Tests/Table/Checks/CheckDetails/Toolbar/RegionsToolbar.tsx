@@ -201,9 +201,10 @@ export function RegionsToolbar({
                     disabled={!visibleRegionRemoveButton}
                     variant="transparent"
                     color="gray"
+                    size={32}
                     onClick={() => mainView.removeActiveIgnoreRegions()}
                 >
-                    <IconShapeOff size={24} stroke={1} />
+                    <IconShapeOff size={20} stroke={1} />
                 </ActionIcon>
             </Tooltip>
 
@@ -236,13 +237,14 @@ export function RegionsToolbar({
                         disabled={(view === 'slider') || !baselineId}
                         variant="transparent"
                         color="gray"
+                        size={32}
                         onClick={() => {
                             // @ts-ignore - Sync window.mainView for E2E tests before calling method
                             if (mainView) window.mainView = mainView;
                             mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 });
                         }}
                     >
-                        <IconShape size={24} stroke={1} />
+                        <IconShape size={20} stroke={1} />
                     </ActionIcon>
                 </div>
             </Tooltip>
@@ -285,9 +287,10 @@ export function RegionsToolbar({
                         disabled={(view === 'slider') || !baselineId || !hasDiff}
                         variant="transparent"
                         color="gray"
+                        size={32}
                         onClick={handleAutoRegion}
                     >
-                        <IconWand size={24} stroke={1} />
+                        <IconWand size={20} stroke={1} />
                     </ActionIcon>
                 </div>
             </Tooltip>
@@ -330,9 +333,10 @@ export function RegionsToolbar({
                         disabled={(view === 'slider') || !baselineId || hasBoundRegion}
                         variant="transparent"
                         color="gray"
+                        size={32}
                         onClick={() => mainView.addBoundingRegion('bound_rect')}
                     >
-                        <IconBoxMargin size={24} stroke={1} />
+                        <IconBoxMargin size={20} stroke={1} />
                     </ActionIcon>
                 </div>
             </Tooltip>
@@ -359,11 +363,12 @@ export function RegionsToolbar({
                     disabled={!hasAnyRegion && !isDirty}
                     variant="transparent"
                     color="gray"
+                    size={32}
                     onClick={() => {
                         saveRegionsAndSyncCache();
                     }}
                 >
-                    <IconDeviceFloppy size={24} stroke={1} />
+                    <IconDeviceFloppy size={20} stroke={1} />
                 </ActionIcon>
             </Tooltip>
 

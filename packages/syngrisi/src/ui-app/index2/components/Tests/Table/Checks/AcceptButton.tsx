@@ -15,10 +15,29 @@ interface Props {
     initCheck?: any
     testUpdateQuery: any
     size?: number
+    buttonSize?: number
     checksQuery: any
 }
 
-export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, size = 19 }: Props) {
+const getEntityId = (value: any) => value?._id || value?.id || value;
+const hasSnapshotFilename = (value: any) => Boolean(value && typeof value === 'object' && value.filename);
+
+const mergeSnapshotRef = (currentValue: any, nextValue: any, fallbackValue?: any) => {
+    if (hasSnapshotFilename(nextValue)) return nextValue;
+
+    const nextId = getEntityId(nextValue);
+    if (!nextId) return fallbackValue || currentValue || nextValue;
+
+    const currentId = getEntityId(currentValue);
+    if (currentId && String(currentId) === String(nextId)) return currentValue;
+
+    const fallbackId = getEntityId(fallbackValue);
+    if (fallbackId && String(fallbackId) === String(nextId)) return fallbackValue;
+
+    return nextValue;
+};
+
+export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, size = 19, buttonSize }: Props) {
     const queryClient = useQueryClient();
     const theme = useMantineTheme();
     const colorScheme = useComputedColorScheme();
@@ -34,6 +53,13 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
     const iconType = isCurrentlyAccepted ? 'fill'
                    : wasAcceptedEarlier ? 'outline'
                    : 'outline';
+
+    const activeLikeFillColor = colorScheme === 'dark'
+        ? theme.colors.green[4]
+        : theme.colors.green[3];
+    const activeLikeStrokeColor = colorScheme === 'dark'
+        ? theme.colors.green[8]
+        : theme.colors.green[8];
 
     // eslint-disable-next-line no-nested-ternary
     const likeIconColor = (isCurrentlyAccepted || wasAcceptedEarlier)
@@ -52,6 +78,9 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
                 const nextCheck = {
                     ...check,
                     ...updatedCheck,
+                    baselineId: mergeSnapshotRef(check.baselineId, updatedCheck?.baselineId, check.actualSnapshotId),
+                    actualSnapshotId: mergeSnapshotRef(check.actualSnapshotId, updatedCheck?.actualSnapshotId),
+                    diffId: mergeSnapshotRef(check.diffId, updatedCheck?.diffId),
                     markedAs: 'accepted',
                     isCurrentlyAccepted: true,
                     wasAcceptedEarlier: false,
@@ -159,6 +188,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
         <ActionPopoverIcon
             iconColor={likeIconColor}
             buttonColor="green"
+            size={buttonSize}
             style={{
                 cursor: isCurrentlyAccepted ? 'default' : 'pointer',
                 '&:hover': { backgroundColor: isCurrentlyAccepted ? 'rgba(255, 255, 255, 0);' : '' },
@@ -171,11 +201,12 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
                 iconType === 'fill'
                     ? (
                         <IconThumbUp
-                            size={Math.max(size - 1, 16)}
-                            stroke={1.35}
-                            fill="currentColor"
+                            size={Math.max(size + 1, 17)}
+                            stroke={1.3}
+                            color={activeLikeStrokeColor}
+                            fill={activeLikeFillColor}
                             data-test-icon-type="fill"
-                            style={{ display: 'block', transform: 'translateY(0.5px)' }}
+                            style={{ display: 'block', transform: 'translateY(-0.5px)', opacity: 0.96 }}
                         />
                     )
                     : (
@@ -194,7 +225,6 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
             title={tooltipLabel}
             loading={mutationAcceptCheck.isPending}
             confirmLabel="Accept"
-            size={size}
         />
     );
 }

@@ -138,13 +138,12 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
         <Modal
             className="modal"
             opened={checkModalOpened}
-            centered
             size="calc(100vw - 15px)"
             onClose={closeHandler}
-            style={{ marginTop: 43 }}
             styles={{
                 inner: {
-                    padding: '78px 7px 48px',
+                    padding: '8px 7px 48px',
+                    alignItems: 'flex-start',
                 },
                 title: { width: '100%', paddingRight: 35 },
                 content: {

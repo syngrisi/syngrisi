@@ -43,6 +43,7 @@ export function HighlightButton({ mainView, disabled = false }: Props) {
                     loading={loadHighlights}
                     variant="transparent"
                     color="gray"
+                    size={32}
                     onClick={async () => {
                         setLoadHighlights(() => true);
                         const { groups, diffImageData } = await highlightDiff(mainView, highlightsGroups, imageData);
@@ -51,7 +52,7 @@ export function HighlightButton({ mainView, disabled = false }: Props) {
                         setLoadHighlights(() => false);
                     }}
                 >
-                    <IconBulb size={24} stroke={1} />
+                    <IconBulb size={20} stroke={1} />
                 </ActionIcon>
             </div>
         </Tooltip>
