@@ -30,18 +30,22 @@ export function Viewport({ type, test }: Props) {
                 multiline
             >
                 <Badge
-                    size="md"
+                    size="sm"
                     color="blue"
                     variant="light"
                     styles={{
                         root: {
                             borderRadius: '32px',
-                            paddingLeft: '10.6667px',
-                            paddingRight: '10.6667px',
+                            paddingLeft: '9px',
+                            paddingRight: '9px',
                         },
                         label: {
                             overflow: 'visible',
                             whiteSpace: 'nowrap',
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            lineHeight: '16px',
+                            letterSpacing: '0.01em',
                         },
                     }}
                 >

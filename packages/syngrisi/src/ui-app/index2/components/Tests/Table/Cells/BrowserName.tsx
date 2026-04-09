@@ -21,7 +21,13 @@ export function BrowserName({ type, test, itemValue }: Props) {
                     <BrowserIcon size={24} browser={itemValue} />
                     <Text
                         lineClamp={1}
-                        style={{ wordBreak: 'break-all' }}
+                        style={{
+                            wordBreak: 'break-all',
+                            fontSize: '13px',
+                            lineHeight: '18px',
+                            letterSpacing: '-0.01em',
+                            fontFamily: '"Roboto","Arial",sans-serif',
+                        }}
                     >
                         {itemValue}
                     </Text>
