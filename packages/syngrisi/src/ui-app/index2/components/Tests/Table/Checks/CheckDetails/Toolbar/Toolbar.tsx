@@ -80,6 +80,8 @@ export function Toolbar(
     const [shareModalOpened, setShareModalOpened] = useState(false);
     const queryClient = useQueryClient();
     const isShareMode = !!query.share;
+    const toolbarActionIconSize = 32;
+    const toolbarGlyphSize = 20;
 
     const mutationRemoveBaseline = useMutation(
         {
@@ -133,13 +135,14 @@ export function Toolbar(
                                     title="Previous Check"
                                     variant="transparent"
                                     color="gray"
+                                    size={toolbarActionIconSize}
                                     styles={{
                                         root: {
                                             backgroundColor: 'transparent',
                                         },
                                     }}
                                 >
-                                    <IconChevronLeft size={20} />
+                                    <IconChevronLeft size={toolbarGlyphSize} />
                                 </ActionIcon>
                                 <ActionIcon
                                     onClick={() => onNavigateCheck && onNavigateCheck('next')}
@@ -147,13 +150,14 @@ export function Toolbar(
                                     title="Next Check"
                                     variant="transparent"
                                     color="gray"
+                                    size={toolbarActionIconSize}
                                     styles={{
                                         root: {
                                             backgroundColor: 'transparent',
                                         },
                                     }}
                                 >
-                                    <IconChevronRight size={20} />
+                                    <IconChevronRight size={toolbarGlyphSize} />
                                 </ActionIcon>
                             </Group>
                             <Group gap={2} wrap="nowrap">
@@ -163,13 +167,14 @@ export function Toolbar(
                                     title="Previous Test"
                                     variant="transparent"
                                     color="gray"
+                                    size={toolbarActionIconSize}
                                     styles={{
                                         root: {
                                             backgroundColor: 'transparent',
                                         },
                                     }}
                                 >
-                                    <IconChevronUp size={20} />
+                                    <IconChevronUp size={toolbarGlyphSize} />
                                 </ActionIcon>
                                 <ActionIcon
                                     onClick={() => onNavigateTest && onNavigateTest('next')}
@@ -177,13 +182,14 @@ export function Toolbar(
                                     title="Next Test"
                                     variant="transparent"
                                     color="gray"
+                                    size={toolbarActionIconSize}
                                     styles={{
                                         root: {
                                             backgroundColor: 'transparent',
                                         },
                                     }}
                                 >
-                                    <IconChevronDown size={20} />
+                                    <IconChevronDown size={toolbarGlyphSize} />
                                 </ActionIcon>
                             </Group>
 
@@ -245,7 +251,8 @@ export function Toolbar(
                                     check={curCheck}
                                     initCheck={initCheckData}
                                     checksQuery={checkQuery}
-                                    size={24}
+                                    size={22}
+                                    buttonSize={toolbarActionIconSize}
                                     testUpdateQuery={checkQuery}
                                 />
 
@@ -253,7 +260,8 @@ export function Toolbar(
                                     check={curCheck}
                                     initCheck={initCheckData}
                                     testUpdateQuery={checkQuery}
-                                    size={30}
+                                    size={22}
+                                    buttonSize={toolbarActionIconSize}
                                     closeHandler={closeHandler}
                                 />
                             </>
@@ -264,8 +272,8 @@ export function Toolbar(
                         !isShareMode && (
                             <Menu shadow="md" width={200} withinPortal>
                                 <Menu.Target>
-                                    <ActionIcon data-test="check-details-menu" variant="transparent" color="gray">
-                                        <IconDotsVertical size={20} />
+                                    <ActionIcon data-test="check-details-menu" variant="transparent" color="gray" size={toolbarActionIconSize}>
+                                        <IconDotsVertical size={toolbarGlyphSize} />
                                     </ActionIcon>
                                 </Menu.Target>
 
@@ -304,8 +312,9 @@ export function Toolbar(
                                     variant={rcaEnabled ? 'filled' : 'default'}
                                     color={rcaEnabled ? 'blue' : undefined}
                                     data-test="rca-toggle-button"
+                                    size={toolbarActionIconSize}
                                 >
-                                    <IconAnalyze size={20} />
+                                    <IconAnalyze size={toolbarGlyphSize} />
                                 </ActionIcon>
 
                                 {rcaEnabled && onToggleWireframe && (
@@ -315,8 +324,9 @@ export function Toolbar(
                                         variant={isWireframeEnabled ? 'filled' : 'default'}
                                         color={isWireframeEnabled ? 'blue' : undefined}
                                         data-test="rca-wireframe-toggle"
+                                        size={toolbarActionIconSize}
                                     >
-                                        <IconBoxModel size={20} />
+                                        <IconBoxModel size={toolbarGlyphSize} />
                                     </ActionIcon>
                                 )}
 

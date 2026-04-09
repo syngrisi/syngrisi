@@ -2,6 +2,7 @@
 // noinspection CheckTagEmptyBody
 import * as React from 'react';
 import {
+    Box,
     Card,
     Group,
     Image,
@@ -38,12 +39,63 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
     const imageWeight: number = 24 * sizes[checksViewSize].coefficient;
     const theme = useMantineTheme();
     const colorScheme = useComputedColorScheme();
-
-    // Preload all check images (baseline, actual, diff) on hover with high priority
     const { onMouseEnter: onHoverPreload } = useImagePreloadOnHover(check);
 
-    const imageFilename = check.diffId?.filename || check.actualSnapshotId?.filename || check.baselineId?.filename;
-    const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
+    const previewImages = React.useMemo(() => ({
+        diff: check.diffId?.filename
+            ? `${config.baseUri}/snapshoots/${check.diffId.filename}`
+            : null,
+        actual: check.actualSnapshotId?.filename
+            ? `${config.baseUri}/snapshoots/${check.actualSnapshotId.filename}`
+            : null,
+        expected: check.baselineId?.filename
+            ? `${config.baseUri}/snapshoots/${check.baselineId.filename}`
+            : null,
+    }), [check.actualSnapshotId?.filename, check.baselineId?.filename, check.diffId?.filename]);
+
+    const previewCycle = React.useMemo(
+        () => ([
+            previewImages.actual ? { key: 'actual', src: previewImages.actual } : null,
+            previewImages.expected ? { key: 'expected', src: previewImages.expected } : null,
+            previewImages.diff ? { key: 'diff', src: previewImages.diff } : null,
+        ].filter(Boolean) as Array<{ key: 'actual' | 'expected' | 'diff', src: string }>),
+        [previewImages.actual, previewImages.diff, previewImages.expected],
+    );
+
+    const defaultPreviewKey = previewImages.diff ? 'diff' : previewCycle[0]?.key || null;
+    const hoverStartPreviewKey = previewImages.actual ? 'actual' : previewCycle[0]?.key || defaultPreviewKey;
+    const [activePreviewKey, setActivePreviewKey] = React.useState<'actual' | 'expected' | 'diff' | null>(defaultPreviewKey);
+    const [isPreviewHovered, setIsPreviewHovered] = React.useState(false);
+    const hoverTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    const lastPointerRef = React.useRef<{ x: number, y: number } | null>(null);
+    const hoverCycleEnabledRef = React.useRef(false);
+
+    const imagePreviewSrc = React.useMemo(() => {
+        const activePreview = previewCycle.find((preview) => preview.key === activePreviewKey);
+        return activePreview?.src || previewImages.diff || previewImages.actual || previewImages.expected || '';
+    }, [activePreviewKey, previewCycle, previewImages.actual, previewImages.diff, previewImages.expected]);
+
+    const previewLabel = React.useMemo(() => {
+        const labelMap = {
+            actual: 'Actual',
+            expected: 'Expected',
+            diff: 'Diff',
+        } as const;
+        const key = activePreviewKey || defaultPreviewKey || 'diff';
+        return labelMap[key as keyof typeof labelMap] || 'Preview';
+    }, [activePreviewKey, defaultPreviewKey]);
+
+    React.useEffect(() => {
+        if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+        hoverCycleEnabledRef.current = false;
+        lastPointerRef.current = null;
+        setIsPreviewHovered(false);
+        setActivePreviewKey(defaultPreviewKey);
+    }, [check._id, defaultPreviewKey]);
+
+    React.useEffect(() => () => {
+        if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    }, []);
 
     const overlayParamsString = stringify(
         encodeQueryParams(
@@ -52,6 +104,47 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
         ),
     );
     const linkToCheckOverlay = `/?${overlayParamsString}&modalIsOpen=true`;
+
+    const handlePreviewMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
+        onHoverPreload();
+        setIsPreviewHovered(true);
+        if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+        hoverCycleEnabledRef.current = false;
+        lastPointerRef.current = { x: e.clientX, y: e.clientY };
+        hoverTimerRef.current = setTimeout(() => {
+            hoverCycleEnabledRef.current = true;
+            setActivePreviewKey(hoverStartPreviewKey);
+        }, 100);
+    };
+
+    const handlePreviewMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+        if (!hoverCycleEnabledRef.current || previewCycle.length <= 1) return;
+
+        const pointer = { x: e.clientX, y: e.clientY };
+        const previousPointer = lastPointerRef.current;
+        lastPointerRef.current = pointer;
+
+        if (!previousPointer) return;
+
+        const distance = Math.hypot(pointer.x - previousPointer.x, pointer.y - previousPointer.y);
+        if (distance < 3) return;
+
+        const stepCount = Math.max(1, Math.floor(distance / 3));
+        setActivePreviewKey((currentKey) => {
+            const currentIndex = previewCycle.findIndex((preview) => preview.key === currentKey);
+            const fallbackIndex = previewCycle.findIndex((preview) => preview.key === hoverStartPreviewKey);
+            const startIndex = currentIndex >= 0 ? currentIndex : Math.max(fallbackIndex, 0);
+            return previewCycle[(startIndex + stepCount) % previewCycle.length]?.key || defaultPreviewKey;
+        });
+    };
+
+    const handlePreviewMouseLeave = () => {
+        if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+        hoverCycleEnabledRef.current = false;
+        lastPointerRef.current = null;
+        setIsPreviewHovered(false);
+        setActivePreviewKey(defaultPreviewKey);
+    };
 
     const handlePreviewImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!e.metaKey && !e.ctrlKey) e.preventDefault();
@@ -69,7 +162,9 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                         <Group
                             data-check={check.name}
                             p="sm"
-                            onMouseEnter={onHoverPreload}
+                            onMouseEnter={handlePreviewMouseEnter}
+                            onMouseMove={handlePreviewMouseMove}
+                            onMouseLeave={handlePreviewMouseLeave}
                             style={{
                                 width: '100%',
                                 borderBottom: `1px solid ${colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]}`,
@@ -101,18 +196,51 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                             style={{ width: '100%', cursor: 'pointer' }}
                                             onClick={handlePreviewImageClick}
                                         >
-                                            <Image
-                                                src={imagePreviewSrc}
-                                                data-test-preview-image={check.name}
-                                                fit="contain"
-                                                w={`${imageWeight * 4}px`}
-                                                alt={check.name}
-                                                fallbackSrc=""
-                                                style={{
-                                                    aspectRatio: '1/1',
-                                                }}
-                                                onClick={handlePreviewImageClick}
-                                            />
+                                            <Box style={{ position: 'relative', display: 'inline-flex' }}>
+                                                <Image
+                                                    src={imagePreviewSrc}
+                                                    data-test-preview-image={check.name}
+                                                    fit="contain"
+                                                    w={`${imageWeight * 4}px`}
+                                                    alt={check.name}
+                                                    fallbackSrc=""
+                                                    style={{
+                                                        aspectRatio: '1/1',
+                                                    }}
+                                                    onClick={handlePreviewImageClick}
+                                                />
+                                                <Box
+                                                    style={{
+                                                        position: 'absolute',
+                                                        left: 8,
+                                                        right: 8,
+                                                        top: 8,
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        pointerEvents: 'none',
+                                                        opacity: isPreviewHovered ? 1 : 0,
+                                                        transform: isPreviewHovered ? 'translateY(0)' : 'translateY(-6px)',
+                                                        transition: 'opacity 160ms ease, transform 180ms ease',
+                                                    }}
+                                                >
+                                                    <Text
+                                                        fw={500}
+                                                        c="rgba(255, 255, 255, 0.82)"
+                                                        tt="uppercase"
+                                                        style={{
+                                                            fontSize: '6px',
+                                                            padding: '2px 4px',
+                                                            borderRadius: 999,
+                                                            backgroundColor: 'rgba(15, 16, 20, 0.4)',
+                                                            backdropFilter: 'blur(2px)',
+                                                            letterSpacing: '0.06em',
+                                                            lineHeight: 1,
+                                                        }}
+                                                    >
+                                                        {previewLabel}
+                                                    </Text>
+                                                </Box>
+                                            </Box>
                                         </Group>
                                     </a>
                                 </Tooltip.Floating>
@@ -157,7 +285,9 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                         // CARD VIEW
                         <Card
                             data-check={check.name}
-                            onMouseEnter={onHoverPreload}
+                            onMouseEnter={handlePreviewMouseEnter}
+                            onMouseMove={handlePreviewMouseMove}
+                            onMouseLeave={handlePreviewMouseLeave}
                             radius="sm"
                             style={{
                                 width: `${imageWeight}%`,
@@ -227,18 +357,51 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                             style={{ width: '100%', cursor: 'pointer' }}
                                             onClick={handlePreviewImageClick}
                                         >
-                                            <Image
-                                                data-test-preview-image={check.name}
-                                                src={imagePreviewSrc}
-                                                fit="contain"
-                                                alt={check.name}
-                                                fallbackSrc=""
-                                                w="100%"
-                                                h="auto"
-                                                style={{
-                                                    maxHeight: checksViewMode === 'bounded' ? `${imageWeight * 8}px` : undefined,
-                                                }}
-                                            />
+                                            <Box style={{ position: 'relative', width: '100%' }}>
+                                                <Image
+                                                    data-test-preview-image={check.name}
+                                                    src={imagePreviewSrc}
+                                                    fit="contain"
+                                                    alt={check.name}
+                                                    fallbackSrc=""
+                                                    w="100%"
+                                                    h="auto"
+                                                    style={{
+                                                        maxHeight: checksViewMode === 'bounded' ? `${imageWeight * 8}px` : undefined,
+                                                    }}
+                                                />
+                                                <Box
+                                                    style={{
+                                                        position: 'absolute',
+                                                        left: 10,
+                                                        right: 10,
+                                                        top: 10,
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        pointerEvents: 'none',
+                                                        opacity: isPreviewHovered ? 1 : 0,
+                                                        transform: isPreviewHovered ? 'translateY(0)' : 'translateY(-6px)',
+                                                        transition: 'opacity 160ms ease, transform 180ms ease',
+                                                    }}
+                                                >
+                                                    <Text
+                                                        fw={500}
+                                                        c="rgba(255, 255, 255, 0.82)"
+                                                        tt="uppercase"
+                                                        style={{
+                                                            fontSize: '6px',
+                                                            padding: '2px 4px',
+                                                            borderRadius: 999,
+                                                            backgroundColor: 'rgba(15, 16, 20, 0.4)',
+                                                            backdropFilter: 'blur(2px)',
+                                                            letterSpacing: '0.06em',
+                                                            lineHeight: 1,
+                                                        }}
+                                                    >
+                                                        {previewLabel}
+                                                    </Text>
+                                                </Box>
+                                            </Box>
                                         </Group>
                                     </a>
 
