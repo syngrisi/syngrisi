@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.4.1
+
+### Patch Changes
+
+-   [`81637a9`](https://github.com/syngrisi/syngrisi/commit/81637a9db0a5d28216532c37c4ed17d4c38f70ad) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Fix Mantine Combobox select interaction in E2E test steps. Handle both native select and Mantine Combobox input for group-by, filter, and other select components.
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.4.1
+
 ## 3.4.0
 
 ### Minor Changes
