@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.4.3
+
+### Patch Changes
+
+-   [`420a239`](https://github.com/syngrisi/syngrisi/commit/420a23963c39d5ecda4bbcaa6a77bc55d8104aca) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Stabilize Mantine Combobox select: add native DOM change listener to SafeSelect for reliable Playwright interaction. Fixes all group-by related E2E failures and reduces flaky tests from 22 to 4.
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.4.3
+
 ## 3.4.2
 
 ### Patch Changes
