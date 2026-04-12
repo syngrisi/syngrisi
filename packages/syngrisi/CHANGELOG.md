@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.4.2
+
+### Patch Changes
+
+-   [`e26c0d3`](https://github.com/syngrisi/syngrisi/commit/e26c0d3ba9efb94888548729811e62cd0e200a29) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Fix E2E select step regression: simplify Mantine Combobox handling to not break native select elements. Fix navbar group-by visibility selectors.
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.4.2
+
 ## 3.4.1
 
 ### Patch Changes
