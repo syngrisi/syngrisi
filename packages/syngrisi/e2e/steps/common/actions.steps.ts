@@ -878,6 +878,8 @@ When(
     // Try selectOption first, if it fails, try clicking the select and then the option
     try {
       await targetLocator.selectOption({ label: renderedOptionText });
+      // Dispatch native change event to ensure SafeSelect native listener fires
+      await targetLocator.dispatchEvent('change');
     } catch (error) {
       // If selectOption fails, try clicking the select and then clicking the option div
       // First try clicking the input inside the target element for Mantine Combobox
