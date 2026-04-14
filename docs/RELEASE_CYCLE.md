@@ -28,9 +28,32 @@ This monorepo uses **Changesets** for version management and automated releases 
    - Publishes packages to npm using OIDC (no token needed for `@syngrisi/*` packages)
    - Creates a GitHub Release with auto-generated notes
 
+## Skip E2E Tests on CI
+
+Add `[skip-e2e]` to the commit message to skip E2E tests while keeping build, unit tests, and release workflow running:
+
+```bash
+git commit -m "chore: add changeset [skip-e2e]"
+# or for an empty retry commit:
+git commit --allow-empty -m "ci: retry [skip-e2e]"
+```
+
+> **Warning**: Do NOT use `[skip ci]` in commit messages — this blocks ALL workflows including the release workflow! Use `[skip-e2e]` instead.
+
 ## Quick Release (Skip CI Tests)
 
 If tests have already been run locally and you want to release quickly:
+
+### Option A: Skip E2E via commit message (no admin rights needed)
+
+1. Create changeset and commit with `[skip-e2e]`:
+   ```bash
+   git commit -m "chore: add changeset [skip-e2e]" && git push
+   ```
+2. Wait for CI (build + unit tests only) → Release workflow creates a PR
+3. Merge the PR → Release workflow publishes to npm
+
+### Option B: Skip CI check via workflow dispatch (requires admin rights)
 
 1. Create and push changeset as above
 2. **Manually trigger** the Release workflow with skip option:
@@ -42,12 +65,12 @@ If tests have already been run locally and you want to release quickly:
    ```bash
    gh workflow run release.yml -f skip_ci_check=true
    ```
-5. Verify packages on NPM:
-   ```bash
-   npm view @syngrisi/syngrisi version
-   ```
 
-> **Warning**: Do NOT use `[skip ci]` in commit messages — this blocks ALL workflows including the release workflow!
+### Verify release
+
+```bash
+npm view @syngrisi/syngrisi version
+```
 
 ## Version Types
 
