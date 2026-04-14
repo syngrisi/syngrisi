@@ -492,8 +492,8 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           config: existingInstance?.config || lastKnownConfig,
           getBackendLogs: existingInstance?.getBackendLogs || (() => 'App server not started'),
           getFrontendLogs: existingInstance?.getFrontendLogs || (() => ''),
-          restart: async (force = false) => {
-            await startServer(force);
+          restart: async (force = false, noRetry = false) => {
+            await startServer(force, noRetry);
           },
           start: async () => {
             await startServer();
@@ -515,9 +515,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           config: existingInstance.config,
           getBackendLogs: existingInstance.getBackendLogs,
           getFrontendLogs: existingInstance.getFrontendLogs,
-          restart: async (force = false) => {
+          restart: async (force = false, noRetry = false) => {
             logger.info(`Restarting server...`);
-            await startServer(force);
+            await startServer(force, noRetry);
           },
           start: async () => {
             logger.info(`Starting server...`);
@@ -536,9 +536,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           config: lastKnownConfig,
           getBackendLogs: () => '',
           getFrontendLogs: () => '',
-          restart: async (force = false) => {
+          restart: async (force = false, noRetry = false) => {
             logger.info(`Restarting server...`);
-            await startServer(force);
+            await startServer(force, noRetry);
           },
           start: async () => {
             logger.info(`Starting server...`);
