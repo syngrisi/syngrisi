@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.4.5
+
+### Patch Changes
+
+-   [`2d6b4e1`](https://github.com/syngrisi/syngrisi/commit/2d6b4e1ce0de799838526716fec7e0b9c06f547b) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - fix: default failed check modal to diff view, adjust light theme check card surface, fix e2e noRetry param in app-server fixture
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.4.5
+
 ## 3.4.4
 
 ### Patch Changes
