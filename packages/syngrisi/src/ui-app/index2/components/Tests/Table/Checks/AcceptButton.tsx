@@ -55,16 +55,16 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
                    : 'outline';
 
     const activeLikeFillColor = colorScheme === 'dark'
-        ? theme.colors.green[4]
+        ? theme.colors.green[2]
         : theme.colors.green[3];
     const activeLikeStrokeColor = colorScheme === 'dark'
-        ? theme.colors.green[8]
+        ? theme.colors.green[7]
         : theme.colors.green[8];
 
     // eslint-disable-next-line no-nested-ternary
     const likeIconColor = (isCurrentlyAccepted || wasAcceptedEarlier)
         ? colorScheme === 'dark'
-            ? 'green.8'
+            ? 'green.5'
             : 'green.6'
         : 'gray';
 
