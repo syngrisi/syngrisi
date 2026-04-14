@@ -17,16 +17,29 @@ This monorepo uses **Changesets** for version management and automated releases 
    Brief description of changes
    ```
 
-2. **Commit and push** the changeset:
+2. **Commit and push** the changeset (add `[skip-e2e]` if E2E tests already passed locally):
    ```bash
-   git add .changeset/ && git commit -m "chore: add changeset" && git push
+   git add .changeset/ && git commit -m "chore: add changeset [skip-e2e]" && git push
    ```
 
-3. **Wait for Changesets PR** - GitHub Actions will automatically create a PR titled "chore(release): version packages"
+3. **Wait for CI** (build + unit tests) → Release workflow automatically creates a PR titled "chore(release): version packages"
 
-4. **Merge the PR** - This triggers the release workflow which:
-   - Publishes packages to npm using OIDC (no token needed for `@syngrisi/*` packages)
-   - Creates a GitHub Release with auto-generated notes
+4. **Merge the PR locally** and push (no admin rights needed):
+   ```bash
+   git fetch origin changeset-release/main && git merge origin/changeset-release/main && git push
+   ```
+   > If the merge commit triggers E2E and they fail on flaky tests, push a retry:
+   > ```bash
+   > git commit --allow-empty -m "ci: retry [skip-e2e]" && git push
+   > ```
+
+5. **Wait for Release workflow** — it publishes packages to npm and creates a GitHub Release
+
+6. **Verify**:
+   ```bash
+   npm view @syngrisi/syngrisi version
+   gh release list --limit 3
+   ```
 
 ## Skip E2E Tests on CI
 
