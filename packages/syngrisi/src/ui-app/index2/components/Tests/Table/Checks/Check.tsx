@@ -302,18 +302,16 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             pr={0}
                             shadow="0"
                         >
-                            <Paper
+                            <Box
                                 py={10}
                                 px={12}
                                 ml={0}
                                 mr={0}
-                                shadow="0"
                                 style={{
                                     backgroundColor: colorScheme === 'dark'
                                         ? theme.colors.dark[6]
-                                        : theme.colors.gray[0],
+                                        : theme.white,
                                 }}
-                                radius={0}
                             >
                                 <Tooltip
                                     label={check.name}
@@ -334,7 +332,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                         {check.name}
                                     </Text>
                                 </Tooltip>
-                            </Paper>
+                            </Box>
                             <Card.Section m={0}>
                                 <Tooltip
                                     openDelay={300}
