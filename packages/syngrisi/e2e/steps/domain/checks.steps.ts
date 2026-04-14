@@ -237,11 +237,41 @@ When('I remove the {string} check', async ({ page }: { page: Page }, checkName: 
   }
 });
 
-/**
- * Delete check from modal dialog.
- * Uses the modal's remove icon and waits for DELETE API response.
- * More stable than raw locator clicks due to API synchronization.
- */
+When('I accept check from modal', async ({ page }: { page: Page }) => {
+  const icon = page.locator('.modal [data-test="check-accept-icon"]').first();
+  await icon.waitFor({ state: 'visible', timeout: 10000 });
+  await icon.scrollIntoViewIfNeeded();
+  await icon.dispatchEvent('click');
+
+  const confirmButton = page.locator('[data-test="check-accept-icon-confirm"]').first();
+  await confirmButton.waitFor({ state: 'visible', timeout: 15000 });
+
+  await Promise.all([
+    page.waitForResponse(
+      (resp) => {
+        if (!resp.ok()) {
+          return false;
+        }
+        const method = resp.request().method();
+        if (method !== 'PUT' && method !== 'PATCH' && method !== 'POST') {
+          return false;
+        }
+        return resp.url().includes('/v1/checks/');
+      },
+      { timeout: 15000 }
+    ).catch(() => null),
+    confirmButton.click({ timeout: 15000, force: true }),
+  ]);
+
+  await page.waitForFunction(
+    () => {
+      const svgIcon = document.querySelector('.modal [data-test="check-accept-icon"] svg');
+      return svgIcon?.getAttribute('data-test-icon-type') === 'fill';
+    },
+    { timeout: 20000 }
+  );
+});
+
 When('I delete check from modal', async ({ page }: { page: Page }) => {
   try {
     // Wait for modal to stabilize (animations, loading states)

@@ -169,12 +169,17 @@ export function CheckDetails({
         actualSnapshotId: {
             createdDate: currentCheck?.actualSnapshotId?.createdDate,
             _id: currentCheck?.actualSnapshotId?._id,
+            filename: currentCheck?.actualSnapshotId?.filename,
         },
         baselineId: {
             createdDate: currentCheck?.baselineId?.createdDate,
             _id: currentCheck?.baselineId?._id,
+            filename: currentCheck?.baselineId?.filename,
         },
-        diffId: { filename: currentCheck?.diffId?.filename },
+        diffId: {
+            _id: currentCheck?.diffId?._id,
+            filename: currentCheck?.diffId?.filename,
+        },
 
         parsedResult: currentCheck?.result ? JSON.parse(currentCheck?.result) : null,
         // Add enriched flags for AcceptButton icon state
