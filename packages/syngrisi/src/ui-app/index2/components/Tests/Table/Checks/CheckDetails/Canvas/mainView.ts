@@ -104,7 +104,7 @@ export class MainView {
 
         // @ts-ignore - Expose mainView instance for E2E tests
         window.mainView = this;
-        this.currentView = 'actual';
+        this.currentView = this.diffImage ? 'diff' : 'actual';
 
         if (actual) {
             this.sliderView = new SideToSideView(
@@ -128,7 +128,7 @@ export class MainView {
         this.expectedView = new SimpleView(this, 'expected');
         this.actualView = new SimpleView(this, 'actual');
         this.diffView = new SimpleView(this, 'diff');
-        this.actualView.render();
+        this[`${this.currentView}View`].render();
         // this.sideToSideView.render()
     }
 

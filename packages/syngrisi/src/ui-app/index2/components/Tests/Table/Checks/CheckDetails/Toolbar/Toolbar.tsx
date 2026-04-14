@@ -75,7 +75,7 @@ export function Toolbar(
     }: Props,
 ) {
     const { query } = useParams();
-    const [view, setView] = useState('actual');
+    const [view, setView] = useState(() => (curCheck?.diffId ? 'diff' : 'actual'));
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
     const [shareModalOpened, setShareModalOpened] = useState(false);
     const queryClient = useQueryClient();
@@ -109,12 +109,12 @@ export function Toolbar(
     };
 
     useEffect(function initView() {
-        if (mainView?.diffImage) {
+        if (mainView?.diffImage || curCheck?.diffId) {
             setView(() => 'diff');
             return;
         }
         setView(() => 'actual');
-    }, [mainView?.diffImage, query.checkId]);
+    }, [mainView?.diffImage, curCheck?.diffId, query.checkId]);
 
     useEffect(function switchView() {
         if (!mainView) return;

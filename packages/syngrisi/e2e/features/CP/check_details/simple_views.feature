@@ -97,3 +97,23 @@ Feature: Simple Views (Expected, Actual, Diff)
           0
         """
 
+    Scenario: Failed check opened via deep link starts in diff view
+        When I click element with locator "[data-test='close-check-detail-icon']"
+        Then I wait on element "[data-check-header-name='CheckName']" to not be displayed
+        When I open the url "/?checkId={{currentCheck._id}}&modalIsOpen=true"
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+        When I execute javascript code:
+        """
+        const objects = mainView.canvas.getObjects();
+        return JSON.stringify({
+          currentView: mainView.currentView,
+          diffIndex: objects.indexOf(mainView.diffImage),
+          actualIndex: objects.indexOf(mainView.actualImage),
+          diffActive: document.querySelector("[data-segment-value='diff']")?.getAttribute('data-segment-active')
+        });
+        """
+        Then I expect the stored "js" string is equal:
+        """
+          {"currentView":"diff","diffIndex":0,"actualIndex":-1,"diffActive":"true"}
+        """
+
