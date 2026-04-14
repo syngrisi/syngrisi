@@ -1,6 +1,6 @@
 metadata:
   category: common/actions
-  generatedAt: '2026-04-09T12:21:03.383Z'
+  generatedAt: '2026-04-14T11:45:11.161Z'
   totalFiles: 2
   totalSteps: 36
   sourceFiles:
@@ -43,7 +43,7 @@ steps:
     line: 191
   - pattern: I click on the element {string} via js
     description: ''
-    line: 1092
+    line: 1104
   - pattern: I click the {ordinal} {role} {string}
     description: |-
       Step definition: `When I click the {ordinal} {role} {string}`
@@ -57,13 +57,13 @@ steps:
       ```gherkin
       When I click the 1st button "Open Check"
       ```
-    line: 1179
+    line: 1191
   - pattern: I delete the cookie {string}
     description: ''
-    line: 1076
+    line: 1088
   - pattern: I drag the element with {target} {string} by offset {int}, {int}
     description: 'Step definition: `When I drag the element with {target} {string} by offset {int}, {int}`'
-    line: 1215
+    line: 1227
   - pattern: 'I execute javascript code:'
     description: |-
       Step definition: `When I execute javascript code:`
@@ -130,22 +130,22 @@ steps:
     line: 384
   - pattern: I force click element with locator {string}
     description: ''
-    line: 1099
+    line: 1111
   - pattern: I hold key {string}
     description: ''
-    line: 1084
+    line: 1096
   - pattern: I hover over {string} and wait for tooltip {string}
     description: ''
-    line: 1125
+    line: 1137
   - pattern: I move to element {string}
     description: ''
-    line: 1111
+    line: 1123
   - pattern: I move to element {string} with an offset of {int},{int}
     description: ''
-    line: 1158
+    line: 1170
   - pattern: I press {string}
     description: ''
-    line: 1080
+    line: 1092
   - pattern: I press the {string} key
     description: |-
       Step definition: `When I press the {string} key`
@@ -159,19 +159,19 @@ steps:
     line: 491
   - pattern: I real click element with locator {string}
     description: ''
-    line: 1105
+    line: 1117
   - pattern: I refresh page
     description: ''
     line: 542
   - pattern: I release key {string}
     description: ''
-    line: 1088
+    line: 1100
   - pattern: I reload session
     description: ''
-    line: 1062
+    line: 1074
   - pattern: I safely click element with {target} {string}
     description: ''
-    line: 1188
+    line: 1200
   - pattern: I scroll container {string} to bottom
     description: ''
     line: 792
@@ -193,13 +193,13 @@ steps:
       ```gherkin
       When I select dropdown option "Failed" by clicking div for element "[data-test='table-filter-value']"
       ```
-    line: 930
+    line: 942
   - pattern: I select the option with the text {string} for element {string}
     description: ''
     line: 842
   - pattern: I set {string} to the inputfield {string}
     description: ''
-    line: 990
+    line: 1002
   - pattern: 'I set window size: {string}'
     description: ''
     line: 537

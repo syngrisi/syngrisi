@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.4.4
+
+### Patch Changes
+
+-   [`886416a`](https://github.com/syngrisi/syngrisi/commit/886416aaccc2e14c8bf4d5548795ba97aa4a260d) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - fix(ui): improve accept icon contrast in dark theme
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.4.4
+
 ## 3.4.3
 
 ### Patch Changes
