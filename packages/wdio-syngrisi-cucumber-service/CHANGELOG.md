@@ -1,5 +1,12 @@
 # wdio-syngrisi-cucumber-service
 
+## 3.4.4
+
+### Patch Changes
+
+-   Updated dependencies []:
+    -   @syngrisi/wdio-sdk@3.4.4
+
 ## 3.4.3
 
 ### Patch Changes

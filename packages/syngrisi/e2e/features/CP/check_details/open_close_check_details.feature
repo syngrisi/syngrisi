@@ -58,3 +58,46 @@ Feature: Open/Close Check Details
     When I open the url "<js:url>"
     When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
+  Scenario: Preview stays visible after accept from modal and close via cross
+    Given I create "1" tests with:
+      """
+          testName: "TestName"
+          checks:
+            - checkName: CheckName
+              filePath: files/A.png
+      """
+    When I go to "main" page
+    Then the title is "By Runs"
+    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
+    Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
+    When I click element with locator "[data-table-test-name=TestName]"
+    When I wait 10 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
+
+    When I execute javascript code:
+      """
+    const img = document.querySelector("[data-test-preview-image='CheckName']");
+    return Boolean(img?.getAttribute('src') && img.complete && img.naturalWidth > 0);
+      """
+    Then I expect the stored "js" string is equal:
+      """
+      true
+      """
+
+    When I click element with locator "[data-test-preview-image='CheckName']"
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I accept check from modal
+    Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=fill"
+    When I click element with locator "[data-test='close-check-detail-icon']"
+    Then I wait on element "[data-check-header-name='CheckName']" to not be displayed
+    Then the title is "By Runs"
+
+    When I execute javascript code:
+      """
+    const img = document.querySelector("[data-test-preview-image='CheckName']");
+    return Boolean(img?.getAttribute('src') && img.complete && img.naturalWidth > 0);
+      """
+    Then I expect the stored "js" string is equal:
+      """
+      true
+      """
+
