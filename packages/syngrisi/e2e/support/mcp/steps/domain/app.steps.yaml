@@ -1,8 +1,8 @@
 metadata:
   category: domain/app
-  generatedAt: '2026-04-14T11:45:11.161Z'
+  generatedAt: '2026-04-14T16:58:11.917Z'
   totalFiles: 26
-  totalSteps: 211
+  totalSteps: 212
   sourceFiles:
     - steps/domain/admin-data.steps.ts
     - steps/domain/ai.steps.ts
@@ -157,15 +157,15 @@ steps:
   - pattern: the {string} button should be {string}
     description: ''
     line: 141
+  - pattern: I accept check from modal
+    description: ''
+    line: 240
   - pattern: I accept the {string} check
     description: ''
     line: 45
   - pattern: I delete check from modal
-    description: |-
-      Delete check from modal dialog.
-      Uses the modal's remove icon and waits for DELETE API response.
-      More stable than raw locator clicks due to API synchronization.
-    line: 245
+    description: ''
+    line: 275
   - pattern: I delete the {string} check
     description: ''
     line: 164
