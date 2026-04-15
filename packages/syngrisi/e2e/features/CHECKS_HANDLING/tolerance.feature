@@ -125,3 +125,42 @@ Feature: Tolerance threshold
           status: [failed]
           failReasons: [different_images]
                   """
+
+      @ui
+      Scenario: UI baseline tolerance accepts small decimal values
+            When I set env variables:
+                  """
+      SYNGRISI_AUTH: "false"
+      SYNGRISI_TEST_MODE: "true"
+                  """
+            Given I start Server and start Driver
+            And I clear database
+            And I create "1" tests with:
+                  """
+                  testName: TolUI
+                  checks:
+                    - checkName: CheckTolUI
+                      filePath: files/low_diff_0.png
+                  """
+            When I accept via http the 1st check with name "CheckTolUI"
+
+            Given I create "1" tests with:
+                  """
+                  testName: TolUI
+                  checks:
+                    - checkName: CheckTolUI
+                      filePath: files/low_diff_1.png
+                  """
+            When I go to "main" page
+            And I wait for test "TolUI" to appear in table
+            And I unfold the test "TolUI"
+            And I wait for check "CheckTolUI" to appear in collapsed row of test "TolUI"
+            And I open the 1st check "CheckTolUI"
+            Then I should see the check details for "CheckTolUI"
+            And the element with locator "[data-check='match-type-selector']" should be enabled
+
+            When I click element with locator "[data-check='match-type-selector']"
+            And I set "0.0001" to the inputfield "[data-check='tolerance-threshold-input']"
+            Then the element with locator "[data-check='tolerance-threshold-input']" should have value "0.0001"
+            When I click element with locator "[data-check='tolerance-save']"
+            And I wait up to 20 seconds for element "[data-check='tolerance-indicator']" to contain text "0.0001"

@@ -44,8 +44,18 @@ type BaselineSettingsResponse = { matchType?: MatchType; toleranceThreshold?: nu
 
 const clampThreshold = (value: number): number => {
     if (!Number.isFinite(value)) return 0;
-    const clamped = Math.max(0, Math.min(100, value));
-    return Number(clamped.toFixed(2));
+    return Math.max(0, Math.min(100, value));
+};
+
+const normalizeThresholdInput = (value: string | number): string | number => {
+    if (value === '') return '';
+    if (typeof value === 'string') {
+        const parsed = Number(value);
+        if (!Number.isFinite(parsed)) return value;
+        if (value.includes('.') && (value.endsWith('.') || /0$/.test(value))) return value;
+        return clampThreshold(parsed);
+    }
+    return clampThreshold(value);
 };
 
 const buildHeaders = (apikey?: string): Record<string, string> => {
@@ -107,7 +117,7 @@ export function MatchTypeSelector({
 }: Props) {
     const queryClient = useQueryClient();
     const [matchType, setMatchType] = useState<MatchType>(initialMatchType as MatchType || 'nothing');
-    const [toleranceThreshold, setToleranceThreshold] = useState<number>(0);
+    const [toleranceThreshold, setToleranceThreshold] = useState<string | number>(0);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -148,11 +158,13 @@ export function MatchTypeSelector({
     const handleSave = async () => {
         if (!baselineId) return;
         setLoading(true);
+        const normalizedThreshold = normalizeThresholdInput(toleranceThreshold);
+        setToleranceThreshold(normalizedThreshold);
         const success = await updateBaselineSettings(
             baselineId,
             {
                 matchType,
-                toleranceThreshold: clampThreshold(toleranceThreshold),
+                toleranceThreshold: typeof normalizedThreshold === 'number' ? normalizedThreshold : 0,
             },
             apikey,
         );
@@ -231,11 +243,9 @@ export function MatchTypeSelector({
                     <NumberInput
                         data-check="tolerance-threshold-input"
                         value={toleranceThreshold}
-                        onChange={(value) => setToleranceThreshold(clampThreshold(Number(value || 0)))}
+                        onChange={(value) => setToleranceThreshold(normalizeThresholdInput(value))}
                         min={0}
                         max={100}
-                        step={0.01}
-                        precision={2}
                     />
                     <Group grow>
                         <Button
