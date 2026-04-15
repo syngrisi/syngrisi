@@ -7,7 +7,7 @@ import { ViewPortLabel } from '@index/components/Tests/Table/Checks/ViewPortLabe
 import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
 import { OsIcon } from '@shared/components/Check/OsIcon';
 import { BrowserIcon } from '@shared/components/Check/BrowserIcon';
-import { getStatusMessage } from '@shared/utils/utils';
+import { formatToleranceThreshold, getStatusMessage } from '@shared/utils/utils';
 
 interface Props {
     classes: any
@@ -35,6 +35,7 @@ export const Header = React.memo(function Header(
             ? theme.colors.gray[3]
             : theme.colors.dark[9]), [colorScheme],
     );
+    const formattedToleranceThreshold = formatToleranceThreshold(Number(toleranceThreshold));
 
     return (
         <Group
@@ -143,8 +144,8 @@ export const Header = React.memo(function Header(
                         <Tooltip
                             label={
                                 toleranceSource === 'api'
-                                    ? `Tolerance: ${Number(toleranceThreshold).toFixed(2)}% — set via API for this check`
-                                    : `Tolerance: ${Number(toleranceThreshold).toFixed(2)}% — from baseline settings`
+                                    ? `Tolerance: ${formattedToleranceThreshold}% — set via API for this check`
+                                    : `Tolerance: ${formattedToleranceThreshold}% — from baseline settings`
                             }
                             withinPortal
                         >
@@ -158,7 +159,7 @@ export const Header = React.memo(function Header(
                                     <Text fz={11} fw={700}>%</Text>
                                 </ActionIcon>
                                 <Text fz={12} c={toleranceSource === 'api' ? 'violet' : 'orange'}>
-                                    Tol {Number(toleranceThreshold).toFixed(2)}%
+                                    Tol {formattedToleranceThreshold}%
                                 </Text>
                             </Group>
                         </Tooltip>

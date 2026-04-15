@@ -40,6 +40,12 @@ export const isJSON = (text: string) => !text ? '' : (/^[\],:{}\s]*$/.test(text.
     .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
     .replace(/(?:^|:|,)(?:\s*\[)+/g, '')));
 
+export function formatToleranceThreshold(value: number) {
+    if (!Number.isFinite(value) || value === 0) return '0';
+    if (Math.abs(value) >= 0.01) return value.toFixed(2);
+    return value.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 }).replace(/\.?0+$/, '');
+}
+
 export function getStatusMessage(check: any) {
     let statusMsg = '';
     let checkResult: any = null;
@@ -73,7 +79,7 @@ export function getStatusMessage(check: any) {
     if (check.status[0] === 'passed'){
         if (checkResult?.passedByTolerance) {
             const diffPercent = checkResult.misMatchPercentage || checkResult.rawMisMatchPercentage || '0.00';
-            const threshold = Number(checkResult.appliedToleranceThreshold || 0).toFixed(2);
+            const threshold = formatToleranceThreshold(Number(checkResult.appliedToleranceThreshold || 0));
             statusMsg = ` - passed by tolerance (${diffPercent}% <= ${threshold}%)`;
         } else {
             statusMsg = ' - successful check';
