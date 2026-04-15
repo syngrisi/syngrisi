@@ -468,19 +468,17 @@ export class MainView {
     }
 
     panToCanvasWidthCenter(imageName: string) {
-        // if (this.pannedOnInit) return;
-        // this.pannedOnInit = true;
+        const image = this[imageName as keyof this] as fabric.Image | null;
+        if (!image) return;
 
         this.canvas.absolutePan(new fabric.Point(0, 0));
         const delta = new fabric.Point(
             ((this.canvas.width / 2)
-                - ((this[imageName].width * this.canvas.getZoom()) / 2)
+                - ((image.width * this.canvas.getZoom()) / 2)
             ),
-            // ((this.canvas.width / 2) - (this[imageName].getScaledWidth() / 2)),
             0,
         );
         this.canvas.relativePan(delta);
-        // this.canvas.renderAll(); console.log('render!!!');
     }
 
     removeActiveIgnoreRegions() {
