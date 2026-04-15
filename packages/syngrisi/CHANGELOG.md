@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.4.6
+
+### Patch Changes
+
+-   [`6d16f8d`](https://github.com/syngrisi/syngrisi/commit/6d16f8da248a12bf270ebb9c99b7bac9f67f3929) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - fix: use diffId.filename for diff view detection, guard panToCanvasWidthCenter against null images, allow small tolerance threshold values
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.4.6
+
 ## 3.4.5
 
 ### Patch Changes
