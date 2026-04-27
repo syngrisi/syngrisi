@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.4.7
+
+### Patch Changes
+
+-   [`f7c19b3`](https://github.com/syngrisi/syngrisi/commit/f7c19b38111f813eb3dd66bfc907e7b1398f737e) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - test(e2e): tag flaky `Auto regions - save and verify persistence` scenario so it runs in the dedicated flaky pool with retries instead of failing the main parallel suite
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.4.7
+
 ## 3.4.6
 
 ### Patch Changes
