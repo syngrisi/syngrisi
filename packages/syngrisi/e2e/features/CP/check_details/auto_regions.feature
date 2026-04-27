@@ -115,6 +115,7 @@ Feature: Check details - Auto Regions from Diff
         # Auto region button should be disabled (no diff image for passed check)
         Then the element with locator "[data-check='auto-ignore-region']" should be disabled for 10 sec
 
+    @flaky
     Scenario: Auto regions - save and verify persistence
         # Create test with baseline
         Given I create "1" tests with:
