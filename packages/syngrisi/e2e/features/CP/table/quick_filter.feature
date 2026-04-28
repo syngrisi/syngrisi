@@ -86,3 +86,67 @@ Feature: Quick Filtering
     When I wait 60 seconds for the element with locator "[data-table-test-name='TestNameP1-0']" to be visible
     Then I wait on element "[data-table-test-name='TestNameP1-1']" to not be displayed
     Then I wait on element "[data-table-test-name='TestNameP2-0']" to not be displayed
+
+  Scenario: Quick Filtering by Status
+    Given I create "1" tests with:
+      """
+      testName: QuickFilterStatus-new
+      checks:
+          - checkName: QuickFilterStatus-new-check
+            filePath: files/A.png
+      """
+
+    Given I create "1" tests with:
+      """
+      testName: QuickFilterStatus-passed-baseline
+      checks:
+          - checkName: QuickFilterStatus-passed-check
+            filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "QuickFilterStatus-passed-check"
+
+    Given I create "1" tests with:
+      """
+      testName: QuickFilterStatus-passed
+      checks:
+          - checkName: QuickFilterStatus-passed-check
+            filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "QuickFilterStatus-passed-check"
+
+    Given I create "1" tests with:
+      """
+      testName: QuickFilterStatus-failed-baseline
+      checks:
+          - checkName: QuickFilterStatus-failed-check
+            filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "QuickFilterStatus-failed-check"
+
+    Given I create "1" tests with:
+      """
+      testName: QuickFilterStatus-failed
+      checks:
+          - checkName: QuickFilterStatus-failed-check
+            filePath: files/B.png
+      """
+
+    When I go to "main" page
+    When I wait 60 seconds for the element with locator "[data-test='table-quick-filter']" to be visible
+    When I wait 60 seconds for the element with locator "[data-table-test-name='QuickFilterStatus-new']" to be visible
+    When I wait 60 seconds for the element with locator "[data-table-test-name='QuickFilterStatus-passed']" to be visible
+    When I wait 60 seconds for the element with locator "[data-table-test-name='QuickFilterStatus-failed']" to be visible
+
+    When I click element with locator "[data-test='table-quick-filter-status-New']"
+    When I click element with locator "[data-test='table-quick-filter-status-Passed']"
+    When I wait 60 seconds for the element with locator "[data-table-test-name='QuickFilterStatus-failed']" to be visible
+    Then I wait on element "[data-table-test-name='QuickFilterStatus-new']" to not be displayed
+    Then I wait on element "[data-table-test-name='QuickFilterStatus-passed']" to not be displayed
+
+    When I click element with locator "button[aria-label='Reset quick filter']"
+    When I wait 60 seconds for the element with locator "[data-table-test-name='QuickFilterStatus-new']" to be visible
+    When I wait 60 seconds for the element with locator "[data-table-test-name='QuickFilterStatus-passed']" to be visible
+    When I wait 60 seconds for the element with locator "[data-table-test-name='QuickFilterStatus-failed']" to be visible
+
+    When I click element with locator "button[aria-label='Open quick filter options']"
+    When I wait 30 seconds for the element with locator "div[role='dialog']:has-text('Browsers:')" to be visible
