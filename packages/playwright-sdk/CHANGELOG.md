@@ -1,5 +1,12 @@
 # @syngrisi/playwright-sdk
 
+## 3.5.0
+
+### Patch Changes
+
+-   Updated dependencies []:
+    -   @syngrisi/core-api@3.5.0
+
 ## 3.4.8
 
 ### Patch Changes
