@@ -1,5 +1,16 @@
 # @syngrisi/syngrisi
 
+## 3.5.0
+
+### Minor Changes
+
+-   [`87a70ab`](https://github.com/syngrisi/syngrisi/commit/87a70abbeaec6e9d98e6907a20625ab84165a6ee) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Add status toggles to the main table quick filter.
+
+### Patch Changes
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.5.0
+
 ## 3.4.8
 
 ### Patch Changes
