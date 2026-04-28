@@ -117,3 +117,49 @@ Feature: Simple Views (Expected, Actual, Diff)
           {"currentView":"diff","diffIndex":0,"actualIndex":-1,"diffActive":"true"}
         """
 
+    Scenario: Simple view switch preserves zoom and pan
+        When I click element with locator "[data-segment-value='actual']"
+        When I wait up to 30 seconds for javascript condition:
+        """
+        return mainView.currentView === 'actual'
+          && mainView.canvas.getObjects().indexOf(mainView.actualImage) !== -1;
+        """
+        When I execute javascript code:
+        """
+        mainView.canvas.zoomToPoint(new fabric.Point(300, 200), 2);
+        mainView.canvas.relativePan(new fabric.Point(-180, -120));
+        mainView.canvas.renderAll();
+
+        window.panZoomBeforeViewSwitch = mainView.canvas.viewportTransform.slice();
+        const vpt = window.panZoomBeforeViewSwitch;
+        return (mainView.currentView === 'actual'
+          && mainView.canvas.getZoom() === 2
+          && vpt[4] !== 0
+          && vpt[5] !== 0).toString();
+        """
+        Then I expect the stored "js" string is equal:
+        """
+          true
+        """
+
+        When I click element with locator "[data-segment-value='expected']"
+        When I wait up to 30 seconds for javascript condition:
+        """
+        return mainView.currentView === 'expected'
+          && mainView.canvas.getObjects().indexOf(mainView.expectedImage) !== -1;
+        """
+        When I execute javascript code:
+        """
+        const before = window.panZoomBeforeViewSwitch;
+        const after = mainView.canvas.viewportTransform.slice();
+        const sameTransform = before.length === after.length
+          && before.every((value, index) => Math.abs(value - after[index]) < 0.001);
+
+        return (mainView.currentView === 'expected'
+          && mainView.canvas.getZoom() === 2
+          && sameTransform).toString();
+        """
+        Then I expect the stored "js" string is equal:
+        """
+          true
+        """
