@@ -457,6 +457,13 @@ export class MainView {
     }
 
     async switchView(view: string) {
+        const previousView = this.currentView;
+        const simpleViews = ['actual', 'expected', 'diff'];
+        const shouldPreserveViewport = simpleViews.includes(previousView) && simpleViews.includes(view);
+        const viewportTransform = shouldPreserveViewport && this.canvas.viewportTransform
+            ? [...this.canvas.viewportTransform]
+            : null;
+
         this.currentView = view;
         await this.destroyAllViews();
         this.sliderView = new SideToSideView(
@@ -464,7 +471,14 @@ export class MainView {
                 mainView: this,
             },
         );
-        this[`${view}View`].render();
+        await this[`${view}View`].render();
+
+        if (viewportTransform) {
+            this.canvas.setViewportTransform(viewportTransform);
+            this.updateRCATransform();
+            this.canvas.requestRenderAll();
+            document.dispatchEvent(new Event('zoom'));
+        }
     }
 
     panToCanvasWidthCenter(imageName: string) {
@@ -900,36 +914,13 @@ export class MainView {
         this.removeAllRegions();
         const regionData = await MainView.getRegionsData(id, prefetchedBaseline);
 
-        // Store initial state
         if (regionData) {
-            this.snapshotRegions = JSON.stringify({
-                ignoreRegions: JSON.stringify(this.convertRegionsDataFromServer(JSON.parse(regionData.ignoreRegions || '[]'))),
-                boundRegions: JSON.stringify(this.convertRegionsDataFromServer(JSON.parse(regionData.boundRegions || '[]')))
-                // Note: The conversion above is seemingly incorrect because getRegionsData returns JSON stringified arrays
-                // but the code below simply parses them. 
-                // Let's stick to what's actually being used:
-                // drawRegions parses JSON string of regions. 
-                // We should probably just store what we retrieved as the "snapshot" in the format getRegionsData() would produce?
-                // actually getRegionsData() produces scaled coordinates (client side), whereas server data is unscaled (original).
-                // So we can't just store server data as snapshot. We need the snapshot to be in CLIENT coordinates/structure.
-            });
-
-            // Wait, we need to draw regions first, then take a snapshot of what we have.
-            // Because getRegionsData() returns current canvas state.
             this.drawRegions(regionData.ignoreRegions);
-            if (regionData.boundRegions) {
-                this.drawRegions(regionData.boundRegions); // Assuming drawRegions handles this logic generic enough or we need a specific one? 
-                // Existing drawRegions implementation hardcodes 'ignore_rect'. Let's check drawRegions.
-            }
-
+            this.drawBoundRegions(regionData.boundRegions);
             this.updateBoundingOverlay();
-
-            // After drawing, update snapshot of current state
-            this.snapshotRegions = JSON.stringify(this.getRegionsData());
-        } else {
-            this.snapshotRegions = JSON.stringify(this.getRegionsData()); // Empty state
         }
-        this.drawBoundRegions(regionData?.boundRegions);
+
+        this.snapshotRegions = JSON.stringify(this.getRegionsData());
     }
 
     /**
