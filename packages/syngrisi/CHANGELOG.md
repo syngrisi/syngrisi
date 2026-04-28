@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.4.8
+
+### Patch Changes
+
+-   [`d5b9bcd`](https://github.com/syngrisi/syngrisi/commit/d5b9bcdcc5aa9396fb2387343e420cdf10a89395) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - feat(ui): preserve zoom and pan when switching between simple views (actual / expected / diff). Also simplifies `loadRegionsData` by removing dead snapshot code that re-serialized the same state twice.
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.4.8
+
 ## 3.4.7
 
 ### Patch Changes
