@@ -23,11 +23,7 @@ in a fast, self-hosted web UI.
 
 ## 🎬 Demo
 
-https://user-images.githubusercontent.com/23633060/225095007-39ee0a29-61c1-4f46-99ab-1af67052accb.mp4
-
-<div align="center">
-  <img src="assets/screenshots/dashboard.png" width="100%" alt="Syngrisi dashboard — runs and checks with passed / failed / new statuses" />
-</div>
+https://github.com/user-attachments/assets/114d3087-5520-49eb-85b9-cbee4d36f12a
 
 ## Why Syngrisi?
 
