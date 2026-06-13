@@ -1,0 +1,14 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "extends": ["./typedoc.base.json"],
+  "name": "Syngrisi Documentation",
+  "entryPointStrategy": "packages",
+  "entryPoints": [
+    "packages/core-api",
+    "packages/playwright-sdk",
+    "packages/wdio-sdk",
+    "packages/create-sy"
+  ],
+  "out": "docs",
+  "readme": "README.md"
+}
