@@ -101,6 +101,11 @@
     </div>
   </section>
 
+  <section class="card" id="globe" style="margin-bottom:18px">
+    <div class="head"><h3>Global reach</h3><span class="sub">active edge locations</span></div>
+    <div class="body"><svg id="globe-svg" viewBox="0 0 760 320" width="100%" height="320" role="img" aria-label="wireframe globe with location points"></svg></div>
+  </section>
+
   <section class="card regions" id="regions">
     <div class="head"><h3>Traffic by region</h3><span class="sub">share of sessions</span></div>
     <div class="body" id="regbars"></div>
@@ -191,6 +196,42 @@
         <div class="track"><div style="width:${r.v * 2}%;background:linear-gradient(90deg,${r.c},${r.c}cc)"></div></div>
         <div class="pct">${r.v}%</div>
       </div>`).join('');
+
+    /* ---------- Wireframe globe with location points ----------
+       v2 nudges only 3 tiny points by ~2-3px — a near-invisible diff that
+       showcases Syngrisi's "difference highlighting" in the diff viewer. */
+    const gsvg = document.getElementById('globe-svg');
+    const gcx = 380, gcy = 160, R = 120;
+    const gdefs = el('defs', {});
+    gdefs.innerHTML = '<radialGradient id="sphere" cx="38%" cy="30%" r="78%">'
+      + '<stop offset="0" stop-color="#f1f4ff"/><stop offset="60%" stop-color="#e4e9ff"/><stop offset="100%" stop-color="#d2d9f6"/></radialGradient>'
+      + '<filter id="pglow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="2.2" result="b"/>'
+      + '<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>';
+    gsvg.appendChild(gdefs);
+    gsvg.appendChild(el('circle', { cx: gcx, cy: gcy, r: R, fill: 'url(#sphere)', stroke: '#c5cdf2', 'stroke-width': 1 }));
+    [-0.8, -0.45, 0, 0.45, 0.8].forEach((f) => { const dy = f * R, rx = Math.sqrt(R * R - dy * dy);
+      gsvg.appendChild(el('ellipse', { cx: gcx, cy: gcy + dy, rx, ry: rx * 0.17, fill: 'none', stroke: '#aab4ee', 'stroke-width': 1, opacity: .55 })); });
+    [0.25, 0.55, 0.82].forEach((f) => gsvg.appendChild(el('ellipse', { cx: gcx, cy: gcy, rx: R * f, ry: R, fill: 'none', stroke: '#aab4ee', 'stroke-width': 1, opacity: .55 })));
+    gsvg.appendChild(el('line', { x1: gcx, y1: gcy - R, x2: gcx, y2: gcy + R, stroke: '#aab4ee', 'stroke-width': 1, opacity: .55 }));
+    let dots = [
+      { k: 'sf', x: -78, y: -18, r: 4, c: '#6366f1' }, { k: 'ny', x: -44, y: -34, r: 4, c: '#6366f1' },
+      { k: 'lon', x: -6, y: -52, r: 5, c: '#10b981' }, { k: 'ber', x: 18, y: -42, r: 4, c: '#8b5cf6' },
+      { k: 'cai', x: 30, y: 6, r: 3, c: '#f59e0b' }, { k: 'mum', x: 58, y: 8, r: 4, c: '#06b6d4' },
+      { k: 'tok', x: 92, y: -14, r: 4, c: '#6366f1' }, { k: 'sin', x: 78, y: 34, r: 4, c: '#06b6d4' },
+      { k: 'syd', x: 96, y: 62, r: 4, c: '#10b981' }, { k: 'sao', x: -40, y: 54, r: 4, c: '#f59e0b' },
+    ];
+    if (v2) dots = dots.map((d) => {
+      if (d.k === 'tok') return { ...d, x: d.x + 3, y: d.y + 2 };
+      if (d.k === 'sao') return { ...d, y: d.y - 3 };
+      if (d.k === 'syd') return { ...d, x: d.x - 2, y: d.y + 3 };
+      return d;
+    });
+    dots.forEach((d) => {
+      const x = gcx + d.x, y = gcy + d.y;
+      gsvg.appendChild(el('circle', { cx: x, cy: y, r: d.r + 2, fill: d.c, opacity: .22 }));
+      gsvg.appendChild(el('circle', { cx: x, cy: y, r: d.r, fill: d.c, filter: 'url(#pglow)' }));
+      gsvg.appendChild(el('circle', { cx: x, cy: y, r: Math.max(1, d.r - 2), fill: '#fff', opacity: .85 }));
+    });
   </script>
 </body>
 </html>

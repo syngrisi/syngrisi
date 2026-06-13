@@ -59,14 +59,19 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 
 <table>
   <tr>
-    <td width="50%"><img src="assets/screenshots/diff-fullpage.png" alt="Diff viewer highlighting changes" /><br/><sub><b>Diff viewer</b> — baseline vs. actual with highlighted changes.</sub></td>
+    <td width="50%"><img src="assets/screenshots/side-by-side.png" alt="Side-by-side slider comparison of baseline and actual" /><br/><sub><b>Side-by-side compare</b> — drag the slider between baseline and actual.</sub></td>
     <td width="50%"><img src="assets/screenshots/rca.png" alt="Root Cause Analysis panel listing DOM changes" /><br/><sub><b>Root Cause Analysis</b> — the DOM-level changes behind a diff, ranked by severity.</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="assets/screenshots/diff-chart.png" alt="Single-element diff" /><br/><sub><b>Clear diffs</b> — pinpoint exactly what changed, down to a single chart point.</sub></td>
-    <td width="50%"><img src="assets/screenshots/checks-grid.png" alt="Visual checks for a test" /><br/><sub><b>Per-test checks</b> — every visual check at a glance.</sub></td>
+    <td width="50%"><img src="assets/screenshots/diff-chart.png" alt="Single-element diff" /><br/><sub><b>Pinpoint diffs</b> — exactly what changed, down to a single chart point.</sub></td>
+    <td width="50%"><img src="assets/screenshots/checks-and-settings.png" alt="Per-test checks with a customizable dark UI" /><br/><sub><b>Per-test checks</b> — every check at a glance, with a customizable UI (dark theme, layouts, fields).</sub></td>
   </tr>
 </table>
+
+<div align="center">
+  <img src="assets/screenshots/highlight.png" width="100%" alt="Difference highlighting reveals a tiny sub-pixel change on a globe" /><br/>
+  <sub><b>Difference highlighting</b> — a 0.09% change across a handful of points becomes impossible to miss.</sub>
+</div>
 
 ## 🚀 Quick Start
 
