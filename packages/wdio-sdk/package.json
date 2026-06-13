@@ -1,7 +1,7 @@
 {
   "name": "@syngrisi/wdio-sdk",
   "version": "3.5.0",
-  "description": "Syngrisi WebdriverIO SDK",
+  "description": "Syngrisi WebdriverIO SDK — visual regression testing for the Syngrisi Visual Testing Platform",
   "main": "dist/WDIODriver.js",
   "types": "dist/WDIODriver.d.ts",
   "directories": {

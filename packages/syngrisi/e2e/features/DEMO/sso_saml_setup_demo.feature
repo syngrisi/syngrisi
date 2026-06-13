@@ -36,7 +36,7 @@ Feature: SSO SAML Setup Demo
     When I announce: "Welcome to Part 1: Understanding IdP Configuration for SAML"
     Then the title is "Login Page"
 
-    When I announce: "This is Syngrisi - a visual regression testing tool."
+    When I announce: "This is Syngrisi - an open-source visual regression testing platform."
     When I announce: "We want to enable Single Sign-On (SSO) using SAML 2.0."
     When I announce: "To do this, we need to configure both sides: the Identity Provider (IdP) and Syngrisi."
 

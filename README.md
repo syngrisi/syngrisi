@@ -1,6 +1,6 @@
 # Syngrisi
 
-Visual Testing Tool - compare screenshots and detect visual regressions.
+Visual Testing Platform — an open-source visual regression testing platform to compare screenshots and detect visual regressions.
 
 ## Monorepo Structure
 

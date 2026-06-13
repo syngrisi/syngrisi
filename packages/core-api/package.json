@@ -1,7 +1,7 @@
 {
   "name": "@syngrisi/core-api",
   "version": "3.5.0",
-  "description": "Syngrisi Core JS client",
+  "description": "Syngrisi Core API — JS/TS client for the Syngrisi Visual Testing Platform",
   "main": "dist/src/SyngrisiApi.js",
   "types": "dist/src/SyngrisiApi.d.ts",
   "private": false,

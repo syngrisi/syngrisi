@@ -1,7 +1,7 @@
 {
   "name": "@syngrisi/playwright-sdk",
   "version": "3.5.0",
-  "description": "Syngrisi Playwright SDK",
+  "description": "Syngrisi Playwright SDK — visual regression testing for the Syngrisi Visual Testing Platform",
   "main": "dist/PlaywrightDriver.js",
   "directories": {
     "lib": "src/lib"
