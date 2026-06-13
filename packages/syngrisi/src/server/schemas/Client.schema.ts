@@ -183,6 +183,15 @@ const ClientCreateCheckSchema = z.object({
             + 'or a compressed payload ({ data, compressed, originalSize }).',
         example: '{"tagName":"BODY","children":[]}',
     }),
+    // Sent over multipart form-data as the string "true"/"false"; coerce it to a real
+    // boolean (z.coerce.boolean would turn "false" into true).
+    vShifting: z.preprocess(
+        (v) => (typeof v === 'string' ? v === 'true' : v),
+        z.boolean(),
+    ).optional().openapi({
+        description: 'Enable vertical-shift stabilization when comparing this check.',
+        example: true,
+    }),
 });
 
 // export type CreateCheckType = z.infer<typeof ClientCreateCheckSchema>;
