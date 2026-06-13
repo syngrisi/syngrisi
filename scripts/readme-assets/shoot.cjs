@@ -52,6 +52,12 @@ async function openCheck(page, id) {
   await save(page, 'diff-fullpage.png');
   console.log('✓ diff-fullpage.png');
 
+  // 3b) Root Cause Analysis panel (toggle with 'D' — requires DOM snapshots)
+  await page.keyboard.press('d');
+  await page.waitForTimeout(2500);
+  await save(page, 'rca.png');
+  console.log('✓ rca.png');
+
   // 4) Diff viewer — chart (clean single-element diff)
   await openCheck(page, weeklyId);
   await save(page, 'diff-chart.png');
