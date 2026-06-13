@@ -7,154 +7,190 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Acme Analytics — Dashboard</title>
+  <title>Orbit Analytics — Executive Dashboard</title>
   <style>
     :root {
-      --bg: #0f172a; --panel: #1e293b; --panel-2: #243049;
-      --text: #e2e8f0; --muted: #94a3b8; --line: #334155;
-      --brand: #6366f1; --green: #22c55e; --amber: #f59e0b; --red: #ef4444; --cyan: #06b6d4;
+      --bg: #f5f6fb; --panel: #ffffff; --ink: #131829; --muted: #6b7390; --line: #e9ebf4;
+      --indigo: #6366f1; --emerald: #10b981; --red: #ef4444; --amber: #f59e0b; --cyan: #06b6d4; --violet: #8b5cf6;
+      --shadow: 0 1px 2px rgba(16,24,40,.05), 0 10px 28px rgba(16,24,40,.06);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 80% -10%, #1e293b 0%, var(--bg) 55%);
-      color: var(--text); min-height: 100vh; padding: 28px 36px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--ink); padding: 24px 30px 30px; -webkit-font-smoothing: antialiased;
     }
-    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
-    .brand { display: flex; align-items: center; gap: 14px; }
-    .logo { width: 44px; height: 44px; border-radius: 12px;
-      background: linear-gradient(135deg, var(--brand), var(--cyan));
-      display: grid; place-items: center; font-weight: 800; font-size: 22px; color: #fff;
-      box-shadow: 0 8px 24px rgba(99,102,241,.45); }
-    .brand h1 { font-size: 22px; letter-spacing: .2px; }
-    .brand p { color: var(--muted); font-size: 13px; }
-    .pill { padding: 8px 16px; border-radius: 999px; background: var(--panel);
-      border: 1px solid var(--line); color: var(--muted); font-size: 13px; }
-    .pill b { color: var(--green); }
+    /* Top bar */
+    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .mark { width: 40px; height: 40px; border-radius: 11px; color: #fff; font-weight: 800; font-size: 20px;
+      display: grid; place-items: center; background: linear-gradient(135deg, var(--indigo), var(--violet));
+      box-shadow: 0 6px 16px rgba(99,102,241,.35); }
+    .brand h1 { font-size: 18px; letter-spacing: -.2px; }
+    .brand p { color: var(--muted); font-size: 12px; }
+    .top-actions { display: flex; align-items: center; gap: 12px; }
+    .seg { display: flex; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); }
+    .seg span { padding: 8px 14px; font-size: 13px; color: var(--muted); border-right: 1px solid var(--line); }
+    .seg span:last-child { border-right: 0; }
+    .seg span.active { color: var(--ink); background: #f0f1fb; font-weight: 600; }
+    .btn { padding: 9px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; color: #fff;
+      background: linear-gradient(135deg, var(--indigo), var(--violet)); box-shadow: 0 6px 16px rgba(99,102,241,.3); }
+    .avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #34d399, #06b6d4);
+      color: #063; display: grid; place-items: center; font-weight: 700; font-size: 13px; color: #fff; }
 
-    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; }
-    .card { background: linear-gradient(180deg, var(--panel), var(--panel-2));
-      border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; }
-    .kpi .label { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .8px; }
-    .kpi .value { font-size: 34px; font-weight: 800; margin: 8px 0 4px; }
-    .kpi .delta { font-size: 13px; font-weight: 600; }
-    .up { color: var(--green); } .down { color: var(--red); }
+    /* KPI row */
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 18px; }
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
+    .kpi { padding: 18px 20px; display: flex; flex-direction: column; gap: 6px; }
+    .kpi .label { color: var(--muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; }
+    .kpi .row { display: flex; align-items: flex-end; justify-content: space-between; }
+    .kpi .value { font-size: 28px; font-weight: 800; letter-spacing: -.5px; }
+    .chip { font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 999px; }
+    .chip.up { color: var(--emerald); background: rgba(16,185,129,.12); }
+    .chip.down { color: var(--red); background: rgba(239,68,68,.12); }
 
-    .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; margin-bottom: 22px; }
-    .card h3 { font-size: 15px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-    .card h3 span { color: var(--muted); font-size: 12px; font-weight: 500; }
+    /* Main grid */
+    .grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; margin-bottom: 18px; }
+    .card h3 { font-size: 15px; font-weight: 700; }
+    .card .head { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 6px; }
+    .card .head .sub { color: var(--muted); font-size: 12px; font-weight: 500; }
+    .legend { display: flex; gap: 14px; color: var(--muted); font-size: 12px; }
+    .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+    .body { padding: 6px 16px 18px; }
 
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th { text-align: left; color: var(--muted); font-weight: 600; padding: 10px 8px; border-bottom: 1px solid var(--line); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
-    td { padding: 12px 8px; border-bottom: 1px solid #2a3a55; }
-    .tag { padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
-    .tag.ok { background: rgba(34,197,94,.15); color: var(--green); }
-    .tag.warn { background: rgba(245,158,11,.15); color: var(--amber); }
-    .tag.err { background: rgba(239,68,68,.15); color: var(--red); }
-    footer { color: var(--muted); font-size: 12px; text-align: center; margin-top: 24px; }
+    /* Regions */
+    .regions .body { padding: 10px 20px 18px; }
+    .reg { display: grid; grid-template-columns: 120px 1fr 56px; align-items: center; gap: 12px; padding: 9px 0; }
+    .reg + .reg { border-top: 1px solid var(--line); }
+    .reg .name { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .reg .name b { width: 22px; text-align: center; }
+    .track { height: 10px; background: #eef0f8; border-radius: 999px; overflow: hidden; }
+    .track > div { height: 100%; border-radius: 999px; }
+    .reg .pct { text-align: right; font-size: 13px; font-weight: 700; color: var(--muted); }
+    footer { color: var(--muted); font-size: 11px; text-align: center; margin-top: 18px; }
   </style>
 </head>
 <body>
   <header>
     <div class="brand">
-      <div class="logo">A</div>
+      <div class="mark">O</div>
       <div>
-        <h1>Acme Analytics</h1>
-        <p>Product performance overview · Q2 2026</p>
+        <h1>Orbit Analytics</h1>
+        <p>Executive dashboard · Q2 2026</p>
       </div>
     </div>
-    <div class="pill">Live · <b>All systems operational</b></div>
+    <div class="top-actions">
+      <div class="seg"><span>Today</span><span class="active">7 days</span><span>30 days</span></div>
+      <div class="btn">Export ↗</div>
+      <div class="avatar">VS</div>
+    </div>
   </header>
 
-  <section class="kpis">
-    <div class="card kpi"><div class="label">Active Users</div><div class="value" id="kpi-users">48,210</div><div class="delta up">▲ 12.4% vs last month</div></div>
-    <div class="card kpi"><div class="label">Revenue</div><div class="value">$312.7K</div><div class="delta up">▲ 8.1%</div></div>
-    <div class="card kpi"><div class="label">Conversion</div><div class="value">4.83%</div><div class="delta up">▲ 0.6 pts</div></div>
-    <div class="card kpi"><div class="label">Churn</div><div class="value">1.92%</div><div class="delta down">▼ 0.3 pts</div></div>
-  </section>
+  <section class="kpis" id="kpis"></section>
 
   <section class="grid">
-    <div class="card">
-      <h3>Weekly Active Users <span>last 8 weeks</span></h3>
-      <svg id="bars" viewBox="0 0 640 240" width="100%" height="240" role="img" aria-label="bar chart"></svg>
+    <div class="card" id="revenue">
+      <div class="head">
+        <h3>Revenue over time</h3>
+        <div class="legend"><span><i style="background:var(--indigo)"></i>This year</span><span><i style="background:#c7d2fe"></i>Last year</span></div>
+      </div>
+      <div class="body"><svg id="line" viewBox="0 0 720 250" width="100%" height="250" role="img" aria-label="revenue line chart"></svg></div>
     </div>
-    <div class="card">
-      <h3>Traffic Sources</h3>
-      <svg id="donut" viewBox="0 0 240 240" width="100%" height="240" role="img" aria-label="donut chart"></svg>
+    <div class="card" id="map">
+      <div class="head"><h3>Global activity</h3><span class="sub">live · last 60 min</span></div>
+      <div class="body"><svg id="geo" viewBox="0 0 560 250" width="100%" height="250" role="img" aria-label="global activity map"></svg></div>
     </div>
   </section>
 
-  <section class="card">
-    <h3>Top Campaigns <span>sorted by ROI</span></h3>
-    <table>
-      <thead><tr><th>Campaign</th><th>Channel</th><th>Spend</th><th>ROI</th><th>Status</th></tr></thead>
-      <tbody id="rows"></tbody>
-    </table>
+  <section class="card regions" id="regions">
+    <div class="head"><h3>Traffic by region</h3><span class="sub">share of sessions</span></div>
+    <div class="body" id="regbars"></div>
   </section>
 
-  <footer>Acme Analytics demo · generated for Syngrisi README screenshots</footer>
+  <footer>Orbit Analytics demo · generated for Syngrisi README screenshots</footer>
 
   <script>
     const v2 = new URLSearchParams(location.search).get('v') === '2';
+    const NS = 'http://www.w3.org/2000/svg';
+    const el = (t, a) => { const n = document.createElementNS(NS, t); for (const k in a) n.setAttribute(k, a[k]); return n; };
 
-    // Bar chart data — v2 mutates one bar (height + color) to create an obvious regression.
-    const bars = [38, 52, 47, 63, 58, 71, 66, v2 ? 41 : 82];
-    const barColor = v2 ? '#ef4444' : '#6366f1';
-    const labels = ['W1','W2','W3','W4','W5','W6','W7','W8'];
-    const svgns = 'http://www.w3.org/2000/svg';
-    const barsSvg = document.getElementById('bars');
-    const max = 90, bw = 56, gap = 24, baseY = 210;
-    bars.forEach((h, i) => {
-      const x = 20 + i * (bw + gap);
-      const ph = (h / max) * 170;
-      const rect = document.createElementNS(svgns, 'rect');
-      rect.setAttribute('x', x); rect.setAttribute('y', baseY - ph);
-      rect.setAttribute('width', bw); rect.setAttribute('height', ph);
-      rect.setAttribute('rx', 8);
-      rect.setAttribute('fill', i === bars.length - 1 ? barColor : 'url(#g)');
-      barsSvg.appendChild(rect);
-      const t = document.createElementNS(svgns, 'text');
-      t.setAttribute('x', x + bw / 2); t.setAttribute('y', baseY + 22);
-      t.setAttribute('fill', '#94a3b8'); t.setAttribute('font-size', '12'); t.setAttribute('text-anchor', 'middle');
-      t.textContent = labels[i]; barsSvg.appendChild(t);
-    });
-    const defs = document.createElementNS(svgns, 'defs');
-    defs.innerHTML = '<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#4f46e5"/></linearGradient>';
-    barsSvg.appendChild(defs);
-
-    // Donut — v2 shifts the split between segments.
-    const donut = document.getElementById('donut');
-    const segs = v2
-      ? [{v:30,c:'#6366f1'},{v:42,c:'#06b6d4'},{v:18,c:'#22c55e'},{v:10,c:'#f59e0b'}]
-      : [{v:46,c:'#6366f1'},{v:28,c:'#06b6d4'},{v:16,c:'#22c55e'},{v:10,c:'#f59e0b'}];
-    let a0 = -Math.PI / 2; const cx = 120, cy = 120, r = 86, rin = 52;
-    segs.forEach(s => {
-      const a1 = a0 + (s.v / 100) * Math.PI * 2;
-      const large = (a1 - a0) > Math.PI ? 1 : 0;
-      const p = document.createElementNS(svgns, 'path');
-      const x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0);
-      const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
-      const xi1 = cx + rin * Math.cos(a1), yi1 = cy + rin * Math.sin(a1);
-      const xi0 = cx + rin * Math.cos(a0), yi0 = cy + rin * Math.sin(a0);
-      p.setAttribute('d', `M${x0} ${y0} A${r} ${r} 0 ${large} 1 ${x1} ${y1} L${xi1} ${yi1} A${rin} ${rin} 0 ${large} 0 ${xi0} ${yi0} Z`);
-      p.setAttribute('fill', s.c); donut.appendChild(p); a0 = a1;
-    });
-    const center = document.createElementNS(svgns, 'text');
-    center.setAttribute('x', cx); center.setAttribute('y', cy + 6); center.setAttribute('text-anchor', 'middle');
-    center.setAttribute('fill', '#e2e8f0'); center.setAttribute('font-size', '26'); center.setAttribute('font-weight', '800');
-    center.textContent = v2 ? '5' : '4'; donut.appendChild(center);
-
-    // Table — v2 flips one campaign status to "At risk".
-    const rows = [
-      ['Spring Launch','Email','$12.4K','420%','ok','Healthy'],
-      ['Retargeting','Display', '$8.9K', '310%', v2 ? 'err' : 'ok', v2 ? 'At risk' : 'Healthy'],
-      ['Referral','Social', '$5.1K', '275%','warn','Watch'],
-      ['Brand Search','Search','$15.7K','180%','ok','Healthy'],
+    /* ---------- KPI cards ---------- */
+    const kpis = [
+      { label: 'Revenue', value: '$1.24M', delta: '+8.2%', up: true, spark: [8,9,8,11,12,11,14,15], color: 'var(--indigo)' },
+      { label: 'Active Users', value: '84.1k', delta: '+12.4%', up: true, spark: [5,6,6,7,8,9,10,12], color: 'var(--emerald)' },
+      { label: 'Orders', value: '12.9k', delta: '+5.1%', up: true, spark: [7,7,8,8,9,9,10,11], color: 'var(--cyan)' },
+      // v2: NPS regresses — value drops and trend flips to red
+      { label: 'NPS', value: v2 ? '61' : '72', delta: v2 ? '−11 pts' : '+3 pts', up: !v2,
+        spark: v2 ? [9,9,8,8,7,6,5,4] : [6,7,7,8,8,9,9,10], color: v2 ? 'var(--red)' : 'var(--amber)' },
     ];
-    document.getElementById('rows').innerHTML = rows.map(r =>
-      `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td><b>${r[3]}</b></td><td><span class="tag ${r[4]}">${r[5]}</span></td></tr>`
-    ).join('');
-    if (v2) document.getElementById('kpi-users').textContent = '41,980';
+    document.getElementById('kpis').innerHTML = kpis.map((k, i) => {
+      const max = Math.max(...k.spark), min = Math.min(...k.spark);
+      const pts = k.spark.map((v, j) => `${j * (110 / (k.spark.length - 1))},${34 - ((v - min) / (max - min || 1)) * 30}`).join(' ');
+      return `<div class="card kpi">
+        <div class="label">${k.label}</div>
+        <div class="row"><div class="value">${k.value}</div><div class="chip ${k.up ? 'up' : 'down'}">${k.up ? '▲' : '▼'} ${k.delta}</div></div>
+        <svg viewBox="0 0 110 36" width="110" height="36"><polyline fill="none" stroke="${k.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="${pts}"/></svg>
+      </div>`;
+    }).join('');
+
+    /* ---------- Revenue line/area chart ---------- */
+    const line = document.getElementById('line');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const cur = [32,38,36,45,52,49,58,64,61,70,76, v2 ? 58 : 82]; // v2: year-end dips
+    const prev = [28,30,33,35,40,42,46,48,50,54,57,60];
+    const W = 720, H = 250, pad = { l: 36, r: 16, t: 16, b: 28 }, max = 90;
+    const X = i => pad.l + i * ((W - pad.l - pad.r) / (months.length - 1));
+    const Y = v => pad.t + (1 - v / max) * (H - pad.t - pad.b);
+    for (let g = 0; g <= 3; g++) { const y = pad.t + g * ((H - pad.t - pad.b) / 3);
+      line.appendChild(el('line', { x1: pad.l, y1: y, x2: W - pad.r, y2: y, stroke: '#eef0f8', 'stroke-width': 1 })); }
+    const defs = el('defs', {}); defs.innerHTML =
+      '<linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity=".22"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient>';
+    line.appendChild(defs);
+    const path = a => a.map((v, i) => `${i ? 'L' : 'M'}${X(i)} ${Y(v)}`).join(' ');
+    line.appendChild(el('path', { d: `${path(cur)} L${X(11)} ${Y(0)} L${X(0)} ${Y(0)} Z`, fill: 'url(#area)' }));
+    line.appendChild(el('path', { d: path(prev), fill: 'none', stroke: '#c7d2fe', 'stroke-width': 2.5, 'stroke-dasharray': '5 5', 'stroke-linejoin': 'round' }));
+    line.appendChild(el('path', { d: path(cur), fill: 'none', stroke: '#6366f1', 'stroke-width': 3, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
+    cur.forEach((v, i) => { if (i === cur.length - 1) { line.appendChild(el('circle', { cx: X(i), cy: Y(v), r: 5, fill: '#6366f1', stroke: '#fff', 'stroke-width': 2.5 })); } });
+    months.forEach((m, i) => { const t = el('text', { x: X(i), y: H - 8, 'text-anchor': 'middle', fill: '#9aa1bd', 'font-size': 11 }); t.textContent = m; line.appendChild(t); });
+
+    /* ---------- Global activity map ---------- */
+    const geo = document.getElementById('geo');
+    const dpat = el('defs', {});
+    dpat.innerHTML = '<pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.3" fill="#e4e7f2"/></pattern>'
+      + '<filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>';
+    geo.appendChild(dpat);
+    geo.appendChild(el('rect', { x: 0, y: 0, width: 560, height: 250, fill: 'url(#dots)', rx: 10 }));
+    const nodes = [
+      { x: 70, y: 140, r: 7, c: '#6366f1', n: 'SF' },
+      { x: 150, y: 115, r: 6, c: '#6366f1', n: 'NY' },
+      { x: 250, y: 88, r: 10, c: '#10b981', n: 'London' },
+      { x: 300, y: 100, r: 6, c: '#8b5cf6', n: 'Berlin' },
+      // v2: APAC hotspot moves, grows and turns red
+      v2 ? { x: 470, y: 165, r: 15, c: '#ef4444', n: 'Tokyo', pulse: true } : { x: 440, y: 130, r: 8, c: '#06b6d4', n: 'Tokyo' },
+      { x: 415, y: 200, r: 6, c: '#6366f1', n: 'Singapore' },
+      { x: 175, y: 205, r: 6, c: '#f59e0b', n: 'São Paulo' },
+    ];
+    const byName = n => nodes.find(d => d.n === n);
+    [['SF','NY'],['NY','London'],['London','Berlin'],['London','Tokyo'],['Tokyo','Singapore'],['NY','São Paulo']].forEach(([a, b]) => {
+      const p = byName(a), q = byName(b); const mx = (p.x + q.x) / 2, my = Math.min(p.y, q.y) - 26;
+      geo.appendChild(el('path', { d: `M${p.x} ${p.y} Q${mx} ${my} ${q.x} ${q.y}`, fill: 'none', stroke: '#c7d2fe', 'stroke-width': 1.4, opacity: .9 }));
+    });
+    nodes.forEach(d => {
+      if (d.pulse) geo.appendChild(el('circle', { cx: d.x, cy: d.y, r: d.r + 8, fill: d.c, opacity: .18 }));
+      geo.appendChild(el('circle', { cx: d.x, cy: d.y, r: d.r, fill: d.c, filter: 'url(#glow)' }));
+      geo.appendChild(el('circle', { cx: d.x, cy: d.y, r: Math.max(2, d.r - 4), fill: '#fff', opacity: .85 }));
+      const t = el('text', { x: d.x, y: d.y + d.r + 13, 'text-anchor': 'middle', fill: '#6b7390', 'font-size': 10, 'font-weight': 600 }); t.textContent = d.n; geo.appendChild(t);
+    });
+
+    /* ---------- Region bars ---------- */
+    const regions = v2
+      ? [{ n: 'North America', f: '🌎', v: 39, c: '#6366f1' }, { n: 'Europe', f: '🌍', v: 26, c: '#10b981' }, { n: 'APAC', f: '🌏', v: 27, c: '#ef4444' }, { n: 'LATAM', f: '🌎', v: 8, c: '#f59e0b' }]
+      : [{ n: 'North America', f: '🌎', v: 42, c: '#6366f1' }, { n: 'Europe', f: '🌍', v: 28, c: '#10b981' }, { n: 'APAC', f: '🌏', v: 18, c: '#06b6d4' }, { n: 'LATAM', f: '🌎', v: 12, c: '#f59e0b' }];
+    document.getElementById('regbars').innerHTML = regions.map(r => `
+      <div class="reg">
+        <div class="name"><b>${r.f}</b> ${r.n}</div>
+        <div class="track"><div style="width:${r.v * 2}%;background:linear-gradient(90deg,${r.c},${r.c}cc)"></div></div>
+        <div class="pct">${r.v}%</div>
+      </div>`).join('');
   </script>
 </body>
 </html>

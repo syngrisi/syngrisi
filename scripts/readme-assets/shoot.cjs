@@ -27,8 +27,8 @@ async function openCheck(page, id) {
 }
 
 (async () => {
-  const fullPageId = await failedCheckId('Dashboard — Full Page');
-  const weeklyId = await failedCheckId('Weekly Active Users');
+  const fullPageId = await failedCheckId('Executive Dashboard — Full Page');
+  const weeklyId = await failedCheckId('Revenue Over Time');
 
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2 });

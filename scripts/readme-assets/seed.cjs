@@ -18,7 +18,7 @@ const HTML = fs.readFileSync(path.join(__dirname, 'demo-site/index.html'), 'utf8
 const SITE_PORT = 5599;
 
 const meta = {
-  app: 'Acme Analytics',
+  app: 'Orbit Analytics',
   branch: 'main',
   os: 'macOS',
   browserName: 'chromium',
@@ -27,11 +27,11 @@ const meta = {
 };
 
 const checks = [
-  { name: 'Dashboard — Full Page', sel: null },
-  { name: 'KPI Cards', sel: 'section.kpis' },
-  { name: 'Weekly Active Users', sel: '#bars' },
-  { name: 'Traffic Sources', sel: '#donut' },
-  { name: 'Top Campaigns', sel: 'section.card:last-of-type' },
+  { name: 'Executive Dashboard — Full Page', sel: null },
+  { name: 'KPI Cards', sel: '#kpis' },
+  { name: 'Revenue Over Time', sel: '#revenue' },
+  { name: 'Global Activity Map', sel: '#map' },
+  { name: 'Traffic by Region', sel: '#regions' },
 ];
 
 async function shot(page, sel) {
@@ -41,7 +41,7 @@ async function shot(page, sel) {
 
 async function runSession(page, { run, runident, suite, tags, version, autoAccept }) {
   const driver = new PlaywrightDriver({ page, url: SYNGRISI_URL, apiKey: API_KEY });
-  await driver.startTestSession({ params: { ...meta, test: 'Marketing Dashboard', run, runident, suite, tags } });
+  await driver.startTestSession({ params: { ...meta, test: 'Executive Dashboard', run, runident, suite, tags } });
   await page.goto(`http://localhost:${SITE_PORT}/${version === 2 ? '?v=2' : ''}`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(400);
   const domDump = await driver.collectDomDump(); // explicit DOM capture for RCA
