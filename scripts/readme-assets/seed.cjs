@@ -32,6 +32,7 @@ const checks = [
   { name: 'Revenue Over Time', sel: '#revenue' },
   { name: 'Global Activity Map', sel: '#map' },
   { name: 'Traffic by Region', sel: '#regions' },
+  { name: 'Global Reach (Globe)', sel: '#globe' },
 ];
 
 async function shot(page, sel) {

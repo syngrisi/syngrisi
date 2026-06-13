@@ -63,5 +63,31 @@ async function openCheck(page, id) {
   await save(page, 'diff-chart.png');
   console.log('✓ diff-chart.png');
 
+  // 5) Subtle diff + difference highlighting (a ~0.1% change on a few globe points)
+  const globeId = await failedCheckId('Global Reach (Globe)');
+  await openCheck(page, globeId);
+  // Fit view: the 3 shifted points are tiny magenta specks, easy to miss.
+  await save(page, 'diff-subtle.png');
+  console.log('✓ diff-subtle.png');
+  // Zoom into the globe, then trigger "difference highlighting" (enabled in diff
+  // mode when mismatch < 5%) — pulsing markers reveal exactly which points changed.
+  await page.evaluate(() => {
+    const cv = window.mainView && window.mainView.canvas;
+    if (!cv) return;
+    cv.setZoom(2.4);
+    cv.absolutePan({ x: (cv.getZoom() * cv.getWidth() / 2) - cv.getWidth() / 2, y: (cv.getZoom() * cv.getHeight() / 2) - cv.getHeight() / 2 });
+    cv.renderAll();
+  });
+  await page.waitForTimeout(500);
+  const hl = page.locator('[data-check="highlight-icon"]');
+  if (await hl.getAttribute('data-disabled') === 'true') {
+    console.log('! highlight disabled — skipping');
+  } else {
+    await hl.click();
+    await page.waitForTimeout(420); // catch the highlight pulse near its peak
+    await save(page, 'diff-highlight.png');
+    console.log('✓ diff-highlight.png');
+  }
+
   await browser.close();
 })().catch(e => { console.error(e); process.exit(1); });
