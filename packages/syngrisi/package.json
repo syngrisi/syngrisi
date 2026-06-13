@@ -1,7 +1,7 @@
 {
   "name": "@syngrisi/syngrisi",
   "version": "3.5.0",
-  "description": "Syngrisi - Visual Testing Tool",
+  "description": "Syngrisi - Visual Testing Platform - open-source visual regression testing platform",
   "main": "./dist/server/server.js",
   "type": "module",
   "bin": {
@@ -31,7 +31,11 @@
     "regression",
     "visual",
     "screenshots",
-    "comparison"
+    "comparison",
+    "open-source",
+    "platform",
+    "visual-regression-testing",
+    "visual-testing-platform"
   ],
   "nodemonConfig": {
     "ignore": [

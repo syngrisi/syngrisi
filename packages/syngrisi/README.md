@@ -1,6 +1,6 @@
-# Syngrisi: Visual Testing Tool <a name="about"></a>
+# Syngrisi: Visual Testing Platform <a name="about"></a>
 
-Syngrisi is designed to facilitate automated visual regression testing. It seamlessly integrates with both new and
+Syngrisi is an open-source visual regression testing platform designed to facilitate automated visual testing. It seamlessly integrates with both new and
 existing test automation kits, providing an API for automated solutions and a user-friendly UI for reviewing and
 managing visual test data.
 
