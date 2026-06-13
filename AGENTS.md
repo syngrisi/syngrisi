@@ -15,7 +15,7 @@
 
 ## Release Process
 
-See [Release Cycle Documentation](docs/RELEASE_CYCLE.md) for detailed instructions on versioning, changelogs, and publishing packages.
+See [Release Cycle Documentation](docs-src/RELEASE_CYCLE.md) for detailed instructions on versioning, changelogs, and publishing packages.
 
 ## 🚀 Quick E2E Test Examples
 

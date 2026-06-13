@@ -20,7 +20,7 @@ If a user asks to run "syngrisi tests" or "e2e tests", treat that as running `ya
 
 ## Release Process
 
--   [Release Cycle Documentation](docs/RELEASE_CYCLE.md)
+-   [Release Cycle Documentation](docs-src/RELEASE_CYCLE.md)
 
 ## E2E Testing Guides
 
