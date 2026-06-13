@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<!--
+  Demo site used ONLY to generate marketing screenshots for the root README.
+  Render with ?v=2 to introduce intentional visual regressions (for "failed" checks).
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Acme Analytics — Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f172a; --panel: #1e293b; --panel-2: #243049;
+      --text: #e2e8f0; --muted: #94a3b8; --line: #334155;
+      --brand: #6366f1; --green: #22c55e; --amber: #f59e0b; --red: #ef4444; --cyan: #06b6d4;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 80% -10%, #1e293b 0%, var(--bg) 55%);
+      color: var(--text); min-height: 100vh; padding: 28px 36px;
+    }
+    header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .logo { width: 44px; height: 44px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand), var(--cyan));
+      display: grid; place-items: center; font-weight: 800; font-size: 22px; color: #fff;
+      box-shadow: 0 8px 24px rgba(99,102,241,.45); }
+    .brand h1 { font-size: 22px; letter-spacing: .2px; }
+    .brand p { color: var(--muted); font-size: 13px; }
+    .pill { padding: 8px 16px; border-radius: 999px; background: var(--panel);
+      border: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+    .pill b { color: var(--green); }
+
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; }
+    .card { background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; }
+    .kpi .label { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .8px; }
+    .kpi .value { font-size: 34px; font-weight: 800; margin: 8px 0 4px; }
+    .kpi .delta { font-size: 13px; font-weight: 600; }
+    .up { color: var(--green); } .down { color: var(--red); }
+
+    .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; margin-bottom: 22px; }
+    .card h3 { font-size: 15px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .card h3 span { color: var(--muted); font-size: 12px; font-weight: 500; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { text-align: left; color: var(--muted); font-weight: 600; padding: 10px 8px; border-bottom: 1px solid var(--line); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+    td { padding: 12px 8px; border-bottom: 1px solid #2a3a55; }
+    .tag { padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    .tag.ok { background: rgba(34,197,94,.15); color: var(--green); }
+    .tag.warn { background: rgba(245,158,11,.15); color: var(--amber); }
+    .tag.err { background: rgba(239,68,68,.15); color: var(--red); }
+    footer { color: var(--muted); font-size: 12px; text-align: center; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">A</div>
+      <div>
+        <h1>Acme Analytics</h1>
+        <p>Product performance overview · Q2 2026</p>
+      </div>
+    </div>
+    <div class="pill">Live · <b>All systems operational</b></div>
+  </header>
+
+  <section class="kpis">
+    <div class="card kpi"><div class="label">Active Users</div><div class="value" id="kpi-users">48,210</div><div class="delta up">▲ 12.4% vs last month</div></div>
+    <div class="card kpi"><div class="label">Revenue</div><div class="value">$312.7K</div><div class="delta up">▲ 8.1%</div></div>
+    <div class="card kpi"><div class="label">Conversion</div><div class="value">4.83%</div><div class="delta up">▲ 0.6 pts</div></div>
+    <div class="card kpi"><div class="label">Churn</div><div class="value">1.92%</div><div class="delta down">▼ 0.3 pts</div></div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h3>Weekly Active Users <span>last 8 weeks</span></h3>
+      <svg id="bars" viewBox="0 0 640 240" width="100%" height="240" role="img" aria-label="bar chart"></svg>
+    </div>
+    <div class="card">
+      <h3>Traffic Sources</h3>
+      <svg id="donut" viewBox="0 0 240 240" width="100%" height="240" role="img" aria-label="donut chart"></svg>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>Top Campaigns <span>sorted by ROI</span></h3>
+    <table>
+      <thead><tr><th>Campaign</th><th>Channel</th><th>Spend</th><th>ROI</th><th>Status</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </section>
+
+  <footer>Acme Analytics demo · generated for Syngrisi README screenshots</footer>
+
+  <script>
+    const v2 = new URLSearchParams(location.search).get('v') === '2';
+
+    // Bar chart data — v2 mutates one bar (height + color) to create an obvious regression.
+    const bars = [38, 52, 47, 63, 58, 71, 66, v2 ? 41 : 82];
+    const barColor = v2 ? '#ef4444' : '#6366f1';
+    const labels = ['W1','W2','W3','W4','W5','W6','W7','W8'];
+    const svgns = 'http://www.w3.org/2000/svg';
+    const barsSvg = document.getElementById('bars');
+    const max = 90, bw = 56, gap = 24, baseY = 210;
+    bars.forEach((h, i) => {
+      const x = 20 + i * (bw + gap);
+      const ph = (h / max) * 170;
+      const rect = document.createElementNS(svgns, 'rect');
+      rect.setAttribute('x', x); rect.setAttribute('y', baseY - ph);
+      rect.setAttribute('width', bw); rect.setAttribute('height', ph);
+      rect.setAttribute('rx', 8);
+      rect.setAttribute('fill', i === bars.length - 1 ? barColor : 'url(#g)');
+      barsSvg.appendChild(rect);
+      const t = document.createElementNS(svgns, 'text');
+      t.setAttribute('x', x + bw / 2); t.setAttribute('y', baseY + 22);
+      t.setAttribute('fill', '#94a3b8'); t.setAttribute('font-size', '12'); t.setAttribute('text-anchor', 'middle');
+      t.textContent = labels[i]; barsSvg.appendChild(t);
+    });
+    const defs = document.createElementNS(svgns, 'defs');
+    defs.innerHTML = '<linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#4f46e5"/></linearGradient>';
+    barsSvg.appendChild(defs);
+
+    // Donut — v2 shifts the split between segments.
+    const donut = document.getElementById('donut');
+    const segs = v2
+      ? [{v:30,c:'#6366f1'},{v:42,c:'#06b6d4'},{v:18,c:'#22c55e'},{v:10,c:'#f59e0b'}]
+      : [{v:46,c:'#6366f1'},{v:28,c:'#06b6d4'},{v:16,c:'#22c55e'},{v:10,c:'#f59e0b'}];
+    let a0 = -Math.PI / 2; const cx = 120, cy = 120, r = 86, rin = 52;
+    segs.forEach(s => {
+      const a1 = a0 + (s.v / 100) * Math.PI * 2;
+      const large = (a1 - a0) > Math.PI ? 1 : 0;
+      const p = document.createElementNS(svgns, 'path');
+      const x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0);
+      const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+      const xi1 = cx + rin * Math.cos(a1), yi1 = cy + rin * Math.sin(a1);
+      const xi0 = cx + rin * Math.cos(a0), yi0 = cy + rin * Math.sin(a0);
+      p.setAttribute('d', `M${x0} ${y0} A${r} ${r} 0 ${large} 1 ${x1} ${y1} L${xi1} ${yi1} A${rin} ${rin} 0 ${large} 0 ${xi0} ${yi0} Z`);
+      p.setAttribute('fill', s.c); donut.appendChild(p); a0 = a1;
+    });
+    const center = document.createElementNS(svgns, 'text');
+    center.setAttribute('x', cx); center.setAttribute('y', cy + 6); center.setAttribute('text-anchor', 'middle');
+    center.setAttribute('fill', '#e2e8f0'); center.setAttribute('font-size', '26'); center.setAttribute('font-weight', '800');
+    center.textContent = v2 ? '5' : '4'; donut.appendChild(center);
+
+    // Table — v2 flips one campaign status to "At risk".
+    const rows = [
+      ['Spring Launch','Email','$12.4K','420%','ok','Healthy'],
+      ['Retargeting','Display', '$8.9K', '310%', v2 ? 'err' : 'ok', v2 ? 'At risk' : 'Healthy'],
+      ['Referral','Social', '$5.1K', '275%','warn','Watch'],
+      ['Brand Search','Search','$15.7K','180%','ok','Healthy'],
+    ];
+    document.getElementById('rows').innerHTML = rows.map(r =>
+      `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td><b>${r[3]}</b></td><td><span class="tag ${r[4]}">${r[5]}</span></td></tr>`
+    ).join('');
+    if (v2) document.getElementById('kpi-users').textContent = '41,980';
+  </script>
+</body>
+</html>
