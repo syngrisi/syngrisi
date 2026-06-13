@@ -178,6 +178,11 @@ const ClientCreateCheckSchema = z.object({
         description: 'Mismatch tolerance threshold in percent to apply to baseline for this ident',
         example: 0.6,
     }),
+    domdump: z.string().optional().openapi({
+        description: 'DOM snapshot for Root Cause Analysis (RCA). JSON string of the DOM tree '
+            + 'or a compressed payload ({ data, compressed, originalSize }).',
+        example: '{"tagName":"BODY","children":[]}',
+    }),
 });
 
 // export type CreateCheckType = z.infer<typeof ClientCreateCheckSchema>;
