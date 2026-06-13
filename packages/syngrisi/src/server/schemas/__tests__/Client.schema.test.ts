@@ -37,3 +37,18 @@ test('createCheck schema accepts a compressed domdump payload', () => {
 
     assert.equal(parsed.body.domdump, compressed);
 });
+
+// Regression: vShifting is read by the controller but was missing from the schema, so it
+// was stripped too. It arrives over multipart as a string and must become a real boolean.
+test('createCheck schema coerces vShifting "true"/"false" strings to booleans', () => {
+    const schema = createRequestBodySchema(ClientCreateCheckSchema);
+
+    const enabled = schema.parse({ body: { ...validBody, vShifting: 'true' } }) as { body: Record<string, unknown> };
+    assert.equal(enabled.body.vShifting, true);
+
+    const disabled = schema.parse({ body: { ...validBody, vShifting: 'false' } }) as { body: Record<string, unknown> };
+    assert.equal(disabled.body.vShifting, false);
+
+    const absent = schema.parse({ body: { ...validBody } }) as { body: Record<string, unknown> };
+    assert.equal(absent.body.vShifting, undefined);
+});
