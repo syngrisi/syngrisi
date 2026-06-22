@@ -20,11 +20,21 @@ export function Checks({ item, testUpdateQuery }: Props) {
     // eslint-disable-next-line no-unused-vars
     const [checksViewMode, setChecksViewMode] = useLocalStorage({ key: 'check-view-mode', defaultValue: 'bounded' });
     const { query } = useParams();
-    // Optional AI-verdict filter (set by clicking a verdict badge). Applied client-side so the
-    // checks query key/cache stay unchanged (accept/remove optimistic updates keep working).
-    const verdictFilter: string | undefined = (query.checkFilter && typeof query.checkFilter === 'object')
-        ? (query.checkFilter as any)['triage.verdict']
-        : undefined;
+    // Optional AI-triage filter (verdict / min confidence / reason substring). Applied client-side so
+    // the checks query key/cache stay unchanged (accept/remove optimistic updates keep working).
+    const cf: any = (query.checkFilter && typeof query.checkFilter === 'object') ? query.checkFilter : {};
+    const verdictFilter: string | undefined = cf['triage.verdict'];
+    const minConfidence: number | undefined = typeof cf.minConfidence === 'number' ? cf.minConfidence : undefined;
+    const reasonContains: string | undefined = (typeof cf.reasonContains === 'string' && cf.reasonContains) ? cf.reasonContains.toLowerCase() : undefined;
+    const hasTriageFilter = !!(verdictFilter || typeof minConfidence === 'number' || reasonContains);
+    const matchesTriageFilter = (c: any) => {
+        const t = c?.triage;
+        if (!t) return false;
+        if (verdictFilter && t.verdict !== verdictFilter) return false;
+        if (typeof minConfidence === 'number' && !(typeof t.confidence === 'number' && t.confidence >= minConfidence)) return false;
+        if (reasonContains && !(String(t.reason || '').toLowerCase().includes(reasonContains))) return false;
+        return true;
+    };
 
     const checksQuery = useQuery({
         queryKey: [
@@ -74,9 +84,7 @@ export function Checks({ item, testUpdateQuery }: Props) {
 
     // Preload images for all checks when data is loaded
     const allChecks = checksQuery?.data?.results || [];
-    const checks = verdictFilter
-        ? allChecks.filter((c: any) => c?.triage?.verdict === verdictFilter)
-        : allChecks;
+    const checks = hasTriageFilter ? allChecks.filter(matchesTriageFilter) : allChecks;
     useImagePreloadBatch(checks, {
         enabled: checks.length > 0,
         priority: 'medium',
