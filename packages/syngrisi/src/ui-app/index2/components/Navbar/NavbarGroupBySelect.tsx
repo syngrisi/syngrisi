@@ -24,6 +24,7 @@ export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupBy
         'test-distinct/os': 'By Platform',
         'test-distinct/status': 'By Test Status',
         'test-distinct/markedAs': 'By Accept Status',
+        'test-distinct/worstTriageVerdict': 'By AI Verdict',
     };
 
     const [title, setTitle] = useState(subpageMap[String('runs')]);
@@ -91,6 +92,7 @@ export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupBy
                 // { value: 'test-distinct/viewport', label: 'Viewport' },
                 { value: 'test-distinct/status', label: 'Test Status' },
                 { value: 'test-distinct/markedAs', label: 'Accept Status' },
+                { value: 'test-distinct/worstTriageVerdict', label: 'AI Verdict' },
             ]}
         />
     );

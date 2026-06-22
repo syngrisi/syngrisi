@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Types } from 'mongoose';
-import { Check, App } from '@models';
+import { Check, App, Test } from '@models';
 import { accept } from '@services/check.service';
 import log from '@lib/logger';
 import { buildTriageInput } from './analysis.service';
@@ -57,7 +57,32 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
     }
 
     await Check.findByIdAndUpdate(checkId, { $set: { triage } }).exec();
+    await updateTestWorstVerdict(checkId);
     return triage;
+}
+
+// Severity ranking: higher = worse. Used to surface the most important verdict on the parent Test.
+const VERDICT_SEVERITY: Record<string, number> = { noise: 1, intended_change: 2, uncertain: 3, likely_bug: 4 };
+
+// Recompute the parent test's worst AI verdict so the test list can group/filter by it.
+async function updateTestWorstVerdict(checkId: string): Promise<void> {
+    try {
+        const check: any = await Check.findById(checkId).select('test').exec();
+        if (!check?.test) return;
+        const checks: any[] = await Check.find({ test: check.test, 'triage.verdict': { $exists: true } })
+            .select('triage.verdict')
+            .exec();
+        let worst: string | undefined;
+        let worstRank = 0;
+        for (const c of checks) {
+            const v = c?.triage?.verdict;
+            const rank = VERDICT_SEVERITY[v] || 0;
+            if (rank > worstRank) { worstRank = rank; worst = v; }
+        }
+        await Test.findByIdAndUpdate(check.test, { $set: { worstTriageVerdict: worst } }).exec();
+    } catch (e) {
+        log.warn(`failed to update test worst verdict for ${checkId}: ${e}`, { scope });
+    }
 }
 
 // Find failed checks that have a diff and no triage yet (cheap default: only hasDiff checks).

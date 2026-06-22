@@ -304,6 +304,72 @@ Feature: AI Triage verdicts and per-project auto-accept
     Then the element with locator "[data-check='BannerCheck']" should be visible
     Then the element with locator "[data-check='FontCheck']" should be hidden
 
+  Scenario: Group tests by AI Verdict
+    Given I create "1" tests with:
+      """
+      testName: VgNoiseTest
+      project: TriageGroup
+      checks:
+        - checkName: VgNoiseCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "VgNoiseCheck"
+    Given I create "1" tests with:
+      """
+      testName: VgNoiseTest
+      project: TriageGroup
+      checks:
+        - checkName: VgNoiseCheck
+          filePath: files/B.png
+      """
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: noise
+        fakeConfidence: 9
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "VgNoiseCheck"
+    Then I expect via http 1st test filtered as "name=VgNoiseTest" matched:
+      """
+      name: VgNoiseTest
+      worstTriageVerdict: noise
+      """
+    Given I create "1" tests with:
+      """
+      testName: VgBugTest
+      project: TriageGroup
+      checks:
+        - checkName: VgBugCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "VgBugCheck"
+    Given I create "1" tests with:
+      """
+      testName: VgBugTest
+      project: TriageGroup
+      checks:
+        - checkName: VgBugCheck
+          filePath: files/B.png
+      """
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: likely_bug
+        fakeConfidence: 8
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "VgBugCheck"
+    When I go to "main" page
+    When I wait 10 seconds for the element with locator "[data-table-test-name='VgNoiseTest']" to be visible
+    When I select the option with the text "AI Verdict" for element "select[data-test='navbar-group-by']"
+    When I wait 30 seconds for the element with locator "//li[contains(., 'noise')]" to be visible
+    When I click element with locator "li*=noise"
+    When I wait 10 seconds for the element with locator "[data-table-test-name='VgNoiseTest']" to be visible
+    When I wait on element "[data-table-test-name='VgBugTest']" to not be displayed
+
   Scenario: Auto-accept applies per project above threshold
     Given I create "1" tests with:
       """
