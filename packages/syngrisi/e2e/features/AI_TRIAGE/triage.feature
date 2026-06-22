@@ -176,6 +176,134 @@ Feature: AI Triage verdicts and per-project auto-accept
     Then the element with locator "[data-triage-verdict='noise']" should be visible
     Then the element with locator "[data-triage-verdict='likely_bug']" should be hidden
 
+  Scenario: Filter checks by minimum confidence
+    Given I create "1" tests with:
+      """
+      testName: HighConfTest
+      project: TriageConf
+      checks:
+        - checkName: HighConfCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "HighConfCheck"
+    Given I create "1" tests with:
+      """
+      testName: HighConfTest
+      project: TriageConf
+      checks:
+        - checkName: HighConfCheck
+          filePath: files/B.png
+      """
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: noise
+        fakeConfidence: 10
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "HighConfCheck"
+    Given I create "1" tests with:
+      """
+      testName: LowConfTest
+      project: TriageConf
+      checks:
+        - checkName: LowConfCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "LowConfCheck"
+    Given I create "1" tests with:
+      """
+      testName: LowConfTest
+      project: TriageConf
+      checks:
+        - checkName: LowConfCheck
+          filePath: files/B.png
+      """
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: noise
+        fakeConfidence: 3
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "LowConfCheck"
+    When I go to "main" page
+    When I wait 10 seconds for the element with locator "[data-table-test-name='HighConfTest']" to be visible
+    When I unfold the test "HighConfTest"
+    When I unfold the test "LowConfTest"
+    When I click element with locator "[data-test='triage-filter-button']"
+    When I fill "8" into element with label "Min confidence"
+    When I click element with locator "[data-test='triage-filter-apply']"
+    Then the element with locator "[data-check='HighConfCheck']" should be visible
+    Then the element with locator "[data-check='LowConfCheck']" should be hidden
+
+  Scenario: Filter checks by reason substring
+    Given I create "1" tests with:
+      """
+      testName: BannerTest
+      project: TriageReason
+      checks:
+        - checkName: BannerCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "BannerCheck"
+    Given I create "1" tests with:
+      """
+      testName: BannerTest
+      project: TriageReason
+      checks:
+        - checkName: BannerCheck
+          filePath: files/B.png
+      """
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: noise
+        fakeConfidence: 9
+        fakeReason: dynamic banner
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "BannerCheck"
+    Given I create "1" tests with:
+      """
+      testName: FontTest
+      project: TriageReason
+      checks:
+        - checkName: FontCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "FontCheck"
+    Given I create "1" tests with:
+      """
+      testName: FontTest
+      project: TriageReason
+      checks:
+        - checkName: FontCheck
+          filePath: files/B.png
+      """
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: noise
+        fakeConfidence: 9
+        fakeReason: font changed
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "FontCheck"
+    When I go to "main" page
+    When I wait 10 seconds for the element with locator "[data-table-test-name='BannerTest']" to be visible
+    When I unfold the test "BannerTest"
+    When I unfold the test "FontTest"
+    When I click element with locator "[data-test='triage-filter-button']"
+    When I fill "banner" into element with label "Reason contains"
+    When I click element with locator "[data-test='triage-filter-apply']"
+    Then the element with locator "[data-check='BannerCheck']" should be visible
+    Then the element with locator "[data-check='FontCheck']" should be hidden
+
   Scenario: Auto-accept applies per project above threshold
     Given I create "1" tests with:
       """
