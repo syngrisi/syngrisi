@@ -23,8 +23,8 @@ export class OpenAIProvider implements TriageProvider {
         const body = {
             model,
             temperature: this.cfg.temperature ?? 0,
-            max_tokens: this.cfg.maxTokens ?? 300,
-            response_format: { type: 'json_object' },
+            // Generous default: "thinking" VLMs spend tokens reasoning before emitting the JSON.
+            max_tokens: this.cfg.maxTokens ?? 1500,
             messages: [
                 { role: 'system', content: SYSTEM_PROMPT },
                 { role: 'user', content: [{ type: 'text', text: buildUserText(input) }, ...imageParts] },
@@ -43,7 +43,9 @@ export class OpenAIProvider implements TriageProvider {
             throw new Error(`OpenAI provider HTTP ${resp.status}: ${await resp.text()}`);
         }
         const data: any = await resp.json();
-        const content = data?.choices?.[0]?.message?.content ?? '';
+        const msg = data?.choices?.[0]?.message ?? {};
+        // Thinking VLMs may put text in `reasoning`; the JSON can land in either field.
+        const content = [msg.content, msg.reasoning].filter(Boolean).join('\n');
         return normalizeResult(content, model);
     }
 }
