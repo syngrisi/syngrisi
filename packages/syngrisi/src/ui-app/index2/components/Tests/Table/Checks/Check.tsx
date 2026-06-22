@@ -154,6 +154,12 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
         setQuery({ modalIsOpen: 'true' });
     };
 
+    // Click a verdict badge to filter checks to that verdict; click the active one again to clear.
+    const handleVerdictClick = (verdict: string) => {
+        const active = (query.checkFilter as any)?.['triage.verdict'];
+        setQuery({ checkFilter: active === verdict ? null : { 'triage.verdict': verdict } });
+    };
+
     return (
         <>
             {
@@ -259,7 +265,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
 
                             <Group justify="flex-end">
                                 <Status check={check} />
-                                <TriageVerdict check={check} />
+                                <TriageVerdict check={check} onClick={handleVerdictClick} />
                                 <ViewPortLabel
                                     color="blue"
                                     check={check}
@@ -411,7 +417,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             {/* CHECK TOOLBAR */}
                             <Group justify="space-between" px={12} mt={4} mb={6} gap={6} align="center" wrap="nowrap">
                                 <Status check={check} variant="filled" size="xs" />
-                                <TriageVerdict check={check} size="xs" />
+                                <TriageVerdict check={check} size="xs" onClick={handleVerdictClick} />
 
                                 <ViewPortLabel
                                     check={check}

@@ -9,6 +9,7 @@ import { GenericService } from '@shared/services';
 import { ChecksSkeleton } from '@index/components/Tests/Table/Checks/ChecksSkeleton';
 import { Check } from '@index/components/Tests/Table/Checks/Check';
 import { useImagePreloadBatch } from '@shared/hooks';
+import { useParams } from '@hooks/useParams';
 
 interface Props {
     item: any,
@@ -18,15 +19,20 @@ interface Props {
 export function Checks({ item, testUpdateQuery }: Props) {
     // eslint-disable-next-line no-unused-vars
     const [checksViewMode, setChecksViewMode] = useLocalStorage({ key: 'check-view-mode', defaultValue: 'bounded' });
+    const { query } = useParams();
+    // Optional AI-verdict/triage filter (set by clicking a verdict badge); default {} → unchanged behavior.
+    const checkFilter = (query.checkFilter && typeof query.checkFilter === 'object') ? query.checkFilter : {};
+    const checkFilterKey = JSON.stringify(checkFilter);
 
     const checksQuery = useQuery({
         queryKey: [
             'preview_checks',
             item._id,
+            checkFilterKey,
         ],
         queryFn: () => GenericService.get(
             'checks',
-            { test: item._id },
+            { test: item._id, ...checkFilter },
             {
                 populate: 'baselineId,actualSnapshotId,diffId',
                 limit: '0',
