@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 3.5.1
+
+### Patch Changes
+
+-   [`a7a3124`](https://github.com/syngrisi/syngrisi/commit/a7a31241435514d1916d653cb3a49cb7993654d9) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Update all dependencies to their latest versions across the monorepo (mongoose 9, vite 8, typescript 6, playwright-bdd 9, react 19.2.7, sharp 0.35, babel 8, jasmine 6, connect-mongo 6, @wdio/\* 9.29, zod 4.4, and more). No public API changes. eslint held at 9.x (eslint 10 drops legacy .eslintrc support) and lint-staged held at 16.x (17 requires Node >=22.22.1).
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.5.1
+
 ## 3.5.0
 
 ### Minor Changes
