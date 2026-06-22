@@ -76,6 +76,40 @@ Feature: AI Triage verdicts and per-project auto-accept
     When I unfold the test "TriageBadgeTest"
     Then the element with locator "[data-triage-verdict='likely_bug']" should be visible
 
+  Scenario: Re-run triage from the check toolbar updates the verdict
+    Given I create "1" tests with:
+      """
+      testName: TriageToolbarTest
+      project: TriageToolbar
+      checks:
+        - checkName: ToolbarCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "ToolbarCheck"
+    Given I create "1" tests with:
+      """
+      testName: TriageToolbarTest
+      project: TriageToolbar
+      checks:
+        - checkName: ToolbarCheck
+          filePath: files/B.png
+      """
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: noise
+        fakeConfidence: 9
+      enabled: true
+      """
+    When I go to "main" page
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TriageToolbarTest']" to be visible
+    When I unfold the test "TriageToolbarTest"
+    When I open the 1st check "ToolbarCheck"
+    Then the element with locator "[data-test='triage-run-button']" should be visible
+    When I click element with locator "[data-test='triage-run-button']"
+    Then the element with locator "[data-triage-verdict='noise']" should be visible
+
   Scenario: Auto-accept applies per project above threshold
     Given I create "1" tests with:
       """
