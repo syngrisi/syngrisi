@@ -3,15 +3,9 @@ import type { AppServerFixture } from '@fixtures';
 import type { TestStore } from '@fixtures';
 import { createLogger } from '@lib/logger';
 import { requestWithSession } from '@utils/http-client';
-import { MongoClient } from 'mongodb';
 import { expect } from '@playwright/test';
 
 const logger = createLogger('TriageSteps');
-
-function testDbUri(): string {
-    const cid = process.env.SYNGRISI_TEST_CID || process.env.TEST_WORKER_INDEX || '0';
-    return `mongodb://127.0.0.1/SyngrisiDbTest${cid}`;
-}
 
 async function findCheckByName(
     appServer: AppServerFixture,
@@ -28,30 +22,28 @@ async function findCheckByName(
     return item;
 }
 
-// Set per-project auto-accept policy directly in the DB (no app-update API yet).
+// Set per-project auto-accept policy via the app API (PATCH /v1/app/:id/triage-policy).
 Given(
     'the project {string} has triage policy {string} threshold {int} verdicts {string}',
-    async ({}, project: string, policy: string, threshold: number, verdicts: string) => {
-        const client = new MongoClient(testDbUri());
-        try {
-            await client.connect();
-            await client.db().collection('vrsapps').updateOne(
-                { name: project },
-                {
-                    $set: {
-                        triagePolicy: {
-                            policy,
-                            autoAcceptThreshold: threshold,
-                            autoAcceptVerdicts: verdicts.split(',').map((v) => v.trim()).filter(Boolean),
-                        },
-                    },
+    async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, project: string, policy: string, threshold: number, verdicts: string) => {
+        const listUri = `${appServer.baseURL}/v1/app?limit=0&filter={"name":"${project}"}`;
+        const listResp = await requestWithSession(listUri, testData, appServer);
+        const app = (listResp.json.results || [])[0];
+        expect(app, `project "${project}" not found`).toBeTruthy();
+        const id = app._id || app.id;
+        const patchUri = `${appServer.baseURL}/v1/app/${id}/triage-policy`;
+        const resp = await requestWithSession(patchUri, testData, appServer, {
+            method: 'PATCH',
+            json: {
+                triagePolicy: {
+                    policy,
+                    autoAcceptThreshold: threshold,
+                    autoAcceptVerdicts: verdicts.split(',').map((v) => v.trim()).filter(Boolean),
                 },
-                { upsert: true },
-            );
-            logger.info(`set triagePolicy for project "${project}": ${policy} >= ${threshold} [${verdicts}]`);
-        } finally {
-            await client.close();
-        }
+            },
+        });
+        expect(resp.raw?.statusCode).toBe(200);
+        logger.info(`set triagePolicy for project "${project}": ${policy} >= ${threshold} [${verdicts}]`);
     },
 );
 

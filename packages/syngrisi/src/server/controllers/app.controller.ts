@@ -5,7 +5,7 @@ import { Request, Response } from "express"
 import { config } from "@config";
 import mongoose from 'mongoose';
 import { env } from "@env";
-import { AppSettings } from '../models';
+import { AppSettings, App } from '../models';
 
 const info = catchAsync(async (req: Request, res: Response) => {
     res.status(HttpStatus.OK).json({
@@ -58,8 +58,21 @@ const get = catchAsync(async (req: Request, res: Response) => {
     res.send(result);
 });
 
+// Update the per-project AI Triage auto-accept policy.
+const updateTriagePolicy = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { triagePolicy } = req.body;
+    const app = await App.findByIdAndUpdate(id, { $set: { triagePolicy } }, { new: true }).exec();
+    if (!app) {
+        res.status(HttpStatus.NOT_FOUND).json({ error: 'App not found' });
+        return;
+    }
+    res.json(app);
+});
+
 export {
     info,
     get,
     systemInfo,
+    updateTriagePolicy,
 };
