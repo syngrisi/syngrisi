@@ -110,6 +110,72 @@ Feature: AI Triage verdicts and per-project auto-accept
     When I click element with locator "[data-test='triage-run-button']"
     Then the element with locator "[data-triage-verdict='noise']" should be visible
 
+  Scenario: Clicking a verdict badge filters checks to that verdict
+    # Test 1 → noise
+    Given I create "1" tests with:
+      """
+      testName: FNoiseTest
+      project: TriageFilter
+      checks:
+        - checkName: FNoiseCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "FNoiseCheck"
+    Given I create "1" tests with:
+      """
+      testName: FNoiseTest
+      project: TriageFilter
+      checks:
+        - checkName: FNoiseCheck
+          filePath: files/B.png
+      """
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: noise
+        fakeConfidence: 9
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "FNoiseCheck"
+    # Test 2 → likely_bug
+    Given I create "1" tests with:
+      """
+      testName: FBugTest
+      project: TriageFilter
+      checks:
+        - checkName: FBugCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "FBugCheck"
+    Given I create "1" tests with:
+      """
+      testName: FBugTest
+      project: TriageFilter
+      checks:
+        - checkName: FBugCheck
+          filePath: files/B.png
+      """
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: likely_bug
+        fakeConfidence: 8
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "FBugCheck"
+    # Both verdicts visible, then filter to noise
+    When I go to "main" page
+    When I wait 10 seconds for the element with locator "[data-table-test-name='FNoiseTest']" to be visible
+    When I unfold the test "FNoiseTest"
+    When I unfold the test "FBugTest"
+    Then the element with locator "[data-triage-verdict='noise']" should be visible
+    Then the element with locator "[data-triage-verdict='likely_bug']" should be visible
+    When I click element with locator "[data-triage-verdict='noise']"
+    Then the element with locator "[data-triage-verdict='noise']" should be visible
+    Then the element with locator "[data-triage-verdict='likely_bug']" should be hidden
+
   Scenario: Auto-accept applies per project above threshold
     Given I create "1" tests with:
       """
