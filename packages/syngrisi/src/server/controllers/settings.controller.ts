@@ -5,7 +5,13 @@ import { appSettings } from "@settings";
 
 const getSettings = catchAsync(async (req: ExtRequest, res: Response) => {
     const AppSettings = appSettings;
-    const result = AppSettings.cache;
+    // Mask write-only secrets (AI provider API key) without mutating the cache.
+    const result = AppSettings.cache.map((s: any) => {
+        if (s.name === 'ai_triage_provider' && s.value && typeof s.value === 'object') {
+            return { ...s, value: { ...s.value, apiKey: s.value.apiKey ? '***' : '' } };
+        }
+        return s;
+    });
     res.json(result);
 });
 
@@ -26,7 +32,15 @@ const updateSetting = catchAsync(async (req: ExtRequest, res: Response) => {
     const AppSettings = appSettings;
 
     const { name } = req.params;
-    await AppSettings.set(name, req.body.value);
+    let value = req.body.value;
+    // Preserve the stored AI provider API key when the client sends a masked/empty placeholder.
+    if (name === 'ai_triage_provider' && value && typeof value === 'object') {
+        if (!value.apiKey || value.apiKey === '***') {
+            const existing = (await AppSettings.get('ai_triage_provider'))?.value;
+            value = { ...value, apiKey: (existing && typeof existing === 'object' ? existing.apiKey : '') || '' };
+        }
+    }
+    await AppSettings.set(name, value);
     if (req.body.enabled === false) {
         await AppSettings.disable(name);
     } else {
