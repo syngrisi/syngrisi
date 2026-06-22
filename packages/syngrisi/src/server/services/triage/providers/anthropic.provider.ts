@@ -22,7 +22,7 @@ export class AnthropicProvider implements TriageProvider {
 
         const body = {
             model,
-            max_tokens: this.cfg.maxTokens ?? 300,
+            max_tokens: this.cfg.maxTokens ?? 1500,
             temperature: this.cfg.temperature ?? 0,
             system: `${SYSTEM_PROMPT}\nRespond with JSON only.`,
             messages: [

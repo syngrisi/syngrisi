@@ -17,7 +17,7 @@ export class GeminiProvider implements TriageProvider {
             contents: [{ role: 'user', parts: [{ text: buildUserText(input) }, ...imageParts] }],
             generationConfig: {
                 temperature: this.cfg.temperature ?? 0,
-                maxOutputTokens: this.cfg.maxTokens ?? 300,
+                maxOutputTokens: this.cfg.maxTokens ?? 1500,
                 responseMimeType: 'application/json',
             },
         };
