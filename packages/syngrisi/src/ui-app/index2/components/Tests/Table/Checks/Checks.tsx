@@ -20,19 +20,20 @@ export function Checks({ item, testUpdateQuery }: Props) {
     // eslint-disable-next-line no-unused-vars
     const [checksViewMode, setChecksViewMode] = useLocalStorage({ key: 'check-view-mode', defaultValue: 'bounded' });
     const { query } = useParams();
-    // Optional AI-verdict/triage filter (set by clicking a verdict badge); default {} → unchanged behavior.
-    const checkFilter = (query.checkFilter && typeof query.checkFilter === 'object') ? query.checkFilter : {};
-    const checkFilterKey = JSON.stringify(checkFilter);
+    // Optional AI-verdict filter (set by clicking a verdict badge). Applied client-side so the
+    // checks query key/cache stay unchanged (accept/remove optimistic updates keep working).
+    const verdictFilter: string | undefined = (query.checkFilter && typeof query.checkFilter === 'object')
+        ? (query.checkFilter as any)['triage.verdict']
+        : undefined;
 
     const checksQuery = useQuery({
         queryKey: [
             'preview_checks',
             item._id,
-            checkFilterKey,
         ],
         queryFn: () => GenericService.get(
             'checks',
-            { test: item._id, ...checkFilter },
+            { test: item._id },
             {
                 populate: 'baselineId,actualSnapshotId,diffId',
                 limit: '0',
@@ -72,7 +73,10 @@ export function Checks({ item, testUpdateQuery }: Props) {
     // );
 
     // Preload images for all checks when data is loaded
-    const checks = checksQuery?.data?.results || [];
+    const allChecks = checksQuery?.data?.results || [];
+    const checks = verdictFilter
+        ? allChecks.filter((c: any) => c?.triage?.verdict === verdictFilter)
+        : allChecks;
     useImagePreloadBatch(checks, {
         enabled: checks.length > 0,
         priority: 'medium',
@@ -112,7 +116,7 @@ export function Checks({ item, testUpdateQuery }: Props) {
                                             data-test-checks-ready="true"
                                         >
                                             {
-                                                checksQuery.data.results.map(
+                                                checks.map(
                                                     (check: any) => (
                                                         <Check
                                                             key={check._id}
