@@ -9,6 +9,10 @@ import { accept, remove } from '@services/check.service';
 import { ExtRequest } from '@types';
 import log from '@lib/logger';
 import { HttpStatus } from '@utils';
+import { triageCheck } from '@services/triage';
+import { buildTriageInput } from '@services/triage/analysis.service';
+import { createProvider } from '@services/triage/factory';
+import { getProviderConfig } from '@services/triage/config';
 
 const htmlShell = (title: string, content: string) => `
 <!DOCTYPE html>
@@ -523,11 +527,43 @@ const registerWebhook = catchAsync(async (req: ExtRequest, res: Response) => {
     res.status(201).json(webhook);
 });
 
+// Re-run AI triage for a single check (toolbar "re-run" action). Returns the persisted triage.
+const triageRun = catchAsync(async (req: ExtRequest, res: Response) => {
+    const { id } = req.params;
+    const check = await Check.findById(id).exec();
+    if (!check) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Check not found');
+    }
+    const triage = await triageCheck(id);
+    res.json({ id, triage });
+});
+
+// Admin "Test connection": run one classification against the current/provided provider config.
+const triageTest = catchAsync(async (req: ExtRequest, res: Response) => {
+    const cfg = (req.body && Object.keys(req.body).length) ? req.body : await getProviderConfig();
+    if (!cfg) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'No triage provider configured');
+    }
+    const { checkId } = req.body || {};
+    const started = Date.now();
+    try {
+        const input = checkId
+            ? await buildTriageInput(checkId)
+            : { name: 'connection-test', baselineB64: null, actualB64: null, diffB64: null };
+        const result = await createProvider(cfg).classify(input || { name: 'connection-test', baselineB64: null, actualB64: null, diffB64: null });
+        res.json({ ok: true, latencyMs: Date.now() - started, result });
+    } catch (e) {
+        res.json({ ok: false, latencyMs: Date.now() - started, error: e instanceof Error ? e.message : String(e) });
+    }
+});
+
 export const aiController = {
     getIndex,
     getChecks,
     getCheckDetails,
     getAnalysis,
     batchUpdate,
-    registerWebhook
+    registerWebhook,
+    triageRun,
+    triageTest,
 };

@@ -22,6 +22,7 @@ import { RemoveButton } from '@index/components/Tests/Table/Checks/RemoveButton'
 import { ViewPortLabel } from '@index/components/Tests/Table/Checks/ViewPortLabel';
 import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
 import { Status } from '@shared/components/Check/Status';
+import { TriageVerdict } from '@shared/components/Check/TriageVerdict';
 import { PreviewCheckTooltipLabel } from '@index/components/Tests/Table/Checks/PreviewCheckTooltipLabel';
 import { useImagePreloadOnHover } from '@shared/hooks';
 
@@ -258,6 +259,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
 
                             <Group justify="flex-end">
                                 <Status check={check} />
+                                <TriageVerdict check={check} />
                                 <ViewPortLabel
                                     color="blue"
                                     check={check}
@@ -409,6 +411,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             {/* CHECK TOOLBAR */}
                             <Group justify="space-between" px={12} mt={4} mb={6} gap={6} align="center" wrap="nowrap">
                                 <Status check={check} variant="filled" size="xs" />
+                                <TriageVerdict check={check} size="xs" />
 
                                 <ViewPortLabel
                                     check={check}

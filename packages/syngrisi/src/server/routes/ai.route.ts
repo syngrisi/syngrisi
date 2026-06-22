@@ -14,5 +14,7 @@ router.get('/checks/:id', aiController.getCheckDetails as Midleware);
 router.get('/analysis/:id', aiController.getAnalysis as Midleware);
 router.post('/batch', aiController.batchUpdate as Midleware);
 router.post('/webhooks', aiController.registerWebhook as Midleware);
+router.post('/triage/test', aiController.triageTest as Midleware);
+router.post('/triage/:id/run', aiController.triageRun as Midleware);
 
 export default router;
