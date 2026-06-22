@@ -9,6 +9,11 @@ export interface AppDocument extends Document {
     updatedDate?: Date;
     createdDate?: Date;
     meta?: Record<string, unknown>;
+    triagePolicy?: {
+        policy: 'suggest' | 'auto';
+        autoAcceptThreshold: number; // 0..10
+        autoAcceptVerdicts: string[];
+    };
 }
 
 const AppSchema: Schema<AppDocument> = new Schema({
@@ -32,6 +37,15 @@ const AppSchema: Schema<AppDocument> = new Schema({
     },
     meta: {
         type: Object,
+    },
+    triagePolicy: {
+        type: {
+            policy: { type: String, enum: ['suggest', 'auto'], default: 'suggest' },
+            autoAcceptThreshold: { type: Number, min: 0, max: 10, default: 9 },
+            autoAcceptVerdicts: { type: [String], default: ['intended_change', 'noise'] },
+        },
+        _id: false,
+        default: undefined,
     },
 });
 

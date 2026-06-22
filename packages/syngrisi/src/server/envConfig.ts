@@ -50,6 +50,9 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_AI_KEY: str({ default: '' }),
     OPENAI_API_BASE_URL: str({ default: 'https://api.openai.com/v1' }),
     OPENAI_API_KEY: str({ default: '' }),
+    // AI Triage
+    SYNGRISI_AI_TRIAGE_POLL_INTERVAL_MS: num({ default: 30 * 1000 }),
+    SYNGRISI_AI_TRIAGE_BATCH_SIZE: num({ default: 10 }),
     SYNGRISI_V8_COVERAGE_ON_EXIT: bool({ default: false }),
 
     // Rate Limiting

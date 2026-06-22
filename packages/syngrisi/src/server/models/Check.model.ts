@@ -36,6 +36,15 @@ export interface CheckDocument extends Document {
     topStablePixels?: string;
     toleranceThreshold?: number;
     meta?: Record<string, unknown>;
+    triage?: {
+        verdict: 'intended_change' | 'likely_bug' | 'noise' | 'uncertain';
+        confidence: number; // 0..10 integer
+        reason: string;
+        model: string;
+        at: Date;
+        autoAccepted?: boolean;
+        failed?: boolean; // provider error/timeout → verdict 'uncertain'
+    };
 }
 
 // const CheckSchema: Schema<CheckDocument> = new Schema({
@@ -162,7 +171,27 @@ const CheckSchema = new Schema<CheckDocument>({
     meta: {
         type: Object,
     },
+    triage: {
+        type: {
+            verdict: {
+                type: String,
+                enum: ['intended_change', 'likely_bug', 'noise', 'uncertain'],
+            },
+            confidence: { type: Number, min: 0, max: 10 },
+            reason: { type: String },
+            model: { type: String },
+            at: { type: Date },
+            autoAccepted: { type: Boolean },
+            failed: { type: Boolean },
+        },
+        _id: false,
+        default: undefined,
+    },
 });
+
+// Indexes for AI Triage grouping/filtering performance
+CheckSchema.index({ run: 1, 'triage.verdict': 1 });
+CheckSchema.index({ app: 1, 'triage.verdict': 1 });
 
 CheckSchema.plugin(toJSON);
 CheckSchema.plugin(paginate);

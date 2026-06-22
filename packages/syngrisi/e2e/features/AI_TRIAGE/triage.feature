@@ -1,0 +1,187 @@
+@fast-server
+Feature: AI Triage verdicts and per-project auto-accept
+  AI classifies failed checks (verdict + confidence + reason). In suggest mode it only
+  annotates; in auto mode it accepts safe verdicts per-project above a threshold.
+
+  @smoke
+  Scenario: Failed check gets a verdict in suggest mode
+    Given I create "1" tests with:
+      """
+      testName: TriageSuggestTest
+      project: TriageSuggest
+      checks:
+        - checkName: SuggestCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "SuggestCheck"
+    Given I create "1" tests with:
+      """
+      testName: TriageSuggestTest
+      project: TriageSuggest
+      checks:
+        - checkName: SuggestCheck
+          filePath: files/B.png
+      """
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: noise
+        fakeConfidence: 9
+        fakeReason: dynamic banner
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "SuggestCheck"
+    # verdict recorded, and NOT auto-accepted (no auto policy) → still failed
+    Then I expect via http 1st check filtered as "name=SuggestCheck" matched:
+      """
+      name: SuggestCheck
+      status: [failed]
+      triage:
+        verdict: noise
+        confidence: 9
+        reason: dynamic banner
+      """
+
+  Scenario: Verdict badge is visible in the UI
+    Given I create "1" tests with:
+      """
+      testName: TriageBadgeTest
+      project: TriageBadge
+      checks:
+        - checkName: BadgeCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "BadgeCheck"
+    Given I create "1" tests with:
+      """
+      testName: TriageBadgeTest
+      project: TriageBadge
+      checks:
+        - checkName: BadgeCheck
+          filePath: files/B.png
+      """
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: likely_bug
+        fakeConfidence: 8
+        fakeReason: layout shifted
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "BadgeCheck"
+    When I go to "main" page
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TriageBadgeTest']" to be visible
+    When I unfold the test "TriageBadgeTest"
+    Then the element with locator "[data-triage-verdict='likely_bug']" should be visible
+
+  Scenario: Auto-accept applies per project above threshold
+    Given I create "1" tests with:
+      """
+      testName: TriageAutoTest
+      project: TriageWeb
+      checks:
+        - checkName: AutoCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "AutoCheck"
+    Given I create "1" tests with:
+      """
+      testName: TriageAutoTest
+      project: TriageWeb
+      checks:
+        - checkName: AutoCheck
+          filePath: files/B.png
+      """
+    Given the project "TriageWeb" has triage policy "auto" threshold 9 verdicts "intended_change,noise"
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: noise
+        fakeConfidence: 10
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "AutoCheck"
+    Then I expect via http 1st check filtered as "name=AutoCheck" matched:
+      """
+      name: AutoCheck
+      markedAs: accepted
+      triage:
+        verdict: noise
+        autoAccepted: true
+      """
+
+  Scenario: Verdict below threshold is left for a human
+    Given I create "1" tests with:
+      """
+      testName: TriageBelowTest
+      project: TriageBelow
+      checks:
+        - checkName: BelowCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "BelowCheck"
+    Given I create "1" tests with:
+      """
+      testName: TriageBelowTest
+      project: TriageBelow
+      checks:
+        - checkName: BelowCheck
+          filePath: files/B.png
+      """
+    Given the project "TriageBelow" has triage policy "auto" threshold 9 verdicts "intended_change,noise"
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: intended_change
+        fakeConfidence: 7
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "BelowCheck"
+    Then I expect via http 1st check filtered as "name=BelowCheck" matched:
+      """
+      name: BelowCheck
+      status: [failed]
+      triage:
+        verdict: intended_change
+        confidence: 7
+      """
+
+  Scenario: likely_bug is never auto-accepted
+    Given I create "1" tests with:
+      """
+      testName: TriageBugTest
+      project: TriageBug
+      checks:
+        - checkName: BugCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "BugCheck"
+    Given I create "1" tests with:
+      """
+      testName: TriageBugTest
+      project: TriageBug
+      checks:
+        - checkName: BugCheck
+          filePath: files/B.png
+      """
+    Given the project "TriageBug" has triage policy "auto" threshold 9 verdicts "intended_change,noise,likely_bug"
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: likely_bug
+        fakeConfidence: 10
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "BugCheck"
+    Then I expect via http 1st check filtered as "name=BugCheck" matched:
+      """
+      name: BugCheck
+      status: [failed]
+      triage:
+        verdict: likely_bug
+      """

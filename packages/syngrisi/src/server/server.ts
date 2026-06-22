@@ -7,6 +7,7 @@ import { colors } from '@utils/colors';
 import connectDB from '@lib/connectDb';
 import { createTempDir, createBasicUsers, createInitialSettings, createTestsUsers } from '@lib/startup';
 import { autoCleanupSchedulers } from '@lib/schedulers/autoCleanupSchedulers';
+import { triageScheduler } from '@lib/schedulers/triageScheduler';
 import { runMigrations } from '@lib/migrations';
 import { env } from '@env';
 import { errMsg } from './utils';
@@ -48,6 +49,8 @@ connectDB().then(async () => {
         } else {
             log.debug('Skipping auto-cleanup schedulers in test mode', logMeta);
         }
+        // Triage scheduler self-gates on isTriageEnabled(), so it is safe to always run.
+        triageScheduler.start();
     });
 
 
@@ -58,6 +61,7 @@ connectDB().then(async () => {
             autoCleanupSchedulers.checks.stop();
             autoCleanupSchedulers.logs.stop();
         }
+        triageScheduler.stop();
         if (config.codeCoverage && env.SYNGRISI_V8_COVERAGE_ON_EXIT) {
             log.info('take coverage');
             v8.takeCoverage();
