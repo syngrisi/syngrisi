@@ -36,25 +36,25 @@
     "dist"
   ],
   "dependencies": {
-    "form-data": "^4.0.5",
+    "form-data": "^4.0.6",
     "got-cjs": "^12.5.4",
     "loglevel": "^1.9.2",
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
-    "@typescript-eslint/eslint-plugin": "^8.48.1",
-    "@typescript-eslint/parser": "^8.48.1",
-    "@vitest/coverage-v8": "^4.0.15",
-    "c8": "^10.1.3",
-    "eslint": "^9.39.1",
+    "@types/node": "^26.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.61.1",
+    "@typescript-eslint/parser": "^8.61.1",
+    "@vitest/coverage-v8": "^4.1.9",
+    "c8": "^11.0.0",
+    "eslint": "^9.39.4",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-unicorn": "^62.0.0",
+    "eslint-plugin-unicorn": "^68.0.0",
     "npm-run-all": "^4.1.5",
-    "rimraf": "^6.1.2",
-    "typedoc": "^0.28.15",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.15"
+    "rimraf": "^6.1.3",
+    "typedoc": "^0.28.19",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
   },
   "gitHead": "12bfda406cbe5aaccf3f17fdab02a9bd1a9d6343"
 }

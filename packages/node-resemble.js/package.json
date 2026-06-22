@@ -36,11 +36,11 @@
   "dependencies": {
     "jpeg-js": "^0.4.4",
     "pngjs": "^7.0.0",
-    "sharp": "^0.34.5"
+    "sharp": "^0.35.2"
   },
   "devDependencies": {
     "chokidar-cli": "^3.0.0",
-    "jasmine": "^5.13.0"
+    "jasmine": "^6.3.0"
   },
   "files": [
     "resemble.js",
