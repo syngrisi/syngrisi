@@ -35,14 +35,17 @@ export function TriageVerdict({ check, size = 'sm', variant = 'light', onClick }
     const confidence = check?.triage?.confidence;
     const reason = check?.triage?.reason;
     const autoAccepted = check?.triage?.autoAccepted === true;
+    // Prefer the denormalized per-project label/color; fall back to the built-in map.
+    const color = check?.triage?.color || verdictColor(verdict);
+    const label = check?.triage?.label || verdictLabel(verdict);
     const tip = autoAccepted
         ? `Accepted by AI${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`
-        : `AI: ${verdict}${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`;
+        : `AI: ${label}${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`;
 
     return (
         <Tooltip label={tip} multiline withinPortal>
             <Badge
-                color={verdictColor(verdict)}
+                color={color}
                 variant={variant}
                 size={size}
                 data-test="triage-verdict"
@@ -54,7 +57,7 @@ export function TriageVerdict({ check, size = 'sm', variant = 'light', onClick }
             >
                 {autoAccepted
                     ? `✓ Accepted by AI${typeof confidence === 'number' ? ` ${confidence}` : ''}`
-                    : `AI: ${verdictLabel(verdict)}${typeof confidence === 'number' ? ` ${confidence}` : ''}`}
+                    : `AI: ${label}${typeof confidence === 'number' ? ` ${confidence}` : ''}`}
             </Badge>
         </Tooltip>
     );
