@@ -2,6 +2,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import UnfoldActionIcon from '@index/components/Tests/Table/UnfoldActionIcon';
 import { Row } from '@index/components/Tests/Table/Row';
+import { useParams } from '@hooks/useParams';
+import { parseTriageFilter, testHasTriageMatch } from '@index/components/Tests/Table/triageFilter';
 
 interface Props {
     infinityQuery: any
@@ -14,6 +16,10 @@ interface Props {
 const Rows = ({ infinityQuery, selection, setSelection, visibleFields, updateToolbar }: Props) => {
     const [collapse, setCollapse]: [string[], any] = useState([]);
     const { data } = infinityQuery;
+    const { query } = useParams();
+    // When an AI-triage filter is active, hide tests that have no matching check
+    // (checks are populated on each test). Non-matching checks are hidden inside Checks.tsx.
+    const triage = parseTriageFilter(query.checkFilter);
 
     const toggleCollapse = useCallback((id: string) => {
         setCollapse(
@@ -67,7 +73,9 @@ const Rows = ({ infinityQuery, selection, setSelection, visibleFields, updateToo
     ), [setSelection]);
 
     return data.pages.map((page: any) => (
-        page.results.map(
+        page.results
+            .filter((item: any) => !triage.active || testHasTriageMatch(item, triage))
+            .map(
             (item: any, index: number) => (
                 <Row
                     key={item.id}

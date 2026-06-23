@@ -72,16 +72,18 @@ export function TriageVerdict({ check, size = 'sm', variant = 'light', onClick, 
     const color = check?.triage?.color || verdictColor(verdict);
     const label = check?.triage?.label || verdictLabel(verdict);
     const iconName = check?.triage?.icon || verdictIcon(verdict);
-    const tip = autoAccepted
+    const base = autoAccepted
         ? `Accepted by AI: ${label}${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`
         : `AI: ${label}${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`;
+    // clickable preview badge → clicking filters the current run by this verdict
+    const tip = onClick ? `${base}\nClick to filter this run by this verdict` : base;
 
     const fullText = autoAccepted
         ? `${label} • Accepted by AI${typeof confidence === 'number' ? ` ${confidence}` : ''}`
         : `${label}${typeof confidence === 'number' ? ` ${confidence}` : ''}`;
 
     return (
-        <Tooltip label={tip} multiline withinPortal>
+        <Tooltip label={tip} multiline withinPortal style={{ whiteSpace: 'pre-line' }}>
             <Badge
                 color={color}
                 variant={variant}

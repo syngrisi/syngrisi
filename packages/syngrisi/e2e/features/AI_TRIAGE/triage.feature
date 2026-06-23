@@ -175,6 +175,18 @@ Feature: AI Triage verdicts and per-project auto-accept
     When I click element with locator "[data-triage-verdict='noise']"
     Then the element with locator "[data-triage-verdict='noise']" should be visible
     Then the element with locator "[data-triage-verdict='likely_bug']" should be hidden
+    # the test whose only check does not match the verdict is hidden entirely, not left empty
+    Then the element with locator "[data-table-test-name='FBugTest']" should be hidden
+    Then the element with locator "[data-table-test-name='FNoiseTest']" should be visible
+    # multi-select: add likely_bug via the filter popover → both tests come back
+    When I click element with locator "[data-test='triage-filter-button']"
+    When I wait 2 seconds for the element with locator "[data-test='triage-filter-popover']" to be visible
+    When I click element with locator "[data-test='triage-filter-verdict-likely_bug']"
+    When I click element with locator "[data-test='triage-filter-apply']"
+    When I wait 10 seconds for the element with locator "[data-table-test-name='FBugTest']" to be visible
+    # both tests stay unfolded (collapse state is retained), so both verdicts are visible again
+    Then the element with locator "[data-triage-verdict='noise']" should be visible
+    Then the element with locator "[data-triage-verdict='likely_bug']" should be visible
 
   Scenario: Filter checks by minimum confidence
     Given I create "1" tests with:
