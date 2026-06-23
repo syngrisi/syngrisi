@@ -49,4 +49,21 @@ export class OpenAIProvider implements TriageProvider {
         const content = [msg.content, msg.reasoning].filter(Boolean).join('\n');
         return normalizeResult(content, model, input.verdicts);
     }
+
+    async ping(): Promise<{ model: string }> {
+        const model = this.cfg.model ?? 'gpt-4o';
+        const baseUrl = (this.cfg.baseUrl ?? 'https://api.openai.com/v1').replace(/\/$/, '');
+        // GET /models is instant on OpenAI/Ollama/vLLM — no inference, no slow VLM warm-up.
+        const resp = await fetch(`${baseUrl}/models`, {
+            headers: { ...(this.cfg.apiKey ? { Authorization: `Bearer ${this.cfg.apiKey}` } : {}) },
+            signal: AbortSignal.timeout(15000),
+        });
+        if (!resp.ok) throw new Error(`OpenAI provider HTTP ${resp.status}: ${await resp.text()}`);
+        const data: any = await resp.json();
+        const ids = (data?.data ?? []).map((m: any) => m.id);
+        if (ids.length && !ids.includes(model)) {
+            throw new Error(`model "${model}" not found. Available: ${ids.slice(0, 20).join(', ')}`);
+        }
+        return { model };
+    }
 }

@@ -36,4 +36,15 @@ export class GeminiProvider implements TriageProvider {
         const content = data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text || '').join('') ?? '';
         return normalizeResult(content, model, input.verdicts);
     }
+
+    async ping(): Promise<{ model: string }> {
+        const model = this.cfg.model ?? 'gemini-2.0-flash';
+        const baseUrl = (this.cfg.baseUrl ?? 'https://generativelanguage.googleapis.com').replace(/\/$/, '');
+        // GET model metadata — instant, verifies key + model name without generateContent.
+        const resp = await fetch(`${baseUrl}/v1beta/models/${model}?key=${this.cfg.apiKey ?? ''}`, {
+            signal: AbortSignal.timeout(15000),
+        });
+        if (!resp.ok) throw new Error(`Gemini provider HTTP ${resp.status}: ${await resp.text()}`);
+        return { model };
+    }
 }

@@ -46,4 +46,7 @@ export interface TriageProviderConfig {
 
 export interface TriageProvider {
     classify(input: TriageInput): Promise<TriageVerdictResult>;
+    // Lightweight reachability check for "Test connection": verifies the provider/model responds
+    // without running a full (slow) classification. Throws on failure. Short fixed timeout.
+    ping(): Promise<{ model: string }>;
 }

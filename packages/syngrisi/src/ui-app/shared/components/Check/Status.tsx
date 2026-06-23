@@ -45,6 +45,24 @@ export function Status({ check, size, variant = 'light', iconOnly = false, ...re
         return <Loader size="xs" color="blue" variant="dots" />;
     }
 
+    // grid preview cards: bare colored icon, no Badge chrome (outline/background)
+    if (iconOnly) {
+        return (
+            <Tooltip label={status} withinPortal>
+                <span
+                    data-test="check-status"
+                    data-check-status-name={check.name}
+                    data-check-status-value={status}
+                    title="Check status"
+                    style={{ display: 'inline-flex', alignItems: 'center', color: `var(--mantine-color-${statusColor(status)}-6)` }}
+                    {...rest}
+                >
+                    {Icon ? <Icon size={typeof size === 'number' ? size : 16} stroke={1.8} /> : null}
+                </span>
+            </Tooltip>
+        );
+    }
+
     const badge = (
         <Badge
             color={statusColor(status)}
@@ -55,13 +73,11 @@ export function Status({ check, size, variant = 'light', iconOnly = false, ...re
             size={size || sizes[checksViewSize].statusBadge}
             title="Check status"
             leftSection={Icon ? <Icon size={14} stroke={1.8} /> : undefined}
-            styles={iconOnly ? { section: { marginRight: 0 } } : undefined}
             {...rest}
         >
-            {iconOnly ? '' : check.status}
+            {check.status}
         </Badge>
     );
 
-    // icon-only badges get a tooltip so the status is still discoverable on hover
-    return iconOnly ? <Tooltip label={status} withinPortal>{badge}</Tooltip> : badge;
+    return badge;
 }

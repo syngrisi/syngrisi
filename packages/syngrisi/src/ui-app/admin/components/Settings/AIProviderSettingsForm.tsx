@@ -88,6 +88,7 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
             <Group justify="space-between" mb="md">
                 <Group gap={6}>
                     <Title order={4}>AI Triage</Title>
+                    <Badge color="grape" variant="light" size="sm" data-test="ai-beta-badge">Beta</Badge>
                     <HelpDoc
                         title="Model provider"
                         lines={[
@@ -140,8 +141,16 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
             />
             <Group grow mb="md" align="start">
                 <NumberInput
-                    label="Temperature"
-                    description="0 = deterministic (recommended for triage)"
+                    label={(
+                        <Group gap={4} component="span">
+                            Temperature
+                            <HelpDoc
+                                dataTest="help-doc-temperature"
+                                title="Temperature"
+                                lines={['Sampling randomness. 0 = deterministic, recommended for stable triage. Higher values make verdicts less repeatable.']}
+                            />
+                        </Group>
+                    )}
                     placeholder="0"
                     min={0}
                     max={2}
@@ -152,8 +161,16 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
                     data-test="ai-provider-temperature"
                 />
                 <NumberInput
-                    label="Max tokens"
-                    description="blank = unlimited (model default)"
+                    label={(
+                        <Group gap={4} component="span">
+                            Max tokens
+                            <HelpDoc
+                                dataTest="help-doc-max-tokens"
+                                title="Max tokens"
+                                lines={['Upper bound on the model response. Leave blank for the model default (unlimited). Raise it for "thinking" VLMs that reason before emitting the verdict.']}
+                            />
+                        </Group>
+                    )}
                     placeholder="unlimited"
                     min={1}
                     value={maxTokens}
@@ -161,8 +178,16 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
                     data-test="ai-provider-max-tokens"
                 />
                 <NumberInput
-                    label="Request timeout (ms)"
-                    description="abort the model call after this (blank = 120000 / 2 min)"
+                    label={(
+                        <Group gap={4} component="span">
+                            Request timeout (ms)
+                            <HelpDoc
+                                dataTest="help-doc-timeout"
+                                title="Request timeout (ms)"
+                                lines={['Abort the model call after this many milliseconds. Leave blank for 120000 (2 min). Increase for slow local models.']}
+                            />
+                        </Group>
+                    )}
                     placeholder="120000"
                     min={0}
                     step={1000}

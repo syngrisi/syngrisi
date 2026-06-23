@@ -101,6 +101,18 @@ Then('the {ordinal} check named {string} has a valid AI verdict', async ({ appSe
     expect(t.failed, 'triage did not fail').not.toBe(true);
 });
 
+// Exercise the "Test connection" endpoint with a deterministic fake provider.
+When('I test the triage provider connection with a fake provider', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
+    const resp = await requestWithSession(`${appServer.baseURL}/ai/triage/test`, testData, appServer, {
+        method: 'POST',
+        json: { type: 'fake', model: 'fake-vlm' },
+    });
+    expect(resp.raw?.statusCode).toBe(200);
+    expect(resp.json?.ok, `test connection should succeed: ${JSON.stringify(resp.json)}`).toBe(true);
+    expect(typeof resp.json?.latencyMs).toBe('number');
+    expect(resp.json?.result?.model).toBe('fake-vlm');
+});
+
 // Enable per-project AI Triage (off by default) via the app API.
 Given('I enable AI triage for the project {string}', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, project: string) => {
     const listResp = await requestWithSession(`${appServer.baseURL}/v1/app?limit=0&filter={"name":"${project}"}`, testData, appServer);
