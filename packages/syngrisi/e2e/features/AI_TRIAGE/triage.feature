@@ -445,7 +445,7 @@ Feature: AI Triage verdicts and per-project auto-accept
       """
     Given I set custom triage verdicts for project "TriageCustom":
       """
-      - { key: flaky_render, label: Flaky render, color: orange, severity: 2, autoAcceptable: true }
+      - { key: flaky_render, label: Flaky render, color: orange, icon: flag, severity: 2, autoAcceptable: true }
       - { key: real_defect, label: Real defect, color: red, severity: 5, autoAcceptable: false, neverAutoAccept: true }
       - { key: unsure, label: Unsure, color: gray, severity: 1, autoAcceptable: false, neverAutoAccept: true, isFallback: true }
       """
@@ -467,6 +467,7 @@ Feature: AI Triage verdicts and per-project auto-accept
         verdict: flaky_render
         label: Flaky render
         color: orange
+        icon: flag
         confidence: 9
       """
 
@@ -535,6 +536,11 @@ Feature: AI Triage verdicts and per-project auto-accept
       triage:
         pending: true
       """
+    # Note: the in-progress UI badge ([data-triage-pending='true']) is transient — the background
+    # scheduler classifies the check shortly after, so it's demonstrated in the DEMO test instead.
+
+  Scenario: Test connection validates the provider and returns a verdict
+    When I test the triage provider connection with a fake provider
 
   Scenario: Auto-accept applies per project above threshold
     Given I create "1" tests with:
@@ -572,6 +578,11 @@ Feature: AI Triage verdicts and per-project auto-accept
         verdict: noise
         autoAccepted: true
       """
+    # and the UI marks it "Accepted by AI"
+    When I go to "main" page
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TriageAutoTest']" to be visible
+    When I unfold the test "TriageAutoTest"
+    Then the element with locator "[data-triage-auto-accepted='true']" should be visible
 
   Scenario: Verdict below threshold is left for a human
     Given I create "1" tests with:

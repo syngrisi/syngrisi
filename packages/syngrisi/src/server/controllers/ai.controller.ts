@@ -10,10 +10,8 @@ import { ExtRequest } from '@types';
 import log from '@lib/logger';
 import { HttpStatus } from '@utils';
 import { triageCheck } from '@services/triage';
-import { buildTriageInput } from '@services/triage/analysis.service';
 import { createProvider } from '@services/triage/factory';
 import { getProviderConfig } from '@services/triage/config';
-import { DEFAULT_VERDICTS } from '@services/triage/verdicts';
 
 const htmlShell = (title: string, content: string) => `
 <!DOCTYPE html>
@@ -545,14 +543,11 @@ const triageTest = catchAsync(async (req: ExtRequest, res: Response) => {
     if (!cfg) {
         throw new ApiError(HttpStatus.BAD_REQUEST, 'No triage provider configured');
     }
-    const { checkId } = req.body || {};
     const started = Date.now();
     try {
-        const fallbackInput = { name: 'connection-test', baselineB64: null, actualB64: null, diffB64: null, verdicts: DEFAULT_VERDICTS };
-        const input = checkId
-            ? await buildTriageInput(checkId, DEFAULT_VERDICTS)
-            : fallbackInput;
-        const result = await createProvider(cfg).classify(input || fallbackInput);
+        // Lightweight reachability check — never a full (slow) classification, so the UI doesn't
+        // hang for minutes on a local VLM warming up.
+        const result = await createProvider(cfg).ping();
         res.json({ ok: true, latencyMs: Date.now() - started, result });
     } catch (e) {
         res.json({ ok: false, latencyMs: Date.now() - started, error: e instanceof Error ? e.message : String(e) });

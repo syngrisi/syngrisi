@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import {
     ScrollArea, Box, Title, Paper, Select, Switch, NumberInput, MultiSelect, Button, Group, Table,
-    TextInput, Checkbox, ActionIcon, Text, Divider, ColorInput, Loader,
+    TextInput, Checkbox, ActionIcon, Text, Divider, ColorInput, Loader, Badge,
 } from '@mantine/core';
 import { IconTrash, IconPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -178,7 +178,10 @@ export default function AdminAI() {
     return (
         <ScrollArea type="auto" h="calc(100vh - 120px)">
             <Box p={10} style={{ minHeight: '100%' }}>
-                <Title>AI</Title>
+                <Group gap="sm" align="center">
+                    <Title>AI</Title>
+                    <Badge color="grape" variant="light" data-test="ai-beta-badge">Beta</Badge>
+                </Group>
                 {settingsQuery.isLoading
                     ? <Loader />
                     : <AIProviderSettingsForm settings={settingsQuery.data || []} refetch={settingsQuery.refetch} />}

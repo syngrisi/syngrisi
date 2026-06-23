@@ -27,10 +27,16 @@ Feature: AI Triage - Демонстрация на реальной локаль
 
         # --- In-progress: проверка прошла, модель ещё не проанализировала ---
         When I set demo step 2 of 9: "AI ещё анализирует — in progress"
+        # gate deterministically: ensure the pending flag is stamped before we look for the UI badge
+        Then I expect via http 1st check filtered as "name=RCA-Scenario-Check" matched:
+            """
+            triage:
+                pending: true
+            """
         When I go to "main" page
         When I wait 10 seconds for the element with locator "[data-table-test-name='RCA-Scenario-Test']" to be visible
         When I unfold the test "RCA-Scenario-Test"
-        When I wait 5 seconds for the element with locator "[data-triage-pending='true']" to be visible
+        When I wait 30 seconds for the element with locator "[data-triage-pending='true']" to be visible
         When I highlight element "[data-triage-pending='true']"
         When I announce: "Проверка уже прошла, а модель ещё анализирует результат — на бейдже крутится индикатор «in progress» вместо вердикта."
         When I clear highlight
@@ -109,6 +115,7 @@ Feature: AI Triage - Демонстрация на реальной локаль
         When I highlight element "[data-test='ai-perproject-form']"
         When I announce: "AI Triage включается отдельно для каждого проекта (по умолчанию выключен). Порог уверенности: ниже него вердикт становится Unknown. Набор вердиктов полностью настраивается: ключ, подпись, иконка, цвет, серьёзность и флаги."
         When I clear highlight
+        When I pause
 
         When I announce: "Это AI Triage на реальной модели: in-progress, вердикты, фильтры, группировка, перезапуск, проверка соединения и настройка под каждый проект."
         When I end the demo

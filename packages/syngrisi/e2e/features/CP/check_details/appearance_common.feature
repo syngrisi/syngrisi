@@ -23,7 +23,7 @@ Feature: Check Detail Appearance
     # Header
     # status
     When I wait 10 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
-    Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(34,139,230,1)"
+    Then the css attribute "color" from element "[data-check-status-name='CheckName']" is "rgba(34,139,230,1)"
     Then the element with locator "[data-check-status-name='CheckName'][data-check-status-value='new']" should be visible
 
     # check 'path'
@@ -95,7 +95,7 @@ Feature: Check Detail Appearance
     # Header
     # status
     When I wait 10 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
-    Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(64,192,87,1)"
+    Then the css attribute "color" from element "[data-check-status-name='CheckName']" is "rgba(64,192,87,1)"
     Then the element with locator "[data-check-status-name='CheckName'][data-check-status-value='passed']" should be visible
 
     # Toolbar
@@ -138,7 +138,7 @@ Feature: Check Detail Appearance
     # Header
     # status
     When I wait 10 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
-    Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(250,82,82,1)"
+    Then the css attribute "color" from element "[data-check-status-name='CheckName']" is "rgba(250,82,82,1)"
     Then the element with locator "[data-check-status-name='CheckName'][data-check-status-value='failed']" should be visible
 
     # Toolbar

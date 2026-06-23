@@ -7,10 +7,11 @@ interface Props {
     title: string;
     lines: string[];          // documentation paragraphs
     docHref?: string;         // optional link to fuller docs
+    dataTest?: string;        // override data-test when several help icons share a container
 }
 
 // A question-mark icon that reveals inline documentation on click. Reusable across admin settings.
-export function HelpDoc({ title, lines, docHref }: Props) {
+export function HelpDoc({ title, lines, docHref, dataTest = 'help-doc' }: Props) {
     const [opened, setOpened] = useState(false);
     return (
         <Popover opened={opened} onChange={setOpened} position="right-start" withArrow shadow="md" width={340}>
@@ -21,7 +22,7 @@ export function HelpDoc({ title, lines, docHref }: Props) {
                     size="sm"
                     aria-label={`Help: ${title}`}
                     title="Documentation"
-                    data-test="help-doc"
+                    data-test={dataTest}
                     onClick={() => setOpened((o) => !o)}
                 >
                     <IconHelpCircle size={18} />

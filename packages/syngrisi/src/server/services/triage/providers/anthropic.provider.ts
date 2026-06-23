@@ -49,4 +49,22 @@ export class AnthropicProvider implements TriageProvider {
             : '';
         return normalizeResult(content, model, input.verdicts);
     }
+
+    async ping(): Promise<{ model: string }> {
+        const model = this.cfg.model ?? 'claude-sonnet-4-6';
+        const baseUrl = (this.cfg.baseUrl ?? 'https://api.anthropic.com').replace(/\/$/, '');
+        // Minimal 1-token message — verifies key + model without a full classification.
+        const resp = await fetch(`${baseUrl}/v1/messages`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': this.cfg.apiKey ?? '',
+                'anthropic-version': '2023-06-01',
+            },
+            body: JSON.stringify({ model, max_tokens: 1, messages: [{ role: 'user', content: 'ping' }] }),
+            signal: AbortSignal.timeout(15000),
+        });
+        if (!resp.ok) throw new Error(`Anthropic provider HTTP ${resp.status}: ${await resp.text()}`);
+        return { model };
+    }
 }

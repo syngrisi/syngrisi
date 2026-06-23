@@ -12,4 +12,8 @@ export class FakeProvider implements TriageProvider {
             model: this.cfg.model ?? 'fake',
         };
     }
+
+    async ping(): Promise<{ model: string }> {
+        return { model: this.cfg.model ?? 'fake' };
+    }
 }
