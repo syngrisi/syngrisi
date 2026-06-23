@@ -9,7 +9,6 @@ import { FormWrapper } from '@admin/components/Settings/Forms/FormWrapper';
 import { GenericService } from '@shared/services';
 
 import { SsoSettingsForm } from './SsoSettingsForm';
-import { AIProviderSettingsForm } from './AIProviderSettingsForm';
 
 export default function AdminSettings() {
     useSubpageEffect('Settings');
@@ -31,7 +30,6 @@ export default function AdminSettings() {
                             ? (
                                 <>
                                     <SsoSettingsForm settings={settingsQuery.data} refetch={settingsQuery.refetch} />
-                                    <AIProviderSettingsForm settings={settingsQuery.data} refetch={settingsQuery.refetch} />
                                     {settingsQuery.data
                                         .filter((item: ISettingForm) => !item.name.startsWith('sso_'))
                                         // ai_triage_* get a dedicated AI Providers section (TODO); skip generic form

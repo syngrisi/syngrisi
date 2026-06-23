@@ -226,6 +226,16 @@ export function navigationData(): INavDataItem[] {
                 { title: 'Settings', href: '/admin/settings' },
             ],
         },
+        {
+            title: 'AI',
+            description: 'AI Triage providers and per-project verdicts',
+            group: 'tasks',
+            icon: <IconListDetails size={18} />,
+            crumbs: [
+                { title: 'Admin', href: '/admin' },
+                { title: 'AI', href: '/admin/ai' },
+            ],
+        },
     ];
 }
 
