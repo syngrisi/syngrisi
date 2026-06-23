@@ -1,5 +1,5 @@
 import { TriageProvider, TriageProviderConfig, TriageInput, TriageVerdictResult } from '../types';
-import { SYSTEM_PROMPT, buildUserText, normalizeResult } from '../prompt';
+import { buildSystemPrompt, buildUserText, normalizeResult } from '../prompt';
 
 // OpenAI-compatible /chat/completions. Covers OpenAI, Ollama, vLLM, LiteLLM, OpenRouter, etc.
 export class OpenAIProvider implements TriageProvider {
@@ -26,7 +26,7 @@ export class OpenAIProvider implements TriageProvider {
             // Generous default: "thinking" VLMs spend tokens reasoning before emitting the JSON.
             max_tokens: this.cfg.maxTokens ?? 1500,
             messages: [
-                { role: 'system', content: SYSTEM_PROMPT },
+                { role: 'system', content: buildSystemPrompt(input.verdicts) },
                 { role: 'user', content: [{ type: 'text', text: buildUserText(input) }, ...imageParts] },
             ],
         };
@@ -46,6 +46,6 @@ export class OpenAIProvider implements TriageProvider {
         const msg = data?.choices?.[0]?.message ?? {};
         // Thinking VLMs may put text in `reasoning`; the JSON can land in either field.
         const content = [msg.content, msg.reasoning].filter(Boolean).join('\n');
-        return normalizeResult(content, model);
+        return normalizeResult(content, model, input.verdicts);
     }
 }

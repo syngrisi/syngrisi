@@ -5,7 +5,7 @@ import { Check } from '@models';
 import { config } from '@config';
 import { domSnapshotService } from '@services/dom-snapshot.service';
 import log from '@lib/logger';
-import { TriageInput } from './types';
+import { TriageInput, VerdictDef } from './types';
 
 function getBase64(filename?: string): string | null {
     if (!filename) return null;
@@ -22,7 +22,7 @@ function getBase64(filename?: string): string | null {
 
 // Builds the VLM payload for a check: base64 baseline/actual/diff + meta + optional DOM diff.
 // Mirrors GET /ai/analysis/:id so the HTTP endpoint and the triage job share one source of truth.
-export async function buildTriageInput(checkId: string): Promise<TriageInput | null> {
+export async function buildTriageInput(checkId: string, verdicts: VerdictDef[]): Promise<TriageInput | null> {
     const check: any = await Check.findById(checkId).populate('actualSnapshotId baselineId diffId');
     if (!check) return null;
 
@@ -41,5 +41,6 @@ export async function buildTriageInput(checkId: string): Promise<TriageInput | n
         diffB64: check.diffId ? getBase64(check.diffId.filename) : null,
         meta: check.meta,
         domDiff,
+        verdicts,
     };
 }

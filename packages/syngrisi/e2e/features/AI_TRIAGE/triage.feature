@@ -425,6 +425,51 @@ Feature: AI Triage verdicts and per-project auto-accept
     # The other project stays off by default → never triaged
     Then the 1st check named "DisabledCheck" has no AI verdict
 
+  Scenario: A project can define and use custom verdicts
+    Given I create "1" tests with:
+      """
+      testName: CustomVerdictTest
+      project: TriageCustom
+      checks:
+        - checkName: CustomCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "CustomCheck"
+    Given I create "1" tests with:
+      """
+      testName: CustomVerdictTest
+      project: TriageCustom
+      checks:
+        - checkName: CustomCheck
+          filePath: files/B.png
+      """
+    Given I set custom triage verdicts for project "TriageCustom":
+      """
+      - { key: flaky_render, label: Flaky render, color: orange, severity: 2, autoAcceptable: true }
+      - { key: real_defect, label: Real defect, color: red, severity: 5, autoAcceptable: false, neverAutoAccept: true }
+      - { key: unsure, label: Unsure, color: gray, severity: 1, autoAcceptable: false, neverAutoAccept: true, isFallback: true }
+      """
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: flaky_render
+        fakeConfidence: 9
+        fakeReason: dynamic chart redraw
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "CustomCheck"
+    # The custom verdict is recorded with its denormalized label/color
+    Then I expect via http 1st check filtered as "name=CustomCheck" matched:
+      """
+      name: CustomCheck
+      triage:
+        verdict: flaky_render
+        label: Flaky render
+        color: orange
+        confidence: 9
+      """
+
   Scenario: Auto-accept applies per project above threshold
     Given I create "1" tests with:
       """

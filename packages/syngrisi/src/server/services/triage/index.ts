@@ -7,7 +7,8 @@ import { buildTriageInput } from './analysis.service';
 import { createProvider } from './factory';
 import { getProviderConfig } from './config';
 import { shouldAutoAccept } from './policy';
-import { TriageVerdictResult } from './types';
+import { getVerdictConfig, findVerdict, fallbackVerdict } from './verdicts';
+import { TriageVerdictResult, VerdictDef } from './types';
 
 const scope = 'triage';
 
@@ -17,18 +18,25 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
     const cfg = await getProviderConfig();
     if (!cfg) throw new Error('triage provider is not configured');
 
+    const check: any = await Check.findById(checkId).exec();
+    if (!check) throw new Error(`check not found: ${checkId}`);
+    const app: any = await App.findById(check.app).exec();
+    const verdicts = getVerdictConfig(app);
+
     let result: TriageVerdictResult;
     let failed = false;
     try {
-        const input = await buildTriageInput(checkId);
+        const input = await buildTriageInput(checkId, verdicts);
         if (!input) throw new Error(`check not found: ${checkId}`);
         result = await createProvider(cfg).classify(input);
     } catch (e) {
         failed = true;
         log.warn(`triage failed for ${checkId}: ${e}`, { scope });
-        result = { verdict: 'uncertain', confidence: 0, reason: 'triage failed', model: cfg.model ?? cfg.type };
+        const fb = fallbackVerdict(verdicts);
+        result = { verdict: fb.key, confidence: 0, reason: 'triage failed', model: cfg.model ?? cfg.type };
     }
 
+    const def = findVerdict(verdicts, result.verdict);
     const triage: any = {
         verdict: result.verdict,
         confidence: result.confidence,
@@ -36,48 +44,44 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
         model: result.model,
         at: new Date(),
         failed,
+        // denormalized display attrs so the UI renders without a per-project lookup
+        label: def?.label ?? result.verdict,
+        color: def?.color ?? 'gray',
     };
 
-    // Apply per-project auto-accept policy
-    if (!failed) {
-        const check: any = await Check.findById(checkId).exec();
-        if (check) {
-            const app: any = await App.findById(check.app).exec();
-            if (shouldAutoAccept(app?.triagePolicy, result.verdict, result.confidence)) {
-                try {
-                    const user: any = { _id: check.creatorId ?? new Types.ObjectId(), username: 'AI Triage' };
-                    await accept(checkId, '', user);
-                    triage.autoAccepted = true;
-                    log.info(`triage auto-accepted ${checkId} (${result.verdict} @ ${result.confidence})`, { scope });
-                } catch (e) {
-                    log.warn(`triage auto-accept failed for ${checkId}: ${e}`, { scope });
-                }
-            }
+    // Apply per-project auto-accept policy (verdict flags + policy allowlist + threshold)
+    if (!failed && shouldAutoAccept(app?.triagePolicy, result.verdict, result.confidence, verdicts)) {
+        try {
+            const user: any = { _id: check.creatorId ?? new Types.ObjectId(), username: 'AI Triage' };
+            await accept(checkId, '', user);
+            triage.autoAccepted = true;
+            log.info(`triage auto-accepted ${checkId} (${result.verdict} @ ${result.confidence})`, { scope });
+        } catch (e) {
+            log.warn(`triage auto-accept failed for ${checkId}: ${e}`, { scope });
         }
     }
 
     await Check.findByIdAndUpdate(checkId, { $set: { triage } }).exec();
-    await updateTestWorstVerdict(checkId);
+    await updateTestWorstVerdict(checkId, verdicts);
     return triage;
 }
 
-// Severity ranking: higher = worse. Used to surface the most important verdict on the parent Test.
-const VERDICT_SEVERITY: Record<string, number> = { noise: 1, intended_change: 2, uncertain: 3, likely_bug: 4 };
-
-// Recompute the parent test's worst AI verdict so the test list can group/filter by it.
-async function updateTestWorstVerdict(checkId: string): Promise<void> {
+// Recompute the parent test's worst AI verdict (by configured severity) for group/filter.
+async function updateTestWorstVerdict(checkId: string, verdicts: VerdictDef[]): Promise<void> {
     try {
         const check: any = await Check.findById(checkId).select('test').exec();
         if (!check?.test) return;
+        const severity: Record<string, number> = {};
+        for (const v of verdicts) severity[v.key] = v.severity;
         const checks: any[] = await Check.find({ test: check.test, 'triage.verdict': { $exists: true } })
             .select('triage.verdict')
             .exec();
         let worst: string | undefined;
-        let worstRank = 0;
+        let worstRank = -Infinity;
         for (const c of checks) {
             const v = c?.triage?.verdict;
-            const rank = VERDICT_SEVERITY[v] || 0;
-            if (rank > worstRank) { worstRank = rank; worst = v; }
+            const rank = severity[v] ?? 0;
+            if (v && rank > worstRank) { worstRank = rank; worst = v; }
         }
         await Test.findByIdAndUpdate(check.test, { $set: { worstTriageVerdict: worst } }).exec();
     } catch (e) {

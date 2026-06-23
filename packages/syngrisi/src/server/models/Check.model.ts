@@ -37,13 +37,15 @@ export interface CheckDocument extends Document {
     toleranceThreshold?: number;
     meta?: Record<string, unknown>;
     triage?: {
-        verdict: 'intended_change' | 'likely_bug' | 'noise' | 'uncertain';
+        verdict: string; // configurable per-project verdict key
         confidence: number; // 0..10 integer
         reason: string;
         model: string;
         at: Date;
+        label?: string; // denormalized display label/color from the project's verdict config
+        color?: string;
         autoAccepted?: boolean;
-        failed?: boolean; // provider error/timeout → verdict 'uncertain'
+        failed?: boolean; // provider error/timeout → fallback verdict
     };
 }
 
@@ -173,14 +175,13 @@ const CheckSchema = new Schema<CheckDocument>({
     },
     triage: {
         type: {
-            verdict: {
-                type: String,
-                enum: ['intended_change', 'likely_bug', 'noise', 'uncertain'],
-            },
+            verdict: { type: String },
             confidence: { type: Number, min: 0, max: 10 },
             reason: { type: String },
             model: { type: String },
             at: { type: Date },
+            label: { type: String },
+            color: { type: String },
             autoAccepted: { type: Boolean },
             failed: { type: Boolean },
         },

@@ -1,5 +1,5 @@
 import { TriageProvider, TriageProviderConfig, TriageInput, TriageVerdictResult } from '../types';
-import { SYSTEM_PROMPT, buildUserText, normalizeResult } from '../prompt';
+import { buildSystemPrompt, buildUserText, normalizeResult } from '../prompt';
 
 // Native Anthropic Messages API with image blocks.
 export class AnthropicProvider implements TriageProvider {
@@ -24,7 +24,7 @@ export class AnthropicProvider implements TriageProvider {
             model,
             max_tokens: this.cfg.maxTokens ?? 1500,
             temperature: this.cfg.temperature ?? 0,
-            system: `${SYSTEM_PROMPT}\nRespond with JSON only.`,
+            system: `${buildSystemPrompt(input.verdicts)}\nRespond with JSON only.`,
             messages: [
                 { role: 'user', content: [{ type: 'text', text: buildUserText(input) }, ...imageBlocks] },
             ],
@@ -46,6 +46,6 @@ export class AnthropicProvider implements TriageProvider {
         const content = Array.isArray(data?.content)
             ? data.content.map((c: any) => c.text || '').join('')
             : '';
-        return normalizeResult(content, model);
+        return normalizeResult(content, model, input.verdicts);
     }
 }

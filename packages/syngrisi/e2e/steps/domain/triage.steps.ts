@@ -4,6 +4,7 @@ import type { TestStore } from '@fixtures';
 import { createLogger } from '@lib/logger';
 import { requestWithSession } from '@utils/http-client';
 import { expect, test } from '@playwright/test';
+import * as yaml from 'yaml';
 
 const logger = createLogger('TriageSteps');
 
@@ -104,6 +105,19 @@ Given('I enable AI triage for the project {string}', async ({ appServer, testDat
     const resp = await requestWithSession(`${appServer.baseURL}/v1/app/${app._id || app.id}/triage-policy`, testData, appServer, {
         method: 'PATCH',
         json: { triageEnabled: true },
+    });
+    expect(resp.raw?.statusCode).toBe(200);
+});
+
+// Set a custom (per-project) verdict set via the app API.
+Given('I set custom triage verdicts for project {string}:', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, project: string, yml: string) => {
+    const triageVerdicts = yaml.parse(yml);
+    const listResp = await requestWithSession(`${appServer.baseURL}/v1/app?limit=0&filter={"name":"${project}"}`, testData, appServer);
+    const app = (listResp.json.results || [])[0];
+    expect(app, `project "${project}" not found`).toBeTruthy();
+    const resp = await requestWithSession(`${appServer.baseURL}/v1/app/${app._id || app.id}/triage-policy`, testData, appServer, {
+        method: 'PATCH',
+        json: { triageVerdicts },
     });
     expect(resp.raw?.statusCode).toBe(200);
 });
