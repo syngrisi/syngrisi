@@ -154,10 +154,18 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
         setQuery({ modalIsOpen: 'true' });
     };
 
-    // Click a verdict badge to filter checks to that verdict; click the active one again to clear.
+    // Click a verdict badge to filter the current run by that verdict; click it again to remove it.
+    // Toggles within the multi-verdict set, preserving other filter dimensions (confidence/reason).
     const handleVerdictClick = (verdict: string) => {
-        const active = (query.checkFilter as any)?.['triage.verdict'];
-        setQuery({ checkFilter: active === verdict ? null : { 'triage.verdict': verdict } });
+        const cf: any = (query.checkFilter && typeof query.checkFilter === 'object') ? { ...query.checkFilter } : {};
+        const raw = cf['triage.verdict'];
+        const current: string[] = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+        const nextVerdicts = current.includes(verdict)
+            ? current.filter((v) => v !== verdict)
+            : [...current, verdict];
+        if (nextVerdicts.length) cf['triage.verdict'] = nextVerdicts;
+        else delete cf['triage.verdict'];
+        setQuery({ checkFilter: Object.keys(cf).length ? cf : null });
     };
 
     return (

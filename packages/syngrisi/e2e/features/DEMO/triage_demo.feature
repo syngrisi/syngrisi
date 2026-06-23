@@ -62,17 +62,28 @@ Feature: AI Triage - Демонстрация на реальной локаль
         When I wait 2 seconds for the element with locator "[data-test='triage-verdict']" to be visible
         When I clear highlight
 
-        # --- Фильтр-панель: уверенность и причина ---
-        When I set demo step 5 of 9: "Фильтр по уверенности и причине"
+        # --- Фильтр-панель: мультивыбор вердиктов, порог и причина ---
+        When I set demo step 5 of 9: "Фильтр сразу по нескольким вердиктам"
         When I go to "main" page
         When I wait 10 seconds for the element with locator "[data-table-test-name='RCA-Scenario-Test']" to be visible
         When I unfold the test "RCA-Scenario-Test"
         When I highlight element "[data-test='triage-filter-button']"
-        When I announce: "Фильтр по минимальной уверенности и по тексту причины. Ниже порога вердикт показывается как Unknown."
+        When I announce: "Фильтр по AI-вердиктам: можно отметить сразу несколько вердиктов чекбоксами, плюс минимальная уверенность и текст причины. Тесты без единого подходящего чека скрываются целиком; ниже порога вердикт показывается как Unknown."
         When I click element with locator "[data-test='triage-filter-button']"
         When I wait 2 seconds for the element with locator "[data-test='triage-filter-popover']" to be visible
+        When I highlight element "[data-test='triage-filter-popover']"
+        When I announce: "Отмечаем несколько вердиктов — в списке остаются только тесты, где есть совпадающие проверки."
+        When I click element with locator "[data-test='triage-filter-verdict-intended_change']"
+        When I click element with locator "[data-test='triage-filter-verdict-likely_bug']"
+        When I click element with locator "[data-test='triage-filter-verdict-noise']"
+        When I click element with locator "[data-test='triage-filter-verdict-uncertain']"
         When I clear highlight
         When I click element with locator "[data-test='triage-filter-apply']"
+        When I wait 10 seconds for the element with locator "[data-table-test-name='RCA-Scenario-Test']" to be visible
+        # сбрасываем фильтр, чтобы не влиять на следующие шаги
+        When I click element with locator "[data-test='triage-filter-button']"
+        When I wait 2 seconds for the element with locator "[data-test='triage-filter-popover']" to be visible
+        When I click element with locator "[data-test='triage-filter-clear']"
 
         # --- Группировка по AI-вердикту ---
         When I set demo step 6 of 9: "Группировка по AI-вердикту"

@@ -1,8 +1,18 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { ActionIcon, Popover, Stack, Select, NumberInput, TextInput, Button, Group, Text, Indicator } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { ActionIcon, Popover, Stack, Checkbox, NumberInput, TextInput, Button, Group, Text, Indicator } from '@mantine/core';
 import { IconSparkles } from '@tabler/icons-react';
 import { useParams } from '@hooks/useParams';
+
+const VERDICT_OPTIONS = [
+    { value: 'intended_change', label: 'Intended change' },
+    { value: 'likely_bug', label: 'Likely bug' },
+    { value: 'noise', label: 'Noise' },
+    { value: 'uncertain', label: 'Uncertain' },
+    { value: 'unknown', label: 'Unknown' },
+];
+
+const toArray = (v: any): string[] => (Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []));
 
 // Compact AI Triage filter: verdict / min confidence / reason substring.
 // Writes the `checkFilter` URL param; checks are filtered client-side in Checks.tsx.
@@ -10,15 +20,25 @@ export function TriageFilterButton() {
     const { query, setQuery } = useParams();
     const cf: any = (query.checkFilter && typeof query.checkFilter === 'object') ? query.checkFilter : {};
     const [opened, setOpened] = useState(false);
-    const [verdict, setVerdict] = useState<string | null>(cf['triage.verdict'] ?? null);
+    const [verdicts, setVerdicts] = useState<string[]>(toArray(cf['triage.verdict']));
     const [minConfidence, setMinConfidence] = useState<number | ''>(typeof cf.minConfidence === 'number' ? cf.minConfidence : '');
     const [reason, setReason] = useState<string>(cf.reasonContains ?? '');
 
-    const active = !!(cf['triage.verdict'] || typeof cf.minConfidence === 'number' || cf.reasonContains);
+    const active = !!(toArray(cf['triage.verdict']).length || typeof cf.minConfidence === 'number' || cf.reasonContains);
+
+    // Sync local controls with the active filter whenever the popover opens (e.g. after the filter
+    // was changed by clicking a verdict badge), so the checkboxes reflect the current state.
+    useEffect(() => {
+        if (!opened) return;
+        setVerdicts(toArray(cf['triage.verdict']));
+        setMinConfidence(typeof cf.minConfidence === 'number' ? cf.minConfidence : '');
+        setReason(cf.reasonContains ?? '');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [opened]);
 
     const apply = () => {
         const next: any = {};
-        if (verdict) next['triage.verdict'] = verdict;
+        if (verdicts.length) next['triage.verdict'] = verdicts;
         if (typeof minConfidence === 'number') next.minConfidence = minConfidence;
         if (reason.trim()) next.reasonContains = reason.trim();
         setQuery({ checkFilter: Object.keys(next).length ? next : null });
@@ -26,7 +46,7 @@ export function TriageFilterButton() {
     };
 
     const clear = () => {
-        setVerdict(null);
+        setVerdicts([]);
         setMinConfidence('');
         setReason('');
         setQuery({ checkFilter: null });
@@ -52,20 +72,18 @@ export function TriageFilterButton() {
             <Popover.Dropdown>
                 <Stack gap="xs" style={{ width: 240 }} data-test="triage-filter-popover">
                     <Text size="sm" fw={600}>AI Triage filter</Text>
-                    <Select
-                        label="Verdict"
-                        placeholder="any"
-                        clearable
-                        value={verdict}
-                        onChange={setVerdict}
+                    <Checkbox.Group
+                        label="Verdicts"
+                        value={verdicts}
+                        onChange={setVerdicts}
                         data-test="triage-filter-verdict"
-                        data={[
-                            { value: 'intended_change', label: 'Intended change' },
-                            { value: 'likely_bug', label: 'Likely bug' },
-                            { value: 'noise', label: 'Noise' },
-                            { value: 'uncertain', label: 'Uncertain' },
-                        ]}
-                    />
+                    >
+                        <Stack gap={6} mt={6}>
+                            {VERDICT_OPTIONS.map((o) => (
+                                <Checkbox key={o.value} value={o.value} label={o.label} data-test={`triage-filter-verdict-${o.value}`} />
+                            ))}
+                        </Stack>
+                    </Checkbox.Group>
                     <NumberInput
                         label="Min confidence"
                         placeholder="0..10"
