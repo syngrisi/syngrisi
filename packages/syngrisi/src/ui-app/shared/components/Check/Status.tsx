@@ -1,7 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react';
-import { Badge, Loader } from '@mantine/core';
+import { Badge, Loader, Tooltip } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
+import {
+    IconCircleDot, IconCircleCheck, IconCircleX, IconClock, IconCircleMinus, IconAlertTriangle, IconLoader2,
+} from '@tabler/icons-react';
 import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
 
 const statusColor = (status: string) => {
@@ -13,25 +16,52 @@ const statusColor = (status: string) => {
     return map[status] || 'gray';
 };
 
+const STATUS_ICONS: { [key: string]: React.ComponentType<any> } = {
+    new: IconCircleDot,
+    passed: IconCircleCheck,
+    approved: IconCircleCheck,
+    failed: IconCircleX,
+    pending: IconClock,
+    running: IconLoader2,
+    aborted: IconCircleMinus,
+    blinking: IconAlertTriangle,
+};
+
+const normStatus = (status: any): string => String(Array.isArray(status) ? status[0] : (status ?? '')).toLowerCase();
+
 interface Props {
     check: any,
     variant?: string
     size?: number | string,
+    iconOnly?: boolean, // grid preview cards: icon instead of text label
 }
 
-export function Status({ check, size, variant = 'light', ...rest }: Props) {
+export function Status({ check, size, variant = 'light', iconOnly = false, ...rest }: Props) {
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
-    return (
+    const status = normStatus(check.status);
+    const Icon = STATUS_ICONS[status];
+
+    if (!check.status) {
+        return <Loader size="xs" color="blue" variant="dots" />;
+    }
+
+    const badge = (
         <Badge
-            color={statusColor(check.status)}
+            color={statusColor(status)}
             data-test="check-status"
             data-check-status-name={check.name}
+            data-check-status-value={status}
             variant={variant}
             size={size || sizes[checksViewSize].statusBadge}
             title="Check status"
+            leftSection={Icon ? <Icon size={14} stroke={1.8} /> : undefined}
+            styles={iconOnly ? { section: { marginRight: 0 } } : undefined}
             {...rest}
         >
-            {check.status ? check.status : <Loader size="xs" color="blue" variant="dots" />}
+            {iconOnly ? '' : check.status}
         </Badge>
     );
+
+    // icon-only badges get a tooltip so the status is still discoverable on hover
+    return iconOnly ? <Tooltip label={status} withinPortal>{badge}</Tooltip> : badge;
 }

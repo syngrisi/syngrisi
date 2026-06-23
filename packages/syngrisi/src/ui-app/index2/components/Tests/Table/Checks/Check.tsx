@@ -264,7 +264,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             </Tooltip>
 
                             <Group justify="flex-end">
-                                <Status check={check} />
+                                <Status check={check} iconOnly />
                                 <TriageVerdict check={check} onClick={handleVerdictClick} compact />
                                 <ViewPortLabel
                                     color="blue"
@@ -416,7 +416,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
 
                             {/* CHECK TOOLBAR */}
                             <Group justify="space-between" px={12} mt={4} mb={6} gap={6} align="center" wrap="nowrap">
-                                <Status check={check} variant="filled" size="xs" />
+                                <Status check={check} variant="filled" size="xs" iconOnly />
                                 <TriageVerdict check={check} size="xs" onClick={handleVerdictClick} compact />
 
                                 <ViewPortLabel
