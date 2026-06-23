@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Badge, Tooltip } from '@mantine/core';
+import { TriageIcon } from '@shared/components/Check/triageIcons';
 
 const verdictColor = (verdict: string) => {
     const map = {
@@ -21,26 +22,40 @@ const verdictLabel = (verdict: string) => {
     return map[verdict] || verdict;
 };
 
+// Built-in icon fallback for the default verdicts (when triage.icon is absent, e.g. old data).
+const verdictIcon = (verdict: string) => ({
+    intended_change: 'check',
+    likely_bug: 'bug',
+    noise: 'wave',
+    uncertain: 'question',
+} as { [key: string]: string })[verdict];
+
 interface Props {
     check: any;
     size?: number | string;
     variant?: string;
     onClick?: (verdict: string) => void;
+    compact?: boolean; // icon-only (grid badges); full = icon + text
 }
 
 // AI Triage verdict chip. Renders nothing when the check has no triage verdict.
-export function TriageVerdict({ check, size = 'sm', variant = 'light', onClick }: Props) {
+export function TriageVerdict({ check, size = 'sm', variant = 'light', onClick, compact = false }: Props) {
     const verdict: string | undefined = check?.triage?.verdict;
     if (!verdict) return null;
     const confidence = check?.triage?.confidence;
     const reason = check?.triage?.reason;
     const autoAccepted = check?.triage?.autoAccepted === true;
-    // Prefer the denormalized per-project label/color; fall back to the built-in map.
+    // Prefer the denormalized per-project label/color/icon; fall back to the built-in maps.
     const color = check?.triage?.color || verdictColor(verdict);
     const label = check?.triage?.label || verdictLabel(verdict);
+    const iconName = check?.triage?.icon || verdictIcon(verdict);
     const tip = autoAccepted
-        ? `Accepted by AI${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`
+        ? `Accepted by AI: ${label}${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`
         : `AI: ${label}${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`;
+
+    const fullText = autoAccepted
+        ? `${label} • Accepted by AI${typeof confidence === 'number' ? ` ${confidence}` : ''}`
+        : `${label}${typeof confidence === 'number' ? ` ${confidence}` : ''}`;
 
     return (
         <Tooltip label={tip} multiline withinPortal>
@@ -48,16 +63,17 @@ export function TriageVerdict({ check, size = 'sm', variant = 'light', onClick }
                 color={color}
                 variant={variant}
                 size={size}
+                leftSection={<TriageIcon name={iconName} size={14} />}
                 data-test="triage-verdict"
                 data-triage-verdict={verdict}
                 data-triage-confidence={typeof confidence === 'number' ? String(confidence) : ''}
                 data-triage-auto-accepted={autoAccepted ? 'true' : undefined}
+                // icon-only: keep the badge compact (the leftSection icon remains visible)
+                styles={compact ? { section: { marginRight: 0 } } : undefined}
                 style={onClick ? { cursor: 'pointer' } : undefined}
                 onClick={onClick ? () => onClick(verdict) : undefined}
             >
-                {autoAccepted
-                    ? `✓ Accepted by AI${typeof confidence === 'number' ? ` ${confidence}` : ''}`
-                    : `AI: ${label}${typeof confidence === 'number' ? ` ${confidence}` : ''}`}
+                {compact ? '' : fullText}
             </Badge>
         </Tooltip>
     );

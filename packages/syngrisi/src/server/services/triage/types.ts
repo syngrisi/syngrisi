@@ -5,6 +5,7 @@ export interface VerdictDef {
     key: string;
     label: string;
     color: string;          // Mantine color name
+    icon?: string;          // icon name from the triage icon registry
     severity: number;       // higher = worse; used to pick a test's "worst" verdict
     autoAcceptable: boolean; // may be auto-accepted by policy
     neverAutoAccept?: boolean; // hard safety: never auto-accept (e.g. real bugs / uncertain)
