@@ -82,7 +82,8 @@ When('I configure the triage provider for the local vision model', async ({ appS
     const uri = `${appServer.baseURL}/v1/settings/ai_triage_provider`;
     const resp = await requestWithSession(uri, testData, appServer, {
         method: 'PATCH',
-        json: { value: { type: 'openai', baseUrl: `${OLLAMA_BASE}/v1`, apiKey: 'ollama', model, maxTokens: 3000 }, enabled: true },
+        // unlimited tokens (let the model think) + generous timeout — local VLMs are slow
+        json: { value: { type: 'openai', baseUrl: `${OLLAMA_BASE}/v1`, apiKey: 'ollama', model, timeoutMs: 600000 }, enabled: true },
     });
     expect(resp.raw?.statusCode).toBe(200);
     logger.info(`configured live triage provider → ${OLLAMA_BASE}/v1 (${model})`);

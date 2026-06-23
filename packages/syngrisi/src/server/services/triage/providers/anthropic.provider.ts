@@ -22,7 +22,7 @@ export class AnthropicProvider implements TriageProvider {
 
         const body = {
             model,
-            max_tokens: this.cfg.maxTokens ?? 1500,
+            max_tokens: this.cfg.maxTokens ?? 4096, // Anthropic requires max_tokens
             temperature: this.cfg.temperature ?? 0,
             system: `${buildSystemPrompt(input.verdicts)}\nRespond with JSON only.`,
             messages: [
@@ -38,7 +38,7 @@ export class AnthropicProvider implements TriageProvider {
                 'anthropic-version': '2023-06-01',
             },
             body: JSON.stringify(body),
-            signal: this.cfg.timeoutMs ? AbortSignal.timeout(this.cfg.timeoutMs) : undefined,
+            signal: AbortSignal.timeout(this.cfg.timeoutMs ?? 120000),
         });
         if (!resp.ok) {
             throw new Error(`Anthropic provider HTTP ${resp.status}: ${await resp.text()}`);

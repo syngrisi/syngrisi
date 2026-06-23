@@ -37,7 +37,9 @@ export interface CheckDocument extends Document {
     toleranceThreshold?: number;
     meta?: Record<string, unknown>;
     triage?: {
-        verdict: string; // configurable per-project verdict key
+        verdict: string; // effective verdict key (may be 'unknown' when below threshold)
+        rawVerdict?: string; // model's actual verdict before threshold masking
+        pending?: boolean; // awaiting analysis (triage enabled, not yet classified)
         confidence: number; // 0..10 integer
         reason: string;
         model: string;
@@ -177,6 +179,8 @@ const CheckSchema = new Schema<CheckDocument>({
     triage: {
         type: {
             verdict: { type: String },
+            rawVerdict: { type: String },
+            pending: { type: Boolean },
             confidence: { type: Number, min: 0, max: 10 },
             reason: { type: String },
             model: { type: String },

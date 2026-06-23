@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Badge, Tooltip } from '@mantine/core';
+import { Badge, Tooltip, Loader } from '@mantine/core';
 import { TriageIcon } from '@shared/components/Check/triageIcons';
 
 const verdictColor = (verdict: string) => {
@@ -8,6 +8,7 @@ const verdictColor = (verdict: string) => {
         likely_bug: 'red',
         noise: 'gray',
         uncertain: 'yellow',
+        unknown: 'gray',
     } as { [key: string]: string };
     return map[verdict] || 'gray';
 };
@@ -18,6 +19,7 @@ const verdictLabel = (verdict: string) => {
         likely_bug: 'bug?',
         noise: 'noise',
         uncertain: 'uncertain',
+        unknown: 'unknown',
     } as { [key: string]: string };
     return map[verdict] || verdict;
 };
@@ -28,6 +30,7 @@ const verdictIcon = (verdict: string) => ({
     likely_bug: 'bug',
     noise: 'wave',
     uncertain: 'question',
+    unknown: 'help',
 } as { [key: string]: string })[verdict];
 
 interface Props {
@@ -38,9 +41,29 @@ interface Props {
     compact?: boolean; // icon-only (grid badges); full = icon + text
 }
 
-// AI Triage verdict chip. Renders nothing when the check has no triage verdict.
+// AI Triage verdict chip. Renders nothing when the check has no triage info.
 export function TriageVerdict({ check, size = 'sm', variant = 'light', onClick, compact = false }: Props) {
     const verdict: string | undefined = check?.triage?.verdict;
+    const pending = check?.triage?.pending === true;
+
+    // Awaiting analysis (triage enabled, not yet classified) → in-progress indicator.
+    if (!verdict && pending) {
+        return (
+            <Tooltip label="AI Triage in progress…" withinPortal>
+                <Badge
+                    color="blue"
+                    variant={variant}
+                    size={size}
+                    leftSection={<Loader size={12} color="blue" />}
+                    data-test="triage-verdict"
+                    data-triage-pending="true"
+                    styles={compact ? { section: { marginRight: 0 } } : undefined}
+                >
+                    {compact ? '' : 'analyzing…'}
+                </Badge>
+            </Tooltip>
+        );
+    }
     if (!verdict) return null;
     const confidence = check?.triage?.confidence;
     const reason = check?.triage?.reason;

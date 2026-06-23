@@ -17,7 +17,7 @@ export class GeminiProvider implements TriageProvider {
             contents: [{ role: 'user', parts: [{ text: buildUserText(input) }, ...imageParts] }],
             generationConfig: {
                 temperature: this.cfg.temperature ?? 0,
-                maxOutputTokens: this.cfg.maxTokens ?? 1500,
+                maxOutputTokens: this.cfg.maxTokens, // undefined = no explicit cap (unlimited)
                 responseMimeType: 'application/json',
             },
         };
@@ -27,7 +27,7 @@ export class GeminiProvider implements TriageProvider {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
-            signal: this.cfg.timeoutMs ? AbortSignal.timeout(this.cfg.timeoutMs) : undefined,
+            signal: AbortSignal.timeout(this.cfg.timeoutMs ?? 120000),
         });
         if (!resp.ok) {
             throw new Error(`Gemini provider HTTP ${resp.status}: ${await resp.text()}`);

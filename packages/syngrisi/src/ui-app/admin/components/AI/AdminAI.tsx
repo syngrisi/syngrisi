@@ -109,7 +109,7 @@ function PerProjectTriage() {
                     <Group mb="md" align="end">
                         <Select label="Policy" value={mode} onChange={(v) => setMode(v || 'suggest')} data-test="ai-policy-mode"
                             data={[{ value: 'suggest', label: 'Suggest (UI only)' }, { value: 'auto', label: 'Auto-accept' }]} />
-                        <NumberInput label="Auto-accept threshold" min={0} max={10} value={threshold} onChange={(v) => setThreshold(typeof v === 'number' ? v : 9)} data-test="ai-policy-threshold" w={180} disabled={mode === 'suggest'} />
+                        <NumberInput label="Confidence threshold" description="below it the verdict shows as Unknown" min={0} max={10} value={threshold} onChange={(v) => setThreshold(typeof v === 'number' ? v : 9)} data-test="ai-policy-threshold" w={220} />
                         <MultiSelect label="Auto-accept verdicts" value={allow} onChange={setAllow} data={verdicts.map((v) => ({ value: v.key, label: v.label || v.key }))} data-test="ai-policy-allow" style={{ flex: 1 }} disabled={mode === 'suggest'} />
                     </Group>
                     <Divider my="sm" label={(

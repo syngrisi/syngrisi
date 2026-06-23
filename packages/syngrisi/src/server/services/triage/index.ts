@@ -7,7 +7,7 @@ import { buildTriageInput } from './analysis.service';
 import { createProvider } from './factory';
 import { getProviderConfig } from './config';
 import { shouldAutoAccept } from './policy';
-import { getVerdictConfig, findVerdict, fallbackVerdict } from './verdicts';
+import { getVerdictConfig, findVerdict, fallbackVerdict, UNKNOWN_VERDICT } from './verdicts';
 import { TriageVerdictResult, VerdictDef } from './types';
 
 const scope = 'triage';
@@ -36,21 +36,28 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
         result = { verdict: fb.key, confidence: 0, reason: 'triage failed', model: cfg.model ?? cfg.type };
     }
 
-    const def = findVerdict(verdicts, result.verdict);
+    // Below the project's confidence threshold → show the reserved "unknown" verdict
+    // (keep the model's actual verdict as rawVerdict). Applies in both suggest and auto modes.
+    const threshold = typeof app?.triagePolicy?.autoAcceptThreshold === 'number' ? app.triagePolicy.autoAcceptThreshold : 0;
+    const belowThreshold = !failed && threshold > 0 && result.confidence < threshold;
+    const def = belowThreshold ? UNKNOWN_VERDICT : findVerdict(verdicts, result.verdict);
+    const effectiveVerdict = belowThreshold ? UNKNOWN_VERDICT.key : result.verdict;
     const triage: any = {
-        verdict: result.verdict,
+        verdict: effectiveVerdict,
+        rawVerdict: result.verdict, // the model's actual verdict before threshold masking
         confidence: result.confidence,
         reason: result.reason,
         model: result.model,
         at: new Date(),
         failed,
         // denormalized display attrs so the UI renders without a per-project lookup
-        label: def?.label ?? result.verdict,
+        label: def?.label ?? effectiveVerdict,
         color: def?.color ?? 'gray',
         icon: def?.icon,
     };
 
-    // Apply per-project auto-accept policy (verdict flags + policy allowlist + threshold)
+    // Apply per-project auto-accept policy (verdict flags + policy allowlist + threshold).
+    // Uses the model's real verdict; below-threshold can't auto-accept anyway (confidence gate).
     if (!failed && shouldAutoAccept(app?.triagePolicy, result.verdict, result.confidence, verdicts)) {
         try {
             const user: any = { _id: check.creatorId ?? new Types.ObjectId(), username: 'AI Triage' };
@@ -98,7 +105,7 @@ export async function findUntriagedCheckIds(limit: number): Promise<string[]> {
     const checks = await Check.find({
         status: 'failed',
         diffId: { $exists: true, $ne: null },
-        triage: { $exists: false },
+        'triage.verdict': { $exists: false }, // not yet classified (covers fresh + pending)
         app: { $in: enabledAppIds },
     })
         .select('_id')
