@@ -1,6 +1,16 @@
-export type TriageVerdict = 'intended_change' | 'likely_bug' | 'noise' | 'uncertain';
+export type TriageVerdict = string; // verdict keys are configurable per project
 
-export const TRIAGE_VERDICTS: TriageVerdict[] = ['intended_change', 'likely_bug', 'noise', 'uncertain'];
+// A configurable verdict definition (per-project, full CRUD).
+export interface VerdictDef {
+    key: string;
+    label: string;
+    color: string;          // Mantine color name
+    severity: number;       // higher = worse; used to pick a test's "worst" verdict
+    autoAcceptable: boolean; // may be auto-accepted by policy
+    neverAutoAccept?: boolean; // hard safety: never auto-accept (e.g. real bugs / uncertain)
+    isFallback?: boolean;   // used when the model output is unparseable/unknown
+    description?: string;   // shown to the model in the prompt
+}
 
 export interface TriageInput {
     name: string;
@@ -9,6 +19,7 @@ export interface TriageInput {
     diffB64: string | null;
     meta?: Record<string, unknown>;
     domDiff?: unknown;
+    verdicts: VerdictDef[]; // the verdict set this classification must choose from
 }
 
 export interface TriageVerdictResult {

@@ -13,6 +13,7 @@ import { triageCheck } from '@services/triage';
 import { buildTriageInput } from '@services/triage/analysis.service';
 import { createProvider } from '@services/triage/factory';
 import { getProviderConfig } from '@services/triage/config';
+import { DEFAULT_VERDICTS } from '@services/triage/verdicts';
 
 const htmlShell = (title: string, content: string) => `
 <!DOCTYPE html>
@@ -547,10 +548,11 @@ const triageTest = catchAsync(async (req: ExtRequest, res: Response) => {
     const { checkId } = req.body || {};
     const started = Date.now();
     try {
+        const fallbackInput = { name: 'connection-test', baselineB64: null, actualB64: null, diffB64: null, verdicts: DEFAULT_VERDICTS };
         const input = checkId
-            ? await buildTriageInput(checkId)
-            : { name: 'connection-test', baselineB64: null, actualB64: null, diffB64: null };
-        const result = await createProvider(cfg).classify(input || { name: 'connection-test', baselineB64: null, actualB64: null, diffB64: null });
+            ? await buildTriageInput(checkId, DEFAULT_VERDICTS)
+            : fallbackInput;
+        const result = await createProvider(cfg).classify(input || fallbackInput);
         res.json({ ok: true, latencyMs: Date.now() - started, result });
     } catch (e) {
         res.json({ ok: false, latencyMs: Date.now() - started, error: e instanceof Error ? e.message : String(e) });

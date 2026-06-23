@@ -15,6 +15,16 @@ export interface AppDocument extends Document {
         autoAcceptThreshold: number; // 0..10
         autoAcceptVerdicts: string[];
     };
+    triageVerdicts?: Array<{
+        key: string;
+        label: string;
+        color: string;
+        severity: number;
+        autoAcceptable: boolean;
+        neverAutoAccept?: boolean;
+        isFallback?: boolean;
+        description?: string;
+    }>;
 }
 
 const AppSchema: Schema<AppDocument> = new Schema({
@@ -50,6 +60,20 @@ const AppSchema: Schema<AppDocument> = new Schema({
             autoAcceptVerdicts: { type: [String], default: ['intended_change', 'noise'] },
         },
         _id: false,
+        default: undefined,
+    },
+    triageVerdicts: {
+        type: [{
+            key: String,
+            label: String,
+            color: String,
+            severity: Number,
+            autoAcceptable: Boolean,
+            neverAutoAccept: Boolean,
+            isFallback: Boolean,
+            description: String,
+            _id: false,
+        }],
         default: undefined,
     },
 });

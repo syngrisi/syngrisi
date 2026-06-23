@@ -1,5 +1,5 @@
 import { TriageProvider, TriageProviderConfig, TriageInput, TriageVerdictResult } from '../types';
-import { SYSTEM_PROMPT, buildUserText, normalizeResult } from '../prompt';
+import { buildSystemPrompt, buildUserText, normalizeResult } from '../prompt';
 
 // Native Google Gemini generateContent with inlineData image parts.
 export class GeminiProvider implements TriageProvider {
@@ -13,7 +13,7 @@ export class GeminiProvider implements TriageProvider {
             .map((b64) => ({ inlineData: { mimeType: 'image/png', data: b64 } }));
 
         const body = {
-            systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+            systemInstruction: { parts: [{ text: buildSystemPrompt(input.verdicts) }] },
             contents: [{ role: 'user', parts: [{ text: buildUserText(input) }, ...imageParts] }],
             generationConfig: {
                 temperature: this.cfg.temperature ?? 0,
@@ -33,6 +33,6 @@ export class GeminiProvider implements TriageProvider {
         }
         const data: any = await resp.json();
         const content = data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text || '').join('') ?? '';
-        return normalizeResult(content, model);
+        return normalizeResult(content, model, input.verdicts);
     }
 }
