@@ -1,5 +1,12 @@
 import { VerdictDef } from './types';
 
+// Reserved service verdict shown when the model's confidence is below the project threshold
+// (the model answered, but not confidently enough to trust). Distinct from the parse fallback.
+export const UNKNOWN_VERDICT: VerdictDef = {
+    key: 'unknown', label: 'Unknown', color: 'gray', icon: 'help', severity: 0,
+    autoAcceptable: false, neverAutoAccept: true, description: 'confidence below the project threshold',
+};
+
 // Built-in defaults — used when a project has no custom verdict set. Preserve original semantics:
 // noise/intended_change are auto-acceptable; likely_bug/uncertain never; uncertain is the fallback.
 export const DEFAULT_VERDICTS: VerdictDef[] = [

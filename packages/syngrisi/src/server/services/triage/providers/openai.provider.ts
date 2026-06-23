@@ -24,7 +24,7 @@ export class OpenAIProvider implements TriageProvider {
             model,
             temperature: this.cfg.temperature ?? 0,
             // Generous default: "thinking" VLMs spend tokens reasoning before emitting the JSON.
-            max_tokens: this.cfg.maxTokens ?? 1500,
+            max_tokens: this.cfg.maxTokens, // undefined = no explicit cap (unlimited)
             messages: [
                 { role: 'system', content: buildSystemPrompt(input.verdicts) },
                 { role: 'user', content: [{ type: 'text', text: buildUserText(input) }, ...imageParts] },
@@ -38,7 +38,7 @@ export class OpenAIProvider implements TriageProvider {
                 ...(this.cfg.apiKey ? { Authorization: `Bearer ${this.cfg.apiKey}` } : {}),
             },
             body: JSON.stringify(body),
-            signal: this.cfg.timeoutMs ? AbortSignal.timeout(this.cfg.timeoutMs) : undefined,
+            signal: AbortSignal.timeout(this.cfg.timeoutMs ?? 120000),
         });
         if (!resp.ok) {
             throw new Error(`OpenAI provider HTTP ${resp.status}: ${await resp.text()}`);

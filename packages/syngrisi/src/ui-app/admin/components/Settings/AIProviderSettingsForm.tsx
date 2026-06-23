@@ -153,8 +153,8 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
                 />
                 <NumberInput
                     label="Max tokens"
-                    description="response budget (≥1500 for 'thinking' models)"
-                    placeholder="1500"
+                    description="blank = unlimited (model default)"
+                    placeholder="unlimited"
                     min={1}
                     value={maxTokens}
                     onChange={(v) => setMaxTokens(typeof v === 'number' ? v : '')}
@@ -162,8 +162,8 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
                 />
                 <NumberInput
                     label="Request timeout (ms)"
-                    description="abort the model call after this (blank = no limit)"
-                    placeholder="no limit"
+                    description="abort the model call after this (blank = 120000 / 2 min)"
+                    placeholder="120000"
                     min={0}
                     step={1000}
                     value={timeoutMs}

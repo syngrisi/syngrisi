@@ -470,6 +470,72 @@ Feature: AI Triage verdicts and per-project auto-accept
         confidence: 9
       """
 
+  Scenario: Low-confidence verdict is shown as Unknown (threshold masking)
+    Given I create "1" tests with:
+      """
+      testName: ThreshTest
+      project: TriageThresh
+      checks:
+        - checkName: ThreshCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "ThreshCheck"
+    Given I create "1" tests with:
+      """
+      testName: ThreshTest
+      project: TriageThresh
+      checks:
+        - checkName: ThreshCheck
+          filePath: files/B.png
+      """
+    Given the project "TriageThresh" has triage policy "suggest" threshold 9 verdicts "intended_change,noise"
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: noise
+        fakeConfidence: 5
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "ThreshCheck"
+    # confidence 5 < threshold 9 -> effective verdict is the reserved 'unknown', raw kept
+    Then I expect via http 1st check filtered as "name=ThreshCheck" matched:
+      """
+      name: ThreshCheck
+      triage:
+        verdict: unknown
+        rawVerdict: noise
+        confidence: 5
+      """
+
+  Scenario: Failed check awaiting analysis is marked pending
+    Given I create "1" tests with:
+      """
+      testName: PendingTest
+      project: TriagePending
+      checks:
+        - checkName: PendingCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "PendingCheck"
+    Given I enable AI triage for the project "TriagePending"
+    Given I create "1" tests with:
+      """
+      testName: PendingTest
+      project: TriagePending
+      checks:
+        - checkName: PendingCheck
+          filePath: files/B.png
+      """
+    # failed-with-diff check in an enabled project is stamped pending until classified
+    Then I expect via http 1st check filtered as "name=PendingCheck" matched:
+      """
+      name: PendingCheck
+      status: [failed]
+      triage:
+        pending: true
+      """
+
   Scenario: Auto-accept applies per project above threshold
     Given I create "1" tests with:
       """
@@ -535,12 +601,14 @@ Feature: AI Triage verdicts and per-project auto-accept
       enabled: true
       """
     When I run AI triage for the 1st check named "BelowCheck"
+    # below the threshold -> shown as the reserved 'unknown' (real verdict kept as rawVerdict), not auto-accepted
     Then I expect via http 1st check filtered as "name=BelowCheck" matched:
       """
       name: BelowCheck
       status: [failed]
       triage:
-        verdict: intended_change
+        verdict: unknown
+        rawVerdict: intended_change
         confidence: 7
       """
 
