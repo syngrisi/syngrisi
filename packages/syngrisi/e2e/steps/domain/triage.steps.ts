@@ -96,6 +96,25 @@ Then('the {ordinal} check named {string} has a valid AI verdict', async ({ appSe
     expect(t.failed, 'triage did not fail').not.toBe(true);
 });
 
+// Enable per-project AI Triage (off by default) via the app API.
+Given('I enable AI triage for the project {string}', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, project: string) => {
+    const listResp = await requestWithSession(`${appServer.baseURL}/v1/app?limit=0&filter={"name":"${project}"}`, testData, appServer);
+    const app = (listResp.json.results || [])[0];
+    expect(app, `project "${project}" not found`).toBeTruthy();
+    const resp = await requestWithSession(`${appServer.baseURL}/v1/app/${app._id || app.id}/triage-policy`, testData, appServer, {
+        method: 'PATCH',
+        json: { triageEnabled: true },
+    });
+    expect(resp.raw?.statusCode).toBe(200);
+});
+
+Then('the {ordinal} check named {string} has no AI verdict', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, ordinal: number, name: string) => {
+    const check = await findCheckByName(appServer, testData, name, ordinal);
+    const fresh = await requestWithSession(`${appServer.baseURL}/v1/checks?limit=0&filter={"_id":"${check._id || check.id}"}`, testData, appServer);
+    const t = (fresh.json.results || [])[0]?.triage;
+    expect(t, `check "${name}" should have no triage verdict, got ${JSON.stringify(t)}`).toBeFalsy();
+});
+
 // Trigger AI triage synchronously via the run endpoint (deterministic, no scheduler wait).
 When(
     'I run AI triage for the {ordinal} check named {string}',

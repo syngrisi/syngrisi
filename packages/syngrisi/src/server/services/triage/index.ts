@@ -85,12 +85,16 @@ async function updateTestWorstVerdict(checkId: string): Promise<void> {
     }
 }
 
-// Find failed checks that have a diff and no triage yet (cheap default: only hasDiff checks).
+// Find failed-with-diff, untriaged checks in projects where AI Triage is enabled (off by default).
+// Used by the background scheduler only; manual re-run is always allowed.
 export async function findUntriagedCheckIds(limit: number): Promise<string[]> {
+    const enabledAppIds = await App.find({ triageEnabled: true }).distinct('_id');
+    if (!enabledAppIds.length) return [];
     const checks = await Check.find({
         status: 'failed',
         diffId: { $exists: true, $ne: null },
         triage: { $exists: false },
+        app: { $in: enabledAppIds },
     })
         .select('_id')
         .limit(limit)
