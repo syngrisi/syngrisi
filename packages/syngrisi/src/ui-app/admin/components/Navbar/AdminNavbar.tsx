@@ -6,7 +6,7 @@ import {
     IconArticle, IconListDetails,
     IconPlugConnected,
     IconDatabase,
-    IconRobot,
+    IconSparkles,
 } from '@tabler/icons-react';
 import { LinksGroup } from '@admin/components/Navbar/NavbarLinksGroup';
 import { taskLinks } from '@admin/components/Tasks/tasksList';
@@ -21,7 +21,7 @@ const navbarItems = [
     },
     { label: 'Data Management', icon: IconDatabase, link: '/admin/data' },
     { label: 'Plugins', icon: IconPlugConnected, link: '/admin/plugins' },
-    { label: 'AI', icon: IconRobot, link: '/admin/ai' },
+    { label: 'AI', icon: IconSparkles, link: '/admin/ai' },
     { label: 'Settings', icon: IconSettings, link: '/admin/settings' },
 ];
 

@@ -38,6 +38,7 @@ export class AnthropicProvider implements TriageProvider {
                 'anthropic-version': '2023-06-01',
             },
             body: JSON.stringify(body),
+            signal: this.cfg.timeoutMs ? AbortSignal.timeout(this.cfg.timeoutMs) : undefined,
         });
         if (!resp.ok) {
             throw new Error(`Anthropic provider HTTP ${resp.status}: ${await resp.text()}`);

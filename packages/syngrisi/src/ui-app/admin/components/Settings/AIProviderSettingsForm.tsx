@@ -12,7 +12,10 @@ type ProviderValue = {
     model?: string;
     maxTokens?: number;
     temperature?: number;
+    timeoutMs?: number;
 };
+
+const numOrUndef = (v: number | string): number | undefined => (typeof v === 'number' ? v : undefined);
 
 // Admin form for the AI Triage feature: global enable + model provider config + connection test.
 export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[], refetch: () => void }) => {
@@ -25,6 +28,9 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
     const [baseUrl, setBaseUrl] = useState<string>(provider.baseUrl || '');
     const [apiKey, setApiKey] = useState<string>(provider.apiKey || ''); // '***' when configured
     const [model, setModel] = useState<string>(provider.model || '');
+    const [temperature, setTemperature] = useState<number | ''>(typeof provider.temperature === 'number' ? provider.temperature : '');
+    const [maxTokens, setMaxTokens] = useState<number | ''>(typeof provider.maxTokens === 'number' ? provider.maxTokens : '');
+    const [timeoutMs, setTimeoutMs] = useState<number | ''>(typeof provider.timeoutMs === 'number' ? provider.timeoutMs : '');
     const [testResult, setTestResult] = useState<{ ok: boolean; latencyMs: number; error?: string } | null>(null);
     const [testing, setTesting] = useState(false);
 
@@ -34,6 +40,9 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
         setBaseUrl(provider.baseUrl || '');
         setApiKey(provider.apiKey || '');
         setModel(provider.model || '');
+        setTemperature(typeof provider.temperature === 'number' ? provider.temperature : '');
+        setMaxTokens(typeof provider.maxTokens === 'number' ? provider.maxTokens : '');
+        setTimeoutMs(typeof provider.timeoutMs === 'number' ? provider.timeoutMs : '');
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [settings]);
 
@@ -42,7 +51,12 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
         onError: (e: any) => errorMsg({ error: e }),
     });
 
-    const providerValue = (): ProviderValue => ({ type, baseUrl, apiKey, model });
+    const providerValue = (): ProviderValue => ({
+        type, baseUrl, apiKey, model,
+        temperature: numOrUndef(temperature),
+        maxTokens: numOrUndef(maxTokens),
+        timeoutMs: numOrUndef(timeoutMs),
+    });
 
     const handleSave = async () => {
         try {
@@ -110,8 +124,41 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
                 placeholder="gpt-4o / claude-sonnet-4-6 / gemini-2.0-flash / qwen3-vl:8b"
                 value={model}
                 onChange={(e) => setModel(e.currentTarget.value)}
-                mb="md"
+                mb="sm"
             />
+            <Group grow mb="md" align="start">
+                <NumberInput
+                    label="Temperature"
+                    description="0 = deterministic (recommended for triage)"
+                    placeholder="0"
+                    min={0}
+                    max={2}
+                    step={0.1}
+                    decimalScale={2}
+                    value={temperature}
+                    onChange={(v) => setTemperature(typeof v === 'number' ? v : '')}
+                    data-test="ai-provider-temperature"
+                />
+                <NumberInput
+                    label="Max tokens"
+                    description="response budget (≥1500 for 'thinking' models)"
+                    placeholder="1500"
+                    min={1}
+                    value={maxTokens}
+                    onChange={(v) => setMaxTokens(typeof v === 'number' ? v : '')}
+                    data-test="ai-provider-max-tokens"
+                />
+                <NumberInput
+                    label="Request timeout (ms)"
+                    description="abort the model call after this (blank = no limit)"
+                    placeholder="no limit"
+                    min={0}
+                    step={1000}
+                    value={timeoutMs}
+                    onChange={(v) => setTimeoutMs(typeof v === 'number' ? v : '')}
+                    data-test="ai-provider-timeout"
+                />
+            </Group>
             <Group>
                 <Button onClick={handleSave} loading={updateSetting.isPending} data-test="ai-providers-save">Save Settings</Button>
                 <Button variant="default" onClick={handleTest} loading={testing} data-test="ai-providers-test">Test connection</Button>

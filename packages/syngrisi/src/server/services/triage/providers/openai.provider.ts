@@ -38,6 +38,7 @@ export class OpenAIProvider implements TriageProvider {
                 ...(this.cfg.apiKey ? { Authorization: `Bearer ${this.cfg.apiKey}` } : {}),
             },
             body: JSON.stringify(body),
+            signal: this.cfg.timeoutMs ? AbortSignal.timeout(this.cfg.timeoutMs) : undefined,
         });
         if (!resp.ok) {
             throw new Error(`OpenAI provider HTTP ${resp.status}: ${await resp.text()}`);

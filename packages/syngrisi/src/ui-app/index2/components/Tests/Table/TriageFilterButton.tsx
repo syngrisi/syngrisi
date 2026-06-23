@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { ActionIcon, Popover, Stack, Select, NumberInput, TextInput, Button, Group, Text, Indicator } from '@mantine/core';
-import { IconRobot } from '@tabler/icons-react';
+import { IconSparkles } from '@tabler/icons-react';
 import { useParams } from '@hooks/useParams';
 
 // Compact AI Triage filter: verdict / min confidence / reason substring.
@@ -45,7 +45,7 @@ export function TriageFilterButton() {
                         color={active ? 'green' : 'gray'}
                         data-test="triage-filter-button"
                     >
-                        <IconRobot size={24} stroke={1} />
+                        <IconSparkles size={24} stroke={1} />
                     </ActionIcon>
                 </Indicator>
             </Popover.Target>

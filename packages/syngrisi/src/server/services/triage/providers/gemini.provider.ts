@@ -27,6 +27,7 @@ export class GeminiProvider implements TriageProvider {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
+            signal: this.cfg.timeoutMs ? AbortSignal.timeout(this.cfg.timeoutMs) : undefined,
         });
         if (!resp.ok) {
             throw new Error(`Gemini provider HTTP ${resp.status}: ${await resp.text()}`);
