@@ -34,7 +34,10 @@ export function TriageVerdict({ check, size = 'sm', variant = 'light', onClick }
     if (!verdict) return null;
     const confidence = check?.triage?.confidence;
     const reason = check?.triage?.reason;
-    const tip = `AI: ${verdict}${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`;
+    const autoAccepted = check?.triage?.autoAccepted === true;
+    const tip = autoAccepted
+        ? `Accepted by AI${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`
+        : `AI: ${verdict}${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`;
 
     return (
         <Tooltip label={tip} multiline withinPortal>
@@ -45,10 +48,13 @@ export function TriageVerdict({ check, size = 'sm', variant = 'light', onClick }
                 data-test="triage-verdict"
                 data-triage-verdict={verdict}
                 data-triage-confidence={typeof confidence === 'number' ? String(confidence) : ''}
+                data-triage-auto-accepted={autoAccepted ? 'true' : undefined}
                 style={onClick ? { cursor: 'pointer' } : undefined}
                 onClick={onClick ? () => onClick(verdict) : undefined}
             >
-                {`AI: ${verdictLabel(verdict)}${typeof confidence === 'number' ? ` ${confidence}` : ''}`}
+                {autoAccepted
+                    ? `✓ Accepted by AI${typeof confidence === 'number' ? ` ${confidence}` : ''}`
+                    : `AI: ${verdictLabel(verdict)}${typeof confidence === 'number' ? ` ${confidence}` : ''}`}
             </Badge>
         </Tooltip>
     );
