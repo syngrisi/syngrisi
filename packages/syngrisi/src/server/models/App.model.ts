@@ -9,6 +9,7 @@ export interface AppDocument extends Document {
     updatedDate?: Date;
     createdDate?: Date;
     meta?: Record<string, unknown>;
+    triageEnabled?: boolean; // per-project AI Triage switch; off by default
     triagePolicy?: {
         policy: 'suggest' | 'auto';
         autoAcceptThreshold: number; // 0..10
@@ -37,6 +38,10 @@ const AppSchema: Schema<AppDocument> = new Schema({
     },
     meta: {
         type: Object,
+    },
+    triageEnabled: {
+        type: Boolean,
+        default: false,
     },
     triagePolicy: {
         type: {

@@ -370,6 +370,61 @@ Feature: AI Triage verdicts and per-project auto-accept
     When I wait 10 seconds for the element with locator "[data-table-test-name='VgNoiseTest']" to be visible
     When I wait on element "[data-table-test-name='VgBugTest']" to not be displayed
 
+  @env:SYNGRISI_AI_TRIAGE_ENABLED:true @env:SYNGRISI_AI_TRIAGE_POLL_INTERVAL_MS:2000
+  Scenario: Background triage runs only for projects where it is enabled
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: noise
+        fakeConfidence: 9
+      enabled: true
+      """
+    Given I create "1" tests with:
+      """
+      testName: EnabledProjTest
+      project: TriageEnabledProj
+      checks:
+        - checkName: EnabledCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "EnabledCheck"
+    Given I create "1" tests with:
+      """
+      testName: EnabledProjTest
+      project: TriageEnabledProj
+      checks:
+        - checkName: EnabledCheck
+          filePath: files/B.png
+      """
+    Given I create "1" tests with:
+      """
+      testName: DisabledProjTest
+      project: TriageDisabledProj
+      checks:
+        - checkName: DisabledCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "DisabledCheck"
+    Given I create "1" tests with:
+      """
+      testName: DisabledProjTest
+      project: TriageDisabledProj
+      checks:
+        - checkName: DisabledCheck
+          filePath: files/B.png
+      """
+    # Enable triage only for the first project; the scheduler should pick up only its check.
+    Given I enable AI triage for the project "TriageEnabledProj"
+    Then I expect via http 1st check filtered as "name=EnabledCheck" matched:
+      """
+      name: EnabledCheck
+      triage:
+        verdict: noise
+      """
+    # The other project stays off by default → never triaged
+    Then the 1st check named "DisabledCheck" has no AI verdict
+
   Scenario: Auto-accept applies per project above threshold
     Given I create "1" tests with:
       """
