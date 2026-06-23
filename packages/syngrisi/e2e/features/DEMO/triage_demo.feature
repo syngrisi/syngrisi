@@ -12,7 +12,7 @@ Feature: AI Triage - Демонстрация всех возможностей
 
     Scenario: Демонстрация AI Triage - вердикты, фильтры, группировка, авто-принятие
         # --- Подготовка данных: три упавших чека с разными вердиктами ---
-        When I set demo step 1 of 8: "Подготовка данных"
+        When I set demo step 1 of 9: "Подготовка данных"
         When I announce: "AI Triage автоматически классифицирует каждый упавший чек: реальная регрессия, шум или намеренное изменение. Создадим несколько упавших чеков."
 
         Given I create "1" tests with:
@@ -100,7 +100,7 @@ Feature: AI Triage - Демонстрация всех возможностей
         When I run AI triage for the 1st check named "Редизайн хедера"
 
         # --- Вердикт-бейджи ---
-        When I set demo step 2 of 8: "Бейджи вердиктов"
+        When I set demo step 2 of 9: "Бейджи вердиктов"
         When I go to "main" page
         When I wait 10 seconds for the element with locator "[data-table-test-name='Главная страница']" to be visible
         When I unfold the test "Главная страница"
@@ -112,7 +112,7 @@ Feature: AI Triage - Демонстрация всех возможностей
         When I clear highlight
 
         # --- Клик по бейджу → фильтрация ---
-        When I set demo step 3 of 8: "Фильтр кликом по бейджу"
+        When I set demo step 3 of 9: "Фильтр кликом по бейджу"
         When I highlight element "[data-triage-verdict='noise']"
         When I announce: "Клик по бейджу мгновенно отфильтрует чеки с этим вердиктом — удобно разобрать однотипный шум пачкой."
         When I click element with locator "[data-triage-verdict='noise']"
@@ -122,7 +122,7 @@ Feature: AI Triage - Демонстрация всех возможностей
         When I clear highlight
 
         # --- Фильтр по уверенности / причине ---
-        When I set demo step 4 of 8: "Фильтр по уверенности и причине"
+        When I set demo step 4 of 9: "Фильтр по уверенности и причине"
         When I go to "main" page
         When I wait 10 seconds for the element with locator "[data-table-test-name='Главная страница']" to be visible
         When I unfold the test "Форма оплаты"
@@ -139,7 +139,7 @@ Feature: AI Triage - Демонстрация всех возможностей
         When I clear highlight
 
         # --- Группировка по AI-вердикту ---
-        When I set demo step 5 of 8: "Группировка по AI-вердикту"
+        When I set demo step 5 of 9: "Группировка по AI-вердикту"
         When I go to "main" page
         When I wait 10 seconds for the element with locator "[data-table-test-name='Главная страница']" to be visible
         When I select the option with the text "AI Verdict" for element "select[data-test='navbar-group-by']"
@@ -151,7 +151,7 @@ Feature: AI Triage - Демонстрация всех возможностей
         When I clear highlight
 
         # --- Re-run в карточке чека ---
-        When I set demo step 6 of 8: "Перезапуск триажа и детали"
+        When I set demo step 6 of 9: "Перезапуск триажа и детали"
         When I go to "main" page
         When I wait 10 seconds for the element with locator "[data-table-test-name='Форма оплаты']" to be visible
         When I unfold the test "Форма оплаты"
@@ -164,7 +164,7 @@ Feature: AI Triage - Демонстрация всех возможностей
         When I clear highlight
 
         # --- Авто-принятие по политике проекта ---
-        When I set demo step 7 of 8: "Авто-принятие по политике проекта"
+        When I set demo step 7 of 9: "Авто-принятие по политике проекта"
         Given I create "1" tests with:
             """
             testName: Зрелый проект
@@ -200,13 +200,28 @@ Feature: AI Triage - Демонстрация всех возможностей
         When I announce: "На зрелом проекте политика авто-принимает уверенный безопасный вердикт: чек принят AI и помечен «Accepted by AI». Реальные баги и спорное всегда остаются человеку."
         When I clear highlight
 
-        # --- Админка: выбор провайдера модели ---
-        When I set demo step 8 of 8: "Провайдеры моделей в админке"
-        When I go to "settings" page
+        # --- Админка: отдельный раздел AI и выбор провайдера модели ---
+        When I set demo step 8 of 9: "Раздел AI в админке"
+        When I go to "ai" page
         When I wait 10 seconds for the element with locator "[data-test='ai-providers-form']" to be visible
         When I highlight element "[data-test='ai-providers-form']"
-        When I announce: "Администратор выбирает провайдера модели — OpenAI, Anthropic, Gemini или self-hosted Ollama — с проверкой соединения. Скриншоты могут не покидать инфраструктуру компании."
+        When I announce: "В админке появился отдельный раздел AI. Здесь администратор выбирает провайдера модели — OpenAI, Anthropic, Gemini или self-hosted Ollama — с проверкой соединения. Скриншоты могут не покидать инфраструктуру компании."
         When I clear highlight
 
-        When I announce: "Это AI Triage: вердикты, фильтры, группировка и авто-принятие — меньше шума, быстрее ревью."
+        # --- Per-project: включение и кастомные вердикты ---
+        When I set demo step 9 of 9: "Настройки проекта: включение и кастомные вердикты"
+        When I wait 3 seconds for the element with locator "[data-test='ai-perproject-form']" to be visible
+        When I highlight element "[data-test='ai-perproject-form']"
+        When I announce: "AI Triage включается отдельно для каждого проекта и по умолчанию выключен. Здесь же — политика авто-принятия."
+        When I clear highlight
+        When I click element with locator "[data-test='ai-project-select']"
+        When I wait 1 seconds
+        When I click element with locator "[role='option']:has-text('TriageDemo')"
+        When I wait 2 seconds for the element with locator "[data-test='ai-verdicts-table']" to be visible
+        When I highlight element "[data-test='ai-verdicts-table']"
+        When I announce: "А набор вердиктов полностью настраивается под проект: можно добавлять свои, менять цвет, подписи и пороги, и удалять дефолтные — реальная регрессия и неуверенность всегда защищены от авто-принятия."
+        When I clear highlight
+
+        When I announce: "Это AI Triage: вердикты, фильтры, группировка, авто-принятие и настройка под каждый проект — меньше шума, быстрее ревью."
+
         When I end the demo
