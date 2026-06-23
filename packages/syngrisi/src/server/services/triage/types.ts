@@ -36,6 +36,7 @@ export interface TriageProviderConfig {
     model?: string;
     maxTokens?: number;
     temperature?: number;
+    timeoutMs?: number; // abort the model request after this many ms (0/undefined = no limit)
     // fake provider only (tests): deterministic output
     fakeVerdict?: TriageVerdict;
     fakeConfidence?: number;

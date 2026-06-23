@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Divider, Group, Menu, ActionIcon, Badge, Tooltip as MantineTooltip } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze, IconBoxModel, IconRobot } from '@tabler/icons-react';
+import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze, IconBoxModel, IconSparkles } from '@tabler/icons-react';
 import { TriageVerdict } from '@shared/components/Check/TriageVerdict';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
@@ -409,7 +409,7 @@ export function Toolbar(
                                     data-test="triage-run-button"
                                     size={toolbarActionIconSize}
                                 >
-                                    <IconRobot size={toolbarGlyphSize} />
+                                    <IconSparkles size={toolbarGlyphSize} />
                                 </ActionIcon>
                                 <TriageVerdict check={curCheck} />
                             </Group>

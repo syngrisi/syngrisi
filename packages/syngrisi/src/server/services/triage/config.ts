@@ -28,6 +28,7 @@ export async function getProviderConfig(): Promise<TriageProviderConfig | null> 
         model: cfg.model || undefined,
         maxTokens: cfg.maxTokens,
         temperature: cfg.temperature,
+        timeoutMs: cfg.timeoutMs,
         fakeVerdict: cfg.fakeVerdict,
         fakeConfidence: cfg.fakeConfidence,
         fakeReason: cfg.fakeReason,
