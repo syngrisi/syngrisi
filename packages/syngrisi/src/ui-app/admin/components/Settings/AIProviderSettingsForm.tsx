@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { GenericService, TriageService } from '@shared/services';
 import { errorMsg } from '@shared/utils';
 import { successMsg } from '@shared/utils/utils';
+import { HelpDoc } from '@admin/components/AI/HelpDoc';
 
 type ProviderValue = {
     type?: string;
@@ -85,7 +86,18 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
     return (
         <Paper withBorder p={20} m={15} style={{ width: '90%' }} data-test="ai-providers-form">
             <Group justify="space-between" mb="md">
-                <Title order={4}>AI Triage</Title>
+                <Group gap={6}>
+                    <Title order={4}>AI Triage</Title>
+                    <HelpDoc
+                        title="Model provider"
+                        lines={[
+                            'Global master switch + the vision-LLM provider that classifies failed checks.',
+                            'OpenAI-compatible covers OpenAI and self-hosted (Ollama/vLLM/LiteLLM) via Base URL. Anthropic and Gemini are native. The API key is write-only (stored masked).',
+                            'Temperature 0 is recommended for stable triage; raise Max tokens for "thinking" models; Request timeout aborts slow calls.',
+                        ]}
+                        docHref="https://github.com/syngrisi/syngrisi/blob/main/packages/syngrisi/AI_TRIAGE.md"
+                    />
+                </Group>
                 <Switch
                     label="Enabled"
                     checked={enabled}

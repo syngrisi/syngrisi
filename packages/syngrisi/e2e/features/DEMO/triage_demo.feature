@@ -223,5 +223,5 @@ Feature: AI Triage - Демонстрация всех возможностей
         When I clear highlight
 
         When I announce: "Это AI Triage: вердикты, фильтры, группировка, авто-принятие и настройка под каждый проект — меньше шума, быстрее ревью."
-
+        When I pause
         When I end the demo

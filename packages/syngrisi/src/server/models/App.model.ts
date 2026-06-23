@@ -19,6 +19,7 @@ export interface AppDocument extends Document {
         key: string;
         label: string;
         color: string;
+        icon?: string;
         severity: number;
         autoAcceptable: boolean;
         neverAutoAccept?: boolean;
@@ -67,6 +68,7 @@ const AppSchema: Schema<AppDocument> = new Schema({
             key: String,
             label: String,
             color: String,
+            icon: String,
             severity: Number,
             autoAcceptable: Boolean,
             neverAutoAccept: Boolean,

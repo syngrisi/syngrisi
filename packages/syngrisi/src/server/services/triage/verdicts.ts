@@ -3,10 +3,10 @@ import { VerdictDef } from './types';
 // Built-in defaults — used when a project has no custom verdict set. Preserve original semantics:
 // noise/intended_change are auto-acceptable; likely_bug/uncertain never; uncertain is the fallback.
 export const DEFAULT_VERDICTS: VerdictDef[] = [
-    { key: 'noise', label: 'Noise', color: 'gray', severity: 1, autoAcceptable: true, description: 'anti-aliasing / dynamic content / render jitter — not a real change' },
-    { key: 'intended_change', label: 'Intended change', color: 'green', severity: 2, autoAcceptable: true, description: 'a real, intentional UI change (expect a new baseline)' },
-    { key: 'uncertain', label: 'Uncertain', color: 'yellow', severity: 3, autoAcceptable: false, neverAutoAccept: true, isFallback: true, description: 'not confident enough to classify' },
-    { key: 'likely_bug', label: 'Likely bug', color: 'red', severity: 4, autoAcceptable: false, neverAutoAccept: true, description: 'an unexpected regression that needs a human' },
+    { key: 'noise', label: 'Noise', color: 'gray', icon: 'wave', severity: 1, autoAcceptable: true, description: 'anti-aliasing / dynamic content / render jitter — not a real change' },
+    { key: 'intended_change', label: 'Intended change', color: 'green', icon: 'check', severity: 2, autoAcceptable: true, description: 'a real, intentional UI change (expect a new baseline)' },
+    { key: 'uncertain', label: 'Uncertain', color: 'yellow', icon: 'question', severity: 3, autoAcceptable: false, neverAutoAccept: true, isFallback: true, description: 'not confident enough to classify' },
+    { key: 'likely_bug', label: 'Likely bug', color: 'red', icon: 'bug', severity: 4, autoAcceptable: false, neverAutoAccept: true, description: 'an unexpected regression that needs a human' },
 ];
 
 // Resolve the verdict set for a project (App): its custom set if defined, else the defaults.

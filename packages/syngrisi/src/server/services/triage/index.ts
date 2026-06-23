@@ -47,6 +47,7 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
         // denormalized display attrs so the UI renders without a per-project lookup
         label: def?.label ?? result.verdict,
         color: def?.color ?? 'gray',
+        icon: def?.icon,
     };
 
     // Apply per-project auto-accept policy (verdict flags + policy allowlist + threshold)

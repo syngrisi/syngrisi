@@ -42,8 +42,9 @@ export interface CheckDocument extends Document {
         reason: string;
         model: string;
         at: Date;
-        label?: string; // denormalized display label/color from the project's verdict config
+        label?: string; // denormalized display label/color/icon from the project's verdict config
         color?: string;
+        icon?: string;
         autoAccepted?: boolean;
         failed?: boolean; // provider error/timeout → fallback verdict
     };
@@ -182,6 +183,7 @@ const CheckSchema = new Schema<CheckDocument>({
             at: { type: Date },
             label: { type: String },
             color: { type: String },
+            icon: { type: String },
             autoAccepted: { type: Boolean },
             failed: { type: Boolean },
         },
