@@ -68,7 +68,10 @@ Given('a local vision model is available', async ({ testData }: { testData: Test
             + `Start it: 'ollama serve' and pull a vision model, e.g. 'ollama pull qwen3-vl:8b'.`);
     }
     const visionModels = models.filter((m) => m?.capabilities?.includes('vision')).map((m) => m.name);
-    const model = process.env.E2E_VLM_MODEL || visionModels[0];
+    // Prefer the spec-recommended Qwen3-VL when available, then any qwen-vl, else the first vision model.
+    const preferred = visionModels.find((m) => m.startsWith('qwen3-vl'))
+        || visionModels.find((m) => /qwen.*vl/i.test(m));
+    const model = process.env.E2E_VLM_MODEL || preferred || visionModels[0];
     if (!model) throw new Error(`No vision-capable model found in Ollama at ${OLLAMA_BASE}. Available: ${models.map((m) => m.name).join(', ')}`);
     testData.set('vlmModel', model);
     logger.info(`live VLM available: using model "${model}"`);
