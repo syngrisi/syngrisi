@@ -24,7 +24,7 @@ Feature: Check Detail Appearance
     # status
     When I wait 10 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
     Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(34,139,230,1)"
-    Then the element "[data-check-status-name='CheckName'] span" matches the text "NEW"
+    Then the element with locator "[data-check-status-name='CheckName'][data-check-status-value='new']" should be visible
 
     # check 'path'
     Then the element "[data-check='app-name']" matches the text "Test App"
@@ -96,7 +96,7 @@ Feature: Check Detail Appearance
     # status
     When I wait 10 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
     Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(64,192,87,1)"
-    Then the element "[data-check-status-name='CheckName'] span" matches the text "PASSED"
+    Then the element with locator "[data-check-status-name='CheckName'][data-check-status-value='passed']" should be visible
 
     # Toolbar
     # accept icon - wait for loading=false first (use toolbar scope)
@@ -139,7 +139,7 @@ Feature: Check Detail Appearance
     # status
     When I wait 10 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
     Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(250,82,82,1)"
-    Then the element "[data-check-status-name='CheckName'] span" matches the text "FAILED"
+    Then the element with locator "[data-check-status-name='CheckName'][data-check-status-value='failed']" should be visible
 
     # Toolbar
     # accept icon - wait for loading=false first (use toolbar scope)
