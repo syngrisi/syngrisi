@@ -1,12 +1,25 @@
 import { TriageInput, TriageVerdictResult, VerdictDef } from './types';
 import { fallbackVerdict } from './verdicts';
 
+// Placeholders that can be used in a (default or custom) prompt; substituted at triage time.
+export const PROMPT_PLACEHOLDERS = [
+    'checkName', 'testName', 'suiteName', 'appName', 'viewport', 'browserName', 'browserVersion',
+    'os', 'branch', 'diffPercent', 'failReasons', 'status', 'imageFormat', 'verdicts', 'createdDate',
+] as const;
+
+// Replace {{placeholder}} tokens with real values; unknown/missing tokens become ''.
+export function substitutePlaceholders(template: string, ctx: Record<string, string>): string {
+    return template.replace(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g, (_m, key) => (ctx[key] != null ? String(ctx[key]) : ''));
+}
+
 // System prompt built from the project's configurable verdict set.
 export function buildSystemPrompt(verdicts: VerdictDef[]): string {
     const fb = fallbackVerdict(verdicts);
     const lines = verdicts.map((v) => `- ${v.key}: ${v.description || v.label}`).join('\n');
     const keys = verdicts.map((v) => v.key).join(' | ');
     return `You are a visual-regression triage assistant. You are given a baseline screenshot, the actual screenshot, and a highlighted diff image of a UI. Classify what changed.
+
+Context for this check: name "{{checkName}}", test "{{testName}}", suite "{{suiteName}}", project "{{appName}}", viewport {{viewport}}, browser {{browserName}}, OS {{os}}, pixel difference vs baseline {{diffPercent}}%.
 
 Return STRICT JSON only, no prose, with this exact shape:
 {"verdict": "<one of: ${keys}>", "confidence": <integer 0..10>, "reason": "<one short phrase>"}

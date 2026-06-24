@@ -57,7 +57,7 @@ Given(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 Given('a local vision model is available', async ({ testData }: { testData: TestStore }) => {
-    test.setTimeout(25 * 60 * 1000); // real VLMs can take minutes; the demo runs several classifications
+    test.setTimeout(40 * 60 * 1000); // real VLMs can take minutes; the demo runs many classifications
     let models: any[] = [];
     try {
         const resp = await fetch(`${OLLAMA_BASE}/api/tags`, { signal: AbortSignal.timeout(4000) });

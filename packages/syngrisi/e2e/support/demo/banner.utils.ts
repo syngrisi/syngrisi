@@ -12,7 +12,6 @@ export const showDemoBanner = async (page: Page, text: string): Promise<void> =>
 
             const banner = document.createElement('div');
             banner.id = bannerId;
-            banner.textContent = text;
             Object.assign(banner.style, {
                 position: 'fixed',
                 bottom: '50px',
@@ -51,6 +50,33 @@ export const showDemoBanner = async (page: Page, text: string): Promise<void> =>
           }
         }
       `;
+            banner.appendChild(document.createTextNode(text));
+
+            // Close button (X) in the top-right corner — clickable even though the banner ignores pointer events
+            const closeBtn = document.createElement('div');
+            closeBtn.textContent = '×';
+            Object.assign(closeBtn.style, {
+                position: 'absolute',
+                top: '-10px',
+                right: '-10px',
+                width: '28px',
+                height: '28px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'rgba(31, 41, 55, 0.98)',
+                color: '#fff',
+                fontSize: '20px',
+                lineHeight: '1',
+                borderRadius: '50%',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                cursor: 'pointer',
+                pointerEvents: 'auto',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.35)',
+            });
+            closeBtn.addEventListener('click', () => banner.remove());
+            banner.appendChild(closeBtn);
+
             document.head.appendChild(style);
             document.body.appendChild(banner);
         },

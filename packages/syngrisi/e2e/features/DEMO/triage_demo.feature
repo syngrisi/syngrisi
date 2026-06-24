@@ -15,14 +15,14 @@ Feature: AI Triage - Демонстрация на реальной локаль
         Given I start Server and start Driver
         And I clear database
 
-    Scenario: Демонстрация AI Triage на реальной модели с пятью разными изменениями
-        # --- Подготовка: реальный VLM + один тест с 5 разными изменениями ---
-        When I set demo step 1 of 8: "Реальная модель и 5 разных изменений"
+    Scenario: Демонстрация AI Triage на реальной модели с семью разными изменениями
+        # --- Подготовка: реальный VLM + один тест с 7 разными изменениями ---
+        When I set demo step 1 of 8: "Реальная модель и 7 разных изменений"
         Given a local vision model is available
         # demo prefers gemma4:12b — it recognises the broken image as a bug (falls back if not installed)
         Given I prefer the local vision model "gemma4:12b"
         When I configure the triage provider for the local vision model
-        When I announce: "Реальная локальная vision-модель (Ollama). Создаём один тест с пятью разными изменениями UI — добавление элементов, удаление, смена текста, сломанная вёрстка и не прогрузившаяся картинка — чтобы модель дала по ним разные вердикты."
+        When I announce: "Реальная локальная vision-модель (Ollama). Создаём один тест с семью разными изменениями UI — добавление элементов, смена текста, динамический контент (только таймстамп и счётчик), обрезанный текст, сломанная вёрстка, не прогрузившаяся картинка и нечитаемый контраст — чтобы модель дала по ним разные вердикты."
         Given I create RCA baselines for the triage changes
         Given I enable AI triage for the project "RCA Scenario App"
         When I create the changed checks for triage
@@ -45,24 +45,29 @@ Feature: AI Triage - Демонстрация на реальной локаль
         When I announce: "Проверки уже прошли, а модель ещё анализирует результаты — на бейджах крутится индикатор «in progress» вместо вердикта."
         When I clear highlight
 
-        # --- Реальная классификация всех 5 проверок → разные вердикты ---
-        When I set demo step 3 of 8: "Разные AI-вердикты по пяти проверкам"
-        When I announce: "Запускаем триаж по всем пяти проверкам — модель сравнивает baseline, actual и diff каждой и выдаёт свой вердикт."
+        # --- Реальная классификация всех 7 проверок → разные вердикты ---
+        When I set demo step 3 of 8: "Разные AI-вердикты по семи проверкам"
+        When I announce: "Запускаем триаж по всем семи проверкам — модель сравнивает baseline, actual и diff каждой и выдаёт свой вердикт."
         When I run AI triage for the 1st check named "Added-Check"
-        When I run AI triage for the 1st check named "Removed-Check"
         When I run AI triage for the 1st check named "Text-Check"
+        When I run AI triage for the 1st check named "Noise-Check"
+        When I run AI triage for the 1st check named "Ambiguous-Check"
         When I run AI triage for the 1st check named "Broken-Check"
         When I run AI triage for the 1st check named "Image-Check"
+        When I run AI triage for the 1st check named "Contrast-Check"
+        When I pause
         Then the 1st check named "Added-Check" has a valid AI verdict
-        Then the 1st check named "Removed-Check" has a valid AI verdict
         Then the 1st check named "Text-Check" has a valid AI verdict
+        Then the 1st check named "Noise-Check" has a valid AI verdict
+        Then the 1st check named "Ambiguous-Check" has a valid AI verdict
         Then the 1st check named "Broken-Check" has a valid AI verdict
         Then the 1st check named "Image-Check" has a valid AI verdict
+        Then the 1st check named "Contrast-Check" has a valid AI verdict
         When I go to "main" page
         When I wait 10 seconds for the element with locator "[data-table-test-name='RCA-Triage-Test']" to be visible
         When I unfold the test "RCA-Triage-Test"
         When I wait 10 seconds for the element with locator "[data-test='triage-verdict']" to be visible
-        When I announce: "Пять проверок — и у каждой свой AI-вердикт: цветные бейджи с иконками и уровнем уверенности. Вместо сплошной «красноты» сразу видно, что есть что."
+        When I announce: "Семь проверок — разные изменения дают разные AI-вердикты: цветные бейджи с иконками и уровнем уверенности. Вместо сплошной «красноты» сразу видно, что есть что."
         When I clear highlight
 
         # --- Группировка по AI-вердикту ---
