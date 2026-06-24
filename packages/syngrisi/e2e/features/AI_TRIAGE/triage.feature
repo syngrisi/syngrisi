@@ -714,3 +714,113 @@ Feature: AI Triage verdicts and per-project auto-accept
       triage:
         verdict: likely_bug
       """
+
+  Scenario: Provider failure records the fallback verdict instead of throwing
+    Given I create "1" tests with:
+      """
+      testName: FailTest
+      project: TriageFail
+      checks:
+        - checkName: FailCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "FailCheck"
+    Given I create "1" tests with:
+      """
+      testName: FailTest
+      project: TriageFail
+      checks:
+        - checkName: FailCheck
+          filePath: files/B.png
+      """
+    # unreachable provider → classify throws → fallback verdict recorded, never crashes
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: openai
+        baseUrl: http://127.0.0.1:1/v1
+        model: nope
+        timeoutMs: 3000
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "FailCheck"
+    Then I expect via http 1st check filtered as "name=FailCheck" matched:
+      """
+      name: FailCheck
+      triage:
+        verdict: uncertain
+        confidence: 0
+        failed: true
+      """
+
+  Scenario: Confidence equal to the threshold is accepted (boundary, not masked to unknown)
+    Given I create "1" tests with:
+      """
+      testName: EdgeTest
+      project: TriageEdge
+      checks:
+        - checkName: EdgeCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "EdgeCheck"
+    Given I create "1" tests with:
+      """
+      testName: EdgeTest
+      project: TriageEdge
+      checks:
+        - checkName: EdgeCheck
+          filePath: files/B.png
+      """
+    Given the project "TriageEdge" has triage policy "auto" threshold 9 verdicts "noise"
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: noise
+        fakeConfidence: 9
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "EdgeCheck"
+    Then I expect via http 1st check filtered as "name=EdgeCheck" matched:
+      """
+      name: EdgeCheck
+      triage:
+        verdict: noise
+        autoAccepted: true
+      """
+
+  Scenario: Re-running triage overwrites a cancelled verdict
+    Given I create "1" tests with:
+      """
+      testName: RecancelTest
+      project: TriageRecancel
+      checks:
+        - checkName: RecancelCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "RecancelCheck"
+    Given I enable AI triage for the project "TriageRecancel"
+    Given I create "1" tests with:
+      """
+      testName: RecancelTest
+      project: TriageRecancel
+      checks:
+        - checkName: RecancelCheck
+          filePath: files/B.png
+      """
+    When I cancel AI triage for the 1st check named "RecancelCheck"
+    When I update via http setting "ai_triage_provider" with params:
+      """
+      value:
+        type: fake
+        fakeVerdict: likely_bug
+        fakeConfidence: 8
+      enabled: true
+      """
+    When I run AI triage for the 1st check named "RecancelCheck"
+    Then I expect via http 1st check filtered as "name=RecancelCheck" matched:
+      """
+      name: RecancelCheck
+      triage:
+        verdict: likely_bug
+      """
