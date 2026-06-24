@@ -474,11 +474,17 @@ const TRIAGE_MATRIX_TEST = 'RCA-Triage-Test';
 // Each case: a baseline fixture and the changed (actual) fixture. Most share base.html; the
 // broken-image case needs a baseline where the image loads so the failed load reads as a regression.
 const TRIAGE_MATRIX = [
+    // intended changes
     { check: 'Added-Check', baseline: 'html-changes/base', actual: 'html-changes/added-elements' },
-    { check: 'Removed-Check', baseline: 'html-changes/base', actual: 'html-changes/removed-elements' },
     { check: 'Text-Check', baseline: 'html-changes/base', actual: 'html-changes/text-change' },
+    // noise: only a timestamp/counter changed
+    { check: 'Noise-Check', baseline: 'html-changes/dynamic-base', actual: 'html-changes/dynamic-content' },
+    // ambiguous: descriptions truncated with ellipsis — could be intended or a bug
+    { check: 'Ambiguous-Check', baseline: 'html-changes/base', actual: 'html-changes/truncated-text' },
+    // likely bugs: broken layout, broken image, unreadable contrast
     { check: 'Broken-Check', baseline: 'html-changes/base', actual: 'html-changes/broken-layout' },
     { check: 'Image-Check', baseline: 'html-changes/with-image', actual: 'html-changes/broken-image' },
+    { check: 'Contrast-Check', baseline: 'html-changes/base', actual: 'html-changes/low-contrast' },
 ];
 const TRIAGE_MATRIX_ENV = {
     app: 'RCA Scenario App', branch: 'test', suite: 'RCA Scenario Suite',

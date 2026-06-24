@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Types } from 'mongoose';
-import { Check, App, Test } from '@models';
+import { Check, App, Test, Suite } from '@models';
 import { accept } from '@services/check.service';
 import log from '@lib/logger';
 import { buildTriageInput } from './analysis.service';
+import { buildSystemPrompt, substitutePlaceholders } from './prompt';
 import { createProvider } from './factory';
 import { getProviderConfig } from './config';
 import { shouldAutoAccept } from './policy';
@@ -23,8 +24,34 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
     const app: any = await App.findById(check.app).exec();
     const verdicts = getVerdictConfig(app);
 
-    // Per-project prompt override + few-shot examples (empty prompt → default built from verdicts).
-    const systemPrompt = (typeof app?.triagePrompt === 'string' && app.triagePrompt.trim()) ? app.triagePrompt.trim() : undefined;
+    // Resolve the prompt: per-project override or the default (built from verdicts), then substitute
+    // {{placeholders}} with this check's real context. Empty override → default.
+    const test: any = check.test ? await Test.findById(check.test).select('name').exec() : null;
+    const suite: any = check.suite ? await Suite.findById(check.suite).select('name').exec() : null;
+    let diffPercent = '';
+    try {
+        const r = check.result ? JSON.parse(check.result) : null;
+        if (r && r.misMatchPercentage != null) diffPercent = String(r.misMatchPercentage);
+    } catch { /* result is not JSON */ }
+    const promptCtx: Record<string, string> = {
+        checkName: check.name || '',
+        testName: test?.name || '',
+        suiteName: suite?.name || '',
+        appName: app?.name || '',
+        viewport: check.viewport || '',
+        browserName: check.browserName || '',
+        browserVersion: check.browserVersion || '',
+        os: check.os || '',
+        branch: check.branch || '',
+        diffPercent,
+        failReasons: Array.isArray(check.failReasons) ? check.failReasons.join(', ') : '',
+        status: Array.isArray(check.status) ? check.status[0] : String(check.status || ''),
+        imageFormat: 'png',
+        verdicts: verdicts.map((v) => v.key).join(', '),
+        createdDate: check.createdDate ? new Date(check.createdDate).toISOString() : '',
+    };
+    const rawPrompt = (typeof app?.triagePrompt === 'string' && app.triagePrompt.trim()) ? app.triagePrompt.trim() : buildSystemPrompt(verdicts);
+    const systemPrompt = substitutePlaceholders(rawPrompt, promptCtx);
     const examples = Array.isArray(app?.triageExamples) ? app.triageExamples : undefined;
 
     let result: TriageVerdictResult;

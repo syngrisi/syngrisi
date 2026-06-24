@@ -41,6 +41,8 @@ function buildDefaultPrompt(verdicts: Verdict[]): string {
     const keys = verdicts.map((v) => v.key).join(' | ');
     return `You are a visual-regression triage assistant. You are given a baseline screenshot, the actual screenshot, and a highlighted diff image of a UI. Classify what changed.
 
+Context for this check: name "{{checkName}}", test "{{testName}}", suite "{{suiteName}}", project "{{appName}}", viewport {{viewport}}, browser {{browserName}}, OS {{os}}, pixel difference vs baseline {{diffPercent}}%.
+
 Return STRICT JSON only, no prose, with this exact shape:
 {"verdict": "<one of: ${keys}>", "confidence": <integer 0..10>, "reason": "<one short phrase>"}
 
@@ -87,8 +89,10 @@ function PerProjectTriage() {
         setMode(selected.triagePolicy?.policy || 'suggest');
         setThreshold(typeof selected.triagePolicy?.autoAcceptThreshold === 'number' ? selected.triagePolicy.autoAcceptThreshold : 9);
         setAllow(selected.triagePolicy?.autoAcceptVerdicts || ['intended_change', 'noise']);
-        setVerdicts(Array.isArray(selected.triageVerdicts) && selected.triageVerdicts.length ? selected.triageVerdicts : DEFAULT_VERDICTS);
-        setPrompt(typeof selected.triagePrompt === 'string' ? selected.triagePrompt : '');
+        const vlist = Array.isArray(selected.triageVerdicts) && selected.triageVerdicts.length ? selected.triageVerdicts : DEFAULT_VERDICTS;
+        setVerdicts(vlist);
+        // Always show the effective prompt: the project's override, or the generated default.
+        setPrompt(selected.triagePrompt ? selected.triagePrompt : buildDefaultPrompt(vlist));
         setExamples(Array.isArray(selected.triageExamples) ? selected.triageExamples : []);
     }, [selected]);
 
@@ -117,7 +121,8 @@ function PerProjectTriage() {
                 triageEnabled: enabled,
                 triagePolicy: { policy: mode, autoAcceptThreshold: threshold, autoAcceptVerdicts: allow },
                 triageVerdicts: verdicts,
-                triagePrompt: prompt.trim(),
+                // if the prompt still equals the generated default, store empty (= keep following the default)
+                triagePrompt: prompt.trim() === buildDefaultPrompt(verdicts).trim() ? '' : prompt.trim(),
                 triageExamples: examples,
             }, {}, 'AdminAI.savePerProject');
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -234,9 +239,9 @@ function PerProjectTriage() {
                             dataTest="help-doc-prompt"
                             title="Writing the prompt"
                             lines={[
-                                'Empty = the default prompt is used. Click “Reset to default” to load the current default into the box and edit from there.',
+                                'The box always shows the effective prompt — the default if you have not customized it. Edit freely; “Reset to default” restores it. If you leave it equal to the default, the project keeps following the default.',
                                 'Keep the model instructed to return STRICT JSON {"verdict","confidence","reason"} and to only use your verdict keys — otherwise results fall back to the fallback verdict.',
-                                'Describe what each verdict means for THIS project and any project-specific rules (e.g. which areas are dynamic / expected to change).',
+                                'Placeholders are replaced with this check\'s real values at triage time: {{checkName}}, {{testName}}, {{suiteName}}, {{appName}}, {{viewport}}, {{browserName}}, {{browserVersion}}, {{os}}, {{branch}}, {{diffPercent}}, {{failReasons}}, {{status}}, {{imageFormat}}, {{verdicts}}, {{createdDate}}.',
                             ]}
                         />
                         <Button size="compact-xs" variant="default" onClick={() => setPrompt(buildDefaultPrompt(verdicts))} data-test="ai-prompt-reset">Reset to default</Button>
