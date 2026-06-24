@@ -24,9 +24,10 @@ MANIFEST = os.path.join(HERE, 'captions.built.json')
 def main() -> None:
     os.makedirs(OUT_DIR, exist_ok=True)
     text = open(FEATURE, encoding='utf-8').read()
-    captions = re.findall(r'I subtitle "([^"]*)"', text)
+    # Captions come from `I subtitle "..."` and `I reveal verdicts with caption "..."` (same voice-over).
+    captions = re.findall(r'I (?:subtitle|reveal verdicts with caption) "([^"]*)"', text)
     if not captions:
-        raise SystemExit(f'no `I subtitle "..."` lines found in {FEATURE}')
+        raise SystemExit(f'no caption lines found in {FEATURE}')
 
     py = os.path.join(TTS_DIR, 'env', 'bin', 'python')
     built = []
