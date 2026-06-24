@@ -525,12 +525,15 @@ async function createMatrixBaselines(appServer: AppServerFixture, testData: Test
 }
 
 // Phase 2: push the changed screenshots → one failed check per case (triage candidates).
-async function createMatrixChanges(appServer: AppServerFixture, testData: TestStore, matrix: MatrixCase[]) {
+async function createMatrixChanges(
+    appServer: AppServerFixture, testData: TestStore, matrix: MatrixCase[],
+    run = 'RCA Triage Run - Actual', suffix = '-actual',
+) {
     const hashedApiKey = testData.get('hashedApiKey') as string;
     const runIdent = testData.get('triageMatrixRunIdent') as string;
     const baseURL = appServer.baseURL;
 
-    const session = await startTestSession(baseURL, hashedApiKey, { ...TRIAGE_MATRIX_ENV, test: TRIAGE_MATRIX_TEST, run: 'RCA Triage Run - Actual', runident: `${runIdent}-actual` });
+    const session = await startTestSession(baseURL, hashedApiKey, { ...TRIAGE_MATRIX_ENV, test: TRIAGE_MATRIX_TEST, run, runident: `${runIdent}${suffix}` });
     const testId = session.id || session._id;
     for (const c of matrix) {
         const port = await startScenarioServer(c.actual);
@@ -555,6 +558,11 @@ Given('I create RCA baselines for the showcase changes', async ({ appServer, tes
 });
 When('I create the showcase changed checks', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
     await createMatrixChanges(appServer, testData, SHOWCASE_MATRIX);
+});
+
+// Re-send the same changed screenshots after their baselines were re-accepted → checks now pass.
+When('I re-run the showcase checks as passing', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
+    await createMatrixChanges(appServer, testData, SHOWCASE_MATRIX, 'RCA Triage Run - Reapplied', '-reapplied');
 });
 
 async function waitForScenarioCheck(baseURL: string, hashedApiKey: string, checkId: string) {
