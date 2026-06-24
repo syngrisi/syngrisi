@@ -1,7 +1,3 @@
-
-
-https://github.com/user-attachments/assets/f5cefc0c-f20f-4913-8e7f-63bc6684386e
-
 <div align="center">
 
 <img src="assets/logo.svg" width="92" alt="Syngrisi logo" />
