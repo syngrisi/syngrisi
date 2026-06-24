@@ -40,15 +40,15 @@ export default defineConfig({
       },
     },
     {
-      // Marketing reel: records a clean 1280x720 video (headless = no browser chrome in frame).
+      // Marketing reel: records a clean 1920x1080 video (headless = no browser chrome in frame).
       // Run: npx playwright test --project=marketing --grep "Marketing reel" --workers=1
       name: 'marketing',
       testDir: demoTestDir,
       use: {
         ...devices['Desktop Chrome'],
-        viewport: { width: 1280, height: 720 },
+        viewport: { width: 1920, height: 1080 },
         headless: true,
-        video: { mode: 'on', size: { width: 1280, height: 720 } },
+        video: { mode: 'on', size: { width: 1920, height: 1080 } },
       },
     }
   ]
