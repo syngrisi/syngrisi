@@ -1,12 +1,6 @@
 import { TriageInput, TriageVerdictResult, VerdictDef } from './types';
 import { fallbackVerdict } from './verdicts';
 
-// Placeholders that can be used in a (default or custom) prompt; substituted at triage time.
-export const PROMPT_PLACEHOLDERS = [
-    'checkName', 'testName', 'suiteName', 'appName', 'viewport', 'browserName', 'browserVersion',
-    'os', 'branch', 'diffPercent', 'failReasons', 'status', 'imageFormat', 'verdicts', 'createdDate',
-] as const;
-
 // Replace {{placeholder}} tokens with real values; unknown/missing tokens become ''.
 export function substitutePlaceholders(template: string, ctx: Record<string, string>): string {
     return template.replace(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g, (_m, key) => (ctx[key] != null ? String(ctx[key]) : ''));

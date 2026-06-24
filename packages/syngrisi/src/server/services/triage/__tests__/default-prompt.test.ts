@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildSystemPrompt, PROMPT_PLACEHOLDERS } from '../prompt';
+import { buildSystemPrompt } from '../prompt';
 import { DEFAULT_VERDICTS as V } from '../verdicts';
 
 test('default prompt lists every verdict key and its description', () => {
@@ -22,6 +22,4 @@ test('default prompt carries the context placeholders that get substituted at tr
     for (const key of ['checkName', 'testName', 'suiteName', 'appName', 'diffPercent']) {
         assert.ok(p.includes(`{{${key}}}`), `prompt should contain placeholder {{${key}}}`);
     }
-    // the placeholder registry stays a non-empty source of truth for the UI help
-    assert.ok(PROMPT_PLACEHOLDERS.length >= 10);
 });
