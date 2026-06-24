@@ -494,6 +494,7 @@ const TRIAGE_MATRIX_ENV = {
 // Trimmed set for the README showcase demo: one intended change, one text change, one bug.
 const SHOWCASE_MATRIX = [
     { check: 'Added-Check', baseline: 'html-changes/base', actual: 'html-changes/added-elements' },
+    { check: 'Small-Check', baseline: 'html-changes/base', actual: 'html-changes/small-change' },
     { check: 'Text-Check', baseline: 'html-changes/base', actual: 'html-changes/text-change' },
     { check: 'Image-Check', baseline: 'html-changes/with-image', actual: 'html-changes/broken-image' },
 ];

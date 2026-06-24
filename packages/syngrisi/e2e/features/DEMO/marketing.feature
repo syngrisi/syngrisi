@@ -1,10 +1,9 @@
 @demo @fast-server @marketing
 Feature: Syngrisi — Marketing reel
 
-    # Subtitled product reel for the README. No spoken audio during recording — captions are compact,
-    # outlined (readable on any background), and each stays on screen for its voice-over clip length.
-    # Voice-over (StyleTTS2 / Olivia) is generated separately and muxed in post. Deterministic
-    # fake-provider verdicts (intended / noise / bug) so the reel always looks clean.
+    # Subtitled product reel for the README. No spoken audio during recording — compact outlined
+    # captions; voice-over (StyleTTS2 / Olivia) is generated and muxed in post. Deterministic
+    # fake-provider verdicts so the reel always looks clean.
     # Record: npx playwright test --project=marketing --grep "Marketing reel" --workers=1
 
     Background:
@@ -18,26 +17,10 @@ Feature: Syngrisi — Marketing reel
 
     Scenario: Marketing reel
         When I start the reel timeline
-        # --- silent prep: three checks, pending (not yet analysed) ---
+        # --- silent prep: four ready checks, classified with fixed verdicts ---
         Given I create RCA baselines for the showcase changes
         Given I enable AI triage for the project "RCA Scenario App"
         When I create the showcase changed checks
-
-        # --- 1. intro on the grid ---
-        When I go to "main" page
-        When I wait 8 seconds for the element with locator "[data-table-test-name='RCA-Triage-Test']" to be visible
-        When I subtitle "Open-source, self-hosted visual regression testing."
-
-        # --- 2. the AI triage queue, still processing ---
-        When I go to "ai" page
-        When I wait 8 seconds for the element with locator "[data-test='ai-providers-form']" to be visible
-        When I click element with locator "[data-test='ai-tab-queue']"
-        When I wait 8 seconds for the element with locator "[data-test='ai-queue-run']" to be visible
-        When I highlight element "[data-test='ai-queue']"
-        When I subtitle "AI triage runs in the background — grouped by run."
-        When I clear highlight
-
-        # --- silent: classify each check with a fixed, photogenic verdict ---
         When I update via http setting "ai_triage_provider" with params:
             """
             value:
@@ -47,6 +30,7 @@ Feature: Syngrisi — Marketing reel
             enabled: true
             """
         When I run AI triage for the 1st check named "Added-Check"
+        When I run AI triage for the 1st check named "Text-Check"
         When I update via http setting "ai_triage_provider" with params:
             """
             value:
@@ -55,7 +39,7 @@ Feature: Syngrisi — Marketing reel
                 fakeConfidence: 9
             enabled: true
             """
-        When I run AI triage for the 1st check named "Text-Check"
+        When I run AI triage for the 1st check named "Small-Check"
         When I update via http setting "ai_triage_provider" with params:
             """
             value:
@@ -66,45 +50,70 @@ Feature: Syngrisi — Marketing reel
             """
         When I run AI triage for the 1st check named "Image-Check"
 
-        # --- 3. verdicts on the grid ---
+        # --- 1. intro: a project full of checks, across browsers, platforms & devices ---
+        When I go to "main" page
+        When I wait 8 seconds for the element with locator "[data-table-test-name='RCA-Triage-Test']" to be visible
+        When I unfold the test "RCA-Triage-Test"
+        When I wait 3 seconds for the element with locator "[data-table-check-name='Added-Check']" to be visible
+        When I subtitle "Syngrisi is an open-source visual testing platform — for every browser, platform and device."
+
+        # --- 2. a big, intended change: inspect & re-accept ---
+        When I open the 1st check "Added-Check"
+        When I wait 4 seconds for the element with locator "[data-test='triage-toolbar']" to be visible
+        When I click element with locator "[data-check='diff-view']"
+        When I subtitle "When a check fails on a large, intended redesign, inspect the highlighted diff."
+        When I click element with locator "[data-check='actual-view']"
+        When I subtitle "Flip between actual and expected,"
+        When I click element with locator "[data-check='expected-view']"
+        When I wait 1 seconds for the element with locator "[data-check='slider-view']" to be visible
+        When I click element with locator "[data-check='slider-view']"
+        When I subtitle "or compare them side by side."
+        When I accept check from modal
+        When I subtitle "Not a bug? Accept it as the new baseline in one click."
+        When I click element with locator "[data-test='close-check-detail-icon']"
+
+        # --- 3. a subtle change: highlighter + automatic ignore-regions ---
+        When I go to "main" page
+        When I wait 6 seconds for the element with locator "[data-table-test-name='RCA-Triage-Test']" to be visible
+        When I unfold the test "RCA-Triage-Test"
+        When I open the 1st check "Small-Check"
+        When I wait 4 seconds for the element with locator "[data-test='triage-toolbar']" to be visible
+        When I click element with locator "[data-check='diff-view']"
+        When I click element with locator "[data-check='highlight-icon']"
+        When I subtitle "For subtle changes, the highlighter pinpoints every difference."
+        When I accept check from modal
+        When I wait 2 seconds for the element with locator "[data-check='auto-ignore-region']" to be visible
+        When I click element with locator "[data-check='auto-ignore-region']"
+        When I subtitle "And automatic ignore-regions mask noisy areas so they never fail again."
+        When I click element with locator "[data-test='close-check-detail-icon']"
+
+        # --- 4. admin: AI provider + verdicts + auto-accept threshold ---
+        When I go to "ai" page
+        When I wait 8 seconds for the element with locator "[data-test='ai-providers-form']" to be visible
+        When I highlight element "[data-test='ai-providers-form']"
+        When I subtitle "Connect a known AI provider — OpenAI, Anthropic, Gemini — or a fully self-hosted model."
+        When I clear highlight
+        When I click element with locator "[data-test='ai-project-select']"
+        When I wait 3 seconds for the element with locator "[role='option']" to be visible
+        When I click element with locator "[role='option']"
+        When I wait 4 seconds for the element with locator "[data-test='ai-policy-threshold']" to be visible
+        When I highlight element "[data-test='ai-policy-threshold']"
+        When I subtitle "Define your own verdicts and auto-accept above a confidence threshold you choose."
+        When I clear highlight
+
+        # --- 5. triage: verdicts, filtering & grouping ---
         When I go to "main" page
         When I wait 6 seconds for the element with locator "[data-table-test-name='RCA-Triage-Test']" to be visible
         When I unfold the test "RCA-Triage-Test"
         When I wait 3 seconds for the element with locator "[data-test='triage-verdict']" to be visible
-        When I subtitle "Every failed check gets an AI verdict."
-        When I highlight element "[data-test='triage-verdict']"
-        When I subtitle "Intended change, noise, or a real bug — each with a reason."
-        When I clear highlight
-
-        # --- 4. inside a check: highlighted diff + side-by-side ---
-        When I open the 1st check "Image-Check"
-        When I wait 4 seconds for the element with locator "[data-test='triage-toolbar']" to be visible
-        When I click element with locator "[data-check='diff-view']"
-        When I subtitle "Open a check — the highlighted diff shows exactly what changed."
-        When I click element with locator "[data-check='slider-view']"
-        When I subtitle "Drag the slider to compare baseline and actual, side by side."
-        When I click element with locator "[data-test='close-check-detail-icon']"
-
-        # --- silent: accept the new baselines and re-run → green ---
-        When I accept via http the 1st check with name "Added-Check"
-        When I accept via http the 1st check with name "Text-Check"
-        When I accept via http the 1st check with name "Image-Check"
-        When I re-run the showcase checks as passing
-
-        # --- 5. reapply → everything green ---
-        When I go to "main" page
-        When I wait 8 seconds for the element with locator "[data-table-test-name='RCA-Triage-Test']" to be visible
-        When I unfold the test "RCA-Triage-Test"
-        When I subtitle "Accept the new baseline, re-run — and the checks pass, green."
-
-        # --- 6. group & filter by AI verdict ---
+        When I subtitle "AI triage turns a wall of red into clear verdicts — intended change, noise, or a likely bug."
         When I select the option with the text "AI Verdict" for element "select[data-test='navbar-group-by']"
         When I wait 10 seconds for the element with locator "[data-test='navbar_item_0']" to be visible
         When I highlight element "[data-test='navbar_item_0']"
-        When I subtitle "Group and filter by AI verdict — triage hundreds of diffs at a glance."
+        When I subtitle "Filter and group by verdict, so you focus only on real bugs."
         When I clear highlight
 
-        # --- 7. closing ---
+        # --- 6. closing ---
         When I go to "main" page
         When I wait 5 seconds for the element with locator "[data-table-test-name='RCA-Triage-Test']" to be visible
-        When I subtitle "Ship pixel-perfect interfaces with confidence — Syngrisi."
+        When I subtitle "Visual testing you control, with AI that has your back — Syngrisi."
