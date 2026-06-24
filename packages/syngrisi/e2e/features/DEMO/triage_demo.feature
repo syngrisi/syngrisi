@@ -17,7 +17,7 @@ Feature: AI Triage - Демонстрация на реальной локаль
 
     Scenario: Демонстрация AI Triage на реальной модели с семью разными изменениями
         # --- Подготовка: реальный VLM + один тест с 7 разными изменениями ---
-        When I set demo step 1 of 8: "Реальная модель и 7 разных изменений"
+        When I set demo step 1 of 9: "Реальная модель и 7 разных изменений"
         Given a local vision model is available
         # demo prefers gemma4:12b — it recognises the broken image as a bug (falls back if not installed)
         Given I prefer the local vision model "gemma4:12b"
@@ -28,7 +28,7 @@ Feature: AI Triage - Демонстрация на реальной локаль
         When I create the changed checks for triage
 
         # --- In-progress: проверки прошли, модель ещё не проанализировала ---
-        When I set demo step 2 of 8: "AI ещё анализирует — in progress"
+        When I set demo step 2 of 9: "AI ещё анализирует — in progress"
         # gate deterministically: ensure the pending flag is stamped before we look for the UI badge
         Then I expect via http 1st check filtered as "name=Added-Check" matched:
             """
@@ -46,7 +46,7 @@ Feature: AI Triage - Демонстрация на реальной локаль
         When I clear highlight
 
         # --- Реальная классификация всех 7 проверок → разные вердикты ---
-        When I set demo step 3 of 8: "Разные AI-вердикты по семи проверкам"
+        When I set demo step 3 of 9: "Разные AI-вердикты по семи проверкам"
         When I announce: "Запускаем триаж по всем семи проверкам — модель сравнивает baseline, actual и diff каждой и выдаёт свой вердикт."
         When I run AI triage for the 1st check named "Added-Check"
         When I run AI triage for the 1st check named "Text-Check"
@@ -71,7 +71,7 @@ Feature: AI Triage - Демонстрация на реальной локаль
         When I clear highlight
 
         # --- Группировка по AI-вердикту ---
-        When I set demo step 4 of 8: "Группировка по AI-вердикту"
+        When I set demo step 4 of 9: "Группировка по AI-вердикту"
         When I go to "main" page
         When I wait 10 seconds for the element with locator "[data-table-test-name='RCA-Triage-Test']" to be visible
         When I select the option with the text "AI Verdict" for element "select[data-test='navbar-group-by']"
@@ -81,7 +81,7 @@ Feature: AI Triage - Демонстрация на реальной локаль
         When I clear highlight
 
         # --- Фильтр-панель: мультивыбор вердиктов ---
-        When I set demo step 5 of 8: "Фильтр сразу по нескольким вердиктам"
+        When I set demo step 5 of 9: "Фильтр сразу по нескольким вердиктам"
         When I go to "main" page
         When I wait 10 seconds for the element with locator "[data-table-test-name='RCA-Triage-Test']" to be visible
         When I unfold the test "RCA-Triage-Test"
@@ -103,7 +103,7 @@ Feature: AI Triage - Демонстрация на реальной локаль
         When I click element with locator "[data-test='triage-filter-clear']"
 
         # --- Re-run в карточке чека ---
-        When I set demo step 6 of 8: "Перезапуск триажа на реальной модели"
+        When I set demo step 6 of 9: "Перезапуск триажа на реальной модели"
         When I go to "main" page
         When I wait 10 seconds for the element with locator "[data-table-test-name='RCA-Triage-Test']" to be visible
         When I unfold the test "RCA-Triage-Test"
@@ -116,7 +116,7 @@ Feature: AI Triage - Демонстрация на реальной локаль
         When I clear highlight
 
         # --- Админка: раздел AI, провайдер и Test connection ---
-        When I set demo step 7 of 8: "Раздел AI в админке и проверка соединения"
+        When I set demo step 7 of 9: "Раздел AI в админке и проверка соединения"
         When I go to "ai" page
         When I wait 10 seconds for the element with locator "[data-test='ai-providers-form']" to be visible
         When I highlight element "[data-test='ai-providers-form']"
@@ -128,7 +128,7 @@ Feature: AI Triage - Демонстрация на реальной локаль
         When I clear highlight
 
         # --- Per-project: вердикты, кастомный промпт и few-shot примеры ---
-        When I set demo step 8 of 8: "Настройки проекта: вердикты, промпт и few-shot примеры"
+        When I set demo step 8 of 9: "Настройки проекта: вердикты, промпт и few-shot примеры"
         When I wait 3 seconds for the element with locator "[data-test='ai-perproject-form']" to be visible
         When I click element with locator "[data-test='ai-project-select']"
         When I wait 3 seconds for the element with locator "[role='option']" to be visible
@@ -138,5 +138,19 @@ Feature: AI Triage - Демонстрация на реальной локаль
         When I announce: "Для каждого проекта свой набор вердиктов, полностью переопределяемый системный промпт (с кнопкой сброса к дефолту) и few-shot примеры — эталонные картинки с нужным вердиктом, которые модель видит перед реальной проверкой."
         When I clear highlight
 
-        When I announce: "Это AI Triage на реальной модели: пять изменений с разными вердиктами, in-progress, группировка, мультифильтр, перезапуск, проверка соединения и тонкая настройка под каждый проект."
+        # --- Очередь триажа: вкладка Queue, группировка по рану, рестарт/отмена ---
+        When I set demo step 9 of 9: "Очередь триажа: рестарт и отмена"
+        When I click element with locator "[data-test='ai-tab-queue']"
+        When I wait 10 seconds for the element with locator "[data-test='ai-queue']" to be visible
+        When I highlight element "[data-test='ai-queue']"
+        When I announce: "Отдельная вкладка Queue: упавшие проверки сгруппированы по ранам, список авто-обновляется. Видно очередь на анализ и счётчики."
+        When I clear highlight
+        When I wait 10 seconds for the element with locator "[data-test='ai-queue-run']" to be visible
+        When I click element with locator "[data-test='ai-queue-run-toggle']"
+        When I wait 5 seconds for the element with locator "[data-test='ai-queue-run-restart']" to be visible
+        When I highlight element "[data-test='ai-queue-run-restart']"
+        When I announce: "Любой ран можно развернуть и вручную перезапустить или отменить анализ — целиком по рану или по каждой проверке отдельно. Отмена помечает проверку служебным вердиктом «cancelled»."
+        When I clear highlight
+
+        When I announce: "Это AI Triage на реальной модели: семь изменений с разными вердиктами, in-progress, группировка, мультифильтр, перезапуск, проверка соединения, настройка под каждый проект и управляемая очередь анализа."
         When I end the demo

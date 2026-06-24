@@ -237,6 +237,9 @@ Then('the triage queue contains a run with check {string}', async ({ appServer, 
     const resp = await requestWithSession(`${appServer.baseURL}/ai/triage/queue`, testData, appServer);
     expect(resp.raw?.statusCode).toBe(200);
     const runs = resp.json?.runs || [];
-    const found = runs.some((r: any) => (r.checks || []).some((c: any) => c.name === name));
-    expect(found, `queue should contain a run with check "${name}": ${JSON.stringify(resp.json?.counts)}`).toBe(true);
+    const run = runs.find((r: any) => (r.checks || []).some((c: any) => c.name === name));
+    expect(run, `queue should contain a run with check "${name}": ${JSON.stringify(resp.json?.counts)}`).toBeTruthy();
+    // the check must be grouped under a real, named run (not an empty / "(no run)" placeholder)
+    const runName = run?.run?.name;
+    expect(typeof runName === 'string' && runName.length > 0 && runName !== '(no run)', `check "${name}" should be grouped under a named run, got "${runName}"`).toBe(true);
 });
