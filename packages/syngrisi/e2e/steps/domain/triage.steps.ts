@@ -57,7 +57,7 @@ Given(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 Given('a local vision model is available', async ({ testData }: { testData: TestStore }) => {
-    test.setTimeout(15 * 60 * 1000); // real VLMs (esp. "thinking" ones) can take minutes
+    test.setTimeout(25 * 60 * 1000); // real VLMs can take minutes; the demo runs several classifications
     let models: any[] = [];
     try {
         const resp = await fetch(`${OLLAMA_BASE}/api/tags`, { signal: AbortSignal.timeout(4000) });
@@ -75,6 +75,23 @@ Given('a local vision model is available', async ({ testData }: { testData: Test
     if (!model) throw new Error(`No vision-capable model found in Ollama at ${OLLAMA_BASE}. Available: ${models.map((m) => m.name).join(', ')}`);
     testData.set('vlmModel', model);
     logger.info(`live VLM available: using model "${model}"`);
+});
+
+// Pin a specific local model (overriding the auto-picked one) when it is available in Ollama.
+// Used by the demo to prefer gemma4:12b; falls back to the auto-picked model if not installed.
+Given('I prefer the local vision model {string}', async ({ testData }: { testData: TestStore }, model: string) => {
+    try {
+        const resp = await fetch(`${OLLAMA_BASE}/api/tags`, { signal: AbortSignal.timeout(4000) });
+        const models = (await resp.json())?.models || [];
+        if (models.some((m: { name?: string }) => m?.name === model)) {
+            testData.set('vlmModel', model);
+            logger.info(`demo: pinned local vision model "${model}"`);
+        } else {
+            logger.warn(`demo: requested model "${model}" not installed in Ollama; keeping "${testData.get('vlmModel')}"`);
+        }
+    } catch {
+        logger.warn(`demo: could not query Ollama to pin "${model}"; keeping "${testData.get('vlmModel')}"`);
+    }
 });
 
 When('I configure the triage provider for the local vision model', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
@@ -136,6 +153,49 @@ Given('I set custom triage verdicts for project {string}:', async ({ appServer, 
         json: { triageVerdicts },
     });
     expect(resp.raw?.statusCode).toBe(200);
+});
+
+// Tiny valid 1x1 PNG (data URL) for few-shot example persistence tests.
+const TINY_PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+
+async function getAppByName(appServer: AppServerFixture, testData: TestStore, project: string): Promise<any> {
+    const listResp = await requestWithSession(`${appServer.baseURL}/v1/app?limit=0&filter={"name":"${project}"}`, testData, appServer);
+    const app = (listResp.json.results || [])[0];
+    expect(app, `project "${project}" not found`).toBeTruthy();
+    return app;
+}
+
+// Set a per-project full prompt override via the app API.
+Given('I set the triage prompt for project {string} to {string}', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, project: string, promptText: string) => {
+    const app = await getAppByName(appServer, testData, project);
+    const resp = await requestWithSession(`${appServer.baseURL}/v1/app/${app._id || app.id}/triage-policy`, testData, appServer, {
+        method: 'PATCH',
+        json: { triagePrompt: promptText },
+    });
+    expect(resp.raw?.statusCode).toBe(200);
+});
+
+Then('the project {string} has triage prompt {string}', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, project: string, expected: string) => {
+    const app = await getAppByName(appServer, testData, project);
+    expect(app.triagePrompt).toBe(expected);
+});
+
+// Attach one few-shot example image (1x1 PNG) mapped to a verdict, via the app API.
+Given('I set a triage example for project {string} with verdict {string}', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, project: string, verdict: string) => {
+    const app = await getAppByName(appServer, testData, project);
+    const resp = await requestWithSession(`${appServer.baseURL}/v1/app/${app._id || app.id}/triage-policy`, testData, appServer, {
+        method: 'PATCH',
+        json: { triageExamples: [{ verdict, image: TINY_PNG, note: 'example' }] },
+    });
+    expect(resp.raw?.statusCode).toBe(200);
+});
+
+Then('the project {string} has {int} triage example with verdict {string}', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, project: string, count: number, verdict: string) => {
+    const app = await getAppByName(appServer, testData, project);
+    const examples = Array.isArray(app.triageExamples) ? app.triageExamples : [];
+    expect(examples.length).toBe(count);
+    expect(examples[0]?.verdict).toBe(verdict);
+    expect(String(examples[0]?.image || '')).toContain('data:image/png;base64,');
 });
 
 Then('the {ordinal} check named {string} has no AI verdict', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, ordinal: number, name: string) => {

@@ -13,6 +13,13 @@ export interface VerdictDef {
     description?: string;   // shown to the model in the prompt
 }
 
+// A few-shot example: a reference image and the verdict it should map to (per-project).
+export interface TriageExample {
+    verdict: string;   // expected verdict for this example
+    image: string;     // image as a data URL (data:image/...;base64,...)
+    note?: string;     // optional guidance shown to the model
+}
+
 export interface TriageInput {
     name: string;
     baselineB64: string | null;
@@ -21,6 +28,8 @@ export interface TriageInput {
     meta?: Record<string, unknown>;
     domDiff?: unknown;
     verdicts: VerdictDef[]; // the verdict set this classification must choose from
+    systemPrompt?: string;  // per-project full prompt override (empty → default built from verdicts)
+    examples?: TriageExample[]; // per-project few-shot examples (image + expected verdict)
 }
 
 export interface TriageVerdictResult {

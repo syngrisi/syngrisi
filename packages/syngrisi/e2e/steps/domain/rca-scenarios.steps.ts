@@ -469,6 +469,65 @@ async function createActualCheck(
     }
 }
 
+// --- Triage demo matrix: one test, 4 checks with different changes (likely → different verdicts) ---
+const TRIAGE_MATRIX_TEST = 'RCA-Triage-Test';
+// Each case: a baseline fixture and the changed (actual) fixture. Most share base.html; the
+// broken-image case needs a baseline where the image loads so the failed load reads as a regression.
+const TRIAGE_MATRIX = [
+    { check: 'Added-Check', baseline: 'html-changes/base', actual: 'html-changes/added-elements' },
+    { check: 'Removed-Check', baseline: 'html-changes/base', actual: 'html-changes/removed-elements' },
+    { check: 'Text-Check', baseline: 'html-changes/base', actual: 'html-changes/text-change' },
+    { check: 'Broken-Check', baseline: 'html-changes/base', actual: 'html-changes/broken-layout' },
+    { check: 'Image-Check', baseline: 'html-changes/with-image', actual: 'html-changes/broken-image' },
+];
+const TRIAGE_MATRIX_ENV = {
+    app: 'RCA Scenario App', branch: 'test', suite: 'RCA Scenario Suite',
+    viewport: '800x600', browserName: 'chrome', browserVersion: '120', browserFullVersion: '120.0.0.0', os: 'macOS',
+};
+
+// Phase 1: capture each case's baseline and accept it (creates the app).
+Given('I create RCA baselines for the triage changes', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
+    const hashedApiKey = hashApiKey(process.env.SYNGRISI_API_KEY || '123');
+    testData.set('hashedApiKey', hashedApiKey);
+    const baseURL = appServer.baseURL;
+    const runIdent = crypto.randomUUID();
+    testData.set('triageMatrixRunIdent', runIdent);
+
+    const session = await startTestSession(baseURL, hashedApiKey, { ...TRIAGE_MATRIX_ENV, test: TRIAGE_MATRIX_TEST, run: 'RCA Triage Run', runident: runIdent });
+    const testId = session.id || session._id;
+    for (const c of TRIAGE_MATRIX) {
+        const port = await startScenarioServer(c.baseline);
+        const shot = (await capturePageData(`http://127.0.0.1:${port}/`, false)).screenshot;
+        const created = await createCheckWithDom(baseURL, hashedApiKey, testId, c.check, shot, null, TRIAGE_MATRIX_ENV);
+        const checkId = created?._id || created?.id;
+        const fetched = await waitForScenarioCheck(baseURL, hashedApiKey, checkId);
+        const snap = fetched.actualSnapshotId?._id || fetched.actualSnapshotId;
+        await got.put(`${baseURL}/v1/checks/${checkId}/accept`, { headers: { apikey: hashedApiKey }, json: { baselineId: snap } });
+    }
+    await stopTestSession(baseURL, hashedApiKey, testId);
+    if (scenarioServer) { scenarioServer.close(); scenarioServer = null; }
+    logger.info(`Triage matrix: ${TRIAGE_MATRIX.length} baselines created and accepted`);
+});
+
+// Phase 2: push the changed screenshots → one failed check per case (triage candidates).
+When('I create the changed checks for triage', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
+    const hashedApiKey = testData.get('hashedApiKey') as string;
+    const runIdent = testData.get('triageMatrixRunIdent') as string;
+    const baseURL = appServer.baseURL;
+
+    const session = await startTestSession(baseURL, hashedApiKey, { ...TRIAGE_MATRIX_ENV, test: TRIAGE_MATRIX_TEST, run: 'RCA Triage Run - Actual', runident: `${runIdent}-actual` });
+    const testId = session.id || session._id;
+    for (const c of TRIAGE_MATRIX) {
+        const port = await startScenarioServer(c.actual);
+        const shot = (await capturePageData(`http://127.0.0.1:${port}/`, false)).screenshot;
+        await createCheckWithDom(baseURL, hashedApiKey, testId, c.check, shot, null, TRIAGE_MATRIX_ENV);
+        const actual = await waitForScenarioCheckByTestAndName(baseURL, hashedApiKey, testId, c.check);
+        logger.info(`Triage matrix check "${c.check}": ${actual?._id || actual?.id}, status ${actual?.status}`);
+    }
+    await stopTestSession(baseURL, hashedApiKey, testId);
+    if (scenarioServer) { scenarioServer.close(); scenarioServer = null; }
+});
+
 async function waitForScenarioCheck(baseURL: string, hashedApiKey: string, checkId: string) {
     const checkFilter = encodeURIComponent(JSON.stringify({ _id: checkId }));
     const maxRetries = 20;

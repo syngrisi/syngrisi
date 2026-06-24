@@ -26,6 +26,8 @@ export interface AppDocument extends Document {
         isFallback?: boolean;
         description?: string;
     }>;
+    triagePrompt?: string; // full system-prompt override (empty → default built from verdicts)
+    triageExamples?: Array<{ verdict: string; image: string; note?: string }>; // few-shot examples (data-URL images)
 }
 
 const AppSchema: Schema<AppDocument> = new Schema({
@@ -74,6 +76,20 @@ const AppSchema: Schema<AppDocument> = new Schema({
             neverAutoAccept: Boolean,
             isFallback: Boolean,
             description: String,
+            _id: false,
+        }],
+        default: undefined,
+    },
+    triagePrompt: {
+        type: String,
+    },
+    // ponytail: few-shot example images stored as data URLs inline (fine for a handful;
+    // move to file/GridFS storage if projects accumulate many large examples).
+    triageExamples: {
+        type: [{
+            verdict: String,
+            image: String,
+            note: String,
             _id: false,
         }],
         default: undefined,

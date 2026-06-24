@@ -3,9 +3,9 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import {
     ScrollArea, Box, Title, Paper, Select, Switch, NumberInput, MultiSelect, Button, Group, Table,
-    TextInput, Checkbox, ActionIcon, Text, Divider, ColorInput, Loader, Badge,
+    TextInput, Checkbox, ActionIcon, Text, Divider, ColorInput, Loader, Badge, Textarea, FileButton, Image, Stack,
 } from '@mantine/core';
-import { IconTrash, IconPlus } from '@tabler/icons-react';
+import { IconTrash, IconPlus, IconPhoto } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useSubpageEffect } from '@shared/hooks';
 import { GenericService } from '@shared/services';
@@ -23,13 +23,48 @@ type Verdict = {
 
 // Mirror of server defaults — starting point when a project has no custom set yet.
 const DEFAULT_VERDICTS: Verdict[] = [
-    { key: 'noise', label: 'Noise', color: 'gray', icon: 'wave', severity: 1, autoAcceptable: true, description: 'render jitter / dynamic content' },
-    { key: 'intended_change', label: 'Intended change', color: 'green', icon: 'check', severity: 2, autoAcceptable: true, description: 'a real intentional change' },
-    { key: 'uncertain', label: 'Uncertain', color: 'yellow', icon: 'question', severity: 3, autoAcceptable: false, neverAutoAccept: true, isFallback: true, description: 'not confident' },
-    { key: 'likely_bug', label: 'Likely bug', color: 'red', icon: 'bug', severity: 4, autoAcceptable: false, neverAutoAccept: true, description: 'an unexpected regression' },
+    { key: 'noise', label: 'Noise', color: 'gray', icon: 'wave', severity: 1, autoAcceptable: true, description: 'pixels differ but the UI is effectively unchanged — sub-pixel/anti-aliasing shifts or dynamic content (dates, counters, spinners, random data)' },
+    { key: 'intended_change', label: 'Intended change', color: 'green', icon: 'check', severity: 2, autoAcceptable: true, description: 'a coherent, complete change — content cleanly added, removed, reworded, restyled or moved with no layout breakage (expect a new baseline)' },
+    { key: 'uncertain', label: 'Uncertain', color: 'yellow', icon: 'question', severity: 3, autoAcceptable: false, neverAutoAccept: true, isFallback: true, description: 'evidence is weak, conflicting or ambiguous — not confident enough to classify' },
+    { key: 'likely_bug', label: 'Likely bug', color: 'red', icon: 'bug', severity: 4, autoAcceptable: false, neverAutoAccept: true, description: 'a visual defect — broken/collapsed layout, overlap, clipping, misalignment, missing content leaving a gap, unreadable contrast or cut-off text' },
 ];
 
 const ICON_OPTIONS = TRIAGE_ICON_NAMES.map((n) => ({ value: n, label: n }));
+
+type Example = { verdict: string; image: string; note?: string };
+
+// Mirror of the server's buildSystemPrompt() — used by "Reset to default" so the user can edit
+// the exact default prompt for the current verdict set. Keep in sync with server/services/triage/prompt.ts.
+function buildDefaultPrompt(verdicts: Verdict[]): string {
+    const fb = verdicts.find((v) => v.isFallback) || verdicts[0];
+    const lines = verdicts.map((v) => `- ${v.key}: ${v.description || v.label}`).join('\n');
+    const keys = verdicts.map((v) => v.key).join(' | ');
+    return `You are a visual-regression triage assistant. You are given a baseline screenshot, the actual screenshot, and a highlighted diff image of a UI. Classify what changed.
+
+Return STRICT JSON only, no prose, with this exact shape:
+{"verdict": "<one of: ${keys}>", "confidence": <integer 0..10>, "reason": "<one short phrase>"}
+
+Verdict meaning (choose the single best match):
+${lines}
+
+How to decide:
+- Judge ONLY by what is visible. You cannot know the developer's intent — infer it from visual evidence; do NOT assume a change is intentional just because it looks deliberate.
+- Inspect: what appeared or disappeared, layout and alignment, overlap or clipping, spacing, colors and contrast, text content, and whether the new state looks coherent and complete or broken and incomplete.
+- Signs of a real defect (a regression / bug): overlapping or clipped elements, collapsed or broken layout, misalignment, content missing and leaving an empty or broken gap, a broken or failed-to-load image (empty image frame, broken-image placeholder, or alt text shown instead of the picture), unreadable contrast, cut-off text, duplicated or stray elements.
+- Signs of an intended change: the new state looks coherent, aligned and complete — content cleanly added, removed, reworded, restyled or moved, with no layout breakage.
+- Signs of noise: sub-pixel or anti-aliasing differences, dynamic content (dates, times, counters, spinners, random data) or rendering jitter — pixels differ but the UI is effectively the same.
+- When evidence is weak, conflicting, or you genuinely cannot tell, prefer "${fb?.key}" instead of guessing.
+
+How to score confidence (integer 0..10):
+- 9-10: a large, unambiguous change that clearly fits one verdict.
+- 6-8: a clear change; the verdict is likely but with some room for doubt.
+- 3-5: a weak or partial signal; the verdict is mostly a guess.
+- 0-2: almost no evidence or fully ambiguous — use "${fb?.key}".
+
+Rules:
+- reason is ONE short human-readable phrase describing the visible change (e.g. "header overlaps content", "new banner added", "timestamp updated").
+- Never invent a verdict outside the allowed set; output JSON only.`;
+}
 
 function PerProjectTriage() {
     const appsQuery = useQuery({ queryKey: ['apps-for-triage'], queryFn: () => GenericService.get('app', {}, { limit: '0' }) });
@@ -42,6 +77,8 @@ function PerProjectTriage() {
     const [threshold, setThreshold] = useState<number>(9);
     const [allow, setAllow] = useState<string[]>([]);
     const [verdicts, setVerdicts] = useState<Verdict[]>(DEFAULT_VERDICTS);
+    const [prompt, setPrompt] = useState<string>('');
+    const [examples, setExamples] = useState<Example[]>([]);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -51,7 +88,18 @@ function PerProjectTriage() {
         setThreshold(typeof selected.triagePolicy?.autoAcceptThreshold === 'number' ? selected.triagePolicy.autoAcceptThreshold : 9);
         setAllow(selected.triagePolicy?.autoAcceptVerdicts || ['intended_change', 'noise']);
         setVerdicts(Array.isArray(selected.triageVerdicts) && selected.triageVerdicts.length ? selected.triageVerdicts : DEFAULT_VERDICTS);
+        setPrompt(typeof selected.triagePrompt === 'string' ? selected.triagePrompt : '');
+        setExamples(Array.isArray(selected.triageExamples) ? selected.triageExamples : []);
     }, [selected]);
+
+    const addExample = (file: File | null) => {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => setExamples((ex) => [...ex, { verdict: verdicts[0]?.key || '', image: String(reader.result), note: '' }]);
+        reader.readAsDataURL(file); // stored as a data URL (data:image/...;base64,...)
+    };
+    const updateExample = (i: number, patch: Partial<Example>) => setExamples((ex) => ex.map((row, idx) => (idx === i ? { ...row, ...patch } : row)));
+    const removeExample = (i: number) => setExamples((ex) => ex.filter((_, idx) => idx !== i));
 
     const update = (i: number, patch: Partial<Verdict>) => setVerdicts((v) => v.map((row, idx) => (idx === i ? { ...row, ...patch } : row)));
     const remove = (i: number) => setVerdicts((v) => v.filter((_, idx) => idx !== i));
@@ -69,6 +117,8 @@ function PerProjectTriage() {
                 triageEnabled: enabled,
                 triagePolicy: { policy: mode, autoAcceptThreshold: threshold, autoAcceptVerdicts: allow },
                 triageVerdicts: verdicts,
+                triagePrompt: prompt.trim(),
+                triageExamples: examples,
             }, {}, 'AdminAI.savePerProject');
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             successMsg({ message: 'Project AI Triage config saved' });
@@ -163,6 +213,70 @@ function PerProjectTriage() {
                     </Table>
                     <Group mt="md">
                         <Button variant="default" leftSection={<IconPlus size={16} />} onClick={add} data-test="ai-verdict-add">Add verdict</Button>
+                    </Group>
+
+                    <Divider my="md" label={(
+                        <Group gap={4}>
+                            <Text size="sm">Prompt &amp; few-shot examples</Text>
+                            <HelpDoc
+                                title="Custom prompt & examples"
+                                lines={[
+                                    'System prompt: leave empty to use the default (built from the verdicts above). Override it to fully control the model instructions.',
+                                    'Few-shot examples: attach reference screenshots and the verdict each should map to — the model sees them before the actual check to anchor its judgement.',
+                                ]}
+                            />
+                        </Group>
+                    )}
+                    />
+                    <Group gap={6} mb={4} align="center">
+                        <Text size="sm" fw={500}>System prompt (override)</Text>
+                        <HelpDoc
+                            dataTest="help-doc-prompt"
+                            title="Writing the prompt"
+                            lines={[
+                                'Empty = the default prompt is used. Click “Reset to default” to load the current default into the box and edit from there.',
+                                'Keep the model instructed to return STRICT JSON {"verdict","confidence","reason"} and to only use your verdict keys — otherwise results fall back to the fallback verdict.',
+                                'Describe what each verdict means for THIS project and any project-specific rules (e.g. which areas are dynamic / expected to change).',
+                            ]}
+                        />
+                        <Button size="compact-xs" variant="default" onClick={() => setPrompt(buildDefaultPrompt(verdicts))} data-test="ai-prompt-reset">Reset to default</Button>
+                    </Group>
+                    <Textarea
+                        placeholder="Leave empty to use the default prompt — “Reset to default” fills it in for editing"
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.currentTarget.value)}
+                        autosize
+                        minRows={4}
+                        maxRows={18}
+                        data-test="ai-prompt"
+                        mb="md"
+                    />
+
+                    <Text size="sm" fw={500} mb={4}>Few-shot examples</Text>
+                    <Stack gap="xs" data-test="ai-examples">
+                        {examples.map((ex, i) => (
+                            // eslint-disable-next-line react/no-array-index-key
+                            <Group key={i} gap="xs" align="center" data-test="ai-example-row">
+                                <Image src={ex.image} w={64} h={40} fit="contain" radius="sm" />
+                                <Select
+                                    value={ex.verdict}
+                                    onChange={(v) => updateExample(i, { verdict: v || '' })}
+                                    data={verdicts.map((v) => ({ value: v.key, label: v.label || v.key }))}
+                                    w={170}
+                                    comboboxProps={{ withinPortal: true }}
+                                    data-test="ai-example-verdict"
+                                />
+                                <TextInput placeholder="note (optional)" value={ex.note || ''} onChange={(e) => updateExample(i, { note: e.currentTarget.value })} style={{ flex: 1 }} />
+                                <ActionIcon color="red" variant="subtle" onClick={() => removeExample(i)} data-test="ai-example-delete"><IconTrash size={16} /></ActionIcon>
+                            </Group>
+                        ))}
+                    </Stack>
+                    <FileButton onChange={addExample} accept="image/png,image/jpeg">
+                        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                        {(props) => <Button {...props} variant="default" leftSection={<IconPhoto size={16} />} mt="xs" data-test="ai-example-add">Add example image</Button>}
+                    </FileButton>
+
+                    <Group mt="md">
                         <Button onClick={save} loading={saving} data-test="ai-perproject-save">Save project config</Button>
                     </Group>
                 </>

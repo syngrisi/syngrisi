@@ -20,14 +20,20 @@ export class OpenAIProvider implements TriageProvider {
             ]))
             .flat();
 
+        // Few-shot example pairs (image + its expected verdict) precede the actual case.
+        const exampleParts = (input.examples ?? []).flatMap((ex) => ([
+            { type: 'text', text: `Example — verdict "${ex.verdict}"${ex.note ? ` (${ex.note})` : ''}:` },
+            { type: 'image_url', image_url: { url: ex.image } },
+        ]));
+
         const body = {
             model,
             temperature: this.cfg.temperature ?? 0,
             // Generous default: "thinking" VLMs spend tokens reasoning before emitting the JSON.
             max_tokens: this.cfg.maxTokens, // undefined = no explicit cap (unlimited)
             messages: [
-                { role: 'system', content: buildSystemPrompt(input.verdicts) },
-                { role: 'user', content: [{ type: 'text', text: buildUserText(input) }, ...imageParts] },
+                { role: 'system', content: input.systemPrompt || buildSystemPrompt(input.verdicts) },
+                { role: 'user', content: [...exampleParts, { type: 'text', text: buildUserText(input) }, ...imageParts] },
             ],
         };
 
