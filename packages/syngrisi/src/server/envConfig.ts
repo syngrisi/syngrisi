@@ -38,6 +38,7 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_SESSION_STORE_KEY: str({ default: crypto.randomBytes(64).toString('hex') }),
     SYNGRISI_LOG_LEVEL: str({ default: 'debug' }),
     SYNGRISI_DISABLE_LOGS: bool({ default: false }),
+    SYNGRISI_LOG_TO_DB: bool({ default: false }), // persist logs to the `vrslogs` collection (Admin → Logs); off by default
     SYNGRISI_AUTO_REMOVE_CHECKS_POLL_INTERVAL_MS: num({ default: 10 * 60 * 1000 }), // 10 minutes
     SYNGRISI_AUTO_REMOVE_CHECKS_MIN_INTERVAL_MS: num({ default: 24 * 60 * 60 * 1000 }),
     SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE: bool({ default: false }),

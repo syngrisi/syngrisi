@@ -121,7 +121,11 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
             staleTime: hasHydratedCachedCheck ? 10 * 1000 : 0,
             refetchInterval: (query) => {
                 const check = query.state.data?.results?.[0];
-                if (check && !check.diffId && check.status[0] !== 'new' && check.status[0] !== 'passed') {
+                // poll while the diff is still being computed, OR while AI analysis is pending
+                // (triage.pending) — so the verdict badge updates live without a reload
+                const waitingForDiff = check && !check.diffId && check.status[0] !== 'new' && check.status[0] !== 'passed';
+                const waitingForVerdict = check?.triage?.pending === true;
+                if (waitingForDiff || waitingForVerdict) {
                     pollCountRef.current += 1;
                     const interval = Math.min(2000 * Math.pow(1.5, pollCountRef.current - 1), 10000);
                     return interval;

@@ -44,6 +44,12 @@ export function Checks({ item, testUpdateQuery }: Props) {
         ),
         refetchOnWindowFocus: false,
         staleTime: 30 * 1000,
+        // Live verdict updates: while any check is awaiting AI analysis (triage.pending),
+        // poll so the verdict badge updates without a reload; stop once all are classified.
+        refetchInterval: (query: any) => {
+            const results = query.state.data?.results || [];
+            return results.some((c: any) => c?.triage?.pending === true) ? 4000 : false;
+        },
     });
 
     // const checksQuery = useQuery(
