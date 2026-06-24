@@ -59,6 +59,17 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 
 > Enabled per project, **off by default**. See [AI Triage docs](packages/syngrisi/AI_TRIAGE.md).
 
+<table>
+  <tr>
+    <td width="50%"><img src="assets/screenshots/ai-config.png" alt="Admin AI settings: provider and per-project triage" /><br/><sub><b>Provider & per-project config</b> — a known provider or a self-hosted model; custom verdicts and auto-accept threshold.</sub></td>
+    <td width="50%"><img src="assets/screenshots/ai-filter.png" alt="Filter checks by AI verdict" /><br/><sub><b>Filter by verdict</b> — focus on likely bugs; hide intended changes and noise.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="assets/screenshots/ai-grouping.png" alt="Group tests by AI verdict" /><br/><sub><b>Group by AI verdict</b> — triage a wall of red at a glance.</sub></td>
+    <td width="50%"><img src="assets/screenshots/ai-queue.png" alt="AI triage queue grouped by run" /><br/><sub><b>Analysis queue</b> — grouped by run, with manual restart / cancel.</sub></td>
+  </tr>
+</table>
+
 ## ✨ Features
 
 - 🖼️ **Pixel-perfect comparison** — powered by a Resemble.js-based engine with `nothing` / `antialiasing` / `colors` match modes.

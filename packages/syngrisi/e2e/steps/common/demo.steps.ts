@@ -114,6 +114,19 @@ When('I subtitle {string}', async ({ page }, text: string) => {
 });
 
 /**
+ * Step definition: `When I save a screenshot to {string}`
+ *
+ * Saves the current viewport as a PNG (path is relative to the e2e dir). Used to capture
+ * marketing screenshots for the README.
+ */
+When('I save a screenshot to {string}', async ({ page }, relPath: string) => {
+  const out = require('path').resolve(process.cwd(), relPath);
+  require('fs').mkdirSync(require('path').dirname(out), { recursive: true });
+  await page.screenshot({ path: out });
+  logger.info(`saved screenshot ${out}`);
+});
+
+/**
  * Step definition: `When I start the reel timeline`
  *
  * Marks t=0 for the marketing reel (≈ video start) and resets the caption timeline.
