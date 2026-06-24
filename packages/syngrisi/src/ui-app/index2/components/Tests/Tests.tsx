@@ -14,6 +14,7 @@ import useInfinityScroll from '@shared/hooks/useInfinityScroll';
 import TestsTable from '@index/components/Tests/Table/TestsTable';
 import Settings from '@index/components/Tests/Table/Settings';
 import Filter from '@index/components/Tests/Table/Filter';
+import { TriageFilterButton } from '@index/components/Tests/Table/TriageFilterButton';
 import { useNavProgressFetchEffect } from '@shared/hooks';
 import { useParams } from '@hooks/useParams';
 
@@ -113,6 +114,16 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
             );
         },
         [sortOpen, isFilterDrawerOpen, colorScheme],
+    );
+
+    useEffect(
+        function updateTriageFilterIcon() {
+            updateToolbar(
+                <TriageFilterButton key="triage-filter" />,
+                49,
+            );
+        },
+        [colorScheme],
     );
 
     useEffect(

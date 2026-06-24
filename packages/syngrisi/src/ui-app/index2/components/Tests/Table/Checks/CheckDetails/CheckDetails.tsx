@@ -7,7 +7,7 @@ import { useDisclosure, useDocumentTitle, useHotkeys } from '@mantine/hooks';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 import { createImageAndWaitForLoad, imageFromUrl, imageFromElement } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/helpers';
-import { GenericService, imagePreloadService } from '@shared/services';
+import { GenericService, imagePreloadService, TriageService } from '@shared/services';
 import config from '@config';
 import { RelatedChecksContainer } from '@index/components/Tests/Table/Checks/CheckDetails/RelatedChecks/RelatedChecksContainer';
 import { useParams } from '@hooks/useParams';
@@ -185,6 +185,21 @@ export function CheckDetails({
         // Add enriched flags for AcceptButton icon state
         isCurrentlyAccepted: currentCheck?.isCurrentlyAccepted,
         wasAcceptedEarlier: currentCheck?.wasAcceptedEarlier,
+        triage: currentCheck?.triage,
+    };
+
+    const [triageRunning, setTriageRunning] = useState(false);
+    const handleRunTriage = async () => {
+        if (!currentCheck?._id) return;
+        setTriageRunning(true);
+        try {
+            await TriageService.runTriage(String(currentCheck._id), apikey);
+            await checkQuery?.refetch?.();
+        } catch (e) {
+            log.error(`triage run failed: ${e}`);
+        } finally {
+            setTriageRunning(false);
+        }
     };
 
     const settingsQuery = useQuery({
@@ -668,6 +683,8 @@ export function CheckDetails({
                     onToggleWireframe={rca.toggleWireframe}
                     isShareEnabled={isShareEnabled}
                     apikey={apikey}
+                    onRunTriage={handleRunTriage}
+                    triageRunning={triageRunning}
                 />
 
                 <Group

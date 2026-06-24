@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Divider, Group, Menu, ActionIcon, Badge, Tooltip as MantineTooltip } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze, IconBoxModel } from '@tabler/icons-react';
+import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze, IconBoxModel, IconSparkles } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -44,6 +44,8 @@ interface Props {
     isShareEnabled?: boolean
     isRCAFeatureEnabled?: boolean
     apikey?: string
+    onRunTriage?: () => void
+    triageRunning?: boolean
 }
 
 export function Toolbar(
@@ -72,6 +74,8 @@ export function Toolbar(
         isShareEnabled = true,
         isRCAFeatureEnabled = false,
         apikey,
+        onRunTriage,
+        triageRunning = false,
     }: Props,
 ) {
     const { query } = useParams();
@@ -388,6 +392,24 @@ export function Toolbar(
                                         )}
                                     </Group>
                                 )}
+                            </Group>
+                        </>
+                    )}
+                    {onRunTriage && (
+                        <>
+                            <Divider orientation="vertical" />
+                            <Group gap={4} wrap="nowrap" data-test="triage-toolbar">
+                                <ActionIcon
+                                    onClick={onRunTriage}
+                                    title="Run AI Triage"
+                                    aria-label="Run AI Triage"
+                                    variant="default"
+                                    loading={triageRunning}
+                                    data-test="triage-run-button"
+                                    size={toolbarActionIconSize}
+                                >
+                                    <IconSparkles size={toolbarGlyphSize} />
+                                </ActionIcon>
                             </Group>
                         </>
                     )}

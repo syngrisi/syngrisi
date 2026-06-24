@@ -43,8 +43,9 @@ function createWinstonLogger(opts: LoggerOptions): WinstonLogger {
         }),
     ];
 
-    // Skip Mongo transport in test mode to avoid polluting vrslogs with framework diagnostics
-    if (!env.SYNGRISI_TEST_MODE) {
+    // Persist to Mongo only when explicitly enabled (off by default).
+    // Always skipped in test mode to avoid polluting vrslogs with framework diagnostics.
+    if (env.SYNGRISI_LOG_TO_DB && !env.SYNGRISI_TEST_MODE) {
         transports.push(
             new winston.transports.MongoDB({
                 level: logLevel || 'debug',

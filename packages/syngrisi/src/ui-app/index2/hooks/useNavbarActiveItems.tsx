@@ -42,6 +42,7 @@ export function useNavbarActiveItems({ groupByValue, classes }: Props) {
             'test-distinct/os': 'os',
             'test-distinct/status': 'status',
             'test-distinct/markedAs': 'markedAs',
+            'test-distinct/worstTriageVerdict': 'worstTriageVerdict',
         }[groupByValue] || groupByValue
     );
 

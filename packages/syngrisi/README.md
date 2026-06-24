@@ -4,6 +4,8 @@ Syngrisi is an open-source visual regression testing platform designed to facili
 existing test automation kits, providing an API for automated solutions and a user-friendly UI for reviewing and
 managing visual test data.
 
+**🧠 New — AI Triage (beta):** a vision-LLM classifies every failed check (intended change / likely bug / noise) with a confidence score, so you review verdicts instead of a wall of red diffs. Fully self-hosted — point it at a local model via Ollama and screenshots never leave your infrastructure. See [AI_TRIAGE.md](AI_TRIAGE.md).
+
 ## Try with a Single-Click
 
 To quickly preview the project without setting it up locally, click the 'Open in Gitpod' button. Gitpod will automatically set up an environment, install the [Syngrisi Cucumber Boilerplate Project](https://github.com/syngrisi/syngrisi-cucumber-boilerplate), and launch the Syngrisi instance for you.

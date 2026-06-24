@@ -3,6 +3,7 @@ import { ActionIcon, Group, Loader, Text, Tooltip, useMantineTheme, useComputedC
 import { useLocalStorage } from '@mantine/hooks';
 import { useMemo } from 'react';
 import { Status } from '@shared/components/Check/Status';
+import { TriageVerdict } from '@shared/components/Check/TriageVerdict';
 import { ViewPortLabel } from '@index/components/Tests/Table/Checks/ViewPortLabel';
 import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
 import { OsIcon } from '@shared/components/Check/OsIcon';
@@ -68,8 +69,9 @@ export const Header = React.memo(function Header(
                     }
                     withinPortal
                 >
-                    <Group align="center" data-check="status">
+                    <Group align="center" data-check="status" gap="xs">
                         <Status size="lg" check={currentCheck} variant="filled" />
+                        <TriageVerdict check={currentCheck} size="lg" />
                     </Group>
                 </Tooltip>
 

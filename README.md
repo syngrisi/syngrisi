@@ -23,7 +23,7 @@ in a fast, self-hosted web UI.
 
 ## 🎬 Demo
 
-https://github.com/user-attachments/assets/114d3087-5520-49eb-85b9-cbee4d36f12a
+https://github.com/user-attachments/assets/05f43d8d-9478-4fc5-bfe8-992941796ffc
 
 ## Why Syngrisi?
 
@@ -46,6 +46,7 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 - 🌐 **Cross-browser, OS & viewport** — capture and group results by browser, platform, viewport and git branch.
 - ✅ **Review workflow** — accept/reject baselines, mark checks as bugs, batch-accept, and share single checks via link.
 - 🧭 **Powerful filtering & grouping** — group by run, suite, browser, platform or status; build nested `AND`/`OR` filters.
+- 🧠 **AI Triage** _(beta)_ — a vision-LLM classifies each failed check (intended change / likely bug / noise) with a confidence score; auto-accept policies, per-project prompts & verdicts, and a fully self-hosted local-model option via Ollama.
 - 🤖 **Root Cause Analysis** _(beta)_ — captures a DOM snapshot alongside each screenshot to help explain **why** a check changed.
 - 🔐 **Auth, roles & SSO** — username/password, API keys, plus OAuth2 / SAML 2.0 single sign-on and an admin panel.
 - 🧩 **Plugin system & rich configuration** — extend behaviour and tune everything through environment variables.
@@ -68,6 +69,38 @@ expensive, send your screenshots to someone else's servers, and lock you in.
   <img src="assets/screenshots/highlight.png" width="100%" alt="Difference highlighting reveals a tiny sub-pixel change on a globe" /><br/>
   <sub><b>Difference highlighting</b> — a 0.09% change across a handful of points becomes impossible to miss.</sub>
 </div>
+
+## ✨ NEW: AI Triage — let AI sort the red from the real _(beta)_
+
+> **Stop drowning in red diffs.** A wall of failed checks after a refactor is the worst
+> part of visual testing. Syngrisi now puts a **vision-LLM on triage duty**: it looks at
+> the baseline, the actual and the diff, and tells you what each change actually is.
+
+- 🧠 **Every failed check gets a verdict** — `intended change`, `likely bug`, `noise` or
+  `uncertain`, with a confidence score and a one-line reason ("header overlaps content",
+  "image failed to load", "dynamic timestamp updated").
+- ⚡ **Auto-accept the boring stuff** — let intended changes and rendering noise accept
+  themselves above a confidence threshold; real bugs are always kept for a human.
+- 🗂️ **Triage at a glance** — group and filter the grid by AI verdict, so "9 noise, 3 real
+  regressions" replaces "47 red checks". Verdicts update live, no reload.
+- 🔒 **100% private — bring your own model** — point it at a **local model via Ollama**
+  (Qwen-VL, Gemma…) and your screenshots never leave your machine. Or use any
+  OpenAI-compatible / Anthropic / Gemini endpoint.
+- 🎛️ **Yours to tune** — per-project verdicts, fully editable prompt with `{{placeholders}}`,
+  few-shot example images, and a manual queue (restart / cancel) grouped by run.
+
+> Enabled per project, **off by default**. See [AI Triage docs](packages/syngrisi/AI_TRIAGE.md).
+
+<table>
+  <tr>
+    <td width="50%"><img src="assets/screenshots/ai-config.png" alt="Admin AI settings: provider and per-project triage" /><br/><sub><b>Provider & per-project config</b> — a known provider or a self-hosted model; custom verdicts and auto-accept threshold.</sub></td>
+    <td width="50%"><img src="assets/screenshots/ai-filter.png" alt="Filter checks by AI verdict" /><br/><sub><b>Filter by verdict</b> — focus on likely bugs; hide intended changes and noise.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="assets/screenshots/ai-grouping.png" alt="Group tests by AI verdict" /><br/><sub><b>Group by AI verdict</b> — triage a wall of red at a glance.</sub></td>
+    <td width="50%"><img src="assets/screenshots/ai-queue.png" alt="AI triage queue grouped by run" /><br/><sub><b>Analysis queue</b> — grouped by run, with manual restart / cancel.</sub></td>
+  </tr>
+</table>
 
 ## 🚀 Quick Start
 
@@ -132,6 +165,7 @@ Cucumber, and the framework-agnostic
 | Pixel comparison & diffs | ✅ | ✅ | ✅ | ✅ |
 | Playwright & WebdriverIO SDKs | ✅ | ✅ | ✅ | Partial |
 | Root Cause Analysis | ✅ _(beta)_ | ✅ _(AI)_ | — | — |
+| AI triage of diffs | ✅ _(beta, **self-hosted / local model**)_ | ✅ _(cloud only)_ | — | — |
 | Managed cloud & scaling | self-managed | ✅ | ✅ | ✅ |
 
 Syngrisi trades a managed cloud and a large hosted feature set for being **free,

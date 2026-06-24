@@ -9,6 +9,8 @@ import { GenericService } from '@shared/services';
 import { ChecksSkeleton } from '@index/components/Tests/Table/Checks/ChecksSkeleton';
 import { Check } from '@index/components/Tests/Table/Checks/Check';
 import { useImagePreloadBatch } from '@shared/hooks';
+import { useParams } from '@hooks/useParams';
+import { parseTriageFilter, checkMatchesTriage } from '@index/components/Tests/Table/triageFilter';
 
 interface Props {
     item: any,
@@ -18,6 +20,11 @@ interface Props {
 export function Checks({ item, testUpdateQuery }: Props) {
     // eslint-disable-next-line no-unused-vars
     const [checksViewMode, setChecksViewMode] = useLocalStorage({ key: 'check-view-mode', defaultValue: 'bounded' });
+    const { query } = useParams();
+    // Optional AI-triage filter (verdict(s) / min confidence / reason substring). Applied client-side
+    // so the checks query key/cache stay unchanged (accept/remove optimistic updates keep working).
+    const triage = parseTriageFilter(query.checkFilter);
+    const hasTriageFilter = triage.active;
 
     const checksQuery = useQuery({
         queryKey: [
@@ -37,6 +44,12 @@ export function Checks({ item, testUpdateQuery }: Props) {
         ),
         refetchOnWindowFocus: false,
         staleTime: 30 * 1000,
+        // Live verdict updates: while any check is awaiting AI analysis (triage.pending),
+        // poll so the verdict badge updates without a reload; stop once all are classified.
+        refetchInterval: (query: any) => {
+            const results = query.state.data?.results || [];
+            return results.some((c: any) => c?.triage?.pending === true) ? 4000 : false;
+        },
     });
 
     // const checksQuery = useQuery(
@@ -66,7 +79,8 @@ export function Checks({ item, testUpdateQuery }: Props) {
     // );
 
     // Preload images for all checks when data is loaded
-    const checks = checksQuery?.data?.results || [];
+    const allChecks = checksQuery?.data?.results || [];
+    const checks = hasTriageFilter ? allChecks.filter((c: any) => checkMatchesTriage(c, triage)) : allChecks;
     useImagePreloadBatch(checks, {
         enabled: checks.length > 0,
         priority: 'medium',
@@ -106,7 +120,7 @@ export function Checks({ item, testUpdateQuery }: Props) {
                                             data-test-checks-ready="true"
                                         >
                                             {
-                                                checksQuery.data.results.map(
+                                                checks.map(
                                                     (check: any) => (
                                                         <Check
                                                             key={check._id}

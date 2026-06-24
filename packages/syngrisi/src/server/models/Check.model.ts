@@ -36,6 +36,20 @@ export interface CheckDocument extends Document {
     topStablePixels?: string;
     toleranceThreshold?: number;
     meta?: Record<string, unknown>;
+    triage?: {
+        verdict: string; // effective verdict key (may be 'unknown' when below threshold)
+        rawVerdict?: string; // model's actual verdict before threshold masking
+        pending?: boolean; // awaiting analysis (triage enabled, not yet classified)
+        confidence: number; // 0..10 integer
+        reason: string;
+        model: string;
+        at: Date;
+        label?: string; // denormalized display label/color/icon from the project's verdict config
+        color?: string;
+        icon?: string;
+        autoAccepted?: boolean;
+        failed?: boolean; // provider error/timeout → fallback verdict
+    };
 }
 
 // const CheckSchema: Schema<CheckDocument> = new Schema({
@@ -120,6 +134,7 @@ const CheckSchema = new Schema<CheckDocument>({
     },
     run: {
         type: Schema.Types.ObjectId,
+        ref: 'VRSRun',
     },
     markedAs: {
         type: String,
@@ -162,7 +177,29 @@ const CheckSchema = new Schema<CheckDocument>({
     meta: {
         type: Object,
     },
+    triage: {
+        type: {
+            verdict: { type: String },
+            rawVerdict: { type: String },
+            pending: { type: Boolean },
+            confidence: { type: Number, min: 0, max: 10 },
+            reason: { type: String },
+            model: { type: String },
+            at: { type: Date },
+            label: { type: String },
+            color: { type: String },
+            icon: { type: String },
+            autoAccepted: { type: Boolean },
+            failed: { type: Boolean },
+        },
+        _id: false,
+        default: undefined,
+    },
 });
+
+// Indexes for AI Triage grouping/filtering performance
+CheckSchema.index({ run: 1, 'triage.verdict': 1 });
+CheckSchema.index({ app: 1, 'triage.verdict': 1 });
 
 CheckSchema.plugin(toJSON);
 CheckSchema.plugin(paginate);

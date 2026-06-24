@@ -22,6 +22,7 @@ import { RemoveButton } from '@index/components/Tests/Table/Checks/RemoveButton'
 import { ViewPortLabel } from '@index/components/Tests/Table/Checks/ViewPortLabel';
 import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
 import { Status } from '@shared/components/Check/Status';
+import { TriageVerdict } from '@shared/components/Check/TriageVerdict';
 import { PreviewCheckTooltipLabel } from '@index/components/Tests/Table/Checks/PreviewCheckTooltipLabel';
 import { useImagePreloadOnHover } from '@shared/hooks';
 
@@ -153,6 +154,20 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
         setQuery({ modalIsOpen: 'true' });
     };
 
+    // Click a verdict badge to filter the current run by that verdict; click it again to remove it.
+    // Toggles within the multi-verdict set, preserving other filter dimensions (confidence/reason).
+    const handleVerdictClick = (verdict: string) => {
+        const cf: any = (query.checkFilter && typeof query.checkFilter === 'object') ? { ...query.checkFilter } : {};
+        const raw = cf['triage.verdict'];
+        const current: string[] = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+        const nextVerdicts = current.includes(verdict)
+            ? current.filter((v) => v !== verdict)
+            : [...current, verdict];
+        if (nextVerdicts.length) cf['triage.verdict'] = nextVerdicts;
+        else delete cf['triage.verdict'];
+        setQuery({ checkFilter: Object.keys(cf).length ? cf : null });
+    };
+
     return (
         <>
             {
@@ -257,7 +272,8 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             </Tooltip>
 
                             <Group justify="flex-end">
-                                <Status check={check} />
+                                <Status check={check} iconOnly />
+                                <TriageVerdict check={check} onClick={handleVerdictClick} compact />
                                 <ViewPortLabel
                                     color="blue"
                                     check={check}
@@ -313,25 +329,28 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                         : theme.white,
                                 }}
                             >
-                                <Tooltip
-                                    label={check.name}
-                                    multiline
-                                    withinPortal
-                                >
-                                    <Text
-                                        lineClamp={1}
-                                        fw={500}
-                                        fz={12}
-                                        style={{
-                                            lineHeight: '16px',
-                                            letterSpacing: '-0.005em',
-                                            fontFamily: '"Roboto","Helvetica Neue","Arial",sans-serif',
-                                        }}
-                                        data-table-check-name={check.name}
+                                <Group gap={8} wrap="nowrap" align="center">
+                                    <Status check={check} size="xs" iconOnly />
+                                    <Tooltip
+                                        label={check.name}
+                                        multiline
+                                        withinPortal
                                     >
-                                        {check.name}
-                                    </Text>
-                                </Tooltip>
+                                        <Text
+                                            lineClamp={1}
+                                            fw={500}
+                                            fz={12}
+                                            style={{
+                                                lineHeight: '16px',
+                                                letterSpacing: '-0.005em',
+                                                fontFamily: '"Roboto","Helvetica Neue","Arial",sans-serif',
+                                            }}
+                                            data-table-check-name={check.name}
+                                        >
+                                            {check.name}
+                                        </Text>
+                                    </Tooltip>
+                                </Group>
                             </Box>
                             <Card.Section m={0}>
                                 <Tooltip
@@ -408,7 +427,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
 
                             {/* CHECK TOOLBAR */}
                             <Group justify="space-between" px={12} mt={4} mb={6} gap={6} align="center" wrap="nowrap">
-                                <Status check={check} variant="filled" size="xs" />
+                                <TriageVerdict check={check} size="xs" onClick={handleVerdictClick} compact />
 
                                 <ViewPortLabel
                                     check={check}

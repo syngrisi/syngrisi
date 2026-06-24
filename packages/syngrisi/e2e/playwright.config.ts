@@ -38,6 +38,18 @@ export default defineConfig({
         viewport: { width: 1366, height: 768 },
         headless: false,  // Demo tests run in headed mode
       },
+    },
+    {
+      // Marketing reel: records a clean 1440x810 video (headless = no browser chrome in frame).
+      // Run: npx playwright test --project=marketing --grep "Marketing reel" --workers=1
+      name: 'marketing',
+      testDir: demoTestDir,
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1440, height: 810 },
+        headless: true,
+        video: { mode: 'on', size: { width: 1440, height: 810 } },
+      },
     }
   ]
 });

@@ -9,6 +9,25 @@ export interface AppDocument extends Document {
     updatedDate?: Date;
     createdDate?: Date;
     meta?: Record<string, unknown>;
+    triageEnabled?: boolean; // per-project AI Triage switch; off by default
+    triagePolicy?: {
+        policy: 'suggest' | 'auto';
+        autoAcceptThreshold: number; // 0..10
+        autoAcceptVerdicts: string[];
+    };
+    triageVerdicts?: Array<{
+        key: string;
+        label: string;
+        color: string;
+        icon?: string;
+        severity: number;
+        autoAcceptable: boolean;
+        neverAutoAccept?: boolean;
+        isFallback?: boolean;
+        description?: string;
+    }>;
+    triagePrompt?: string; // full system-prompt override (empty → default built from verdicts)
+    triageExamples?: Array<{ verdict: string; image: string; note?: string }>; // few-shot examples (data-URL images)
 }
 
 const AppSchema: Schema<AppDocument> = new Schema({
@@ -32,6 +51,48 @@ const AppSchema: Schema<AppDocument> = new Schema({
     },
     meta: {
         type: Object,
+    },
+    triageEnabled: {
+        type: Boolean,
+        default: false,
+    },
+    triagePolicy: {
+        type: {
+            policy: { type: String, enum: ['suggest', 'auto'], default: 'suggest' },
+            autoAcceptThreshold: { type: Number, min: 0, max: 10, default: 9 },
+            autoAcceptVerdicts: { type: [String], default: ['intended_change', 'noise'] },
+        },
+        _id: false,
+        default: undefined,
+    },
+    triageVerdicts: {
+        type: [{
+            key: String,
+            label: String,
+            color: String,
+            icon: String,
+            severity: Number,
+            autoAcceptable: Boolean,
+            neverAutoAccept: Boolean,
+            isFallback: Boolean,
+            description: String,
+            _id: false,
+        }],
+        default: undefined,
+    },
+    triagePrompt: {
+        type: String,
+    },
+    // ponytail: few-shot example images stored as data URLs inline (fine for a handful;
+    // move to file/GridFS storage if projects accumulate many large examples).
+    triageExamples: {
+        type: [{
+            verdict: String,
+            image: String,
+            note: String,
+            _id: false,
+        }],
+        default: undefined,
     },
 });
 

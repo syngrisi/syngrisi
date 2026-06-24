@@ -5,7 +5,7 @@ import { Request, Response } from "express"
 import { config } from "@config";
 import mongoose from 'mongoose';
 import { env } from "@env";
-import { AppSettings } from '../models';
+import { AppSettings, App } from '../models';
 
 const info = catchAsync(async (req: Request, res: Response) => {
     res.status(HttpStatus.OK).json({
@@ -58,8 +58,26 @@ const get = catchAsync(async (req: Request, res: Response) => {
     res.send(result);
 });
 
+// Update per-project AI Triage config: enable switch, auto-accept policy, and/or custom verdicts.
+const updateTriagePolicy = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const set: Record<string, unknown> = {};
+    if (req.body.triageEnabled !== undefined) set.triageEnabled = req.body.triageEnabled === true || req.body.triageEnabled === 'true';
+    if (req.body.triagePolicy !== undefined) set.triagePolicy = req.body.triagePolicy;
+    if (req.body.triageVerdicts !== undefined) set.triageVerdicts = req.body.triageVerdicts;
+    if (req.body.triagePrompt !== undefined) set.triagePrompt = req.body.triagePrompt;
+    if (req.body.triageExamples !== undefined) set.triageExamples = req.body.triageExamples;
+    const app = await App.findByIdAndUpdate(id, { $set: set }, { new: true }).exec();
+    if (!app) {
+        res.status(HttpStatus.NOT_FOUND).json({ error: 'App not found' });
+        return;
+    }
+    res.json(app);
+});
+
 export {
     info,
     get,
     systemInfo,
+    updateTriagePolicy,
 };

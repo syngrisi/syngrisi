@@ -84,5 +84,27 @@
         "type": "String",
         "value": "",
         "enabled": true
+    },
+    {
+        "name": "ai_triage_enabled",
+        "label": "Enable AI Triage",
+        "description": "Classify failed checks with a vision LLM (verdict, confidence, reason)",
+        "type": "Boolean",
+        "value": "false",
+        "env_variable": "SYNGRISI_AI_TRIAGE_ENABLED",
+        "enabled": true
+    },
+    {
+        "name": "ai_triage_provider",
+        "label": "AI Triage Provider",
+        "description": "Model provider for AI Triage (type, baseUrl, apiKey, model)",
+        "type": "AIProvider",
+        "value": {
+            "type": "openai",
+            "baseUrl": "",
+            "apiKey": "",
+            "model": ""
+        },
+        "enabled": true
     }
 ]

@@ -59,4 +59,10 @@ router.get(
     appController.get as Midleware
 );
 
+router.patch(
+    '/:id/triage-policy',
+    validateRequest(SkipValid, 'patch, /v1/app/:id/triage-policy'),
+    appController.updateTriagePolicy as Midleware
+);
+
 export default router;
