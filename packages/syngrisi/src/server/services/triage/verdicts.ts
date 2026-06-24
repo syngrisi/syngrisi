@@ -10,10 +10,10 @@ export const UNKNOWN_VERDICT: VerdictDef = {
 // Built-in defaults — used when a project has no custom verdict set. Preserve original semantics:
 // noise/intended_change are auto-acceptable; likely_bug/uncertain never; uncertain is the fallback.
 export const DEFAULT_VERDICTS: VerdictDef[] = [
-    { key: 'noise', label: 'Noise', color: 'gray', icon: 'wave', severity: 1, autoAcceptable: true, description: 'anti-aliasing / dynamic content / render jitter — not a real change' },
-    { key: 'intended_change', label: 'Intended change', color: 'green', icon: 'check', severity: 2, autoAcceptable: true, description: 'a real, intentional UI change (expect a new baseline)' },
-    { key: 'uncertain', label: 'Uncertain', color: 'yellow', icon: 'question', severity: 3, autoAcceptable: false, neverAutoAccept: true, isFallback: true, description: 'not confident enough to classify' },
-    { key: 'likely_bug', label: 'Likely bug', color: 'red', icon: 'bug', severity: 4, autoAcceptable: false, neverAutoAccept: true, description: 'an unexpected regression that needs a human' },
+    { key: 'noise', label: 'Noise', color: 'gray', icon: 'wave', severity: 1, autoAcceptable: true, description: 'pixels differ but the UI is effectively unchanged — sub-pixel/anti-aliasing shifts or dynamic content (dates, counters, spinners, random data)' },
+    { key: 'intended_change', label: 'Intended change', color: 'green', icon: 'check', severity: 2, autoAcceptable: true, description: 'a coherent, complete change — content cleanly added, removed, reworded, restyled or moved with no layout breakage (expect a new baseline)' },
+    { key: 'uncertain', label: 'Uncertain', color: 'yellow', icon: 'question', severity: 3, autoAcceptable: false, neverAutoAccept: true, isFallback: true, description: 'evidence is weak, conflicting or ambiguous — not confident enough to classify' },
+    { key: 'likely_bug', label: 'Likely bug', color: 'red', icon: 'bug', severity: 4, autoAcceptable: false, neverAutoAccept: true, description: 'a visual defect — broken/collapsed layout, overlap, clipping, misalignment, missing content leaving a gap, unreadable contrast or cut-off text' },
 ];
 
 // Resolve the verdict set for a project (App): its custom set if defined, else the defaults.

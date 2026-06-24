@@ -23,10 +23,14 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
     const app: any = await App.findById(check.app).exec();
     const verdicts = getVerdictConfig(app);
 
+    // Per-project prompt override + few-shot examples (empty prompt → default built from verdicts).
+    const systemPrompt = (typeof app?.triagePrompt === 'string' && app.triagePrompt.trim()) ? app.triagePrompt.trim() : undefined;
+    const examples = Array.isArray(app?.triageExamples) ? app.triageExamples : undefined;
+
     let result: TriageVerdictResult;
     let failed = false;
     try {
-        const input = await buildTriageInput(checkId, verdicts);
+        const input = await buildTriageInput(checkId, verdicts, { systemPrompt, examples });
         if (!input) throw new Error(`check not found: ${checkId}`);
         result = await createProvider(cfg).classify(input);
     } catch (e) {

@@ -1,5 +1,5 @@
 import { TriageProvider, TriageProviderConfig, TriageInput, TriageVerdictResult } from '../types';
-import { buildSystemPrompt, buildUserText, normalizeResult } from '../prompt';
+import { buildSystemPrompt, buildUserText, normalizeResult, parseImageData } from '../prompt';
 
 // Native Anthropic Messages API with image blocks.
 export class AnthropicProvider implements TriageProvider {
@@ -20,13 +20,21 @@ export class AnthropicProvider implements TriageProvider {
             ]))
             .flat();
 
+        const exampleBlocks = (input.examples ?? []).flatMap((ex) => {
+            const { mediaType, data } = parseImageData(ex.image);
+            return [
+                { type: 'text', text: `Example — verdict "${ex.verdict}"${ex.note ? ` (${ex.note})` : ''}:` },
+                { type: 'image', source: { type: 'base64', media_type: mediaType, data } },
+            ];
+        });
+
         const body = {
             model,
             max_tokens: this.cfg.maxTokens ?? 4096, // Anthropic requires max_tokens
             temperature: this.cfg.temperature ?? 0,
-            system: `${buildSystemPrompt(input.verdicts)}\nRespond with JSON only.`,
+            system: `${input.systemPrompt || buildSystemPrompt(input.verdicts)}\nRespond with JSON only.`,
             messages: [
-                { role: 'user', content: [{ type: 'text', text: buildUserText(input) }, ...imageBlocks] },
+                { role: 'user', content: [...exampleBlocks, { type: 'text', text: buildUserText(input) }, ...imageBlocks] },
             ],
         };
 

@@ -6,18 +6,39 @@ export function buildSystemPrompt(verdicts: VerdictDef[]): string {
     const fb = fallbackVerdict(verdicts);
     const lines = verdicts.map((v) => `- ${v.key}: ${v.description || v.label}`).join('\n');
     const keys = verdicts.map((v) => v.key).join(' | ');
-    return `You are a visual-regression triage assistant. You compare a baseline screenshot, the actual screenshot, and a highlighted diff image of a UI, and classify the change.
+    return `You are a visual-regression triage assistant. You are given a baseline screenshot, the actual screenshot, and a highlighted diff image of a UI. Classify what changed.
 
 Return STRICT JSON only, no prose, with this exact shape:
 {"verdict": "<one of: ${keys}>", "confidence": <integer 0..10>, "reason": "<one short phrase>"}
 
-Verdict meaning:
+Verdict meaning (choose the single best match):
 ${lines}
 
+How to decide:
+- Judge ONLY by what is visible. You cannot know the developer's intent — infer it from visual evidence; do NOT assume a change is intentional just because it looks deliberate.
+- Inspect: what appeared or disappeared, layout and alignment, overlap or clipping, spacing, colors and contrast, text content, and whether the new state looks coherent and complete or broken and incomplete.
+- Signs of a real defect (a regression / bug): overlapping or clipped elements, collapsed or broken layout, misalignment, content missing and leaving an empty or broken gap, a broken or failed-to-load image (empty image frame, broken-image placeholder, or alt text shown instead of the picture), unreadable contrast, cut-off text, duplicated or stray elements.
+- Signs of an intended change: the new state looks coherent, aligned and complete — content cleanly added, removed, reworded, restyled or moved, with no layout breakage.
+- Signs of noise: sub-pixel or anti-aliasing differences, dynamic content (dates, times, counters, spinners, random data) or rendering jitter — pixels differ but the UI is effectively the same.
+- When evidence is weak, conflicting, or you genuinely cannot tell, prefer "${fb.key}" instead of guessing.
+
+How to score confidence (integer 0..10):
+- 9-10: a large, unambiguous change that clearly fits one verdict.
+- 6-8: a clear change; the verdict is likely but with some room for doubt.
+- 3-5: a weak or partial signal; the verdict is mostly a guess.
+- 0-2: almost no evidence or fully ambiguous — use "${fb.key}".
+
 Rules:
-- confidence is an integer from 0 (no idea) to 10 (certain).
-- reason is ONE short human-readable phrase.
-- If you are not confident enough to classify, use "${fb.key}"; never invent a verdict outside the allowed set.`;
+- reason is ONE short human-readable phrase describing the visible change (e.g. "header overlaps content", "new banner added", "timestamp updated").
+- Never invent a verdict outside the allowed set; output JSON only.`;
+}
+
+// Split a data URL into media type + raw base64 (for providers that need them separately).
+// Falls back to treating the input as raw base64 PNG.
+export function parseImageData(s: string): { mediaType: string; data: string } {
+    const m = /^data:([^;]+);base64,(.*)$/.exec(s || '');
+    if (m) return { mediaType: m[1], data: m[2] };
+    return { mediaType: 'image/png', data: s || '' };
 }
 
 export function buildUserText(input: TriageInput): string {

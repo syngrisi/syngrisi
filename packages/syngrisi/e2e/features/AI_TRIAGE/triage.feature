@@ -554,6 +554,20 @@ Feature: AI Triage verdicts and per-project auto-accept
   Scenario: Test connection validates the provider and returns a verdict
     When I test the triage provider connection with a fake provider
 
+  Scenario: Per-project custom prompt and few-shot examples persist
+    Given I create "1" tests with:
+      """
+      testName: PromptTest
+      project: TriagePrompt
+      checks:
+        - checkName: PromptCheck
+          filePath: files/A.png
+      """
+    When I set the triage prompt for project "TriagePrompt" to "Custom project instructions. Return strict JSON only."
+    Then the project "TriagePrompt" has triage prompt "Custom project instructions. Return strict JSON only."
+    When I set a triage example for project "TriagePrompt" with verdict "noise"
+    Then the project "TriagePrompt" has 1 triage example with verdict "noise"
+
   Scenario: Auto-accept applies per project above threshold
     Given I create "1" tests with:
       """

@@ -1,5 +1,5 @@
 import { TriageProvider, TriageProviderConfig, TriageInput, TriageVerdictResult } from '../types';
-import { buildSystemPrompt, buildUserText, normalizeResult } from '../prompt';
+import { buildSystemPrompt, buildUserText, normalizeResult, parseImageData } from '../prompt';
 
 // Native Google Gemini generateContent with inlineData image parts.
 export class GeminiProvider implements TriageProvider {
@@ -12,9 +12,17 @@ export class GeminiProvider implements TriageProvider {
             .filter((b64): b64 is string => !!b64)
             .map((b64) => ({ inlineData: { mimeType: 'image/png', data: b64 } }));
 
+        const exampleParts = (input.examples ?? []).flatMap((ex) => {
+            const { mediaType, data } = parseImageData(ex.image);
+            return [
+                { text: `Example — verdict "${ex.verdict}"${ex.note ? ` (${ex.note})` : ''}:` },
+                { inlineData: { mimeType: mediaType, data } },
+            ];
+        });
+
         const body = {
-            systemInstruction: { parts: [{ text: buildSystemPrompt(input.verdicts) }] },
-            contents: [{ role: 'user', parts: [{ text: buildUserText(input) }, ...imageParts] }],
+            systemInstruction: { parts: [{ text: input.systemPrompt || buildSystemPrompt(input.verdicts) }] },
+            contents: [{ role: 'user', parts: [...exampleParts, { text: buildUserText(input) }, ...imageParts] }],
             generationConfig: {
                 temperature: this.cfg.temperature ?? 0,
                 maxOutputTokens: this.cfg.maxTokens, // undefined = no explicit cap (unlimited)
