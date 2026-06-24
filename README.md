@@ -1,3 +1,7 @@
+
+
+https://github.com/user-attachments/assets/f5cefc0c-f20f-4913-8e7f-63bc6684386e
+
 <div align="center">
 
 <img src="assets/logo.svg" width="92" alt="Syngrisi logo" />
@@ -23,7 +27,7 @@ in a fast, self-hosted web UI.
 
 ## 🎬 Demo
 
-https://github.com/user-attachments/assets/114d3087-5520-49eb-85b9-cbee4d36f12a
+https://github.com/user-attachments/assets/05f43d8d-9478-4fc5-bfe8-992941796ffc
 
 ## Why Syngrisi?
 
