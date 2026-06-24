@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { ActionIcon, Popover, Stack, Checkbox, NumberInput, TextInput, Button, Group, Text, Indicator } from '@mantine/core';
-import { IconSparkles } from '@tabler/icons-react';
+import { IconSparkles2 } from '@tabler/icons-react';
 import { useParams } from '@hooks/useParams';
 
 const VERDICT_OPTIONS = [
@@ -65,7 +65,7 @@ export function TriageFilterButton() {
                         color={active ? 'green' : 'gray'}
                         data-test="triage-filter-button"
                     >
-                        <IconSparkles size={24} stroke={1} />
+                        <IconSparkles2 size={24} stroke={1} />
                     </ActionIcon>
                 </Indicator>
             </Popover.Target>

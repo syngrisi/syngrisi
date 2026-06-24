@@ -82,7 +82,7 @@ export function TriageQueue() {
                         const ids = r.checks.map((c) => c.id);
                         return (
                             <Accordion.Item key={r.run.id} value={r.run.id} data-test="ai-queue-run" data-run-name={r.run.name}>
-                                <Accordion.Control>
+                                <Accordion.Control data-test="ai-queue-run-toggle">
                                     <Group justify="space-between" pr="sm">
                                         <Text fw={500}>{r.run.name}</Text>
                                         <Badge variant="light" color="gray">{r.checks.length} checks</Badge>

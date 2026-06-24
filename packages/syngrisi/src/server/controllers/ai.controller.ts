@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Response } from 'express';
-import { Check, Webhook, App } from '@models';
+import { Check, Webhook, App, Run } from '@models';
 import { catchAsync, ApiError } from '@utils';
 import { config } from '@config';
 import fs from 'fs';
@@ -557,18 +557,22 @@ const triageQueue = catchAsync(async (req: ExtRequest, res: Response) => {
     if (pendingOnly) filter['triage.pending'] = true;
     const checks = await Check.find(filter)
         .select('name run test status triage createdDate')
-        .populate('run', 'name createdDate')
         .sort({ createdDate: -1 })
         .limit(1000)
         .exec();
 
+    // The Check.run field has no schema ref, so resolve run names with a separate query.
+    const runIds = [...new Set((checks as any[]).map((c) => c.run).filter(Boolean).map(String))];
+    const runDocs = runIds.length ? await Run.find({ _id: { $in: runIds } }).select('name createdDate').exec() : [];
+    const runById = new Map((runDocs as any[]).map((r) => [String(r._id), r]));
+
     const runsMap = new Map<string, any>();
     for (const c of checks as any[]) {
-        const run = c.run;
-        const rid = run?._id ? String(run._id) : 'no-run';
+        const rid = c.run ? String(c.run) : 'no-run';
+        const runDoc = runById.get(rid);
         if (!runsMap.has(rid)) {
             runsMap.set(rid, {
-                run: run?._id ? { id: rid, name: run.name, createdDate: run.createdDate } : { id: 'no-run', name: '(no run)' },
+                run: runDoc ? { id: rid, name: runDoc.name, createdDate: runDoc.createdDate } : { id: 'no-run', name: '(no run)' },
                 checks: [],
             });
         }
