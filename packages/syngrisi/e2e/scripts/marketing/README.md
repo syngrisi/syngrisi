@@ -19,8 +19,13 @@ yarn bddgen
 npx playwright test --project=marketing --grep "Marketing reel" --workers=1
 
 # 3. Assemble: place each clip at its caption's moment + mux onto the video → assets/marketing.mp4
-python3 scripts/marketing/build.py
+#    --sync-ms / MARKETING_SYNC_MS nudges audio vs captions (the recording's video starts a few
+#    seconds before the reel timeline; ~3400ms compensates that lead on this setup).
+MARKETING_SYNC_MS=3400 python3 scripts/marketing/build.py
 ```
+
+To re-check sync, extract a frame at a caption's audio mid-point and confirm the matching
+subtitle is on screen: `ffmpeg -ss 24 -i assets/marketing.mp4 -frames:v 1 /tmp/f.png`.
 
 Notes:
 - Source of truth for the script is the `I subtitle "..."` lines in `marketing.feature`.
