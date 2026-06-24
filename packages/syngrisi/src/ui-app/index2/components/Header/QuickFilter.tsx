@@ -226,7 +226,7 @@ export function QuickFilter(
                                 style={{
                                     width: 14,
                                     height: 14,
-                                    borderRadius: 4,
+                                    borderRadius: '50%',
                                     backgroundColor: status.color,
                                     opacity: isActive ? 1 : 0.28,
                                     border: isActive ? 'none' : `1px solid ${status.color}`,

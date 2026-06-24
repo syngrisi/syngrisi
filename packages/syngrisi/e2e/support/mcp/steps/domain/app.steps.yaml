@@ -1,8 +1,8 @@
 metadata:
   category: domain/app
-  generatedAt: '2026-04-15T06:38:03.446Z'
-  totalFiles: 26
-  totalSteps: 212
+  generatedAt: '2026-06-24T05:53:26.305Z'
+  totalFiles: 27
+  totalSteps: 228
   sourceFiles:
     - steps/domain/admin-data.steps.ts
     - steps/domain/ai.steps.ts
@@ -30,6 +30,7 @@ metadata:
     - steps/domain/sso.steps.ts
     - steps/domain/stored-values.steps.ts
     - steps/domain/tests.steps.ts
+    - steps/domain/triage.steps.ts
 steps:
   - pattern: I create a database backup archive fixture stored as {string}
     description: ''
@@ -477,27 +478,27 @@ steps:
     line: 12
   - pattern: I open the saved share URL
     description: Opens the previously saved share URL
-    line: 258
+    line: 260
   - pattern: I open the shared check URL
     description: |-
       Opens the shared check URL from the share input field (immediate - modal must be open)
       Gets the URL from [data-test="share-url-input"] input and navigates to it
-    line: 274
+    line: 276
   - pattern: I save the share URL
     description: Gets share URL from Share Check modal and stores it in testData
-    line: 205
+    line: 207
   - pattern: I wait for navbar filter to sync
     description: Navbar synchronization steps
-    line: 178
+    line: 180
   - pattern: I wait for navbar to be ready
     description: ''
-    line: 191
+    line: 193
   - pattern: I wait for table to stabilize
     description: ''
-    line: 195
+    line: 197
   - pattern: the current url contains {string}
     description: ''
-    line: 109
+    line: 111
   - pattern: 'I update plugin {string} settings via API:'
     description: ''
     line: 12
@@ -516,6 +517,9 @@ steps:
   - pattern: I create RCA actual check with {string} without DOM data
     description: ''
     line: 332
+  - pattern: I create RCA baselines for the triage changes
+    description: 'Phase 1: capture each case''s baseline and accept it (creates the app).'
+    line: 495
   - pattern: I create RCA test with {string} as baseline
     description: ''
     line: 227
@@ -525,27 +529,30 @@ steps:
   - pattern: I create RCA test with {string} as baseline without DOM data
     description: ''
     line: 234
+  - pattern: I create the changed checks for triage
+    description: 'Phase 2: push the changed screenshots → one failed check per case (triage candidates).'
+    line: 519
   - pattern: I wait for RCA data to be ready
     description: ''
     line: 346
   - pattern: the RCA panel should show added elements
     description: ''
-    line: 601
+    line: 666
   - pattern: the RCA panel should show changes summary
     description: ''
-    line: 693
+    line: 758
   - pattern: the RCA panel should show no DOM data message
     description: ''
-    line: 669
+    line: 734
   - pattern: the RCA panel should show removed elements
     description: ''
-    line: 618
+    line: 683
   - pattern: the RCA panel should show style changes
     description: ''
-    line: 652
+    line: 717
   - pattern: the RCA panel should show text changes
     description: ''
-    line: 635
+    line: 700
   - pattern: I create RCA demo actual check with DOM changes
     description: Accepts the baseline and creates actual check with broken state
     line: 271
@@ -802,3 +809,51 @@ steps:
       When I wait for test "TestName-1" to appear in table
       ```
     line: 860
+  - pattern: a local vision model is available
+    description: |-
+      --- Live VLM (@live-vlm, opt-in) ----------------------------------------------------------
+      Verifies the real classification path against a local Ollama vision model. Non-deterministic
+      (asserts a well-formed verdict, not a specific one) and slow, so excluded from default runs.
+      eslint-disable-next-line @typescript-eslint/no-explicit-any
+    line: 59
+  - pattern: I configure the triage provider for the local vision model
+    description: ''
+    line: 97
+  - pattern: I enable AI triage for the project {string}
+    description: Enable per-project AI Triage (off by default) via the app API.
+    line: 134
+  - pattern: I prefer the local vision model {string}
+    description: |-
+      Pin a specific local model (overriding the auto-picked one) when it is available in Ollama.
+      Used by the demo to prefer gemma4:12b; falls back to the auto-picked model if not installed.
+    line: 82
+  - pattern: I run AI triage for the {ordinal} check named {string}
+    description: Trigger AI triage synchronously via the run endpoint (deterministic, no scheduler wait).
+    line: 209
+  - pattern: I set a triage example for project {string} with verdict {string}
+    description: Attach one few-shot example image (1x1 PNG) mapped to a verdict, via the app API.
+    line: 184
+  - pattern: 'I set custom triage verdicts for project {string}:'
+    description: Set a custom (per-project) verdict set via the app API.
+    line: 146
+  - pattern: I set the triage prompt for project {string} to {string}
+    description: Set a per-project full prompt override via the app API.
+    line: 169
+  - pattern: I test the triage provider connection with a fake provider
+    description: Exercise the "Test connection" endpoint with a deterministic fake provider.
+    line: 122
+  - pattern: the {ordinal} check named {string} has a valid AI verdict
+    description: ''
+    line: 109
+  - pattern: the {ordinal} check named {string} has no AI verdict
+    description: ''
+    line: 201
+  - pattern: the project {string} has {int} triage example with verdict {string}
+    description: ''
+    line: 193
+  - pattern: the project {string} has triage policy {string} threshold {int} verdicts {string}
+    description: Set per-project auto-accept policy via the app API (PATCH /v1/app/:id/triage-policy).
+    line: 30
+  - pattern: the project {string} has triage prompt {string}
+    description: ''
+    line: 178

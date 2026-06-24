@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle,prefer-arrow-callback,react/jsx-one-expression-per-line */
 import React, { useCallback, useMemo } from 'react';
-import { RunItem, SuiteItem, BrowserItem, PlatformItem, StatusItem, AcceptStatusItem } from '@index/components/Navbar/Items';
+import { RunItem, SuiteItem, BrowserItem, PlatformItem, StatusItem, AcceptStatusItem, VerdictItem } from '@index/components/Navbar/Items';
 
 const itemTypesMap = {
     runs: 'Run',
@@ -87,6 +87,14 @@ export function BaseItemWrapper(
         ),
         'test-distinct/markedAs': (
             <AcceptStatusItem
+                item={item}
+                index={index}
+                className={className}
+                handlerItemClick={handlerItemClick}
+            />
+        ),
+        'test-distinct/worstTriageVerdict': (
+            <VerdictItem
                 item={item}
                 index={index}
                 className={className}

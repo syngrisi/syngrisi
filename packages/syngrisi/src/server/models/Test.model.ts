@@ -26,6 +26,7 @@ export interface TestDocument extends Document {
     creatorId?: Schema.Types.ObjectId;
     creatorUsername?: string;
     meta?: Record<string, unknown>;
+    worstTriageVerdict?: string; // most severe AI verdict among this test's checks (for group/filter)
 }
 
 const TestSchema: Schema<TestDocument> = new Schema(
@@ -104,6 +105,9 @@ const TestSchema: Schema<TestDocument> = new Schema(
         },
         meta: {
             type: Object,
+        },
+        worstTriageVerdict: {
+            type: String,
         },
     },
     { strictQuery: true }

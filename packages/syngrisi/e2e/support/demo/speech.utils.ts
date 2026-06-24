@@ -1,13 +1,13 @@
 import type { Page } from '@playwright/test';
-import { env } from '@config';
 
 export const speak = async (page: Page, text: string, waitForEnd: boolean = true): Promise<void> => {
-    const voiceName = process.env.E2E_SAY_VOICE || 'Google US English';
+    const voiceLang = process.env.E2E_SAY_LANG || 'en-US';
+    const voiceName = process.env.E2E_SAY_VOICE || (process.env.E2E_SAY_LANG ? '' : 'Google US English');
 
     await page.evaluate(
-        ({ text, voiceName, waitForEnd }) =>
+        ({ text, voiceName, voiceLang, waitForEnd }) =>
             new Promise<void>((resolve) => {
-                const timeout = setTimeout(() => resolve(), 10000); // 10s max timeout
+                const timeout = setTimeout(() => resolve(), 10000);
                 const done = () => {
                     clearTimeout(timeout);
                     resolve();
@@ -20,23 +20,33 @@ export const speak = async (page: Page, text: string, waitForEnd: boolean = true
                 }
 
                 const synth = window.speechSynthesis;
-                // Cancel any pending speech
                 synth.cancel();
 
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.rate = 1.0;
                 utterance.pitch = 1.0;
+                utterance.lang = voiceLang;
 
                 const pickVoice = () => {
                     const voices = synth.getVoices();
-                    // Try to find exact match
-                    let matched = voices.find((voice) => voice.name === voiceName);
-                    // Fallback to any English voice
+                    let matched = voiceName ? voices.find((voice) => voice.name === voiceName) : undefined;
+
                     if (!matched) {
-                        matched = voices.find((voice) => voice.lang.includes('en'));
+                        matched = voices.find(
+                            (voice) => voice.lang === voiceLang || voice.lang.startsWith(`${voiceLang}-`),
+                        );
                     }
+
+                    if (!matched) {
+                        const baseLang = voiceLang.split('-')[0];
+                        matched = voices.find(
+                            (voice) => voice.lang === baseLang || voice.lang.startsWith(`${baseLang}-`),
+                        );
+                    }
+
                     if (matched) {
                         utterance.voice = matched;
+                        utterance.lang = matched.lang;
                     }
                 };
 
@@ -65,6 +75,6 @@ export const speak = async (page: Page, text: string, waitForEnd: boolean = true
                     speakNow();
                 }
             }),
-        { text, voiceName, waitForEnd },
+        { text, voiceName, voiceLang, waitForEnd },
     );
 };

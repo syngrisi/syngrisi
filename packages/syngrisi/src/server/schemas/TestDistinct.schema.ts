@@ -16,6 +16,7 @@ const validIds = [
     'os',
     'app',
     'startDate',
+    'worstTriageVerdict',
     'filter',
 ] as const;
 

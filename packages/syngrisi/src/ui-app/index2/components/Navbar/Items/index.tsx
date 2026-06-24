@@ -4,3 +4,4 @@ export { BrowserItem } from '@index/components/Navbar/Items/BrowserItem';
 export { PlatformItem } from '@index/components/Navbar/Items/PlatformItem';
 export { StatusItem } from '@index/components/Navbar/Items/StatusItem';
 export { AcceptStatusItem } from '@index/components/Navbar/Items/AcceptStatusItem';
+export { VerdictItem } from '@index/components/Navbar/Items/VerdictItem';

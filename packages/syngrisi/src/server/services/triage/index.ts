@@ -1,0 +1,173 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Types } from 'mongoose';
+import { Check, App, Test, Suite } from '@models';
+import { accept } from '@services/check.service';
+import log from '@lib/logger';
+import { buildTriageInput } from './analysis.service';
+import { buildSystemPrompt, substitutePlaceholders } from './prompt';
+import { createProvider } from './factory';
+import { getProviderConfig } from './config';
+import { shouldAutoAccept } from './policy';
+import { getVerdictConfig, findVerdict, fallbackVerdict, UNKNOWN_VERDICT, CANCELLED_VERDICT } from './verdicts';
+import { TriageVerdictResult, VerdictDef } from './types';
+
+const scope = 'triage';
+
+// Triage a single check: classify, persist verdict, apply the check's App auto-accept policy.
+// Returns the persisted triage object. Never throws on provider failure → records 'uncertain'/failed.
+export async function triageCheck(checkId: string): Promise<Record<string, unknown>> {
+    const cfg = await getProviderConfig();
+    if (!cfg) throw new Error('triage provider is not configured');
+
+    const check: any = await Check.findById(checkId).exec();
+    if (!check) throw new Error(`check not found: ${checkId}`);
+    const app: any = await App.findById(check.app).exec();
+    const verdicts = getVerdictConfig(app);
+
+    // Resolve the prompt: per-project override or the default (built from verdicts), then substitute
+    // {{placeholders}} with this check's real context. Empty override → default.
+    const [test, suite]: [any, any] = await Promise.all([
+        check.test ? Test.findById(check.test).select('name').exec() : null,
+        check.suite ? Suite.findById(check.suite).select('name').exec() : null,
+    ]);
+    let diffPercent = '';
+    try {
+        const r = check.result ? JSON.parse(check.result) : null;
+        if (r && r.misMatchPercentage != null) diffPercent = String(r.misMatchPercentage);
+    } catch { /* result is not JSON */ }
+    const promptCtx: Record<string, string> = {
+        checkName: check.name || '',
+        testName: test?.name || '',
+        suiteName: suite?.name || '',
+        appName: app?.name || '',
+        viewport: check.viewport || '',
+        browserName: check.browserName || '',
+        browserVersion: check.browserVersion || '',
+        os: check.os || '',
+        branch: check.branch || '',
+        diffPercent,
+        failReasons: Array.isArray(check.failReasons) ? check.failReasons.join(', ') : '',
+        status: Array.isArray(check.status) ? check.status[0] : String(check.status || ''),
+        imageFormat: 'png',
+        verdicts: verdicts.map((v) => v.key).join(', '),
+        createdDate: check.createdDate ? new Date(check.createdDate).toISOString() : '',
+    };
+    const rawPrompt = (typeof app?.triagePrompt === 'string' && app.triagePrompt.trim()) ? app.triagePrompt.trim() : buildSystemPrompt(verdicts);
+    const systemPrompt = substitutePlaceholders(rawPrompt, promptCtx);
+    const examples = Array.isArray(app?.triageExamples) ? app.triageExamples : undefined;
+
+    let result: TriageVerdictResult;
+    let failed = false;
+    try {
+        const input = await buildTriageInput(checkId, verdicts, { systemPrompt, examples });
+        if (!input) throw new Error(`check not found: ${checkId}`);
+        result = await createProvider(cfg).classify(input);
+    } catch (e) {
+        failed = true;
+        log.warn(`triage failed for ${checkId}: ${e}`, { scope });
+        const fb = fallbackVerdict(verdicts);
+        result = { verdict: fb.key, confidence: 0, reason: 'triage failed', model: cfg.model ?? cfg.type };
+    }
+
+    // Below the project's confidence threshold → show the reserved "unknown" verdict
+    // (keep the model's actual verdict as rawVerdict). Applies in both suggest and auto modes.
+    const threshold = typeof app?.triagePolicy?.autoAcceptThreshold === 'number' ? app.triagePolicy.autoAcceptThreshold : 0;
+    const belowThreshold = !failed && threshold > 0 && result.confidence < threshold;
+    const def = belowThreshold ? UNKNOWN_VERDICT : findVerdict(verdicts, result.verdict);
+    const effectiveVerdict = belowThreshold ? UNKNOWN_VERDICT.key : result.verdict;
+    const triage: any = {
+        verdict: effectiveVerdict,
+        rawVerdict: result.verdict, // the model's actual verdict before threshold masking
+        confidence: result.confidence,
+        reason: result.reason,
+        model: result.model,
+        at: new Date(),
+        failed,
+        // denormalized display attrs so the UI renders without a per-project lookup
+        label: def?.label ?? effectiveVerdict,
+        color: def?.color ?? 'gray',
+        icon: def?.icon,
+    };
+
+    // Apply per-project auto-accept policy (verdict flags + policy allowlist + threshold).
+    // Uses the model's real verdict; below-threshold can't auto-accept anyway (confidence gate).
+    if (!failed && shouldAutoAccept(app?.triagePolicy, result.verdict, result.confidence, verdicts)) {
+        try {
+            const user: any = { _id: check.creatorId ?? new Types.ObjectId(), username: 'AI Triage' };
+            await accept(checkId, '', user);
+            triage.autoAccepted = true;
+            log.info(`triage auto-accepted ${checkId} (${result.verdict} @ ${result.confidence})`, { scope });
+        } catch (e) {
+            log.warn(`triage auto-accept failed for ${checkId}: ${e}`, { scope });
+        }
+    }
+
+    await Check.findByIdAndUpdate(checkId, { $set: { triage } }).exec();
+    await updateTestWorstVerdict(check.test, verdicts);
+    return triage;
+}
+
+// Manually cancel a check's analysis: clears pending and stamps the reserved 'cancelled' verdict
+// (so the scheduler no longer picks it up). Re-running triage overwrites it.
+export async function cancelCheck(checkId: string): Promise<Record<string, unknown>> {
+    const check: any = await Check.findById(checkId).exec();
+    if (!check) throw new Error(`check not found: ${checkId}`);
+    const app: any = await App.findById(check.app).exec();
+    const verdicts = getVerdictConfig(app);
+    const def = CANCELLED_VERDICT;
+    const triage = {
+        verdict: def.key,
+        pending: false,
+        confidence: 0,
+        reason: 'cancelled manually',
+        model: '-',
+        at: new Date(),
+        failed: false,
+        label: def.label,
+        color: def.color,
+        icon: def.icon,
+    };
+    await Check.findByIdAndUpdate(checkId, { $set: { triage } }).exec();
+    await updateTestWorstVerdict(check.test, verdicts);
+    return triage;
+}
+
+// Recompute the parent test's worst AI verdict (by configured severity) for group/filter.
+// Takes the test id directly (callers already have the loaded check) to avoid an extra lookup.
+async function updateTestWorstVerdict(testId: unknown, verdicts: VerdictDef[]): Promise<void> {
+    if (!testId) return;
+    try {
+        const severity: Record<string, number> = {};
+        for (const v of verdicts) severity[v.key] = v.severity;
+        const checks: any[] = await Check.find({ test: testId, 'triage.verdict': { $exists: true } })
+            .select('triage.verdict')
+            .exec();
+        let worst: string | undefined;
+        let worstRank = -Infinity;
+        for (const c of checks) {
+            const v = c?.triage?.verdict;
+            const rank = severity[v] ?? 0;
+            if (v && rank > worstRank) { worstRank = rank; worst = v; }
+        }
+        await Test.findByIdAndUpdate(testId, { $set: { worstTriageVerdict: worst } }).exec();
+    } catch (e) {
+        log.warn(`failed to update test worst verdict for test ${testId}: ${e}`, { scope });
+    }
+}
+
+// Find failed-with-diff, untriaged checks in projects where AI Triage is enabled (off by default).
+// Used by the background scheduler only; manual re-run is always allowed.
+export async function findUntriagedCheckIds(limit: number): Promise<string[]> {
+    const enabledAppIds = await App.find({ triageEnabled: true }).distinct('_id');
+    if (!enabledAppIds.length) return [];
+    const checks = await Check.find({
+        status: 'failed',
+        diffId: { $exists: true, $ne: null },
+        'triage.verdict': { $exists: false }, // not yet classified (covers fresh + pending)
+        app: { $in: enabledAppIds },
+    })
+        .select('_id')
+        .limit(limit)
+        .exec();
+    return checks.map((c: any) => String(c._id));
+}

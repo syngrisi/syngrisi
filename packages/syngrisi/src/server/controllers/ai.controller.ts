@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Response } from 'express';
-import { Check, Webhook } from '@models';
+import { Check, Webhook, App } from '@models';
 import { catchAsync, ApiError } from '@utils';
 import { config } from '@config';
 import fs from 'fs';
@@ -9,6 +9,9 @@ import { accept, remove } from '@services/check.service';
 import { ExtRequest } from '@types';
 import log from '@lib/logger';
 import { HttpStatus } from '@utils';
+import { triageCheck, cancelCheck } from '@services/triage';
+import { createProvider } from '@services/triage/factory';
+import { getProviderConfig } from '@services/triage/config';
 
 const htmlShell = (title: string, content: string) => `
 <!DOCTYPE html>
@@ -523,11 +526,121 @@ const registerWebhook = catchAsync(async (req: ExtRequest, res: Response) => {
     res.status(201).json(webhook);
 });
 
+// Re-run AI triage for a single check (toolbar "re-run" action). Returns the persisted triage.
+const triageRun = catchAsync(async (req: ExtRequest, res: Response) => {
+    const { id } = req.params;
+    const check = await Check.findById(id).exec();
+    if (!check) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Check not found');
+    }
+    const triage = await triageCheck(id);
+    res.json({ id, triage });
+});
+
+// Cancel analysis for a check from the queue → stamp the reserved 'cancelled' verdict.
+const triageCancel = catchAsync(async (req: ExtRequest, res: Response) => {
+    const { id } = req.params;
+    const check = await Check.findById(id).exec();
+    if (!check) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Check not found');
+    }
+    const triage = await cancelCheck(id);
+    res.json({ id, triage });
+});
+
+// Triage queue: failed-with-diff checks in triage-enabled projects, grouped by run.
+// ?pendingOnly=true → only checks still awaiting analysis.
+const triageQueue = catchAsync(async (req: ExtRequest, res: Response) => {
+    const pendingOnly = String(req.query.pendingOnly) === 'true';
+    const enabledAppIds = await App.find({ triageEnabled: true }).distinct('_id');
+    const filter: Record<string, unknown> = { status: 'failed', diffId: { $exists: true, $ne: null }, app: { $in: enabledAppIds } };
+    if (pendingOnly) filter['triage.pending'] = true;
+    const checks = await Check.find(filter)
+        .select('name run test status triage createdDate')
+        .populate('run', 'name createdDate')
+        .sort({ createdDate: -1 })
+        .limit(1000)
+        .exec();
+
+    const runsMap = new Map<string, any>();
+    for (const c of checks as any[]) {
+        const run = c.run;
+        const rid = run?._id ? String(run._id) : 'no-run';
+        if (!runsMap.has(rid)) {
+            runsMap.set(rid, {
+                run: run?._id ? { id: rid, name: run.name, createdDate: run.createdDate } : { id: 'no-run', name: '(no run)' },
+                checks: [],
+            });
+        }
+        runsMap.get(rid).checks.push({
+            id: String(c._id),
+            name: c.name,
+            test: c.test ? String(c.test) : null,
+            status: Array.isArray(c.status) ? c.status[0] : c.status,
+            triage: c.triage ?? null,
+        });
+    }
+    const runs = [...runsMap.values()];
+    const counts = { pending: 0, done: 0, cancelled: 0, failed: 0 };
+    for (const r of runs) {
+        for (const c of r.checks) {
+            const t = c.triage;
+            if (t?.pending) counts.pending += 1;
+            else if (t?.verdict === 'cancelled') counts.cancelled += 1;
+            else if (t?.failed) counts.failed += 1;
+            else if (t?.verdict) counts.done += 1;
+        }
+    }
+    res.json({ runs, counts });
+});
+
+// Run a per-check operation over a list of checkIds, collecting per-id ok/error.
+// Sequential to avoid hammering the provider on restart.
+const bulkTriageOp = async (body: any, op: (id: string) => Promise<unknown>) => {
+    const ids: string[] = Array.isArray(body?.checkIds) ? body.checkIds : [];
+    const results = [];
+    for (const id of ids) {
+        try { const triage = await op(id); results.push({ id, ok: true, triage }); } catch (e) { results.push({ id, ok: false, error: String(e) }); }
+    }
+    return results;
+};
+
+// Bulk cancel / restart from the queue (e.g. "cancel all" / "restart all" in a run).
+const triageQueueCancel = catchAsync(async (req: ExtRequest, res: Response) => {
+    res.json({ results: await bulkTriageOp(req.body, cancelCheck) });
+});
+const triageQueueRestart = catchAsync(async (req: ExtRequest, res: Response) => {
+    res.json({ results: await bulkTriageOp(req.body, triageCheck) });
+});
+
+// Admin "Test connection": run one classification against the current/provided provider config.
+const triageTest = catchAsync(async (req: ExtRequest, res: Response) => {
+    const cfg = (req.body && Object.keys(req.body).length) ? req.body : await getProviderConfig();
+    if (!cfg) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'No triage provider configured');
+    }
+    const started = Date.now();
+    try {
+        // Lightweight reachability check — never a full (slow) classification, so the UI doesn't
+        // hang for minutes on a local VLM warming up.
+        const result = await createProvider(cfg).ping();
+        res.json({ ok: true, latencyMs: Date.now() - started, result });
+    } catch (e) {
+        res.json({ ok: false, latencyMs: Date.now() - started, error: e instanceof Error ? e.message : String(e) });
+    }
+});
+
 export const aiController = {
     getIndex,
     getChecks,
     getCheckDetails,
     getAnalysis,
     batchUpdate,
-    registerWebhook
+    registerWebhook,
+    triageRun,
+    triageCancel,
+    triageQueue,
+    triageQueueCancel,
+    triageQueueRestart,
+    triageTest,
 };

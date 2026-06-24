@@ -23,6 +23,8 @@ When('I go to {string} page', async ({ page, appServer }: { page: Page; appServe
     admin2: `${baseURL}/admin`,
     logs: `${baseURL}/admin/logs`,
     settings: `${baseURL}/admin/settings`,
+    ai: `${baseURL}/admin/ai`,
+    "admin/ai": `${baseURL}/admin/ai`,
     data: `${baseURL}/admin/data`,
     plugins: `${baseURL}/admin/plugins`,
     "admin/settings": `${baseURL}/admin/settings`,
