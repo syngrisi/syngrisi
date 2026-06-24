@@ -38,38 +38,6 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 - 🔌 **Drop-in SDKs** for Playwright, WebdriverIO and Cucumber, plus a REST API.
 - 🐳 **Up in one command** with Docker.
 
-## ✨ NEW: AI Triage — let AI sort the red from the real _(beta)_
-
-> **Stop drowning in red diffs.** A wall of failed checks after a refactor is the worst
-> part of visual testing. Syngrisi now puts a **vision-LLM on triage duty**: it looks at
-> the baseline, the actual and the diff, and tells you what each change actually is.
-
-- 🧠 **Every failed check gets a verdict** — `intended change`, `likely bug`, `noise` or
-  `uncertain`, with a confidence score and a one-line reason ("header overlaps content",
-  "image failed to load", "dynamic timestamp updated").
-- ⚡ **Auto-accept the boring stuff** — let intended changes and rendering noise accept
-  themselves above a confidence threshold; real bugs are always kept for a human.
-- 🗂️ **Triage at a glance** — group and filter the grid by AI verdict, so "9 noise, 3 real
-  regressions" replaces "47 red checks". Verdicts update live, no reload.
-- 🔒 **100% private — bring your own model** — point it at a **local model via Ollama**
-  (Qwen-VL, Gemma…) and your screenshots never leave your machine. Or use any
-  OpenAI-compatible / Anthropic / Gemini endpoint.
-- 🎛️ **Yours to tune** — per-project verdicts, fully editable prompt with `{{placeholders}}`,
-  few-shot example images, and a manual queue (restart / cancel) grouped by run.
-
-> Enabled per project, **off by default**. See [AI Triage docs](packages/syngrisi/AI_TRIAGE.md).
-
-<table>
-  <tr>
-    <td width="50%"><img src="assets/screenshots/ai-config.png" alt="Admin AI settings: provider and per-project triage" /><br/><sub><b>Provider & per-project config</b> — a known provider or a self-hosted model; custom verdicts and auto-accept threshold.</sub></td>
-    <td width="50%"><img src="assets/screenshots/ai-filter.png" alt="Filter checks by AI verdict" /><br/><sub><b>Filter by verdict</b> — focus on likely bugs; hide intended changes and noise.</sub></td>
-  </tr>
-  <tr>
-    <td width="50%"><img src="assets/screenshots/ai-grouping.png" alt="Group tests by AI verdict" /><br/><sub><b>Group by AI verdict</b> — triage a wall of red at a glance.</sub></td>
-    <td width="50%"><img src="assets/screenshots/ai-queue.png" alt="AI triage queue grouped by run" /><br/><sub><b>Analysis queue</b> — grouped by run, with manual restart / cancel.</sub></td>
-  </tr>
-</table>
-
 ## ✨ Features
 
 - 🖼️ **Pixel-perfect comparison** — powered by a Resemble.js-based engine with `nothing` / `antialiasing` / `colors` match modes.
@@ -101,6 +69,38 @@ expensive, send your screenshots to someone else's servers, and lock you in.
   <img src="assets/screenshots/highlight.png" width="100%" alt="Difference highlighting reveals a tiny sub-pixel change on a globe" /><br/>
   <sub><b>Difference highlighting</b> — a 0.09% change across a handful of points becomes impossible to miss.</sub>
 </div>
+
+## ✨ NEW: AI Triage — let AI sort the red from the real _(beta)_
+
+> **Stop drowning in red diffs.** A wall of failed checks after a refactor is the worst
+> part of visual testing. Syngrisi now puts a **vision-LLM on triage duty**: it looks at
+> the baseline, the actual and the diff, and tells you what each change actually is.
+
+- 🧠 **Every failed check gets a verdict** — `intended change`, `likely bug`, `noise` or
+  `uncertain`, with a confidence score and a one-line reason ("header overlaps content",
+  "image failed to load", "dynamic timestamp updated").
+- ⚡ **Auto-accept the boring stuff** — let intended changes and rendering noise accept
+  themselves above a confidence threshold; real bugs are always kept for a human.
+- 🗂️ **Triage at a glance** — group and filter the grid by AI verdict, so "9 noise, 3 real
+  regressions" replaces "47 red checks". Verdicts update live, no reload.
+- 🔒 **100% private — bring your own model** — point it at a **local model via Ollama**
+  (Qwen-VL, Gemma…) and your screenshots never leave your machine. Or use any
+  OpenAI-compatible / Anthropic / Gemini endpoint.
+- 🎛️ **Yours to tune** — per-project verdicts, fully editable prompt with `{{placeholders}}`,
+  few-shot example images, and a manual queue (restart / cancel) grouped by run.
+
+> Enabled per project, **off by default**. See [AI Triage docs](packages/syngrisi/AI_TRIAGE.md).
+
+<table>
+  <tr>
+    <td width="50%"><img src="assets/screenshots/ai-config.png" alt="Admin AI settings: provider and per-project triage" /><br/><sub><b>Provider & per-project config</b> — a known provider or a self-hosted model; custom verdicts and auto-accept threshold.</sub></td>
+    <td width="50%"><img src="assets/screenshots/ai-filter.png" alt="Filter checks by AI verdict" /><br/><sub><b>Filter by verdict</b> — focus on likely bugs; hide intended changes and noise.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="assets/screenshots/ai-grouping.png" alt="Group tests by AI verdict" /><br/><sub><b>Group by AI verdict</b> — triage a wall of red at a glance.</sub></td>
+    <td width="50%"><img src="assets/screenshots/ai-queue.png" alt="AI triage queue grouped by run" /><br/><sub><b>Analysis queue</b> — grouped by run, with manual restart / cancel.</sub></td>
+  </tr>
+</table>
 
 ## 🚀 Quick Start
 
