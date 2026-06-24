@@ -8,7 +8,7 @@ import { buildSystemPrompt, substitutePlaceholders } from './prompt';
 import { createProvider } from './factory';
 import { getProviderConfig } from './config';
 import { shouldAutoAccept } from './policy';
-import { getVerdictConfig, findVerdict, fallbackVerdict, UNKNOWN_VERDICT } from './verdicts';
+import { getVerdictConfig, findVerdict, fallbackVerdict, UNKNOWN_VERDICT, CANCELLED_VERDICT } from './verdicts';
 import { TriageVerdictResult, VerdictDef } from './types';
 
 const scope = 'triage';
@@ -100,6 +100,31 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
         }
     }
 
+    await Check.findByIdAndUpdate(checkId, { $set: { triage } }).exec();
+    await updateTestWorstVerdict(checkId, verdicts);
+    return triage;
+}
+
+// Manually cancel a check's analysis: clears pending and stamps the reserved 'cancelled' verdict
+// (so the scheduler no longer picks it up). Re-running triage overwrites it.
+export async function cancelCheck(checkId: string): Promise<Record<string, unknown>> {
+    const check: any = await Check.findById(checkId).exec();
+    if (!check) throw new Error(`check not found: ${checkId}`);
+    const app: any = await App.findById(check.app).exec();
+    const verdicts = getVerdictConfig(app);
+    const def = CANCELLED_VERDICT;
+    const triage = {
+        verdict: def.key,
+        pending: false,
+        confidence: 0,
+        reason: 'cancelled manually',
+        model: '-',
+        at: new Date(),
+        failed: false,
+        label: def.label,
+        color: def.color,
+        icon: def.icon,
+    };
     await Check.findByIdAndUpdate(checkId, { $set: { triage } }).exec();
     await updateTestWorstVerdict(checkId, verdicts);
     return triage;

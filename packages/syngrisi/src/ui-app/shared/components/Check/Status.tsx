@@ -57,7 +57,15 @@ export function Status({ check, size, variant = 'light', iconOnly = false, ...re
                     style={{ display: 'inline-flex', alignItems: 'center', color: `var(--mantine-color-${statusColor(status)}-6)` }}
                     {...rest}
                 >
-                    {Icon ? <Icon size={typeof size === 'number' ? size : 16} stroke={1.8} /> : null}
+                    <span
+                        style={{
+                            width: 14,
+                            height: 14,
+                            borderRadius: '50%',
+                            display: 'inline-block',
+                            backgroundColor: `var(--mantine-color-${statusColor(status)}-6)`,
+                        }}
+                    />
                 </span>
             </Tooltip>
         );

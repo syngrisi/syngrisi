@@ -597,6 +597,11 @@ const createCheckDocument = async (checkParams: any, session?: any): Promise<Che
             if (app?.triageEnabled) {
                 await Check.updateOne({ _id: check._id }, { $set: { 'triage.pending': true } }).exec();
                 (check as any).triage = { pending: true };
+                // Kick the scheduler so analysis starts right away instead of waiting for the poll.
+                // Lazy import avoids a module-load cycle (scheduler → triage → check.service).
+                import('@lib/schedulers/triageScheduler')
+                    .then((m) => m.triageScheduler.kick())
+                    .catch((e) => log.warn(`triage kick failed for check ${check._id}: ${e}`, { scope: 'triage.pending' }));
             }
         }
     } catch (e) {
