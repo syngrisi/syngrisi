@@ -4,6 +4,8 @@ import { env } from '@config';
 import { createLogger } from '@lib/logger';
 import { showDemoBanner, hideDemoBanner } from '../../support/demo/banner.utils';
 import { showSubtitle, hideSubtitle } from '../../support/demo/subtitle.utils';
+import { annotateVerdicts, clearAnnotations } from '../../support/demo/annotate.utils';
+import { installClickRipple } from '../../support/demo/ripple.utils';
 import { highlightElement, clearHighlight } from '../../support/demo/highlight.utils';
 import { speak } from '../../support/demo/speech.utils';
 import { showProgress } from '../../support/demo/progress.utils';
@@ -131,11 +133,12 @@ When('I save a screenshot to {string}', async ({ page }, relPath: string) => {
  *
  * Marks t=0 for the marketing reel (≈ video start) and resets the caption timeline.
  */
-When('I start the reel timeline', async () => {
+When('I start the reel timeline', async ({ page }) => {
   reelT0 = Date.now();
   reelTimeline.length = 0;
   const file = process.env.MARKETING_TIMELINE;
   if (file) { try { fs.writeFileSync(file, JSON.stringify({ captions: [] }, null, 2)); } catch { /* ignore */ } }
+  if (!shouldSkipAll()) await installClickRipple(page);
 });
 
 /**
@@ -154,6 +157,36 @@ When('I highlight element {string}', async ({ page }, selector: string) => {
 When('I clear highlight', async ({ page }) => {
   if (shouldSkipAll()) return;
   await clearHighlight(page);
+});
+
+/**
+ * Step definition: `When I reveal verdicts with caption {string}`
+ *
+ * Shows the verdict caption and reveals the red verdict arrows one group at a time, timed
+ * to the moments the voice-over names each verdict. The reveal order matches the sentence:
+ * "…intended change, noise, or a likely bug." Fractions are of the caption's voice-over
+ * length; tune them against the built audio if the wording/timing changes.
+ */
+When('I reveal verdicts with caption {string}', async ({ page }, text: string) => {
+  if (shouldSkipAll()) return;
+  const ms = getCaptionMs(text);
+  recordCaption(text, ms);
+  await showSubtitle(page, text);
+  // [fraction of clip, verdicts to reveal] — synced to when each verdict word is spoken.
+  const reveals: Array<[number, string[]]> = [
+    [0.53, ['intended_change']],
+    [0.67, ['noise']],
+    [0.80, ['likely_bug']],
+  ];
+  let elapsed = 0;
+  for (const [frac, verdicts] of reveals) {
+    const at = Math.round(ms * frac);
+    if (at > elapsed) { await page.waitForTimeout(at - elapsed); elapsed = at; }
+    await annotateVerdicts(page, verdicts);
+  }
+  if (ms > elapsed) await page.waitForTimeout(ms - elapsed);
+  await hideSubtitle(page);
+  await clearAnnotations(page);
 });
 
 /**
