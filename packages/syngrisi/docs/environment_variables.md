@@ -125,6 +125,10 @@
     - Description: npm tag or version used during Docker build to install `@syngrisi/syngrisi` (e.g. `latest`, `2.3.0`)
     - Default Value: `latest`
 
+17. `SYNGRISI_LOG_TO_DB`
+    - Description: Persist application logs to the `vrslogs` collection so they appear on the **Admin → Logs** page. When `false`, logs go only to the console. Always disabled in test mode (`SYNGRISI_TEST_MODE=true`).
+    - Default Value: `false`
+
 ### SSO (Single Sign-On) Configuration
 
 SSO allows users to authenticate using external identity providers (OAuth2/Google or SAML).

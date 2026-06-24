@@ -27,8 +27,8 @@ Feature: AI Triage - Демонстрация на реальной локаль
         Given I enable AI triage for the project "RCA Scenario App"
         When I create the changed checks for triage
 
-        # --- In-progress: проверки прошли, модель ещё не проанализировала ---
-        When I set demo step 2 of 9: "AI ещё анализирует — in progress"
+        # --- In-progress + live-обновление вердикта без перезагрузки ---
+        When I set demo step 2 of 9: "In-progress и live-обновление без перезагрузки"
         # gate deterministically: ensure the pending flag is stamped before we look for the UI badge
         Then I expect via http 1st check filtered as "name=Added-Check" matched:
             """
@@ -36,26 +36,28 @@ Feature: AI Triage - Демонстрация на реальной локаль
                 pending: true
             """
         When I go to "main" page
-        # When I pause
-
         When I wait 10 seconds for the element with locator "[data-table-test-name='RCA-Triage-Test']" to be visible
         When I unfold the test "RCA-Triage-Test"
         When I wait 30 seconds for the element with locator "[data-triage-pending='true']" to be visible
         When I highlight element "[data-triage-pending='true']"
-        When I announce: "Проверки уже прошли, а модель ещё анализирует результаты — на бейджах крутится индикатор «in progress» вместо вердикта."
+        When I announce: "Проверки уже прошли, а модель ещё анализирует — на бейджах крутится «in progress». Запустим анализ одной проверки и НЕ будем перезагружать страницу."
+        When I clear highlight
+        # классифицируем одну проверку, оставаясь на гриде — бейдж сменится сам (грид поллит, пока есть pending)
+        When I run AI triage for the 1st check named "Added-Check"
+        When I wait 20 seconds for the element with locator "[data-test='triage-verdict']" to be visible
+        When I highlight element "[data-test='triage-verdict']"
+        When I announce: "Вердикт появился сам, без перезагрузки страницы — грид опрашивается, пока есть проверки в анализе, и «in progress» сменяется вердиктом на лету."
         When I clear highlight
 
-        # --- Реальная классификация всех 7 проверок → разные вердикты ---
+        # --- Реальная классификация остальных проверок → разные вердикты ---
         When I set demo step 3 of 9: "Разные AI-вердикты по семи проверкам"
-        When I announce: "Запускаем триаж по всем семи проверкам — модель сравнивает baseline, actual и diff каждой и выдаёт свой вердикт."
-        When I run AI triage for the 1st check named "Added-Check"
+        When I announce: "Анализируем остальные проверки — модель сравнивает baseline, actual и diff каждой и выдаёт свой вердикт."
         When I run AI triage for the 1st check named "Text-Check"
         When I run AI triage for the 1st check named "Noise-Check"
         When I run AI triage for the 1st check named "Ambiguous-Check"
         When I run AI triage for the 1st check named "Broken-Check"
         When I run AI triage for the 1st check named "Image-Check"
         When I run AI triage for the 1st check named "Contrast-Check"
-        When I pause
         Then the 1st check named "Added-Check" has a valid AI verdict
         Then the 1st check named "Text-Check" has a valid AI verdict
         Then the 1st check named "Noise-Check" has a valid AI verdict
