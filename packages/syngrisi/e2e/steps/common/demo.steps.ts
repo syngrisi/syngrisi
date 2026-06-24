@@ -1,12 +1,45 @@
+import * as fs from 'fs';
 import { When } from '@fixtures';
 import { env } from '@config';
 import { createLogger } from '@lib/logger';
 import { showDemoBanner, hideDemoBanner } from '../../support/demo/banner.utils';
+import { showSubtitle, hideSubtitle } from '../../support/demo/subtitle.utils';
 import { highlightElement, clearHighlight } from '../../support/demo/highlight.utils';
 import { speak } from '../../support/demo/speech.utils';
 import { showProgress } from '../../support/demo/progress.utils';
 
 const logger = createLogger('DemoSteps');
+
+// Marketing captions: { text: durationMs } from the TTS manifest (MARKETING_CAPTIONS file).
+// Each subtitle stays on screen for exactly its voice-over clip length (audio-first sync).
+const SUBTITLE_DEFAULT_MS = 2800;
+let captionDurations: Record<string, number> | null = null;
+function getCaptionMs(text: string): number {
+    if (captionDurations === null) {
+        captionDurations = {};
+        const file = process.env.MARKETING_CAPTIONS;
+        try {
+            if (file && fs.existsSync(file)) {
+                const data = JSON.parse(fs.readFileSync(file, 'utf-8'));
+                for (const c of (data.captions || data)) captionDurations[c.text] = c.durationMs;
+            }
+        } catch (e) { logger.warn(`failed to read MARKETING_CAPTIONS: ${e}`); }
+    }
+    return captionDurations[text] ?? SUBTITLE_DEFAULT_MS;
+}
+
+// Reel timeline: when each caption appears (ms from reel start ≈ video start), so the
+// generated voice-over clips can be placed at the right moment during post-production.
+let reelT0: number | null = null;
+const reelTimeline: Array<{ text: string; offsetMs: number; durationMs: number }> = [];
+function recordCaption(text: string, durationMs: number): void {
+    if (reelT0 === null) return;
+    reelTimeline.push({ text, offsetMs: Date.now() - reelT0, durationMs });
+    const file = process.env.MARKETING_TIMELINE;
+    if (file) {
+        try { fs.writeFileSync(file, JSON.stringify({ captions: reelTimeline }, null, 2)); } catch { /* ignore */ }
+    }
+}
 
 // Configuration helpers
 const isCI = () => env.CI;
@@ -62,6 +95,34 @@ When('I announce: {string} and PAUSE', async ({ page, testEngine }, phrase: stri
   }
 
   await hideDemoBanner(page);
+});
+
+/**
+ * Step definition: `When I subtitle {string}`
+ *
+ * Marketing caption: compact, no background, outlined text. No speech (TTS is added in
+ * post-production). Stays on screen for the matching voice-over clip duration so the
+ * recorded video lines up with the generated audio.
+ */
+When('I subtitle {string}', async ({ page }, text: string) => {
+  if (shouldSkipAll()) return;
+  const ms = getCaptionMs(text);
+  recordCaption(text, ms);
+  await showSubtitle(page, text);
+  await page.waitForTimeout(ms);
+  await hideSubtitle(page);
+});
+
+/**
+ * Step definition: `When I start the reel timeline`
+ *
+ * Marks t=0 for the marketing reel (≈ video start) and resets the caption timeline.
+ */
+When('I start the reel timeline', async () => {
+  reelT0 = Date.now();
+  reelTimeline.length = 0;
+  const file = process.env.MARKETING_TIMELINE;
+  if (file) { try { fs.writeFileSync(file, JSON.stringify({ captions: [] }, null, 2)); } catch { /* ignore */ } }
 });
 
 /**
