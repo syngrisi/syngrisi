@@ -1,5 +1,16 @@
 # @syngrisi/syngrisi
 
+## 3.6.0
+
+### Minor Changes
+
+-   [#35](https://github.com/syngrisi/syngrisi/pull/35) [`8d3260a`](https://github.com/syngrisi/syngrisi/commit/8d3260ab85219d33fdd9b1c0677ce26cb137e753) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - AI Triage (Beta): vision-LLM classification of failed checks with per-project config (off by default), per-verdict labels/colors/icons, confidence threshold with Unknown masking, auto-accept policy, in-progress badge, dedicated Admin → AI page, and a background scheduler. Providers: OpenAI-compatible (incl. self-hosted Ollama/vLLM), Anthropic, Gemini. "Test connection" is now a lightweight reachability check (provider/model ping, 15s timeout) instead of a full classification, so it no longer hangs on slow local models. Provider form gained temperature / max tokens / request timeout with inline help popovers; grid check-status is shown as icons without badge chrome. Verdict filtering supports selecting multiple verdicts (checkboxes), hides tests that have no matching check, and clicking a verdict badge filters the current run by that verdict. Per-project prompt customization: a full system-prompt override (with "reset to default" and inline help) and few-shot example images mapped to verdicts that the model sees before the actual check. The default prompt was sharpened with explicit visual-evidence criteria per verdict and a 0–10 confidence rubric. The prompt editor always shows the effective prompt (the default when not overridden), and prompts support {{placeholders}} (checkName, testName, suiteName, appName, viewport, browser, os, branch, diffPercent, failReasons, status, verdicts, …) substituted with each check's real values at triage time. Failed checks are enqueued for analysis immediately (the scheduler is kicked on creation, with the poller as a fallback). The Admin → AI page has a Queue tab: failed checks grouped by run with manual restart / cancel (per check and per run); cancelling stamps a reserved "cancelled" verdict.
+
+### Patch Changes
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.6.0
+
 ## 3.5.1
 
 ### Patch Changes
