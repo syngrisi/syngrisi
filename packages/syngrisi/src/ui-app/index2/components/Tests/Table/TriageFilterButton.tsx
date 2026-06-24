@@ -62,10 +62,11 @@ export function TriageFilterButton() {
                         title="Filter by AI verdict"
                         aria-label="Filter by AI verdict"
                         variant={active ? 'light' : 'transparent'}
-                        color={active ? 'green' : 'gray'}
+                        color="yellow"
                         data-test="triage-filter-button"
                     >
-                        <IconSparkles2 size={24} stroke={1} />
+                        {/* gold AI icon — highlights the AI feature in the toolbar */}
+                        <IconSparkles2 size={24} stroke={1.5} color="#E0A100" fill={active ? '#F2C744' : 'none'} />
                     </ActionIcon>
                 </Indicator>
             </Popover.Target>
