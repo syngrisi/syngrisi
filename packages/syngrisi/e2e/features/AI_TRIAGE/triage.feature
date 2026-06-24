@@ -568,6 +568,36 @@ Feature: AI Triage verdicts and per-project auto-accept
     When I set a triage example for project "TriagePrompt" with verdict "noise"
     Then the project "TriagePrompt" has 1 triage example with verdict "noise"
 
+  Scenario: Triage queue lists failed checks by run and supports cancel
+    Given I create "1" tests with:
+      """
+      testName: QueueTest
+      project: TriageQueue
+      checks:
+        - checkName: QueueCheck
+          filePath: files/A.png
+      """
+    When I accept via http the 1st check with name "QueueCheck"
+    Given I enable AI triage for the project "TriageQueue"
+    Given I create "1" tests with:
+      """
+      testName: QueueTest
+      project: TriageQueue
+      checks:
+        - checkName: QueueCheck
+          filePath: files/B.png
+      """
+    # the failed check shows up in the queue, grouped under its run
+    Then the triage queue contains a run with check "QueueCheck"
+    # cancelling stamps the reserved 'cancelled' verdict
+    When I cancel AI triage for the 1st check named "QueueCheck"
+    Then I expect via http 1st check filtered as "name=QueueCheck" matched:
+      """
+      name: QueueCheck
+      triage:
+        verdict: cancelled
+      """
+
   Scenario: Auto-accept applies per project above threshold
     Given I create "1" tests with:
       """

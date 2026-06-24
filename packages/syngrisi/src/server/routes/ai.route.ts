@@ -15,6 +15,11 @@ router.get('/analysis/:id', aiController.getAnalysis as Midleware);
 router.post('/batch', aiController.batchUpdate as Midleware);
 router.post('/webhooks', aiController.registerWebhook as Midleware);
 router.post('/triage/test', aiController.triageTest as Midleware);
+// queue routes must precede '/triage/:id/...' so "queue" is not captured as an :id
+router.get('/triage/queue', aiController.triageQueue as Midleware);
+router.post('/triage/queue/cancel', aiController.triageQueueCancel as Midleware);
+router.post('/triage/queue/restart', aiController.triageQueueRestart as Midleware);
 router.post('/triage/:id/run', aiController.triageRun as Midleware);
+router.post('/triage/:id/cancel', aiController.triageCancel as Midleware);
 
 export default router;

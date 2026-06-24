@@ -9,6 +9,7 @@ const verdictColor = (verdict: string) => {
         noise: 'gray',
         uncertain: 'yellow',
         unknown: 'gray',
+        cancelled: 'gray',
     } as { [key: string]: string };
     return map[verdict] || 'gray';
 };
@@ -20,6 +21,7 @@ const verdictLabel = (verdict: string) => {
         noise: 'noise',
         uncertain: 'uncertain',
         unknown: 'unknown',
+        cancelled: 'cancelled',
     } as { [key: string]: string };
     return map[verdict] || verdict;
 };
@@ -31,6 +33,7 @@ const verdictIcon = (verdict: string) => ({
     noise: 'wave',
     uncertain: 'question',
     unknown: 'help',
+    cancelled: 'ban',
 } as { [key: string]: string })[verdict];
 
 interface Props {

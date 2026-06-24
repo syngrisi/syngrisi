@@ -222,3 +222,21 @@ When(
         logger.info(`triage run for "${name}": ${JSON.stringify(resp.json?.triage)}`);
     },
 );
+
+// Cancel triage for a check from the queue (stamps the reserved 'cancelled' verdict).
+When('I cancel AI triage for the {ordinal} check named {string}', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, ordinal: number, name: string) => {
+    const check = await findCheckByName(appServer, testData, name, ordinal);
+    const id = check._id || check.id;
+    const resp = await requestWithSession(`${appServer.baseURL}/ai/triage/${id}/cancel`, testData, appServer, { method: 'POST', json: {} });
+    expect(resp.raw?.statusCode).toBe(200);
+    expect(resp.json?.triage?.verdict).toBe('cancelled');
+});
+
+// Assert the triage queue (grouped by run) contains a check with the given name.
+Then('the triage queue contains a run with check {string}', async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, name: string) => {
+    const resp = await requestWithSession(`${appServer.baseURL}/ai/triage/queue`, testData, appServer);
+    expect(resp.raw?.statusCode).toBe(200);
+    const runs = resp.json?.runs || [];
+    const found = runs.some((r: any) => (r.checks || []).some((c: any) => c.name === name));
+    expect(found, `queue should contain a run with check "${name}": ${JSON.stringify(resp.json?.counts)}`).toBe(true);
+});

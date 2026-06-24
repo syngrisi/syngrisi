@@ -329,25 +329,28 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                         : theme.white,
                                 }}
                             >
-                                <Tooltip
-                                    label={check.name}
-                                    multiline
-                                    withinPortal
-                                >
-                                    <Text
-                                        lineClamp={1}
-                                        fw={500}
-                                        fz={12}
-                                        style={{
-                                            lineHeight: '16px',
-                                            letterSpacing: '-0.005em',
-                                            fontFamily: '"Roboto","Helvetica Neue","Arial",sans-serif',
-                                        }}
-                                        data-table-check-name={check.name}
+                                <Group gap={8} wrap="nowrap" align="center">
+                                    <Status check={check} size="xs" iconOnly />
+                                    <Tooltip
+                                        label={check.name}
+                                        multiline
+                                        withinPortal
                                     >
-                                        {check.name}
-                                    </Text>
-                                </Tooltip>
+                                        <Text
+                                            lineClamp={1}
+                                            fw={500}
+                                            fz={12}
+                                            style={{
+                                                lineHeight: '16px',
+                                                letterSpacing: '-0.005em',
+                                                fontFamily: '"Roboto","Helvetica Neue","Arial",sans-serif',
+                                            }}
+                                            data-table-check-name={check.name}
+                                        >
+                                            {check.name}
+                                        </Text>
+                                    </Tooltip>
+                                </Group>
                             </Box>
                             <Card.Section m={0}>
                                 <Tooltip
@@ -424,7 +427,6 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
 
                             {/* CHECK TOOLBAR */}
                             <Group justify="space-between" px={12} mt={4} mb={6} gap={6} align="center" wrap="nowrap">
-                                <Status check={check} variant="filled" size="xs" iconOnly />
                                 <TriageVerdict check={check} size="xs" onClick={handleVerdictClick} compact />
 
                                 <ViewPortLabel

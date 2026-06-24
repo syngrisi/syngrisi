@@ -7,6 +7,12 @@ export const UNKNOWN_VERDICT: VerdictDef = {
     autoAcceptable: false, neverAutoAccept: true, description: 'confidence below the project threshold',
 };
 
+// Reserved service verdict set when analysis is cancelled manually from the queue.
+export const CANCELLED_VERDICT: VerdictDef = {
+    key: 'cancelled', label: 'Cancelled', color: 'gray', icon: 'ban', severity: 0,
+    autoAcceptable: false, neverAutoAccept: true, description: 'analysis cancelled manually',
+};
+
 // Built-in defaults — used when a project has no custom verdict set. Preserve original semantics:
 // noise/intended_change are auto-acceptable; likely_bug/uncertain never; uncertain is the fallback.
 export const DEFAULT_VERDICTS: VerdictDef[] = [

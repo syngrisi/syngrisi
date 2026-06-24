@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import {
     ScrollArea, Box, Title, Paper, Select, Switch, NumberInput, MultiSelect, Button, Group, Table,
-    TextInput, Checkbox, ActionIcon, Text, Divider, ColorInput, Loader, Badge, Textarea, FileButton, Image, Stack,
+    TextInput, Checkbox, ActionIcon, Text, Divider, ColorInput, Loader, Badge, Textarea, FileButton, Image, Stack, Tabs,
 } from '@mantine/core';
 import { IconTrash, IconPlus, IconPhoto } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -15,6 +15,7 @@ import { errorMsg, successMsg } from '@shared/utils/utils';
 import { AIProviderSettingsForm } from '@admin/components/Settings/AIProviderSettingsForm';
 import { TriageIcon, TRIAGE_ICON_NAMES } from '@shared/components/Check/triageIcons';
 import { HelpDoc } from '@admin/components/AI/HelpDoc';
+import { TriageQueue } from '@admin/components/AI/TriageQueue';
 
 type Verdict = {
     key: string; label: string; color: string; icon?: string; severity: number;
@@ -301,10 +302,21 @@ export default function AdminAI() {
                     <Title>AI</Title>
                     <Badge color="grape" variant="light" data-test="ai-beta-badge">Beta</Badge>
                 </Group>
-                {settingsQuery.isLoading
-                    ? <Loader />
-                    : <AIProviderSettingsForm settings={settingsQuery.data || []} refetch={settingsQuery.refetch} />}
-                <PerProjectTriage />
+                <Tabs defaultValue="settings" mt="sm" keepMounted={false}>
+                    <Tabs.List>
+                        <Tabs.Tab value="settings" data-test="ai-tab-settings">Settings</Tabs.Tab>
+                        <Tabs.Tab value="queue" data-test="ai-tab-queue">Queue</Tabs.Tab>
+                    </Tabs.List>
+                    <Tabs.Panel value="settings">
+                        {settingsQuery.isLoading
+                            ? <Loader />
+                            : <AIProviderSettingsForm settings={settingsQuery.data || []} refetch={settingsQuery.refetch} />}
+                        <PerProjectTriage />
+                    </Tabs.Panel>
+                    <Tabs.Panel value="queue">
+                        <TriageQueue />
+                    </Tabs.Panel>
+                </Tabs>
             </Box>
         </ScrollArea>
     );

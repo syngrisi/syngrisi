@@ -28,6 +28,12 @@ export class TriageScheduler {
         }
     }
 
+    // Trigger a tick immediately (e.g. right after a failed check is created) instead of waiting
+    // for the next poll. The `running` guard prevents overlap, so calling it on a burst is safe.
+    kick(): void {
+        void this.tick();
+    }
+
     private async tick(): Promise<void> {
         if (this.running) return;
         this.running = true;

@@ -42,4 +42,23 @@ export const TriageService = {
         );
         return resp.json();
     },
+
+    // Triage queue: failed-with-diff checks in triage-enabled projects, grouped by run.
+    async getQueue(pendingOnly = false, apikey?: string): Promise<{ runs: any[]; counts: Record<string, number> }> {
+        const resp = await http.get(
+            `${config.baseUri}/ai/triage/queue${pendingOnly ? '?pendingOnly=true' : ''}`,
+            { headers: authHeaders(apikey) },
+            'TriageService.getQueue',
+        );
+        if (!resp.ok) throw new Error(`Failed to load queue: ${resp.status}`);
+        return resp.json();
+    },
+
+    async cancelMany(checkIds: string[], apikey?: string): Promise<void> {
+        await http.post(`${config.baseUri}/ai/triage/queue/cancel`, { checkIds }, { headers: authHeaders(apikey) }, 'TriageService.cancelMany');
+    },
+
+    async restartMany(checkIds: string[], apikey?: string): Promise<void> {
+        await http.post(`${config.baseUri}/ai/triage/queue/restart`, { checkIds }, { headers: authHeaders(apikey) }, 'TriageService.restartMany');
+    },
 };

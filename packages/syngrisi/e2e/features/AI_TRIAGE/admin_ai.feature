@@ -13,6 +13,12 @@ Feature: AI Triage - Admin AI page
     # feature is Beta — badge shown on the page header and in the provider form
     Then the element with locator "[data-test='ai-providers-form'] [data-test='ai-beta-badge']" should be visible
 
+  Scenario: AI page has a Queue tab
+    When I go to "ai" page
+    Then the element with locator "[data-test='ai-tab-queue']" should be visible
+    When I click element with locator "[data-test='ai-tab-queue']"
+    Then the element with locator "[data-test='ai-queue']" should be visible
+
   Scenario: Help documentation popover opens on the AI page
     When I go to "ai" page
     Then the element with locator "[data-test='ai-providers-form'] [data-test='help-doc']" should be visible
