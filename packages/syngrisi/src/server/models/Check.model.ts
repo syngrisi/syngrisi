@@ -134,6 +134,7 @@ const CheckSchema = new Schema<CheckDocument>({
     },
     run: {
         type: Schema.Types.ObjectId,
+        ref: 'VRSRun',
     },
     markedAs: {
         type: String,

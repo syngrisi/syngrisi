@@ -2,39 +2,16 @@ import * as React from 'react';
 import { Badge, Tooltip, Loader } from '@mantine/core';
 import { TriageIcon } from '@shared/components/Check/triageIcons';
 
-const verdictColor = (verdict: string) => {
-    const map = {
-        intended_change: 'green',
-        likely_bug: 'red',
-        noise: 'gray',
-        uncertain: 'yellow',
-        unknown: 'gray',
-        cancelled: 'gray',
-    } as { [key: string]: string };
-    return map[verdict] || 'gray';
+// Built-in display fallback for the default verdicts (used when the denormalized
+// triage.color/label/icon are absent, e.g. old data). One cohesive map.
+const VERDICT_FALLBACK: Record<string, { color: string; label: string; icon: string }> = {
+    intended_change: { color: 'green', label: 'intended', icon: 'check' },
+    likely_bug: { color: 'red', label: 'bug?', icon: 'bug' },
+    noise: { color: 'gray', label: 'noise', icon: 'wave' },
+    uncertain: { color: 'yellow', label: 'uncertain', icon: 'question' },
+    unknown: { color: 'gray', label: 'unknown', icon: 'help' },
+    cancelled: { color: 'gray', label: 'cancelled', icon: 'ban' },
 };
-
-const verdictLabel = (verdict: string) => {
-    const map = {
-        intended_change: 'intended',
-        likely_bug: 'bug?',
-        noise: 'noise',
-        uncertain: 'uncertain',
-        unknown: 'unknown',
-        cancelled: 'cancelled',
-    } as { [key: string]: string };
-    return map[verdict] || verdict;
-};
-
-// Built-in icon fallback for the default verdicts (when triage.icon is absent, e.g. old data).
-const verdictIcon = (verdict: string) => ({
-    intended_change: 'check',
-    likely_bug: 'bug',
-    noise: 'wave',
-    uncertain: 'question',
-    unknown: 'help',
-    cancelled: 'ban',
-} as { [key: string]: string })[verdict];
 
 interface Props {
     check: any;
@@ -71,19 +48,18 @@ export function TriageVerdict({ check, size = 'sm', variant = 'light', onClick, 
     const confidence = check?.triage?.confidence;
     const reason = check?.triage?.reason;
     const autoAccepted = check?.triage?.autoAccepted === true;
-    // Prefer the denormalized per-project label/color/icon; fall back to the built-in maps.
-    const color = check?.triage?.color || verdictColor(verdict);
-    const label = check?.triage?.label || verdictLabel(verdict);
-    const iconName = check?.triage?.icon || verdictIcon(verdict);
-    const base = autoAccepted
-        ? `Accepted by AI: ${label}${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`
-        : `AI: ${label}${typeof confidence === 'number' ? ` (conf ${confidence})` : ''}${reason ? ` — ${reason}` : ''}`;
+    // Prefer the denormalized per-project label/color/icon; fall back to the built-in map.
+    const fb = VERDICT_FALLBACK[verdict] || { color: 'gray', label: verdict, icon: '' };
+    const color = check?.triage?.color || fb.color;
+    const label = check?.triage?.label || fb.label;
+    const iconName = check?.triage?.icon || fb.icon;
+    const confSuffix = typeof confidence === 'number' ? ` (conf ${confidence})` : '';
+    const reasonSuffix = reason ? ` — ${reason}` : '';
+    const confShort = typeof confidence === 'number' ? ` ${confidence}` : '';
+    const base = `${autoAccepted ? 'Accepted by AI' : 'AI'}: ${label}${confSuffix}${reasonSuffix}`;
     // clickable preview badge → clicking filters the current run by this verdict
     const tip = onClick ? `${base}\nClick to filter this run by this verdict` : base;
-
-    const fullText = autoAccepted
-        ? `${label} • Accepted by AI${typeof confidence === 'number' ? ` ${confidence}` : ''}`
-        : `${label}${typeof confidence === 'number' ? ` ${confidence}` : ''}`;
+    const fullText = autoAccepted ? `${label} • Accepted by AI${confShort}` : `${label}${confShort}`;
 
     return (
         <Tooltip label={tip} multiline withinPortal style={{ whiteSpace: 'pre-line' }}>

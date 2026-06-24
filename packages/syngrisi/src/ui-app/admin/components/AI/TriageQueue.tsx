@@ -24,7 +24,8 @@ export function TriageQueue() {
     const queueQuery = useQuery({
         queryKey: ['triage-queue', pendingOnly],
         queryFn: () => TriageService.getQueue(pendingOnly),
-        refetchInterval: 4000, // live status while analysis runs
+        // live status while analysis runs; stop polling once nothing is pending (manual refresh remains)
+        refetchInterval: (query: any) => ((query.state.data?.counts?.pending ?? 0) > 0 ? 4000 : false),
         refetchOnWindowFocus: true,
     });
 
