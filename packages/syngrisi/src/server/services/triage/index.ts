@@ -26,8 +26,10 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
 
     // Resolve the prompt: per-project override or the default (built from verdicts), then substitute
     // {{placeholders}} with this check's real context. Empty override → default.
-    const test: any = check.test ? await Test.findById(check.test).select('name').exec() : null;
-    const suite: any = check.suite ? await Suite.findById(check.suite).select('name').exec() : null;
+    const [test, suite]: [any, any] = await Promise.all([
+        check.test ? Test.findById(check.test).select('name').exec() : null,
+        check.suite ? Suite.findById(check.suite).select('name').exec() : null,
+    ]);
     let diffPercent = '';
     try {
         const r = check.result ? JSON.parse(check.result) : null;
@@ -101,7 +103,7 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
     }
 
     await Check.findByIdAndUpdate(checkId, { $set: { triage } }).exec();
-    await updateTestWorstVerdict(checkId, verdicts);
+    await updateTestWorstVerdict(check.test, verdicts);
     return triage;
 }
 
@@ -126,18 +128,18 @@ export async function cancelCheck(checkId: string): Promise<Record<string, unkno
         icon: def.icon,
     };
     await Check.findByIdAndUpdate(checkId, { $set: { triage } }).exec();
-    await updateTestWorstVerdict(checkId, verdicts);
+    await updateTestWorstVerdict(check.test, verdicts);
     return triage;
 }
 
 // Recompute the parent test's worst AI verdict (by configured severity) for group/filter.
-async function updateTestWorstVerdict(checkId: string, verdicts: VerdictDef[]): Promise<void> {
+// Takes the test id directly (callers already have the loaded check) to avoid an extra lookup.
+async function updateTestWorstVerdict(testId: unknown, verdicts: VerdictDef[]): Promise<void> {
+    if (!testId) return;
     try {
-        const check: any = await Check.findById(checkId).select('test').exec();
-        if (!check?.test) return;
         const severity: Record<string, number> = {};
         for (const v of verdicts) severity[v.key] = v.severity;
-        const checks: any[] = await Check.find({ test: check.test, 'triage.verdict': { $exists: true } })
+        const checks: any[] = await Check.find({ test: testId, 'triage.verdict': { $exists: true } })
             .select('triage.verdict')
             .exec();
         let worst: string | undefined;
@@ -147,9 +149,9 @@ async function updateTestWorstVerdict(checkId: string, verdicts: VerdictDef[]): 
             const rank = severity[v] ?? 0;
             if (v && rank > worstRank) { worstRank = rank; worst = v; }
         }
-        await Test.findByIdAndUpdate(check.test, { $set: { worstTriageVerdict: worst } }).exec();
+        await Test.findByIdAndUpdate(testId, { $set: { worstTriageVerdict: worst } }).exec();
     } catch (e) {
-        log.warn(`failed to update test worst verdict for ${checkId}: ${e}`, { scope });
+        log.warn(`failed to update test worst verdict for test ${testId}: ${e}`, { scope });
     }
 }
 

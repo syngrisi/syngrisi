@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Response } from 'express';
-import { Check, Webhook, App, Run } from '@models';
+import { Check, Webhook, App } from '@models';
 import { catchAsync, ApiError } from '@utils';
 import { config } from '@config';
 import fs from 'fs';
@@ -557,22 +557,18 @@ const triageQueue = catchAsync(async (req: ExtRequest, res: Response) => {
     if (pendingOnly) filter['triage.pending'] = true;
     const checks = await Check.find(filter)
         .select('name run test status triage createdDate')
+        .populate('run', 'name createdDate')
         .sort({ createdDate: -1 })
         .limit(1000)
         .exec();
 
-    // The Check.run field has no schema ref, so resolve run names with a separate query.
-    const runIds = [...new Set((checks as any[]).map((c) => c.run).filter(Boolean).map(String))];
-    const runDocs = runIds.length ? await Run.find({ _id: { $in: runIds } }).select('name createdDate').exec() : [];
-    const runById = new Map((runDocs as any[]).map((r) => [String(r._id), r]));
-
     const runsMap = new Map<string, any>();
     for (const c of checks as any[]) {
-        const rid = c.run ? String(c.run) : 'no-run';
-        const runDoc = runById.get(rid);
+        const run = c.run;
+        const rid = run?._id ? String(run._id) : 'no-run';
         if (!runsMap.has(rid)) {
             runsMap.set(rid, {
-                run: runDoc ? { id: rid, name: runDoc.name, createdDate: runDoc.createdDate } : { id: 'no-run', name: '(no run)' },
+                run: run?._id ? { id: rid, name: run.name, createdDate: run.createdDate } : { id: 'no-run', name: '(no run)' },
                 checks: [],
             });
         }
@@ -598,24 +594,23 @@ const triageQueue = catchAsync(async (req: ExtRequest, res: Response) => {
     res.json({ runs, counts });
 });
 
-// Bulk cancel from the queue (e.g. "cancel all" in a run).
-const triageQueueCancel = catchAsync(async (req: ExtRequest, res: Response) => {
-    const ids: string[] = Array.isArray(req.body?.checkIds) ? req.body.checkIds : [];
+// Run a per-check operation over a list of checkIds, collecting per-id ok/error.
+// Sequential to avoid hammering the provider on restart.
+const bulkTriageOp = async (body: any, op: (id: string) => Promise<unknown>) => {
+    const ids: string[] = Array.isArray(body?.checkIds) ? body.checkIds : [];
     const results = [];
     for (const id of ids) {
-        try { await cancelCheck(id); results.push({ id, ok: true }); } catch (e) { results.push({ id, ok: false, error: String(e) }); }
+        try { const triage = await op(id); results.push({ id, ok: true, triage }); } catch (e) { results.push({ id, ok: false, error: String(e) }); }
     }
-    res.json({ results });
-});
+    return results;
+};
 
-// Bulk restart from the queue (re-run analysis). Sequential to avoid hammering the provider.
+// Bulk cancel / restart from the queue (e.g. "cancel all" / "restart all" in a run).
+const triageQueueCancel = catchAsync(async (req: ExtRequest, res: Response) => {
+    res.json({ results: await bulkTriageOp(req.body, cancelCheck) });
+});
 const triageQueueRestart = catchAsync(async (req: ExtRequest, res: Response) => {
-    const ids: string[] = Array.isArray(req.body?.checkIds) ? req.body.checkIds : [];
-    const results = [];
-    for (const id of ids) {
-        try { const triage = await triageCheck(id); results.push({ id, ok: true, triage }); } catch (e) { results.push({ id, ok: false, error: String(e) }); }
-    }
-    res.json({ results });
+    res.json({ results: await bulkTriageOp(req.body, triageCheck) });
 });
 
 // Admin "Test connection": run one classification against the current/provided provider config.
