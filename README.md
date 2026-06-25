@@ -120,6 +120,9 @@ start from the plain
 [Playwright](https://github.com/syngrisi/syngrisi-playwright-boilerplate) or
 [Cucumber](https://github.com/syngrisi/syngrisi-cucumber-boilerplate) boilerplate
 ([▶ open in Gitpod](https://gitpod.io/#https://github.com/syngrisi/syngrisi-cucumber-boilerplate)).
+Testing in another language? There are also
+[Playwright + Python](https://github.com/syngrisi/syngrisi-playwright-python-boilerplate) and
+[Playwright + Java](https://github.com/syngrisi/syngrisi-playwright-java-boilerplate) boilerplates.
 
 ### Run the server with Docker
 
