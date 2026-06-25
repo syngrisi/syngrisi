@@ -111,7 +111,11 @@ npm init sy@latest
 ```
 
 The interactive CLI sets up a ready-to-run project with Syngrisi and your chosen test
-framework. Prefer a template? Start from the
+framework. Prefer a template? The
+[**Playwright BDD boilerplate**](https://github.com/syngrisi/syngrisi-playwright-bdd-boilerplate)
+is the **recommended starting point for the fastest start** — Gherkin/BDD with ~150 ready-made
+steps, first-class Syngrisi visual checks, and AI-agent tooling out of the box. You can also
+start from the plain
 [Playwright](https://github.com/syngrisi/syngrisi-playwright-boilerplate) or
 [Cucumber](https://github.com/syngrisi/syngrisi-cucumber-boilerplate) boilerplate
 ([▶ open in Gitpod](https://gitpod.io/#https://github.com/syngrisi/syngrisi-cucumber-boilerplate)).
