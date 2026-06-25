@@ -23,7 +23,8 @@ in a fast, self-hosted web UI.
 
 ## 🎬 Demo
 
-https://github.com/user-attachments/assets/05f43d8d-9478-4fc5-bfe8-992941796ffc
+https://github.com/user-attachments/assets/24a666f0-6dc5-439d-be9a-8d7b2e411655
+
 
 ## Why Syngrisi?
 
