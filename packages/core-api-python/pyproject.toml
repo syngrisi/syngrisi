@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "syngrisi-core-api"
+version = "3.6.0"
+description = "Syngrisi Core API — Python client for the Syngrisi Visual Testing Platform"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Viktar Silakou" }]
+keywords = ["visual", "regression", "test", "SDK"]
+dependencies = ["requests>=2.25"]
+
+[project.optional-dependencies]
+dev = ["responses>=0.23", "pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+include = ["syngrisi_core_api*"]
