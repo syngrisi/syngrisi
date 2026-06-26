@@ -397,46 +397,47 @@ export function Toolbar(
                     )}
                     {(() => {
                         const st = String(Array.isArray(curCheck?.status) ? curCheck.status[0] : (curCheck?.status ?? '')).toLowerCase();
-                        if (st !== 'failed' || !curCheck?.diffId) return null;
+                        const canFindSimilar = st === 'failed' && !!curCheck?.diffId;
+                        if (!canFindSimilar && !onRunTriage) return null;
+                        // find-similar + AI sit in one group, no divider between them
                         return (
                             <>
                                 <Divider orientation="vertical" />
-                                <MantineTooltip label="Find similar checks" withinPortal>
-                                    <ActionIcon
-                                        component="a"
-                                        href={`?similarTo=${curCheck._id}`}
-                                        onClick={(e) => { e.preventDefault(); setQuery({ similarTo: String(curCheck._id), checkId: undefined, modalIsOpen: undefined }); }}
-                                        title="Find similar checks"
-                                        aria-label="Find similar checks"
-                                        variant="default"
-                                        size={toolbarActionIconSize}
-                                        data-test="find-similar-checks"
-                                        data-check-find-similar={curCheck.name}
-                                    >
-                                        <IconBinoculars size={toolbarGlyphSize} />
-                                    </ActionIcon>
-                                </MantineTooltip>
+                                <Group gap={4} wrap="nowrap" data-test="triage-toolbar">
+                                    {canFindSimilar && (
+                                        <MantineTooltip label="Find similar checks" withinPortal>
+                                            <ActionIcon
+                                                component="a"
+                                                href={`?similarTo=${curCheck._id}`}
+                                                onClick={(e) => { e.preventDefault(); setQuery({ similarTo: String(curCheck._id), checkId: undefined, modalIsOpen: undefined }); }}
+                                                title="Find similar checks"
+                                                aria-label="Find similar checks"
+                                                variant="default"
+                                                size={toolbarActionIconSize}
+                                                data-test="find-similar-checks"
+                                                data-check-find-similar={curCheck.name}
+                                            >
+                                                <IconBinoculars size={toolbarGlyphSize} />
+                                            </ActionIcon>
+                                        </MantineTooltip>
+                                    )}
+                                    {onRunTriage && (
+                                        <ActionIcon
+                                            onClick={onRunTriage}
+                                            title="Run AI Triage"
+                                            aria-label="Run AI Triage"
+                                            variant="default"
+                                            loading={triageRunning}
+                                            data-test="triage-run-button"
+                                            size={toolbarActionIconSize}
+                                        >
+                                            <IconSparkles size={toolbarGlyphSize} />
+                                        </ActionIcon>
+                                    )}
+                                </Group>
                             </>
                         );
                     })()}
-                    {onRunTriage && (
-                        <>
-                            <Divider orientation="vertical" />
-                            <Group gap={4} wrap="nowrap" data-test="triage-toolbar">
-                                <ActionIcon
-                                    onClick={onRunTriage}
-                                    title="Run AI Triage"
-                                    aria-label="Run AI Triage"
-                                    variant="default"
-                                    loading={triageRunning}
-                                    data-test="triage-run-button"
-                                    size={toolbarActionIconSize}
-                                >
-                                    <IconSparkles size={toolbarGlyphSize} />
-                                </ActionIcon>
-                            </Group>
-                        </>
-                    )}
                 </Group>
             </Group>
             <DeleteBaselineModal
