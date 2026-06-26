@@ -20,9 +20,10 @@ Feature: Change similarity — find similar checks
     When I go to "main" page
     When I wait 15 seconds for the element with locator "[data-row-name='SimUi__375x667']" to be visible
     When I unfold the test "SimUi__375x667"
-    # the small icon-link sits on the failed check (just left of the AI verdict icon)
-    When I wait 15 seconds for the element with locator "[data-test='find-similar-checks'][data-check-find-similar='ChangeCheck']" to be visible
-    When I click element with locator "[data-test='find-similar-checks'][data-check-find-similar='ChangeCheck']"
+    When I open the 1st check "ChangeCheck"
+    # the small icon-link sits in the Check Details modal toolbar, just left of the AI icon
+    When I wait 15 seconds for the element with locator "[data-test='find-similar-checks']" to be visible
+    When I click element with locator "[data-test='find-similar-checks']"
     # clicking lands on the filtered grid; the similar checks each show a similarity score
     When I wait 15 seconds for the element with locator "[data-test='similarity-score']" to be visible
     # the same change at the OTHER viewports is shown

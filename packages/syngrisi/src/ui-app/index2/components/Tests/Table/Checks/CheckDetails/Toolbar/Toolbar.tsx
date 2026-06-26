@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Divider, Group, Menu, ActionIcon, Badge, Tooltip as MantineTooltip } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze, IconBoxModel, IconSparkles } from '@tabler/icons-react';
+import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze, IconBoxModel, IconSparkles, IconBinoculars } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -78,7 +78,7 @@ export function Toolbar(
         triageRunning = false,
     }: Props,
 ) {
-    const { query } = useParams();
+    const { query, setQuery } = useParams();
     const [view, setView] = useState(() => (curCheck?.diffId?.filename ? 'diff' : 'actual'));
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
     const [shareModalOpened, setShareModalOpened] = useState(false);
@@ -395,6 +395,30 @@ export function Toolbar(
                             </Group>
                         </>
                     )}
+                    {(() => {
+                        const st = String(Array.isArray(curCheck?.status) ? curCheck.status[0] : (curCheck?.status ?? '')).toLowerCase();
+                        if (st !== 'failed' || !curCheck?.diffId) return null;
+                        return (
+                            <>
+                                <Divider orientation="vertical" />
+                                <MantineTooltip label="Find similar checks" withinPortal>
+                                    <ActionIcon
+                                        component="a"
+                                        href={`?similarTo=${curCheck._id}`}
+                                        onClick={(e) => { e.preventDefault(); setQuery({ similarTo: String(curCheck._id), checkId: undefined, modalIsOpen: undefined }); }}
+                                        title="Find similar checks"
+                                        aria-label="Find similar checks"
+                                        variant="default"
+                                        size={toolbarActionIconSize}
+                                        data-test="find-similar-checks"
+                                        data-check-find-similar={curCheck.name}
+                                    >
+                                        <IconBinoculars size={toolbarGlyphSize} />
+                                    </ActionIcon>
+                                </MantineTooltip>
+                            </>
+                        );
+                    })()}
                     {onRunTriage && (
                         <>
                             <Divider orientation="vertical" />
