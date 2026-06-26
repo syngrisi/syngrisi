@@ -1,8 +1,8 @@
 @fast-server
-Feature: Change similarity — find similar checks
+Feature: AI Match — find the same change across checks
   Given one failed check, rank the other failed checks in the same run by the change descriptor and
   return the full list with a 0..1 similarity score. Similarity is NOT limited to other resolutions
-  (same-viewport/other-browser checks are included). The UI exposes a "Find similar checks" button in
+  (same-viewport/other-browser checks are included). The UI exposes an "AI Match" button in
   Check Details that leaves the modal and filters the standard main grid to that ranked set, each
   check showing its similarity score, so the existing per-check/batch accept-reject controls apply.
 
@@ -13,7 +13,7 @@ Feature: Change similarity — find similar checks
     And I add an unrelated failed change "OtherCheck" to run "SimRun" at viewport "375x667"
     Then the change "ChangeCheck" has 3 similar checks ranked by score including the same viewport
 
-  Scenario: "Find similar" icon-link filters & auto-expands the grid with ~NN% scores
+  Scenario: "AI Match" icon-link filters & auto-expands the grid with ~NN% scores
     Given I create a run "SimUi" with the same change at viewports "375x667,768x1024,1366x768"
     And I add the same change "ChangeCheck" to run "SimUi" at viewport "375x667" with browser "firefox"
     And I add an unrelated failed change "OtherCheck" to run "SimUi" at viewport "375x667"

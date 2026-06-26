@@ -10,7 +10,7 @@ Feature: AI Triage - Admin AI page
     Then the element with locator "[data-test='ai-provider-timeout']" should be visible
     # feature is Beta — badge shown on the page header and in the provider form
     Then the element with locator "[data-test='ai-providers-form'] [data-test='ai-beta-badge']" should be visible
-    # per-project settings (triage + AI Similarity) live in their own "Projects settings" tab, left of Queue
+    # per-project settings (triage + AI Match) live in their own "Projects settings" tab, left of Queue
     Then the element with locator "[data-test='ai-tab-projects']" should be visible
     When I click element with locator "[data-test='ai-tab-projects']"
     Then the element with locator "[data-test='ai-perproject-form']" should be visible
