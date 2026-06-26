@@ -4,7 +4,7 @@ import { env } from '@config';
 import { createLogger } from '@lib/logger';
 import { showDemoBanner, hideDemoBanner } from '../../support/demo/banner.utils';
 import { showSubtitle, hideSubtitle } from '../../support/demo/subtitle.utils';
-import { annotateVerdicts, clearAnnotations } from '../../support/demo/annotate.utils';
+import { annotateVerdicts, clearAnnotations, annotateArrow, clearArrows } from '../../support/demo/annotate.utils';
 import { installClickRipple } from '../../support/demo/ripple.utils';
 import { highlightElement, clearHighlight } from '../../support/demo/highlight.utils';
 import { speak } from '../../support/demo/speech.utils';
@@ -157,6 +157,24 @@ When('I highlight element {string}', async ({ page }, selector: string) => {
 When('I clear highlight', async ({ page }) => {
   if (shouldSkipAll()) return;
   await clearHighlight(page);
+});
+
+/**
+ * Step definition: `When I point an arrow at {string} labeled {string}`
+ *
+ * Draws a single red arrow (with a label) pointing at an element — used by the AI Match reel.
+ */
+When('I point an arrow at {string} labeled {string}', async ({ page }, selector: string, label: string) => {
+  if (shouldSkipAll()) return;
+  await annotateArrow(page, selector, label);
+});
+
+/**
+ * Step definition: `When I clear arrows`
+ */
+When('I clear arrows', async ({ page }) => {
+  if (shouldSkipAll()) return;
+  await clearArrows(page);
 });
 
 /**

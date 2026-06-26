@@ -14,7 +14,11 @@ import re
 import subprocess
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-FEATURE = os.path.normpath(os.path.join(HERE, '..', '..', 'features', 'DEMO', 'marketing.feature'))
+# Source of caption lines; override with MARKETING_FEATURE to voice a different reel (e.g. AI Match).
+FEATURE = os.environ.get(
+    'MARKETING_FEATURE',
+    os.path.normpath(os.path.join(HERE, '..', '..', 'features', 'DEMO', 'marketing.feature')),
+)
 TTS_DIR = os.environ.get('STYLETTS2_DIR', '/Users/a1/Project/styletts2')
 VOICE = os.environ.get('MARKETING_VOICE', 'Olivia')
 OUT_DIR = os.path.join(HERE, 'audio')
