@@ -16,6 +16,7 @@ import { Header } from '@index/components/Tests/Table/Checks/CheckDetails/Header
 import { Canvas } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/Canvas';
 import { log } from '@shared/utils/Logger';
 import { RCAPanel, useRCA } from '@index/components/Tests/Table/Checks/CheckDetails/RCA';
+import { SameChangePanel } from '@index/components/Tests/Table/Checks/CheckDetails/SameChange/SameChangePanel';
 
 const inlineStyles = {
     zoomButtonsWrapper: {
@@ -686,6 +687,9 @@ export function CheckDetails({
                     onRunTriage={handleRunTriage}
                     triageRunning={triageRunning}
                 />
+
+                {/* The same change at other resolutions (soft re-rank suggestions) */}
+                <SameChangePanel checkId={(initCheckData as any)?._id || (currentCheckSafe as any)?._id} />
 
                 <Group
                     gap={4}
