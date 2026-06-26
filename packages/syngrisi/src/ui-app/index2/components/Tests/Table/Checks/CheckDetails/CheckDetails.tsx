@@ -16,7 +16,8 @@ import { Header } from '@index/components/Tests/Table/Checks/CheckDetails/Header
 import { Canvas } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/Canvas';
 import { log } from '@shared/utils/Logger';
 import { RCAPanel, useRCA } from '@index/components/Tests/Table/Checks/CheckDetails/RCA';
-import { SameChangePanel } from '@index/components/Tests/Table/Checks/CheckDetails/SameChange/SameChangePanel';
+import { Button } from '@mantine/core';
+import { IconSearch } from '@tabler/icons-react';
 
 const inlineStyles = {
     zoomButtonsWrapper: {
@@ -688,8 +689,22 @@ export function CheckDetails({
                     triageRunning={triageRunning}
                 />
 
-                {/* The same change at other resolutions (soft re-rank suggestions) */}
-                <SameChangePanel checkId={(initCheckData as any)?._id || (currentCheckSafe as any)?._id} />
+                {/* Find similar checks: leave the modal and filter the main grid to this change set */}
+                <Button
+                    data-test="find-similar-checks"
+                    leftSection={<IconSearch size={16} />}
+                    variant="light"
+                    size="xs"
+                    mt={6}
+                    style={{ alignSelf: 'flex-start' }}
+                    onClick={() => {
+                        const id = (initCheckData as any)?._id || (currentCheckSafe as any)?._id;
+                        if (!id) return;
+                        setQuery({ similarTo: String(id), checkId: undefined, modalIsOpen: undefined });
+                    }}
+                >
+                    Find similar checks
+                </Button>
 
                 <Group
                     gap={4}

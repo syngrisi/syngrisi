@@ -2,6 +2,7 @@
 // noinspection CheckTagEmptyBody
 import * as React from 'react';
 import {
+    Badge,
     Box,
     Card,
     Group,
@@ -31,9 +32,10 @@ interface Props {
     checksViewMode: string,
     testUpdateQuery: any,
     checksQuery: any,
+    similarityScore?: number, // 0..1, set when the grid is filtered via "Find similar checks"
 }
 
-export const Check = React.memo(function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: Props) {
+export const Check = React.memo(function Check({ check, checksViewMode, checksQuery, testUpdateQuery, similarityScore }: Props) {
     const { setQuery, query, queryConfig } = useParams();
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
 
@@ -168,6 +170,19 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
         setQuery({ checkFilter: Object.keys(cf).length ? cf : null });
     };
 
+    const similarityBadge = (similarityScore !== undefined) ? (
+        <Badge
+            color="grape"
+            variant="light"
+            size="sm"
+            radius="sm"
+            data-test="similarity-score"
+            data-score={Math.round(similarityScore * 100)}
+        >
+            {`Similarity ${Math.round(similarityScore * 100)}%`}
+        </Badge>
+    ) : null;
+
     return (
         <>
             {
@@ -272,6 +287,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             </Tooltip>
 
                             <Group justify="flex-end">
+                                {similarityBadge}
                                 <Status check={check} iconOnly />
                                 <TriageVerdict check={check} onClick={handleVerdictClick} compact />
                                 <ViewPortLabel
@@ -331,6 +347,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             >
                                 <Group gap={8} wrap="nowrap" align="center">
                                     <Status check={check} size="xs" iconOnly />
+                                    {similarityBadge}
                                     <Tooltip
                                         label={check.name}
                                         multiline
