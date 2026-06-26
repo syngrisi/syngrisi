@@ -131,6 +131,7 @@ Feature: AI Triage - Демонстрация на реальной локаль
 
         # --- Per-project: вердикты, кастомный промпт и few-shot примеры ---
         When I set demo step 8 of 9: "Настройки проекта: вердикты, промпт и few-shot примеры"
+        When I click element with locator "[data-test='ai-tab-projects']"
         When I wait 3 seconds for the element with locator "[data-test='ai-perproject-form']" to be visible
         When I click element with locator "[data-test='ai-project-select']"
         When I wait 3 seconds for the element with locator "[role='option']" to be visible
