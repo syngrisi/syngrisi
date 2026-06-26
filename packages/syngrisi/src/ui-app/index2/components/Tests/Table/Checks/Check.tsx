@@ -124,7 +124,9 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
         setQuery({ similarTo: String(check._id), checkId: undefined, modalIsOpen: undefined });
     };
     // Offer the action only where there is a diff to compare (failed checks).
-    const canFindSimilar = check?.status === 'failed' && !!check?.diffId;
+    // check.status may be a string or a single-element array — normalize like Status does.
+    const statusStr = String(Array.isArray(check?.status) ? check.status[0] : (check?.status ?? '')).toLowerCase();
+    const canFindSimilar = statusStr === 'failed' && !!check?.diffId;
 
     const handlePreviewMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
         onHoverPreload();
