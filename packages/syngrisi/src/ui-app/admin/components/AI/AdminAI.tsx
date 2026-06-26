@@ -287,11 +287,11 @@ function PerProjectTriage() {
 
                     <Divider my="md" label={(
                         <Group gap={4}>
-                            <Text size="sm">AI Similarity</Text>
+                            <Text size="sm">AI Match</Text>
                             <HelpDoc
-                                title="AI Similarity"
+                                title="AI Match"
                                 lines={[
-                                    'AI Similarity finds the same visual change across other checks of the same run (other resolutions, browsers). Open a failed check and use the "Find similar checks" icon in the toolbar.',
+                                    'AI Match finds the same visual change across other checks of the same run (other resolutions, browsers). Open a failed check and use the "AI Match" icon in the toolbar.',
                                     'Match threshold (0..1): the maximum cosine distance for two changes to be treated as the same. Lower = stricter (fewer, surer matches); higher = looser. Default 0.32.',
                                 ]}
                             />
@@ -299,7 +299,7 @@ function PerProjectTriage() {
                     )}
                     />
                     <NumberInput
-                        label="Similarity match threshold"
+                        label="AI Match threshold"
                         description="0..1 cosine cutoff — lower is stricter, higher is looser"
                         min={0}
                         max={1}

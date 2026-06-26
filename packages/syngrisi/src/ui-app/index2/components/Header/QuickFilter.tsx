@@ -249,7 +249,7 @@ export function QuickFilter(
             color="grape"
             variant="light"
             data-test="similarity-filter-badge"
-            title="Showing checks similar to the selected one"
+            title="AI Match — showing the same change across other checks"
             style={{ transform: 'scale(1.15)', transformOrigin: 'right center' }}
             styles={{ root: { textTransform: 'none', paddingLeft: 8, paddingRight: 2 }, label: { display: 'flex', alignItems: 'center', gap: 2 } }}
             rightSection={(
@@ -267,7 +267,7 @@ export function QuickFilter(
                 </ActionIcon>
             )}
         >
-            ~ similar
+            AI Match
         </Badge>
     ) : null;
 
