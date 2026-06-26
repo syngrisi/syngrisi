@@ -77,7 +77,10 @@ export async function backfillAll(batch = 200): Promise<number> {
     return total;
 }
 
-export type SiblingResult = { checkId: string; viewport: string; distance: number; confidence: number };
+export type SiblingResult = {
+    checkId: string; viewport: string; distance: number; confidence: number;
+    name?: string; diffFilename?: string;
+};
 
 // "The same change at other resolutions": rank other failed checks in the SAME run by descriptor
 // distance, return the best match per other viewport, gated by the project's confidence cutoff.
@@ -112,11 +115,19 @@ export async function findSiblings(checkId: string): Promise<{ results: SiblingR
         const vp = s.check.viewport || '';
         if (seenViewports.has(vp)) continue; // best match per other viewport
         seenViewports.add(vp);
+        // enrich for the UI: check name + the diff snapshot filename (for a thumbnail)
+        let diffFilename: string | undefined;
+        try {
+            const ds: any = s.check.diffId ? await Snapshot.findById(s.check.diffId).select('filename').exec() : null;
+            diffFilename = ds?.filename;
+        } catch { /* thumbnail is best-effort */ }
         results.push({
             checkId: String(s.check._id),
             viewport: vp,
             distance: Number(s.dist.toFixed(4)),
             confidence: Number(Math.max(0, 1 - s.dist / gate).toFixed(3)),
+            name: s.check.name,
+            diffFilename,
         });
     }
     return { results, gate };
