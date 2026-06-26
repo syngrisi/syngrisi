@@ -13,6 +13,7 @@ export function useParams() {
         modalIsOpen: StringParam,
         share: StringParam,
         checkFilter: JsonParam,
+        similarTo: StringParam,
     };
     const [query, setQuery] = useQueryParams(queryConfig);
     const updateQueryJsonParam = (section: string, key: string, value: string) => {
