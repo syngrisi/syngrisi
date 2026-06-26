@@ -405,13 +405,13 @@ export function Toolbar(
                                 <Divider orientation="vertical" />
                                 <Group gap={4} wrap="nowrap" data-test="triage-toolbar">
                                     {canFindSimilar && (
-                                        <MantineTooltip label="Find similar checks" withinPortal>
+                                        <MantineTooltip label="AI Match — find the same change across checks" withinPortal>
                                             <ActionIcon
                                                 component="a"
                                                 href={`?similarTo=${curCheck._id}`}
                                                 onClick={(e) => { e.preventDefault(); setQuery({ similarTo: String(curCheck._id), checkId: undefined, modalIsOpen: undefined }); }}
-                                                title="Find similar checks"
-                                                aria-label="Find similar checks"
+                                                title="AI Match"
+                                                aria-label="AI Match"
                                                 variant="subtle"
                                                 color="gray"
                                                 size={toolbarActionIconSize}

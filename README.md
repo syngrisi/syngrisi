@@ -48,6 +48,7 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 - ✅ **Review workflow** — accept/reject baselines, mark checks as bugs, batch-accept, and share single checks via link.
 - 🧭 **Powerful filtering & grouping** — group by run, suite, browser, platform or status; build nested `AND`/`OR` filters.
 - 🧠 **AI Triage** _(beta)_ — a vision-LLM classifies each failed check (intended change / likely bug / noise) with a confidence score; auto-accept policies, per-project prompts & verdicts, and a fully self-hosted local-model option via Ollama.
+- 🎯 **AI Match** _(beta)_ — from one failed check, instantly find the **same visual change** on every other resolution and browser, ranked by a similarity score — review the whole cluster of "one bug, many viewports" in a single pass. 100% local, no model required.
 - 🤖 **Root Cause Analysis** _(beta)_ — captures a DOM snapshot alongside each screenshot to help explain **why** a check changed.
 - 🔐 **Auth, roles & SSO** — username/password, API keys, plus OAuth2 / SAML 2.0 single sign-on and an admin panel.
 - 🧩 **Plugin system & rich configuration** — extend behaviour and tune everything through environment variables.
@@ -102,6 +103,26 @@ expensive, send your screenshots to someone else's servers, and lock you in.
     <td width="50%"><img src="assets/screenshots/ai-queue.png" alt="AI triage queue grouped by run" /><br/><sub><b>Analysis queue</b> — grouped by run, with manual restart / cancel.</sub></td>
   </tr>
 </table>
+
+## 🎯 NEW: AI Match — one bug, every viewport, one click _(beta)_
+
+> **A single layout regression rarely fails just once.** Bump a header and it breaks on
+> mobile, tablet, desktop and in every browser you capture — a dozen red checks for **one
+> root cause**. AI Match collapses that noise: open any failed check, hit the **AI Match**
+> icon, and Syngrisi pulls up every other check with the *same* visual change.
+
+- 🎯 **Same change, everywhere** — finds the identical diff across other resolutions **and**
+  other browsers in the run, not just look-alikes by name.
+- 📊 **Ranked by similarity** — each match shows a `~NN%` score so the closest siblings sort
+  to the top; the main grid filters down to just the cluster, auto-expanded.
+- ⚡ **Instant & 100% local** — built on a lightweight colour-histogram change descriptor, **no
+  ML model and no network** required. Matching is computed once per check in the background.
+- 🧹 **Review the cluster, not the chaos** — accept or reject the whole "one bug across N
+  viewports" group in a single pass, using the same per-check controls you already know.
+- 🎛️ **Tunable per project** — set the match threshold (stricter = fewer, surer matches) under
+  **Admin → AI → Projects settings**.
+
+> Enabled per project, **off by default**.
 
 ## 🚀 Quick Start
 
