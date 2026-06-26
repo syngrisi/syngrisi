@@ -2,7 +2,7 @@
 import path from 'path';
 import { promises as fsp } from 'fs';
 import { PNG } from 'pngjs';
-import { Check, App } from '@models';
+import { Check, App, Snapshot } from '@models';
 import { config } from '@config';
 import log from '@logger';
 import { changeVectorFromRaw, cosineDistance, SIG_VERSION } from './descriptor';
@@ -13,8 +13,13 @@ export const DEFAULT_GATE = 0.32;
 
 type Sig = { vector: number[]; version: string; at: Date; failed?: boolean };
 
+// Snapshot files are stored at defaultImagesPath/<snapshot.filename>. The filename is NOT always
+// "<id>.png" (snapshots are de-duplicated by image hash, so a baseline can reuse another
+// snapshot's file), so resolve the real filename via the Snapshot document.
 async function readRaw(snapshotId: unknown) {
-    const buf = await fsp.readFile(path.join(config.defaultImagesPath, `${snapshotId}.png`));
+    const snap: any = await Snapshot.findById(snapshotId as any).select('filename').exec();
+    if (!snap || !snap.filename) throw new Error(`snapshot not found or has no file: ${snapshotId}`);
+    const buf = await fsp.readFile(path.join(config.defaultImagesPath, snap.filename));
     const png = PNG.sync.read(buf); // RGBA
     return { data: png.data as Uint8Array, width: png.width, height: png.height, channels: 4 };
 }
