@@ -77,14 +77,17 @@ export async function backfillAll(batch = 200): Promise<number> {
     return total;
 }
 
-export type SiblingResult = {
-    checkId: string; viewport: string; distance: number; confidence: number;
-    name?: string; diffFilename?: string;
+export type SimilarResult = {
+    checkId: string; viewport: string; distance: number;
+    score: number; // 0..1 similarity (1 = identical change); = max(0, 1 - distance)
+    name?: string;
 };
 
-// "The same change at other resolutions": rank other failed checks in the SAME run by descriptor
-// distance, return the best match per other viewport, gated by the project's confidence cutoff.
-export async function findSiblings(checkId: string): Promise<{ results: SiblingResult[]; gate: number }> {
+// "Find similar checks": rank ALL other failed checks in the SAME run by descriptor distance and
+// return the full list (best first) with a 0..1 similarity score. Similarity is NOT limited to
+// other resolutions — same-viewport/other-browser candidates are included; only the query check
+// itself is excluded. The per-project gate is an optional cutoff (drops clearly-unrelated changes).
+export async function findSimilar(checkId: string): Promise<{ results: SimilarResult[]; gate: number }> {
     const query: any = await Check.findById(checkId).exec();
     if (!query) throw new Error(`check not found: ${checkId}`);
     const app: any = query.app ? await App.findById(query.app).exec() : null;
@@ -104,31 +107,18 @@ export async function findSiblings(checkId: string): Promise<{ results: SiblingR
     for (const c of candidates) {
         const sig = await ensureSig(c);
         if (sig.failed || !sig.vector.length) continue;
-        scored.push({ check: c, dist: cosineDistance(qsig.vector, sig.vector) });
+        const dist = cosineDistance(qsig.vector, sig.vector);
+        if (dist > gate) continue; // optional cutoff: above it = almost certainly a different change
+        scored.push({ check: c, dist });
     }
-    scored.sort((a, b) => a.dist - b.dist);
+    scored.sort((a, b) => a.dist - b.dist); // best (smallest distance) first
 
-    const seenViewports = new Set<string>([query.viewport || '']);
-    const results: SiblingResult[] = [];
-    for (const s of scored) {
-        if (s.dist > gate) continue; // gate: above cutoff = almost certainly a different change
-        const vp = s.check.viewport || '';
-        if (seenViewports.has(vp)) continue; // best match per other viewport
-        seenViewports.add(vp);
-        // enrich for the UI: check name + the diff snapshot filename (for a thumbnail)
-        let diffFilename: string | undefined;
-        try {
-            const ds: any = s.check.diffId ? await Snapshot.findById(s.check.diffId).select('filename').exec() : null;
-            diffFilename = ds?.filename;
-        } catch { /* thumbnail is best-effort */ }
-        results.push({
-            checkId: String(s.check._id),
-            viewport: vp,
-            distance: Number(s.dist.toFixed(4)),
-            confidence: Number(Math.max(0, 1 - s.dist / gate).toFixed(3)),
-            name: s.check.name,
-            diffFilename,
-        });
-    }
+    const results: SimilarResult[] = scored.map((s) => ({
+        checkId: String(s.check._id),
+        viewport: s.check.viewport || '',
+        distance: Number(s.dist.toFixed(4)),
+        score: Number(Math.max(0, 1 - s.dist).toFixed(3)),
+        name: s.check.name,
+    }));
     return { results, gate };
 }

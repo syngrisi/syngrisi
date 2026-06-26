@@ -124,23 +124,23 @@ router.get(
 
 registry.registerPath({
     method: 'get',
-    path: '/v1/checks/{id}/siblings',
-    summary: 'The same change at other resolutions: ranked sibling checks (one per other viewport)',
+    path: '/v1/checks/{id}/similar',
+    summary: 'Find similar checks: full ranked list of failed checks in the same run with a 0..1 similarity score',
     tags: ['Checks'],
     request: commonValidations.paramsId,
     responses: {
         200: {
-            description: 'Ranked sibling checks with distance/confidence and the applied gate',
+            description: 'Ranked similar checks with distance/score and the applied gate',
             content: { 'application/json': { schema: { type: 'object' } } },
         },
     },
 });
 
 router.get(
-    '/:id/siblings',
+    '/:id/similar',
     ensureLoggedInOrApiKeyOrShareToken(),
-    validateRequest(getByIdParamsSchema(), 'get, /v1/checks/{id}/siblings'),
-    checkController.getSiblings as Midleware
+    validateRequest(getByIdParamsSchema(), 'get, /v1/checks/{id}/similar'),
+    checkController.getSimilar as Midleware
 );
 
 export default router;
