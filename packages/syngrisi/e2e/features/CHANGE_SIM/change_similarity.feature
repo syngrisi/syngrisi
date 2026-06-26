@@ -24,6 +24,8 @@ Feature: Change similarity — find similar checks
     # the small icon-link sits in the Check Details modal toolbar, just left of the AI icon
     When I wait 15 seconds for the element with locator "[data-test='find-similar-checks']" to be visible
     When I click element with locator "[data-test='find-similar-checks']"
+    # the Check Details modal must close (transition to the grid), not stay on top
+    When I wait 10 seconds for the element with locator "[data-check='toolbar']" to not be displayed
     # clicking lands on the filtered grid; the similar checks each show a similarity score
     When I wait 15 seconds for the element with locator "[data-test='similarity-score']" to be visible
     # the same change at the OTHER viewports is shown
