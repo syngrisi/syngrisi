@@ -111,6 +111,14 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 > root cause**. AI Match collapses that noise: open any failed check, hit the **AI Match**
 > icon, and Syngrisi pulls up every other check with the *same* visual change.
 
+<!--
+  ▶️ AI Match demo video lives at assets/ai-match.mp4.
+  GitHub does not play repo-relative videos inline — to embed a player, drag assets/ai-match.mp4 into
+  any GitHub issue/PR comment and paste the resulting https://github.com/user-attachments/... URL on
+  its own line right below (same mechanism as the hero video near the top), then delete this comment.
+-->
+<p align="center"><a href="assets/ai-match.mp4">▶️ Watch the AI Match demo</a> — open a failed check → <b>AI Match</b> → the whole cluster, scored.</p>
+
 - 🎯 **Same change, everywhere** — finds the identical diff across other resolutions **and**
   other browsers in the run, not just look-alikes by name.
 - 📊 **Ranked by similarity** — each match shows a `~NN%` score so the closest siblings sort
