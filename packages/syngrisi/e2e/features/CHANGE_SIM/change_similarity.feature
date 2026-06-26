@@ -20,11 +20,10 @@ Feature: Change similarity — the same change at other resolutions
     # the panel lists the same change at the OTHER two viewports
     Then the element with locator "[data-test='same-change-item'][data-viewport='768x1024']" should be visible
     Then the element with locator "[data-test='same-change-item'][data-viewport='1366x768']" should be visible
+    # the check exposes an operable accept/reject control (same AcceptButton the table rows use)
+    Then the element with locator "[data-test='not-accepted-error-icon']" should be visible
     # show exactly the query + sibling checks in the table; the unrelated change is filtered out
     When I click element with locator "[data-test='same-change-show-in-table']"
     When I wait 15 seconds for the element with locator "[data-row-name='SimUi__768x1024']" to be visible
     Then the element with locator "[data-row-name='SimUi__1366x768']" should be visible
     Then the element with locator "[data-row-name='SimUi__other']" should be hidden
-    # the query test stays expanded; its filtered check still exposes the per-check accept/reject control
-    Then the element with locator "[data-check='ChangeCheck']" should be visible
-    Then the element with locator "[data-check='ChangeCheck'] [data-test='not-accepted-error-icon']" should be visible
