@@ -2,6 +2,7 @@
 // noinspection CheckTagEmptyBody
 import * as React from 'react';
 import {
+    ActionIcon,
     Badge,
     Box,
     Card,
@@ -13,6 +14,7 @@ import {
     Tooltip,
     useMantineTheme, useComputedColorScheme,
 } from '@mantine/core';
+import { IconBinoculars } from '@tabler/icons-react';
 
 import { useLocalStorage } from '@mantine/hooks';
 import { useParams, encodeQueryParams } from '@hooks/useParams';
@@ -108,6 +110,22 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
     );
     const linkToCheckOverlay = `/?${overlayParamsString}&modalIsOpen=true`;
 
+    // "Find similar checks": link to the main grid filtered to this check's similar set.
+    const similarParamsString = stringify(
+        encodeQueryParams(
+            queryConfig,
+            { ...query, similarTo: check._id, checkId: undefined, modalIsOpen: undefined },
+        ),
+    );
+    const linkToSimilar = `/?${similarParamsString}`;
+    const handleFindSimilar = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (e.metaKey || e.ctrlKey) return; // let the browser open it in a new tab
+        e.preventDefault();
+        setQuery({ similarTo: String(check._id), checkId: undefined, modalIsOpen: undefined });
+    };
+    // Offer the action only where there is a diff to compare (failed checks).
+    const canFindSimilar = check?.status === 'failed' && !!check?.diffId;
+
     const handlePreviewMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
         onHoverPreload();
         setIsPreviewHovered(true);
@@ -179,8 +197,29 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
             data-test="similarity-score"
             data-score={Math.round(similarityScore * 100)}
         >
-            {`Similarity ${Math.round(similarityScore * 100)}%`}
+            {`~${Math.round(similarityScore * 100)}%`}
         </Badge>
+    ) : null;
+
+    // Small icon-link sitting just left of the AI verdict icon; same compact line-icon style.
+    const findSimilarLink = canFindSimilar ? (
+        <Tooltip label="Find similar checks" withinPortal>
+            <ActionIcon
+                component="a"
+                href={linkToSimilar}
+                onClick={handleFindSimilar}
+                variant="subtle"
+                color="grape"
+                size="sm"
+                radius="sm"
+                aria-label="Find similar checks"
+                title="Find similar checks"
+                data-test="find-similar-checks"
+                data-check-find-similar={check.name}
+            >
+                <IconBinoculars size={14} />
+            </ActionIcon>
+        </Tooltip>
     ) : null;
 
     return (
@@ -289,6 +328,7 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                             <Group justify="flex-end">
                                 {similarityBadge}
                                 <Status check={check} iconOnly />
+                                {findSimilarLink}
                                 <TriageVerdict check={check} onClick={handleVerdictClick} compact />
                                 <ViewPortLabel
                                     color="blue"
@@ -444,7 +484,10 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
 
                             {/* CHECK TOOLBAR */}
                             <Group justify="space-between" px={12} mt={4} mb={6} gap={6} align="center" wrap="nowrap">
-                                <TriageVerdict check={check} size="xs" onClick={handleVerdictClick} compact />
+                                <Group gap={4} wrap="nowrap" align="center">
+                                    {findSimilarLink}
+                                    <TriageVerdict check={check} size="xs" onClick={handleVerdictClick} compact />
+                                </Group>
 
                                 <ViewPortLabel
                                     check={check}

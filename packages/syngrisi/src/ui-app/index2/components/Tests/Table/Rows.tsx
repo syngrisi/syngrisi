@@ -21,7 +21,8 @@ const Rows = ({ infinityQuery, selection, setSelection, visibleFields, updateToo
     // "Find similar checks" filters the grid to the ranked similar set (carried by similarTo) via the
     // same _idIn mechanism as the AI-triage filter, without bloating the URL with the id list.
     const { similarTo, ids } = useSimilar();
-    const effectiveCheckFilter = (similarTo && ids.length)
+    const similarActive = !!(similarTo && ids.length);
+    const effectiveCheckFilter = similarActive
         ? { ...query.checkFilter, _idIn: ids }
         : query.checkFilter;
     // When an AI-triage filter is active, hide tests that have no matching check
@@ -94,6 +95,7 @@ const Rows = ({ infinityQuery, selection, setSelection, visibleFields, updateToo
                     visibleFields={visibleFields}
                     selection={selection}
                     collapse={collapse}
+                    forceExpanded={similarActive}
                 />
             ),
         )

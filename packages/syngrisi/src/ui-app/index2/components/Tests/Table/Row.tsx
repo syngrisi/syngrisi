@@ -19,6 +19,7 @@ interface Props {
     selection: any
     collapse: any
     infinityQuery: any,
+    forceExpanded?: boolean,
 }
 
 export const Row = memo(function Row(
@@ -31,13 +32,15 @@ export const Row = memo(function Row(
         selection,
         collapse,
         infinityQuery,
+        forceExpanded = false,
     }: Props,
 ) {
     const theme = useMantineTheme();
     const colorScheme = useComputedColorScheme();
     const styles = testsCreateStyle(theme, colorScheme);
     const selected = selection.includes(item.id!);
-    const collapsed = collapse.includes(item.id!);
+    // In similarity mode every shown test is expanded so the matching checks are visible at once.
+    const collapsed = forceExpanded || collapse.includes(item.id!);
 
     // Only mount Checks after first expansion to avoid unnecessary API queries
     const [hasBeenExpanded, setHasBeenExpanded] = useState(false);
