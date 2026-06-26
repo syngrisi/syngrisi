@@ -1,5 +1,16 @@
 # @syngrisi/syngrisi
 
+## 3.7.0
+
+### Minor Changes
+
+-   [`5d849c4`](https://github.com/syngrisi/syngrisi/commit/5d849c4b260e71f13ae11d68d368042dde39a07e) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - AI Match (Beta): from one failed check, find the same visual change across the other failed checks in the same run — other resolutions **and** other browsers (not limited to cross-resolution). The Check Details modal gains an "AI Match" icon that leaves the modal and filters the main grid to the ranked cluster, auto-expanded, each check showing a `~NN%` similarity score; the active filter appears as a compact, resettable badge inside the quick filter. Matching is 100% local — a lightweight Lab colour-histogram change descriptor, no ML model and no network — computed per check in the background and ranked by cosine distance. Configurable per project: a match threshold under Admin → AI → Projects settings (a new tab housing the per-project triage and AI Match settings). Off by default.
+
+### Patch Changes
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.7.0
+
 ## 3.6.0
 
 ### Minor Changes
