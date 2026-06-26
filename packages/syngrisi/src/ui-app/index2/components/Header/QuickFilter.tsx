@@ -240,23 +240,8 @@ export function QuickFilter(
         </Group>
     );
 
-    const rightSection = (
-        <Group gap={2} wrap="nowrap" pr={4}>
-            {statusButtons}
-            <ActionIcon
-                title="Reset quick filter"
-                aria-label="Reset quick filter"
-                variant="transparent"
-                color="gray"
-                size="sm"
-                onClick={resetQuickFilter}
-            >
-                <IconX size={16} stroke={1} />
-            </ActionIcon>
-        </Group>
-    );
-
     // Compact pill shown INSIDE the filter input when a similarity filter is active; X resets it.
+    // 15% larger than the default xs badge, right-aligned just left of the status dots.
     const similarBadge = query.similarTo ? (
         <Badge
             size="xs"
@@ -265,6 +250,7 @@ export function QuickFilter(
             variant="light"
             data-test="similarity-filter-badge"
             title="Showing checks similar to the selected one"
+            style={{ transform: 'scale(1.15)', transformOrigin: 'right center' }}
             styles={{ root: { textTransform: 'none', paddingLeft: 8, paddingRight: 2 }, label: { display: 'flex', alignItems: 'center', gap: 2 } }}
             rightSection={(
                 <ActionIcon
@@ -284,6 +270,23 @@ export function QuickFilter(
             ~ similar
         </Badge>
     ) : null;
+
+    const rightSection = (
+        <Group gap={6} wrap="nowrap" pr={4}>
+            {similarBadge}
+            {statusButtons}
+            <ActionIcon
+                title="Reset quick filter"
+                aria-label="Reset quick filter"
+                variant="transparent"
+                color="gray"
+                size="sm"
+                onClick={resetQuickFilter}
+            >
+                <IconX size={16} stroke={1} />
+            </ActionIcon>
+        </Group>
+    );
 
     return (
         <Box
@@ -321,11 +324,8 @@ export function QuickFilter(
                             placeholder={searchPlaceholder}
                             size="xs"
                             radius="xs"
-                            leftSection={similarBadge}
-                            leftSectionWidth={query.similarTo ? 96 : 0}
-                            leftSectionPointerEvents="auto"
                             rightSection={rightSection}
-                            rightSectionWidth={108}
+                            rightSectionWidth={query.similarTo ? 210 : 108}
                             rightSectionPointerEvents="auto"
                             style={{ width: 400 }}
                             styles={{
@@ -333,7 +333,7 @@ export function QuickFilter(
                                     width: '400px',
                                     height: 36,
                                     minHeight: 36,
-                                    paddingRight: 116,
+                                    paddingRight: query.similarTo ? 218 : 116,
                                     fontSize: '13px',
                                     fontWeight: 400,
                                     letterSpacing: '-0.01em',
