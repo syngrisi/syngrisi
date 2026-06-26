@@ -50,6 +50,12 @@ export interface CheckDocument extends Document {
         autoAccepted?: boolean;
         failed?: boolean; // provider error/timeout → fallback verdict
     };
+    changeSig?: {
+        vector: number[]; // color_hist Lab descriptor of the change (resolution-invariant)
+        version: string; // descriptor version, for re-compute on algorithm change
+        at: Date;
+        failed?: boolean;
+    };
 }
 
 // const CheckSchema: Schema<CheckDocument> = new Schema({
@@ -195,11 +201,23 @@ const CheckSchema = new Schema<CheckDocument>({
         _id: false,
         default: undefined,
     },
+    changeSig: {
+        type: {
+            vector: { type: [Number] },
+            version: { type: String },
+            at: { type: Date },
+            failed: { type: Boolean },
+        },
+        _id: false,
+        default: undefined,
+    },
 });
 
 // Indexes for AI Triage grouping/filtering performance
 CheckSchema.index({ run: 1, 'triage.verdict': 1 });
 CheckSchema.index({ app: 1, 'triage.verdict': 1 });
+// Change-similarity: fetch run-scoped failed checks fast
+CheckSchema.index({ run: 1, status: 1 });
 
 CheckSchema.plugin(toJSON);
 CheckSchema.plugin(paginate);

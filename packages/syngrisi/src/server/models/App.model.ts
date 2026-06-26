@@ -28,6 +28,7 @@ export interface AppDocument extends Document {
     }>;
     triagePrompt?: string; // full system-prompt override (empty → default built from verdicts)
     triageExamples?: Array<{ verdict: string; image: string; note?: string }>; // few-shot examples (data-URL images)
+    changeSimGate?: number; // cosine cutoff for "same change at other resolutions" (per-project)
 }
 
 const AppSchema: Schema<AppDocument> = new Schema({
@@ -93,6 +94,9 @@ const AppSchema: Schema<AppDocument> = new Schema({
             _id: false,
         }],
         default: undefined,
+    },
+    changeSimGate: {
+        type: Number,
     },
 });
 

@@ -122,4 +122,25 @@ router.get(
     checkController.getDomSnapshot as Midleware
 );
 
+registry.registerPath({
+    method: 'get',
+    path: '/v1/checks/{id}/siblings',
+    summary: 'The same change at other resolutions: ranked sibling checks (one per other viewport)',
+    tags: ['Checks'],
+    request: commonValidations.paramsId,
+    responses: {
+        200: {
+            description: 'Ranked sibling checks with distance/confidence and the applied gate',
+            content: { 'application/json': { schema: { type: 'object' } } },
+        },
+    },
+});
+
+router.get(
+    '/:id/siblings',
+    ensureLoggedInOrApiKeyOrShareToken(),
+    validateRequest(getByIdParamsSchema(), 'get, /v1/checks/{id}/siblings'),
+    checkController.getSiblings as Midleware
+);
+
 export default router;

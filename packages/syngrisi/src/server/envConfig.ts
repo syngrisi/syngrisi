@@ -46,6 +46,11 @@ export const env = cleanEnv(process.env, {
     // RCA
     SYNGRISI_RCA: bool({ default: false }),
 
+    // Change-similarity ("same change at other resolutions"): off by default
+    SYNGRISI_CHANGE_SIM: bool({ default: false }),
+    SYNGRISI_CHANGE_SIM_POLL_INTERVAL_MS: num({ default: 30 * 1000 }),
+    SYNGRISI_CHANGE_SIM_BATCH_SIZE: num({ default: 20 }),
+
     // trunk features
     SYNGRISI_TRUNK_FEATURE_AI_SEVERITY: bool({ default: false }),
     SYNGRISI_AI_KEY: str({ default: '' }),

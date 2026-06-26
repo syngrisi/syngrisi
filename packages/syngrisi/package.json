@@ -1,190 +1,191 @@
 {
-  "name": "@syngrisi/syngrisi",
-  "version": "3.6.0",
-  "description": "Syngrisi - Visual Testing Platform - open-source visual regression testing platform",
-  "main": "./dist/server/server.js",
-  "type": "module",
-  "bin": {
-    "sy": "./dist/server/server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/syngrisi/syngrisi"
-  },
-  "engines": {
-    "node": ">=22.19.0"
-  },
-  "files": [
-    "src",
-    "dist",
-    "mvc",
-    "static",
-    "src/tasks",
-    "config.js",
-    "server.js",
-    "docker-compose.yml",
-    ".nvmrc"
-  ],
-  "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi",
-  "keywords": [
-    "testing",
-    "regression",
-    "visual",
-    "screenshots",
-    "comparison",
-    "open-source",
-    "platform",
-    "visual-regression-testing",
-    "visual-testing-platform"
-  ],
-  "nodemonConfig": {
-    "ignore": [
-      "mvc/views/lib/*.js"
+    "name": "@syngrisi/syngrisi",
+    "version": "3.6.0",
+    "description": "Syngrisi - Visual Testing Platform - open-source visual regression testing platform",
+    "main": "./dist/server/server.js",
+    "type": "module",
+    "bin": {
+        "sy": "./dist/server/server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/syngrisi/syngrisi"
+    },
+    "engines": {
+        "node": ">=22.19.0"
+    },
+    "files": [
+        "src",
+        "dist",
+        "mvc",
+        "static",
+        "src/tasks",
+        "config.js",
+        "server.js",
+        "docker-compose.yml",
+        ".nvmrc"
     ],
-    "include": [
-      "dist"
+    "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi",
+    "keywords": [
+        "testing",
+        "regression",
+        "visual",
+        "screenshots",
+        "comparison",
+        "open-source",
+        "platform",
+        "visual-regression-testing",
+        "visual-testing-platform"
     ],
-    "delay": 500
-  },
-  "scripts": {
-    "server:watch": "npx tsup --watch --onSuccess \"node ./dist/server/server.js\" # compile all server ts files changes",
-    "start": "if [ \"$NODE_ENV\" = \"development\" ]; then yarn server:watch; else node ./dist/server/server.js; fi",
-    "start:dev": "cross-env SYNGRISI_AUTH=true SYNGRISI_TEST_MODE=true SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE=true npx tsup --watch --onSuccess \"node ./dist/server/server.js\"",
-    "test": "yarn build && cd e2e && yarn test",
-    "test:mcp": "cd e2e && yarn test:mcp",
-    "test:mcp:test-engine": "cd e2e && yarn test:mcp:test-engine",
-    "start:mcp": "cd e2e && yarn start:mcp",
-    "start:mcp:bridge": "cd e2e && yarn start:mcp:bridge",
-    "build": "yarn build:ui && yarn build:server",
-    "clean:server": "rimraf dist",
-    "build:ui": "rm -rf mvc/views/react/assets && cross-env VITE_ROOT_PATH='./src/ui-app/' vite build",
-    "build:server": "yarn clean:server && npx tsup",
-    "install:server": "yarn install",
-    "install:ui": "cd src/ui-app && yarn install && cd --",
-    "install:all": "yarn install:server && yarn install:ui",
-    "test:docker": "cd e2e && yarn test:docker",
-    "smoke": "cd e2e && yarn test:smoke",
-    "staging:test": "cd e2e && npx bddgen --config playwright.staging.config.ts && npx playwright test --config playwright.staging.config.ts",
-    "staging:test:smoke": "cd e2e && npx bddgen --config playwright.staging.config.ts && npx playwright test --config playwright.staging.config.ts --project staging-smoke",
-    "staging:test:extended": "cd e2e && npx bddgen --config playwright.staging.config.ts && npx playwright test --config playwright.staging.config.ts --project staging-extended",
-    "staging:test:maintenance": "cd e2e && npx bddgen --config playwright.staging.config.ts && npx playwright test --config playwright.staging.config.ts --project staging-maintenance",
-    "staging:test:readonly": "./scripts/staging/run-readonly-tests.sh",
-    "staging:test:readwrite": "./scripts/staging/run-readwrite-tests.sh",
-    "staging:test:polluting": "./scripts/staging/run-polluting-tests.sh",
-    "staging:test:all": "./scripts/staging/run-all-staging-tests.sh",
-    "test:migrations": "tsx --test src/server/migrations/__tests__/migrationRunner.test.ts",
-    "dev": "npx concurrently -k -n \"UI,SERVER\" -c \"magenta,blue\" \"yarn dev:ui\" \"cross-env SYNGRISI_AUTH=false yarn server:watch\"",
-    "dev:ui": "vite",
-    "dev:admin": "cross-env VITE_SYNGRISI_BASED_URL='http://localhost:3000' VITE_INDEX_ROUTE='admin/' vite/' vite #(!) open http://localhost:8080/admin/ ",
-    "build:watch": "cross-env VITE_ROOT_PATH='./src/ui-app/' vite build --watch",
-    "pub": "np --yolo --no-publish",
-    "tasks:reindex": "node dist/tasks/reindex.js",
-    "tasks:backup": "node dist/src/tasks/backup.js",
-    "tasks:restore": "node dist/src/tasks/restore.js",
-    "tasks:migration_2_0": "node src/tasks/migrations/2.0.migration.js",
-    "task:consistency": "node dist/tasks/cli/handle-database-consistency.cli.js",
-    "task:old-checks": "node dist/tasks/cli/handle-old-checks.cli.js",
-    "task:old-logs": "node dist/tasks/cli/remove-old-logs.cli.js",
-    "task:orphan-files": "node dist/tasks/cli/handle-orphan-files.cli.js",
-    "clean": "read -p \"Are you sure you want to clean the project? [y/n] \" REPLY; if [[ $REPLY =~ ^[Yy]$ ]]; then mongosh SyngrisiDb --eval \"db.dropDatabase();\" && rm -f ./baselines/*.png; fi",
-    "clean:force": "mongosh SyngrisiDb --eval \"db.dropDatabase();\" && rm -f ./baselines/*.png",
-    "start_test": "cross-env SYNGRISI_DB_URI='mongodb://localhost/SyngrisiDbTest' nodemon dist/server/server.js",
-    "clear_test": "mongosh SyngrisiDbTest$CID --eval \"db.dropDatabase();\" && rm -rf ./baselinesTest/$CID",
-    "clear_test_db_only": "mongosh SyngrisiDbTest$CID --eval \"db.dropDatabase();\"",
-    "docker_clear_test": "rm -rf ./data/db_data && rm -rf ./baselinesTest/$CID",
-    "docker_clear_test_db_only": "rm -rf ./data/db_data",
-    "clear_test_screenshots_only": "rm -rf ./baselinesTest/$CID/*",
-    "deadfile:fe": "deadfile ./mvc/views/react/index2/index.html ./mvc/views/react/auth/index.html --dir ./mvc/views/react",
-    "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section",
-    "seed": "yarn clean:force && node scripts/init-db.cjs && cd ../../seed-data && yarn install && SYNGRISI_URL=http://localhost:3000 SYNGRISI_API_KEY=123 yarn seed"
-  },
-  "author": {
-    "name": "Viktar Silakou",
-    "email": "1105714@gmail.com"
-  },
-  "bugs": {
-    "url": "https://github.com/syngrisi/syngrisi/issues"
-  },
-  "license": "MIT",
-  "dependencies": {
-    "@asteasolutions/zod-to-openapi": "^8.5.0",
-    "@inquirer/prompts": "^8.5.2",
-    "@node-saml/passport-saml": "^5.1.0",
-    "@syngrisi/node-resemble.js": "^3.6.0",
-    "bson": "^7.3.0",
-    "compression": "^1.8.1",
-    "connect-mongo": "^6.0.0",
-    "dotenv": "^17.4.2",
-    "envalid": "^8.2.0",
-    "express": "^5.2.1",
-    "express-fileupload": "^1.5.2",
-    "express-rate-limit": "^8.5.2",
-    "express-session": "^1.19.0",
-    "fast-xml-parser": "^5.9.3",
-    "helmet": "^8.2.0",
-    "jose": "^6.2.3",
-    "mongoose": "^9.7.1",
-    "passport": "^0.7.0",
-    "passport-google-oauth20": "^2.0.0",
-    "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^9.1.0",
-    "passport-oauth2": "^1.8.0",
-    "path-to-regexp": "^8.4.2",
-    "swagger-ui-express": "^5.0.1",
-    "tar-stream": "^3.2.0",
-    "winston": "^3.19.0",
-    "winston-mongodb": "^7.0.1",
-    "zod": "^4.1.13"
-  },
-  "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/express-fileupload": "^1.5.1",
-    "@types/express-session": "^1.19.0",
-    "@types/fabric": "^5.3.11",
-    "@types/node": "^26.0.0",
-    "@types/passport": "^1.0.17",
-    "@types/passport-google-oauth20": "^2.0.17",
-    "@types/passport-local": "^1.0.38",
-    "@types/passport-oauth2": "^1.8.0",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@types/swagger-ui-express": "^4.1.8",
-    "@typescript-eslint/eslint-plugin": "^8.61.1",
-    "@typescript-eslint/parser": "^8.61.1",
-    "@vitejs/plugin-react": "^6.0.2",
-    "concurrently": "^10.0.3",
-    "cross-env": "^10.1.0",
-    "eslint": "^9.39.4",
-    "eslint-plugin-custom": "file:.eslint",
-    "ink": "^7.1.0",
-    "nodemon": "^3.1.14",
-    "playwright-bdd": "^9.2.0",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "rimraf": "^6.1.3",
-    "sass": "^1.101.0",
-    "ts-node": "^10.9.2",
-    "tsup": "^8.5.1",
-    "tsx": "^4.22.4",
-    "typescript": "^6.0.3",
-    "vite": "^8.0.16"
-  },
-  "nyc": {
-    "all": true,
-    "include": [
-      "src/server/**/*.js"
-    ],
-    "exclude": [
-      "**/*.test.js",
-      "coverage/**",
-      "node_modules/**"
-    ],
-    "reporter": [
-      "json"
-    ],
-    "extension": [
-      ".js"
-    ]
-  },
-  "gitHead": "12bfda406cbe5aaccf3f17fdab02a9bd1a9d6343"
+    "nodemonConfig": {
+        "ignore": [
+            "mvc/views/lib/*.js"
+        ],
+        "include": [
+            "dist"
+        ],
+        "delay": 500
+    },
+    "scripts": {
+        "server:watch": "npx tsup --watch --onSuccess \"node ./dist/server/server.js\" # compile all server ts files changes",
+        "start": "if [ \"$NODE_ENV\" = \"development\" ]; then yarn server:watch; else node ./dist/server/server.js; fi",
+        "start:dev": "cross-env SYNGRISI_AUTH=true SYNGRISI_TEST_MODE=true SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE=true npx tsup --watch --onSuccess \"node ./dist/server/server.js\"",
+        "test": "yarn build && cd e2e && yarn test",
+        "test:mcp": "cd e2e && yarn test:mcp",
+        "test:mcp:test-engine": "cd e2e && yarn test:mcp:test-engine",
+        "start:mcp": "cd e2e && yarn start:mcp",
+        "start:mcp:bridge": "cd e2e && yarn start:mcp:bridge",
+        "build": "yarn build:ui && yarn build:server",
+        "clean:server": "rimraf dist",
+        "build:ui": "rm -rf mvc/views/react/assets && cross-env VITE_ROOT_PATH='./src/ui-app/' vite build",
+        "build:server": "yarn clean:server && npx tsup",
+        "install:server": "yarn install",
+        "install:ui": "cd src/ui-app && yarn install && cd --",
+        "install:all": "yarn install:server && yarn install:ui",
+        "test:docker": "cd e2e && yarn test:docker",
+        "smoke": "cd e2e && yarn test:smoke",
+        "staging:test": "cd e2e && npx bddgen --config playwright.staging.config.ts && npx playwright test --config playwright.staging.config.ts",
+        "staging:test:smoke": "cd e2e && npx bddgen --config playwright.staging.config.ts && npx playwright test --config playwright.staging.config.ts --project staging-smoke",
+        "staging:test:extended": "cd e2e && npx bddgen --config playwright.staging.config.ts && npx playwright test --config playwright.staging.config.ts --project staging-extended",
+        "staging:test:maintenance": "cd e2e && npx bddgen --config playwright.staging.config.ts && npx playwright test --config playwright.staging.config.ts --project staging-maintenance",
+        "staging:test:readonly": "./scripts/staging/run-readonly-tests.sh",
+        "staging:test:readwrite": "./scripts/staging/run-readwrite-tests.sh",
+        "staging:test:polluting": "./scripts/staging/run-polluting-tests.sh",
+        "staging:test:all": "./scripts/staging/run-all-staging-tests.sh",
+        "test:migrations": "tsx --test src/server/migrations/__tests__/migrationRunner.test.ts",
+        "dev": "npx concurrently -k -n \"UI,SERVER\" -c \"magenta,blue\" \"yarn dev:ui\" \"cross-env SYNGRISI_AUTH=false yarn server:watch\"",
+        "dev:ui": "vite",
+        "dev:admin": "cross-env VITE_SYNGRISI_BASED_URL='http://localhost:3000' VITE_INDEX_ROUTE='admin/' vite/' vite #(!) open http://localhost:8080/admin/ ",
+        "build:watch": "cross-env VITE_ROOT_PATH='./src/ui-app/' vite build --watch",
+        "pub": "np --yolo --no-publish",
+        "tasks:reindex": "node dist/tasks/reindex.js",
+        "tasks:backup": "node dist/src/tasks/backup.js",
+        "tasks:restore": "node dist/src/tasks/restore.js",
+        "tasks:migration_2_0": "node src/tasks/migrations/2.0.migration.js",
+        "task:consistency": "node dist/tasks/cli/handle-database-consistency.cli.js",
+        "task:old-checks": "node dist/tasks/cli/handle-old-checks.cli.js",
+        "task:old-logs": "node dist/tasks/cli/remove-old-logs.cli.js",
+        "task:orphan-files": "node dist/tasks/cli/handle-orphan-files.cli.js",
+        "clean": "read -p \"Are you sure you want to clean the project? [y/n] \" REPLY; if [[ $REPLY =~ ^[Yy]$ ]]; then mongosh SyngrisiDb --eval \"db.dropDatabase();\" && rm -f ./baselines/*.png; fi",
+        "clean:force": "mongosh SyngrisiDb --eval \"db.dropDatabase();\" && rm -f ./baselines/*.png",
+        "start_test": "cross-env SYNGRISI_DB_URI='mongodb://localhost/SyngrisiDbTest' nodemon dist/server/server.js",
+        "clear_test": "mongosh SyngrisiDbTest$CID --eval \"db.dropDatabase();\" && rm -rf ./baselinesTest/$CID",
+        "clear_test_db_only": "mongosh SyngrisiDbTest$CID --eval \"db.dropDatabase();\"",
+        "docker_clear_test": "rm -rf ./data/db_data && rm -rf ./baselinesTest/$CID",
+        "docker_clear_test_db_only": "rm -rf ./data/db_data",
+        "clear_test_screenshots_only": "rm -rf ./baselinesTest/$CID/*",
+        "deadfile:fe": "deadfile ./mvc/views/react/index2/index.html ./mvc/views/react/auth/index.html --dir ./mvc/views/react",
+        "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section",
+        "seed": "yarn clean:force && node scripts/init-db.cjs && cd ../../seed-data && yarn install && SYNGRISI_URL=http://localhost:3000 SYNGRISI_API_KEY=123 yarn seed"
+    },
+    "author": {
+        "name": "Viktar Silakou",
+        "email": "1105714@gmail.com"
+    },
+    "bugs": {
+        "url": "https://github.com/syngrisi/syngrisi/issues"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "@asteasolutions/zod-to-openapi": "^8.5.0",
+        "@inquirer/prompts": "^8.5.2",
+        "@node-saml/passport-saml": "^5.1.0",
+        "@syngrisi/node-resemble.js": "^3.6.0",
+        "bson": "^7.3.0",
+        "compression": "^1.8.1",
+        "connect-mongo": "^6.0.0",
+        "dotenv": "^17.4.2",
+        "envalid": "^8.2.0",
+        "express": "^5.2.1",
+        "express-fileupload": "^1.5.2",
+        "express-rate-limit": "^8.5.2",
+        "express-session": "^1.19.0",
+        "fast-xml-parser": "^5.9.3",
+        "helmet": "^8.2.0",
+        "jose": "^6.2.3",
+        "mongoose": "^9.7.1",
+        "passport": "^0.7.0",
+        "passport-google-oauth20": "^2.0.0",
+        "passport-local": "^1.0.0",
+        "passport-local-mongoose": "^9.1.0",
+        "passport-oauth2": "^1.8.0",
+        "path-to-regexp": "^8.4.2",
+        "swagger-ui-express": "^5.0.1",
+        "tar-stream": "^3.2.0",
+        "winston": "^3.19.0",
+        "winston-mongodb": "^7.0.1",
+        "zod": "^4.1.13",
+        "pngjs": "^7.0.0"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.6",
+        "@types/express-fileupload": "^1.5.1",
+        "@types/express-session": "^1.19.0",
+        "@types/fabric": "^5.3.11",
+        "@types/node": "^26.0.0",
+        "@types/passport": "^1.0.17",
+        "@types/passport-google-oauth20": "^2.0.17",
+        "@types/passport-local": "^1.0.38",
+        "@types/passport-oauth2": "^1.8.0",
+        "@types/react": "^19.2.17",
+        "@types/react-dom": "^19.2.3",
+        "@types/swagger-ui-express": "^4.1.8",
+        "@typescript-eslint/eslint-plugin": "^8.61.1",
+        "@typescript-eslint/parser": "^8.61.1",
+        "@vitejs/plugin-react": "^6.0.2",
+        "concurrently": "^10.0.3",
+        "cross-env": "^10.1.0",
+        "eslint": "^9.39.4",
+        "eslint-plugin-custom": "file:.eslint",
+        "ink": "^7.1.0",
+        "nodemon": "^3.1.14",
+        "playwright-bdd": "^9.2.0",
+        "react": "^19.2.7",
+        "react-dom": "^19.2.7",
+        "rimraf": "^6.1.3",
+        "sass": "^1.101.0",
+        "ts-node": "^10.9.2",
+        "tsup": "^8.5.1",
+        "tsx": "^4.22.4",
+        "typescript": "^6.0.3",
+        "vite": "^8.0.16"
+    },
+    "nyc": {
+        "all": true,
+        "include": [
+            "src/server/**/*.js"
+        ],
+        "exclude": [
+            "**/*.test.js",
+            "coverage/**",
+            "node_modules/**"
+        ],
+        "reporter": [
+            "json"
+        ],
+        "extension": [
+            ".js"
+        ]
+    },
+    "gitHead": "12bfda406cbe5aaccf3f17fdab02a9bd1a9d6343"
 }
