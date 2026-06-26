@@ -112,8 +112,7 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 > icon, and Syngrisi pulls up every other check with the *same* visual change.
 
 
-https://github.com/user-attachments/assets/192eb44d-952a-42e7-aa97-8ff9f96f81d4
-
+https://github.com/user-attachments/assets/3dca7b0f-5056-423d-bef7-81d2ac6f6125
 
 
 - 🎯 **Same change, everywhere** — finds the identical diff across other resolutions **and**
