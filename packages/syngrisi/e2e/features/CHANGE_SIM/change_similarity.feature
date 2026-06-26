@@ -25,7 +25,6 @@ Feature: Change similarity — the same change at other resolutions
     When I wait 15 seconds for the element with locator "[data-row-name='SimUi__768x1024']" to be visible
     Then the element with locator "[data-row-name='SimUi__1366x768']" should be visible
     Then the element with locator "[data-row-name='SimUi__other']" should be hidden
-    # the existing per-check accept/reject controls are available on the filtered checks
-    When I unfold the test "SimUi__768x1024"
+    # the query test stays expanded; its filtered check still exposes the per-check accept/reject control
     Then the element with locator "[data-check='ChangeCheck']" should be visible
     Then the element with locator "[data-check='ChangeCheck'] [data-test='not-accepted-error-icon']" should be visible
