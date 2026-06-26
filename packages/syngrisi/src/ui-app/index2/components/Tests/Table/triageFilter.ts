@@ -5,10 +5,12 @@ export interface ParsedTriageFilter {
     verdicts: string[];
     minConfidence?: number;
     reasonContains?: string;
+    ids?: string[]; // explicit check-id set (e.g. "same change at other resolutions")
     active: boolean;
 }
 
 // Parse the raw `checkFilter` URL param. `triage.verdict` may be a string (legacy) or string[].
+// `_idIn` is an explicit set of check ids (used by the "same change" panel → show-in-table).
 export function parseTriageFilter(checkFilter: any): ParsedTriageFilter {
     const cf = (checkFilter && typeof checkFilter === 'object') ? checkFilter : {};
     const rawV = cf['triage.verdict'];
@@ -16,12 +18,17 @@ export function parseTriageFilter(checkFilter: any): ParsedTriageFilter {
     const minConfidence = typeof cf.minConfidence === 'number' ? cf.minConfidence : undefined;
     const reasonContains = (typeof cf.reasonContains === 'string' && cf.reasonContains)
         ? cf.reasonContains.toLowerCase() : undefined;
-    const active = verdicts.length > 0 || typeof minConfidence === 'number' || !!reasonContains;
-    return { verdicts, minConfidence, reasonContains, active };
+    const ids = Array.isArray(cf._idIn) ? cf._idIn.map(String).filter(Boolean) : undefined;
+    const active = (!!ids && ids.length > 0) || verdicts.length > 0 || typeof minConfidence === 'number' || !!reasonContains;
+    return { verdicts, minConfidence, reasonContains, ids, active };
 }
 
 // Does a single check satisfy the filter?
 export function checkMatchesTriage(check: any, f: ParsedTriageFilter): boolean {
+    // Explicit check-id set takes precedence (filter to exactly this set, e.g. similar changes).
+    if (f.ids && f.ids.length) {
+        return f.ids.includes(String(check?._id ?? check?.id ?? ''));
+    }
     const t = check?.triage;
     if (!t) return false;
     if (f.verdicts.length && !f.verdicts.includes(t.verdict)) return false;

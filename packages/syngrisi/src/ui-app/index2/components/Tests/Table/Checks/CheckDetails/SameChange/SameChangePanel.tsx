@@ -35,9 +35,12 @@ export function SameChangePanel({ checkId }: { checkId?: string }) {
     const results: Sibling[] = data?.results || [];
     if (!checkId || results.length === 0) return null;
 
+    // Filter the standard table to exactly this change set (query + siblings) via the client-side
+    // check filter, then close the modal so the table — with its existing per-check accept/reject
+    // controls — shows just these checks.
     const showInTable = () => {
         const ids = [checkId, ...results.map((r) => r.checkId)];
-        setQuery({ quick_filter: { _id: { $in: ids } } });
+        setQuery({ checkFilter: { _idIn: ids }, checkId: undefined, modalIsOpen: undefined });
     };
 
     return (
