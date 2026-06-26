@@ -256,6 +256,35 @@ export function QuickFilter(
         </Group>
     );
 
+    // Compact pill shown INSIDE the filter input when a similarity filter is active; X resets it.
+    const similarBadge = query.similarTo ? (
+        <Badge
+            size="xs"
+            radius="xl"
+            color="grape"
+            variant="light"
+            data-test="similarity-filter-badge"
+            title="Showing checks similar to the selected one"
+            styles={{ root: { textTransform: 'none', paddingLeft: 8, paddingRight: 2 }, label: { display: 'flex', alignItems: 'center', gap: 2 } }}
+            rightSection={(
+                <ActionIcon
+                    size={14}
+                    radius="xl"
+                    variant="transparent"
+                    color="grape"
+                    aria-label="Reset similarity filter"
+                    title="Reset similarity filter"
+                    data-test="similarity-filter-reset"
+                    onClick={() => setQuery({ similarTo: undefined })}
+                >
+                    <IconX size={10} stroke={1.5} />
+                </ActionIcon>
+            )}
+        >
+            ~ similar
+        </Badge>
+    ) : null;
+
     return (
         <Box
             className={className}
@@ -274,31 +303,6 @@ export function QuickFilter(
                 align="center"
                 style={{ padding: 0 }}
             >
-                {query.similarTo && (
-                    <Badge
-                        size="lg"
-                        radius="sm"
-                        color="grape"
-                        variant="light"
-                        data-test="similarity-filter-badge"
-                        title="Showing checks similar to the selected one"
-                        rightSection={(
-                            <ActionIcon
-                                size="xs"
-                                variant="transparent"
-                                color="grape"
-                                aria-label="Reset similarity filter"
-                                title="Reset similarity filter"
-                                data-test="similarity-filter-reset"
-                                onClick={() => setQuery({ similarTo: undefined })}
-                            >
-                                <IconX size={12} stroke={1.5} />
-                            </ActionIcon>
-                        )}
-                    >
-                        ~ Similar
-                    </Badge>
-                )}
                 <Popover
                     width={330}
                     position="bottom"
@@ -317,6 +321,9 @@ export function QuickFilter(
                             placeholder={searchPlaceholder}
                             size="xs"
                             radius="xs"
+                            leftSection={similarBadge}
+                            leftSectionWidth={query.similarTo ? 96 : 0}
+                            leftSectionPointerEvents="auto"
                             rightSection={rightSection}
                             rightSectionWidth={108}
                             rightSectionPointerEvents="auto"
