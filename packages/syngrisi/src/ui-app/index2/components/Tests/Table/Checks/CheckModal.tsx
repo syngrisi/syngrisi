@@ -36,6 +36,10 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
         if (query.checkId && query.modalIsOpen === 'true') {
             setInitCheckId(query.checkId);
             checkModalHandlers.open();
+        } else if (checkModalOpened) {
+            // params no longer point at an open check (e.g. "Find similar" navigated away) → close
+            checkModalHandlers.close();
+            setInitCheckId('');
         }
     }, [query.modalIsOpen, query.checkId]);
 
