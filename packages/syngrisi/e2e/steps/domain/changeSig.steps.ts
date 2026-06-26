@@ -10,34 +10,59 @@ import * as crypto from 'crypto';
 const filesDir = path.resolve(__dirname, '..', '..', 'files');
 const A = fs.readFileSync(path.join(filesDir, 'A.png'));
 const B = fs.readFileSync(path.join(filesDir, 'B.png'));
+// a clearly different image (unrelated change) lives in the package tests fixtures
+const C = fs.readFileSync(path.resolve(__dirname, '..', '..', '..', 'tests', 'files', 'C.png'));
 
-// Create ONE run where the SAME change (A baseline -> B actual) is produced at several viewports:
-// per viewport, push+auto-accept A as the baseline, then push B to get a failed check with a diff.
+// Push one failed check (accept `baseline`, then push `actual`) for a given run/test/viewport.
+async function pushChange(
+    baseURL: string, apiKey: string,
+    o: { run: string; runident: string; app: string; test: string; viewport: string; checkName: string; baseline: Buffer; actual: Buffer },
+) {
+    const params = {
+        test: o.test, run: o.run, runident: o.runident, app: o.app, branch: 'main',
+        suite: o.run, os: 'macOS', browserName: 'chrome',
+        browserVersion: '11', browserFullVersion: '11.0.0.0', viewport: o.viewport,
+    };
+    const d1 = new SyngrisiDriver({ url: baseURL, apiKey });
+    await d1.startTestSession({ params });
+    await d1.check({ checkName: o.checkName, imageBuffer: o.baseline, params: { viewport: o.viewport, browserName: 'chrome', os: 'macOS', autoAccept: true } });
+    await d1.stopTestSession();
+    const d2 = new SyngrisiDriver({ url: baseURL, apiKey });
+    await d2.startTestSession({ params });
+    await d2.check({ checkName: o.checkName, imageBuffer: o.actual, params: { viewport: o.viewport, browserName: 'chrome', os: 'macOS' } });
+    await d2.stopTestSession();
+}
+
+const apiKey = () => process.env.SYNGRISI_API_KEY || '123';
+const base = (appServer: AppServerFixture) => (appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`);
+
+// Create ONE run where the SAME change (A -> B) is produced at several viewports — one test per
+// viewport so the table rows are addressable; all share a run so they are sibling candidates.
 Given(
     'I create a run {string} with the same change at viewports {string}',
-    async ({ appServer }: { appServer: AppServerFixture }, runName: string, vpsCsv: string) => {
-        const apiKey = process.env.SYNGRISI_API_KEY || '123';
-        const baseURL = appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`;
+    async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, runName: string, vpsCsv: string) => {
         const runident = crypto.randomUUID();
-        const viewports = vpsCsv.split(',').map((s) => s.trim()).filter(Boolean);
-        for (const vp of viewports) {
-            const params = {
-                test: runName, run: runName, runident, app: `${runName}-app`, branch: 'main',
-                suite: runName, os: 'macOS', browserName: 'chrome',
-                browserVersion: '11', browserFullVersion: '11.0.0.0', viewport: vp,
-            };
-            // accepted baseline (A)
-            const d1 = new SyngrisiDriver({ url: baseURL, apiKey });
-            await d1.startTestSession({ params });
-            await d1.check({ checkName: 'ChangeCheck', imageBuffer: A, params: { viewport: vp, browserName: 'chrome', os: 'macOS', autoAccept: true } });
-            await d1.stopTestSession();
-            // actual (B) -> failed diff, same run
-            const d2 = new SyngrisiDriver({ url: baseURL, apiKey });
-            await d2.startTestSession({ params });
-            await d2.check({ checkName: 'ChangeCheck', imageBuffer: B, params: { viewport: vp, browserName: 'chrome', os: 'macOS' } });
-            await d2.stopTestSession();
+        const app = `${runName}-app`;
+        testData.set(`simrun:${runName}`, { runident, app });
+        for (const vp of vpsCsv.split(',').map((s) => s.trim()).filter(Boolean)) {
+            await pushChange(base(appServer), apiKey(), {
+                run: runName, runident, app, test: `${runName}__${vp}`, viewport: vp, checkName: 'ChangeCheck', baseline: A, actual: B,
+            });
         }
-        await new Promise((r) => setTimeout(r, 400)); // brief indexing delay
+        await new Promise((r) => setTimeout(r, 400));
+    },
+);
+
+// Add an UNRELATED change (A -> C) to the same run; it must NOT be returned as a sibling and must
+// be filtered out by "show in table".
+Given(
+    'I add an unrelated failed change {string} to run {string} at viewport {string}',
+    async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }, checkName: string, runName: string, vp: string) => {
+        const info = testData.get(`simrun:${runName}`) as { runident: string; app: string };
+        await pushChange(base(appServer), apiKey(), {
+            run: runName, runident: info.runident, app: info.app, test: `${runName}__other`, viewport: vp, checkName, baseline: A, actual: C,
+        });
+        await new Promise((r) => setTimeout(r, 300));
     },
 );
 
@@ -55,7 +80,6 @@ Then(
         const resp = await requestWithSession(`${appServer.baseURL}/v1/checks/${query._id}/siblings`, testData, appServer);
         const results = (resp.json.results || []) as Array<{ viewport: string; distance: number }>;
         expect(results.length, `siblings of ${checkName}`).toBe(expected);
-        // every returned sibling is a DIFFERENT viewport than the query (same change, other resolution)
         const viewports = results.map((r) => r.viewport);
         expect(viewports).not.toContain(query.viewport);
         expect(new Set(viewports).size, 'one per viewport').toBe(results.length);
