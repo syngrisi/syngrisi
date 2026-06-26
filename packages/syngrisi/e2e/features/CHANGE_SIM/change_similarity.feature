@@ -38,3 +38,8 @@ Feature: Change similarity — find similar checks
     # all matching tests auto-expand (no manual unfolding) → 4 checks, each with a ~NN% badge
     Then the element "[data-test='similarity-score']" does appear exactly "4" times
     Then the element "[data-test='similarity-score']" contains the text "~"
+    # the quick filter shows an active similarity badge with a reset; resetting clears the filter
+    Then the element with locator "[data-test='similarity-filter-badge']" should be visible
+    When I click element with locator "[data-test='similarity-filter-reset']"
+    When I wait 10 seconds for the element with locator "[data-row-name='SimUi__other']" to be visible
+    Then the element "[data-test='similarity-score']" does appear exactly "0" times

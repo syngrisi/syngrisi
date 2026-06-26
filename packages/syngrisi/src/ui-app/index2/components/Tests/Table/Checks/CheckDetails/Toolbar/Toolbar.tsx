@@ -412,7 +412,8 @@ export function Toolbar(
                                                 onClick={(e) => { e.preventDefault(); setQuery({ similarTo: String(curCheck._id), checkId: undefined, modalIsOpen: undefined }); }}
                                                 title="Find similar checks"
                                                 aria-label="Find similar checks"
-                                                variant="default"
+                                                variant="subtle"
+                                                color="gray"
                                                 size={toolbarActionIconSize}
                                                 data-test="find-similar-checks"
                                                 data-check-find-similar={curCheck.name}
@@ -426,7 +427,8 @@ export function Toolbar(
                                             onClick={onRunTriage}
                                             title="Run AI Triage"
                                             aria-label="Run AI Triage"
-                                            variant="default"
+                                            variant="subtle"
+                                            color="gray"
                                             loading={triageRunning}
                                             data-test="triage-run-button"
                                             size={toolbarActionIconSize}
