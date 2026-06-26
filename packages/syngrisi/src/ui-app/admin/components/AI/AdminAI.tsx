@@ -82,6 +82,7 @@ function PerProjectTriage() {
     const [verdicts, setVerdicts] = useState<Verdict[]>(DEFAULT_VERDICTS);
     const [prompt, setPrompt] = useState<string>('');
     const [examples, setExamples] = useState<Example[]>([]);
+    const [simGate, setSimGate] = useState<number>(0.32);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -95,6 +96,7 @@ function PerProjectTriage() {
         // Always show the effective prompt: the project's override, or the generated default.
         setPrompt(selected.triagePrompt ? selected.triagePrompt : buildDefaultPrompt(vlist));
         setExamples(Array.isArray(selected.triageExamples) ? selected.triageExamples : []);
+        setSimGate(typeof selected.changeSimGate === 'number' ? selected.changeSimGate : 0.32);
     }, [selected]);
 
     const addExample = (file: File | null) => {
@@ -125,6 +127,7 @@ function PerProjectTriage() {
                 // if the prompt still equals the generated default, store empty (= keep following the default)
                 triagePrompt: prompt.trim() === buildDefaultPrompt(verdicts).trim() ? '' : prompt.trim(),
                 triageExamples: examples,
+                changeSimGate: simGate,
             }, {}, 'AdminAI.savePerProject');
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             successMsg({ message: 'Project AI Triage config saved' });
@@ -282,6 +285,33 @@ function PerProjectTriage() {
                         {(props) => <Button {...props} variant="default" leftSection={<IconPhoto size={16} />} mt="xs" data-test="ai-example-add">Add example image</Button>}
                     </FileButton>
 
+                    <Divider my="md" label={(
+                        <Group gap={4}>
+                            <Text size="sm">AI Similarity</Text>
+                            <HelpDoc
+                                title="AI Similarity"
+                                lines={[
+                                    'AI Similarity finds the same visual change across other checks of the same run (other resolutions, browsers). Open a failed check and use the "Find similar checks" icon in the toolbar.',
+                                    'Match threshold (0..1): the maximum cosine distance for two changes to be treated as the same. Lower = stricter (fewer, surer matches); higher = looser. Default 0.32.',
+                                ]}
+                            />
+                        </Group>
+                    )}
+                    />
+                    <NumberInput
+                        label="Similarity match threshold"
+                        description="0..1 cosine cutoff — lower is stricter, higher is looser"
+                        min={0}
+                        max={1}
+                        step={0.02}
+                        decimalScale={2}
+                        value={simGate}
+                        onChange={(v) => setSimGate(typeof v === 'number' ? v : 0.32)}
+                        data-test="ai-sim-gate"
+                        w={260}
+                        mb="md"
+                    />
+
                     <Group mt="md">
                         <Button onClick={save} loading={saving} data-test="ai-perproject-save">Save project config</Button>
                     </Group>
@@ -305,12 +335,15 @@ export default function AdminAI() {
                 <Tabs defaultValue="settings" mt="sm" keepMounted={false}>
                     <Tabs.List>
                         <Tabs.Tab value="settings" data-test="ai-tab-settings">Settings</Tabs.Tab>
+                        <Tabs.Tab value="projects" data-test="ai-tab-projects">Projects settings</Tabs.Tab>
                         <Tabs.Tab value="queue" data-test="ai-tab-queue">Queue</Tabs.Tab>
                     </Tabs.List>
                     <Tabs.Panel value="settings">
                         {settingsQuery.isLoading
                             ? <Loader />
                             : <AIProviderSettingsForm settings={settingsQuery.data || []} refetch={settingsQuery.refetch} />}
+                    </Tabs.Panel>
+                    <Tabs.Panel value="projects">
                         <PerProjectTriage />
                     </Tabs.Panel>
                     <Tabs.Panel value="queue">
