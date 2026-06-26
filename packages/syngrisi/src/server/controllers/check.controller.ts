@@ -6,6 +6,7 @@ import { ExtRequest } from '@types';
 import { CheckDocument } from '@models';
 import { Response } from "express";
 import { appSettings } from '@settings';
+import * as changeSigService from '@services/changeSig';
 
 const get = catchAsync(async (req: ExtRequest, res: Response) => {
     // const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
@@ -102,6 +103,15 @@ const getDomSnapshot = catchAsync(async (req: ExtRequest, res: Response) => {
     res.json(content);
 });
 
+// "The same change at other resolutions": rank other failed checks in this check's run by the
+// color_hist descriptor, return the best match per other viewport (gated by the project setting).
+const getSiblings = catchAsync(async (req: ExtRequest, res: Response) => {
+    const { id } = req.params;
+    if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Check ID is required');
+    const out = await changeSigService.findSiblings(id);
+    res.json(out);
+});
+
 export {
     getViaPost,
     get,
@@ -110,4 +120,5 @@ export {
     recompare,
     update,
     getDomSnapshot,
+    getSiblings,
 };
