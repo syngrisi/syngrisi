@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Response } from 'express';
-import { Check, Webhook, App } from '@models';
+import { Check, Webhook, App, Run, Test } from '@models';
 import { catchAsync, ApiError } from '@utils';
 import { config } from '@config';
 import fs from 'fs';
@@ -492,6 +492,74 @@ const getAnalysis = catchAsync(async (req: ExtRequest, res: Response) => {
     });
 });
 
+// Aggregated report for a single run: run metadata, status breakdown, diff summary,
+// and the tests with their checks. JSON for programmatic/AI consumption.
+const getRunReport = catchAsync(async (req: ExtRequest, res: Response) => {
+    const { runId } = req.params;
+
+    const run: any = await Run.findById(runId).exec();
+    if (!run) {
+        res.status(404).json({ error: 'Run not found' });
+        return;
+    }
+
+    const [tests, checks] = await Promise.all([
+        Test.find({ run: runId }).select('_id name status').lean().exec() as Promise<any[]>,
+        Check.find({ run: runId }).select('_id name status test diffId markedAs createdDate').lean().exec() as Promise<any[]>,
+    ]);
+
+    const statuses: Record<string, number> = {};
+    let accepted = 0;
+    let withDiff = 0;
+    for (const c of checks) {
+        const s = (Array.isArray(c.status) ? c.status[0] : c.status) || 'unknown';
+        statuses[s] = (statuses[s] || 0) + 1;
+        if (c.diffId) withDiff += 1;
+        if (c.markedAs === 'accepted') accepted += 1;
+    }
+
+    const checksByTest = new Map<string, any[]>();
+    for (const c of checks) {
+        const key = String(c.test);
+        if (!checksByTest.has(key)) checksByTest.set(key, []);
+        checksByTest.get(key)!.push({
+            id: c._id,
+            name: c.name,
+            status: Array.isArray(c.status) ? c.status[0] : c.status,
+            hasDiff: !!c.diffId,
+            markedAs: c.markedAs || null,
+            createdDate: c.createdDate,
+        });
+    }
+
+    res.json({
+        run: {
+            id: run._id,
+            name: run.name,
+            app: run.app,
+            ident: run.ident,
+            description: run.description || null,
+            createdDate: run.createdDate,
+            updatedDate: run.updatedDate,
+            parameters: run.parameters || [],
+        },
+        summary: {
+            totalTests: tests.length,
+            totalChecks: checks.length,
+            statuses,
+            accepted,
+            withDiff,
+            diffPercentage: checks.length > 0 ? Math.round((withDiff / checks.length) * 1000) / 10 : 0,
+        },
+        tests: tests.map((t) => ({
+            id: t._id,
+            name: t.name,
+            status: t.status,
+            checks: checksByTest.get(String(t._id)) || [],
+        })),
+    });
+});
+
 const batchUpdate = catchAsync(async (req: ExtRequest, res: Response) => {
     const { ids, action } = req.body;
     const idList = Array.isArray(ids) ? ids : [ids];
@@ -635,6 +703,7 @@ export const aiController = {
     getChecks,
     getCheckDetails,
     getAnalysis,
+    getRunReport,
     batchUpdate,
     registerWebhook,
     triageRun,

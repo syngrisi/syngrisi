@@ -14,6 +14,6 @@ export default defineConfig({
   clean: true,
   target: 'es2022',
   platform: 'node',
-  // Mark deprecated dependencies as external (used only in server_old.ts)
-  external: ['pino', 'pino-http', 'body-parser', 'p-queue', 'chalk', 'string-table', 'cookie-parser', 'http-status'],
+  // pino / pino-http are used by src/server/lib/httpLogger.ts; keep them external.
+  external: ['pino', 'pino-http'],
 });
