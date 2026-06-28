@@ -11,7 +11,7 @@ export async function run() {
 
         if (args.help || args._.includes('--help')) {
             console.log(`
-            Usage: syngrisi [DIRECTORY] [OPTIONS]
+            Usage: npm init sy [DIRECTORY] [OPTIONS]
 
             DIRECTORY:
             Specify the directory where Syngrisi will be installed. If not provided, the current directory will be used.
@@ -19,6 +19,7 @@ export async function run() {
             Options:
             -f, --force   Force the installation even if the checks are not passed
             -y, --yes     Automatically agree to continue the installation
+            --npmTag      Syngrisi package version to install (default: latest)
             --help        Show usage information and exit
         `)
             return

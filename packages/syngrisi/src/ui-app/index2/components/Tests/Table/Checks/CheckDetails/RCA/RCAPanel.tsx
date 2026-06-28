@@ -19,6 +19,8 @@ import {
     ThemeIcon,
     Loader,
     Center,
+    ActionIcon,
+    Tooltip,
 } from '@mantine/core';
 import {
     IconAlertTriangle,
@@ -29,6 +31,7 @@ import {
     IconTextCaption,
     IconListDetails,
     IconCode,
+    IconBoxModel,
 } from '@tabler/icons-react';
 
 import {
@@ -49,6 +52,8 @@ interface RCAPanelProps {
     selectedElement: DOMNode | null;
     onSelectChange: (change: DOMChange | null) => void;
     onClose: () => void;
+    isWireframeEnabled?: boolean;
+    onToggleWireframe?: () => void;
 }
 
 /**
@@ -132,7 +137,7 @@ function formatXPath(xpath: string) {
 function AttributesDiff({ properties }: { properties: PropertyChange[] }) {
     if (!properties || properties.length === 0) return null;
     return (
-        <Paper p="xs" withBorder bg="var(--mantine-color-dark-8)">
+        <Paper p="xs" withBorder bg="light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8))">
             <Text size="xs" fw={500} mb="xs" c="dimmed">Attributes</Text>
             <Stack gap={4}>
                 {properties.map((prop, idx) => (
@@ -164,7 +169,7 @@ function BoundingBoxVisualizer({ baseline, actual }: { baseline?: DOMNode, actua
     const aRect = actual?.rect;
 
     return (
-        <Paper p="xs" withBorder bg="var(--mantine-color-dark-8)">
+        <Paper p="xs" withBorder bg="light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8))">
             <Text size="xs" fw={500} mb="xs" c="dimmed">Bounding box</Text>
             <Group justify="center" gap="xl" align="center">
                 {/* Position */}
@@ -191,8 +196,8 @@ function BoundingBoxVisualizer({ baseline, actual }: { baseline?: DOMNode, actua
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        border: '1px solid var(--mantine-color-dark-4)',
-                        backgroundColor: 'var(--mantine-color-dark-7)',
+                        border: '1px solid var(--mantine-color-default-border)',
+                        backgroundColor: 'light-dark(var(--mantine-color-white), var(--mantine-color-dark-7))',
                         borderRadius: '4px'
                     }}
                 >
@@ -228,7 +233,7 @@ function ChangeItem({
     const icon = getChangeIcon(change.type);
 
     return (
-        <Accordion.Item value={change.id} style={{ borderColor: 'var(--mantine-color-dark-4)', backgroundColor: 'var(--mantine-color-dark-6)', marginBottom: 4, borderRadius: 4 }}>
+        <Accordion.Item value={change.id} style={{ borderColor: 'var(--mantine-color-default-border)', backgroundColor: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))', marginBottom: 4, borderRadius: 4 }}>
             <Accordion.Control onClick={onSelect}>
                 <Group gap="xs" wrap="nowrap">
                     <ThemeIcon size="sm" variant="light" color={color} style={{ flexShrink: 0 }}>
@@ -340,6 +345,8 @@ export function RCAPanel({
     selectedChange,
     onSelectChange,
     onClose,
+    isWireframeEnabled,
+    onToggleWireframe,
 }: RCAPanelProps) {
     const [activeTab, setActiveTab] = useState<string | null>('issues');
 
@@ -429,11 +436,38 @@ export function RCAPanel({
                 flexDirection: 'column',
             }}
         >
-            <Box p="sm" style={{ borderBottom: '1px solid var(--mantine-color-dark-5)' }}>
-                <Group justify="space-between" align="center">
-                    <Text size="sm" fw={600} data-test="rca-panel-title">
+            <Box style={{ borderBottom: '1px solid var(--mantine-color-default-border)' }}>
+                <Group justify="space-between" align="center" px="sm" pt="sm" pb="xs" wrap="nowrap">
+                    <Text size="sm" fw={700} c="var(--mantine-color-text)" data-test="rca-panel-title">
                         Root Cause Analysis
                     </Text>
+                </Group>
+
+                {/* Panel toolbar: wireframe toggle + change stats */}
+                <Group
+                    justify="flex-start"
+                    align="center"
+                    gap="sm"
+                    px="sm"
+                    pb="xs"
+                    wrap="nowrap"
+                    data-test="rca-panel-toolbar"
+                >
+                    {onToggleWireframe && (
+                        <Tooltip label="Toggle wireframe overlay" withinPortal>
+                            <ActionIcon
+                                onClick={onToggleWireframe}
+                                aria-label="Toggle wireframe overlay"
+                                variant={isWireframeEnabled ? 'filled' : 'default'}
+                                color={isWireframeEnabled ? 'blue' : 'gray'}
+                                data-test="rca-wireframe-toggle"
+                                size="md"
+                            >
+                                <IconBoxModel size={18} />
+                            </ActionIcon>
+                        </Tooltip>
+                    )}
+                    <StatsSummary stats={diffResult.stats} />
                 </Group>
             </Box>
 
@@ -441,6 +475,7 @@ export function RCAPanel({
                 value={activeTab}
                 onChange={setActiveTab}
                 variant="pills"
+                color="gray"
                 style={{
                     flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0,
                 }}

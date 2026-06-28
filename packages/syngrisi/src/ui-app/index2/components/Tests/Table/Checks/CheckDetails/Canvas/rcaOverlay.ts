@@ -376,7 +376,10 @@ export class RCAOverlay {
 
                 this.wireframeRects.push(rect);
                 this.canvas.add(rect);
-                rect.sendToBack(); // Send to back so highlights are on top
+                // Note: do NOT sendToBack() here — that would push the wireframe
+                // behind the screenshot image (which sits at the very back), making
+                // it invisible. Wireframe stays above the image; highlights are
+                // re-raised to the front below so they remain on top.
             }
 
             if (node.children) {
@@ -385,6 +388,9 @@ export class RCAOverlay {
         };
 
         traverse(this.actualDom);
+        // Keep change highlights (and any active selection) above the wireframe.
+        this.changeRects.forEach((r) => r.bringToFront());
+        this.highlightRect?.bringToFront();
         this.canvas.renderAll();
     }
 

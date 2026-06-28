@@ -15,7 +15,7 @@ In order to use the service with WebdriverIO test runner add these settings to s
 
 ```js
 // wdio.conf.js
-export.config = {
+exports.config = {
     // ...
     services: [
         ['syngrisi-cucumber',
@@ -47,8 +47,20 @@ export.config = {
 
 ## Usage
 
-After all the preparations, you can use the `browser.syngrisiCheck(checkName, imageBuffer)` method in which:
+After all the preparations, the service adds the following commands to `browser`:
+
+### `browser.syngrisiCheck(checkName, imageBuffer, opts, domDump)`
 
 * `checkName` - the name of the check in Syngrisi
 * `imageBuffer` - the screenshot image buffer
+* `opts` - optional check params (e.g. `viewport`, `browserName`, `os`, `app`, `branch`, `autoAccept`, `toleranceThreshold`)
+* `domDump` - optional DOM dump for Root Cause Analysis
+
+### `browser.getLastBaseline(opts)`
+
+Returns the most recent baseline matching `opts` (e.g. `{ name, app, branch }`), or `null` if none found.
+
+### `browser.getSnapshot(opts)`
+
+Returns the first snapshot matching `opts`, or `null` if none found.
 

@@ -82,10 +82,10 @@ export class PlaywrightDriver {
      * const session = await driver.startTestSession({
      *   params: {
      *     os: 'macOS',
-     *     viewport: { width: 1200, height: 800 },
-     *     browserName: 'chrome',
+     *     viewport: '1200x800',
+     *     browserName: 'chromium',
      *     browserVersion: '114',
-     *     name: 'Homepage Test',
+     *     test: 'Homepage Test',
      *     app: 'MyProject',
      *     run: 'Run 123',
      *     runident: 'run-identifier',
@@ -177,8 +177,8 @@ export class PlaywrightDriver {
      * // Assuming the Syngrisi driver instance has been initialized
      * const baselineParams = {
      *   name: 'Login Page',
-     *   viewport: { width: 1024, height: 768 },
-     *   browserName: 'chrome',
+     *   viewport: '1024x768',
+     *   browserName: 'chromium',
      *   os: 'windows',
      *   app: 'YourProject',
      *   branch: 'develop',
@@ -247,7 +247,7 @@ export class PlaywrightDriver {
      *   imageBuffer: fs.readFileSync('navbar.png'),
      *   params: {
      *     viewport: '1200x800',
-     *     browserName: 'chrome',
+     *     browserName: 'chromium',
      *     os: 'Windows',
      *     app: 'MyProject',
      *     branch: 'develop',
