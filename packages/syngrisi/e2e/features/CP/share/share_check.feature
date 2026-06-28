@@ -273,3 +273,65 @@ Feature: Share Check Feature
       Test
       """
 # "Test" is the username we logged in with
+
+  @security
+  Scenario: Anonymous share token is scoped to a single check and cannot enumerate others
+    Given I create "1" tests with:
+      """
+          testName: ShareIsolationTest
+          checks:
+            - checkName: SharedOnly
+              filePath: files/A.png
+            - checkName: HiddenCheck
+              filePath: files/B.png
+      """
+    When I accept via http the 1st check with name "SharedOnly"
+    When I accept via http the 1st check with name "HiddenCheck"
+    When I go to "main" page
+    When I wait for test "ShareIsolationTest" to appear in table
+    When I unfold the test "ShareIsolationTest"
+    When I wait for check "SharedOnly" to appear in collapsed row of test "ShareIsolationTest"
+    When I open the 1st check "SharedOnly"
+
+    # Create and save the share link, then drop to an anonymous session
+    When I click element with locator "[data-test='check-details-menu']"
+    When I wait 2 seconds for the element with locator "[data-test='menu-share-check']" to be visible
+    When I click element with locator "[data-test='menu-share-check']"
+    When I wait 5 seconds for the element with locator "[data-test='create-share-button']" to be visible
+    When I click element with locator "[data-test='create-share-button']"
+    When I wait 10 seconds for the element with locator "[data-test='share-url-input']" to be visible
+    When I save the share URL
+    When I go to "logout" page
+    When I wait 10 seconds for the element with locator "a:has-text('Sign In')" to be visible
+    When I click element with locator "a:has-text('Sign In')"
+    When I wait 10 seconds for the element with locator "[data-test='login-email-input']" to be visible
+    When I open the saved share URL
+    When I wait 10 seconds for the element with locator "[data-check='toolbar']" to be visible
+
+    # Viewing the shared check
+    Then the element with locator "[data-check-header-name='SharedOnly']" should be visible
+
+    # The share token must expose ONLY the shared check via the API — no enumeration of others
+    When I execute javascript code:
+      """
+      const token = new URLSearchParams(window.location.search).get('share');
+      const headers = token ? { 'x-share-token': token, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+      const withTimeout = (p, ms) => new Promise((res, rej) => { const id = setTimeout(() => rej(new Error('timeout')), ms); p.then(v => { clearTimeout(id); res(v); }).catch(e => { clearTimeout(id); rej(e); }); });
+      return withTimeout(fetch('/v1/checks?limit=0', { headers }), 5000)
+        .then(r => r.json())
+        .then(d => {
+          const names = (d.results || []).map(c => c.name);
+          return JSON.stringify({ count: names.length, leaksHidden: names.includes('HiddenCheck') });
+        });
+      """
+    Then I expect the stored "js" string is contain:
+      """
+      "count":1
+      """
+    Then I expect the stored "js" string is contain:
+      """
+      "leaksHidden":false
+      """
+
+    # And the hidden check must not leak into the share UI
+    Then the element with locator ".virtual-table-row:has-text('HiddenCheck')" should not be visible

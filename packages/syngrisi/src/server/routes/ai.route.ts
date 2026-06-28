@@ -12,6 +12,7 @@ router.get('/', aiController.getIndex as Midleware);
 router.get('/checks', aiController.getChecks as Midleware);
 router.get('/checks/:id', aiController.getCheckDetails as Midleware);
 router.get('/analysis/:id', aiController.getAnalysis as Midleware);
+router.get('/report/:runId', aiController.getRunReport as Midleware);
 router.post('/batch', aiController.batchUpdate as Midleware);
 router.post('/webhooks', aiController.registerWebhook as Midleware);
 router.post('/triage/test', aiController.triageTest as Midleware);

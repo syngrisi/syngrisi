@@ -272,3 +272,25 @@ Then(
     expect(days).toBe(expectedDays);
   }
 );
+
+// Resolve a run by name and DELETE it via the API (triggers the cascade:
+// run -> tests -> checks -> snapshots).
+When(
+  'I delete via http run with name {string}',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    name: string
+  ) => {
+    const findUri = `${appServer.baseURL}/v1/runs?limit=0&filter={"$and":[{"name":{"$regex":"${name}","$options":"im"}}]}`;
+    const found = await requestWithSession(findUri, testData, appServer);
+    const run = found.json.results?.[0];
+    if (!run?._id) {
+      throw new Error(`Run "${name}" not found for deletion`);
+    }
+    const delUri = `${appServer.baseURL}/v1/runs/${run._id}`;
+    logger.info(`Deleting run "${name}" (${run._id}) via ${delUri}`);
+    const result = await requestWithSession(delUri, testData, appServer, { method: 'DELETE' });
+    const statusCode = result.raw?.statusCode;
+    logger.info(`Run "${name}" delete status: ${statusCode}`);
+  }
+);
