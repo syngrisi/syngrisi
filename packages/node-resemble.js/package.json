@@ -43,8 +43,7 @@
     "jasmine": "^6.3.0"
   },
   "files": [
-    "resemble.js",
-    "compareImages.js"
+    "resemble.js"
   ],
   "gitHead": "12bfda406cbe5aaccf3f17fdab02a9bd1a9d6343"
 }

@@ -246,7 +246,7 @@ class SyngrisiApi {
      *     suite: 'suite-name', // name of the suite this test belongs to
      *     browserVersion: '89', // version of the browser used
      *     browserFullVersion: '89.0.4389.82', // full version of the browser used
-     *     hashCode: '<your-optional-hash-code>', // hashcode of image buffer (you can use hasha(`imageBuffer` for this)
+     *     hashCode: '<sha-512-or-sha-256-hex-of-imageBuffer>', // required; e.g. createHash('sha512').update(imageBuffer).digest('hex')
      *                firstly the method try to send only hashcode without imageBuffer to speed up process
      *                if server response with `requiredFileData` status it send request with `imageBuffer` again
      * };

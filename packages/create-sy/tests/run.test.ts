@@ -119,7 +119,7 @@ describe('run', () => {
 
         // console.error(console.log.mock.calls)
         expect(console.log).toBeCalledTimes(1)
-        expect(vi.mocked(console.log).mock.calls[0][0]).toContain('Usage: syngrisi [DIRECTORY] [OPTIONS]')
+        expect(vi.mocked(console.log).mock.calls[0][0]).toContain('Usage: npm init sy [DIRECTORY] [OPTIONS]')
         expect(createSyngrisiProject).toBeCalledTimes(0)
     })
 })
