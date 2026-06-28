@@ -678,9 +678,6 @@ export function CheckDetails({
                     rcaEnabled={rca.state.isEnabled}
                     isRCAFeatureEnabled={isRCAEnabled}
                     onToggleRCA={rca.toggle}
-                    rcaStats={rca.state.diffResult?.stats}
-                    isWireframeEnabled={rca.state.isWireframeEnabled}
-                    onToggleWireframe={rca.toggleWireframe}
                     isShareEnabled={isShareEnabled}
                     apikey={apikey}
                     onRunTriage={handleRunTriage}
@@ -753,7 +750,7 @@ export function CheckDetails({
                                     style={{
                                         width: `${rcaPanelWidth}px`,
                                         flexShrink: 0,
-                                        backgroundColor: 'var(--mantine-color-dark-7)',
+                                        backgroundColor: 'light-dark(var(--mantine-color-white), var(--mantine-color-dark-7))',
                                         display: 'flex',
                                         flexDirection: 'column',
                                         overflow: 'hidden',
@@ -767,6 +764,8 @@ export function CheckDetails({
                                         selectedElement={rca.state.selectedElement}
                                         onSelectChange={rca.selectChange}
                                         onClose={rca.disable}
+                                        isWireframeEnabled={rca.state.isWireframeEnabled}
+                                        onToggleWireframe={rca.toggleWireframe}
                                     />
                                 </Box>
                             </>
