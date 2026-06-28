@@ -265,66 +265,28 @@ export function Toolbar(
                         )
                     }
 
-                    {
-                        !isShareMode && (
-                            <Menu shadow="md" width={200} withinPortal>
-                                <Menu.Target>
-                                    <ActionIcon data-test="check-details-menu" variant="transparent" color="gray" size={toolbarActionIconSize}>
-                                        <IconDotsVertical size={toolbarGlyphSize} />
-                                    </ActionIcon>
-                                </Menu.Target>
-
-                                <Menu.Dropdown>
-                                    <Menu.Item
-                                        leftSection={<IconShare size={14} />}
-                                        onClick={isShareEnabled ? () => setShareModalOpened(true) : undefined}
-                                        data-test="menu-share-check"
-                                        data-share-enabled={isShareEnabled.toString()}
-                                        disabled={!isShareEnabled}
-                                        title={!isShareEnabled ? 'Sharing is globally disabled by administrator' : 'Share'}
-                                    >
-                                        Share
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        color="red"
-                                        leftSection={<IconTrash size={14} />}
-                                        disabled={!baselineId}
-                                        onClick={() => setDeleteModalOpened(true)}
-                                        data-test="menu-delete-baseline"
-                                    >
-                                        Delete Baseline
-                                    </Menu.Item>
-                                </Menu.Dropdown>
-                            </Menu>
-                        )
-                    }
-
-                    {onToggleRCA && isRCAFeatureEnabled && (
-                        <>
-                            <Divider orientation="vertical" />
-                            <Group gap={4} wrap="nowrap">
-                                <ActionIcon
-                                    onClick={onToggleRCA}
-                                    title="Root Cause Analysis (D)"
-                                    variant={rcaEnabled ? 'filled' : 'default'}
-                                    color={rcaEnabled ? 'blue' : undefined}
-                                    data-test="rca-toggle-button"
-                                    size={toolbarActionIconSize}
-                                >
-                                    <IconAnalyze size={toolbarGlyphSize} />
-                                </ActionIcon>
-                            </Group>
-                        </>
-                    )}
                     {(() => {
                         const st = String(Array.isArray(curCheck?.status) ? curCheck.status[0] : (curCheck?.status ?? '')).toLowerCase();
                         const canFindSimilar = st === 'failed' && !!curCheck?.diffId;
-                        if (!canFindSimilar && !onRunTriage) return null;
-                        // find-similar + AI sit in one group, no divider between them
+                        const showRCA = !!(onToggleRCA && isRCAFeatureEnabled);
+                        if (!showRCA && !canFindSimilar && !onRunTriage) return null;
+                        // RCA + AI Match + Triage share one group with no dividers between them.
                         return (
                             <>
                                 <Divider orientation="vertical" />
                                 <Group gap={4} wrap="nowrap" data-test="triage-toolbar">
+                                    {showRCA && (
+                                        <ActionIcon
+                                            onClick={onToggleRCA}
+                                            title="Root Cause Analysis (D)"
+                                            variant={rcaEnabled ? 'light' : 'subtle'}
+                                            color="gray"
+                                            data-test="rca-toggle-button"
+                                            size={toolbarActionIconSize}
+                                        >
+                                            <IconAnalyze size={toolbarGlyphSize} />
+                                        </ActionIcon>
+                                    )}
                                     {canFindSimilar && (
                                         <MantineTooltip label="AI Match — find the same change across checks" withinPortal>
                                             <ActionIcon
@@ -361,6 +323,44 @@ export function Toolbar(
                             </>
                         );
                     })()}
+
+                    {/* Kebab menu sits at the far right of the toolbar. */}
+                    {
+                        !isShareMode && (
+                            <>
+                                <Divider orientation="vertical" />
+                                <Menu shadow="md" width={200} withinPortal>
+                                    <Menu.Target>
+                                        <ActionIcon data-test="check-details-menu" variant="transparent" color="gray" size={toolbarActionIconSize}>
+                                            <IconDotsVertical size={toolbarGlyphSize} />
+                                        </ActionIcon>
+                                    </Menu.Target>
+
+                                    <Menu.Dropdown>
+                                        <Menu.Item
+                                            leftSection={<IconShare size={14} />}
+                                            onClick={isShareEnabled ? () => setShareModalOpened(true) : undefined}
+                                            data-test="menu-share-check"
+                                            data-share-enabled={isShareEnabled.toString()}
+                                            disabled={!isShareEnabled}
+                                            title={!isShareEnabled ? 'Sharing is globally disabled by administrator' : 'Share'}
+                                        >
+                                            Share
+                                        </Menu.Item>
+                                        <Menu.Item
+                                            color="red"
+                                            leftSection={<IconTrash size={14} />}
+                                            disabled={!baselineId}
+                                            onClick={() => setDeleteModalOpened(true)}
+                                            data-test="menu-delete-baseline"
+                                        >
+                                            Delete Baseline
+                                        </Menu.Item>
+                                    </Menu.Dropdown>
+                                </Menu>
+                            </>
+                        )
+                    }
                 </Group>
             </Group>
             <DeleteBaselineModal

@@ -89,8 +89,7 @@ Feature: RCA (Root Cause Analysis) Panel
     When I click element with locator "[data-test='rca-toggle-button']"
     When I wait 10 seconds for the element with locator "[data-test='rca-panel']" to be visible
 
-    # Verify button becomes active (filled variant)
-    # Note: Mantine ActionIcon with variant="filled" gets data-variant attribute
+    # Verify button stays visible and active (subtle/light variant — styled like the other toolbar icons)
     Then the element with locator "[data-test='rca-toggle-button']" should be visible
 
   Scenario: RCA panel closes when check modal is closed
