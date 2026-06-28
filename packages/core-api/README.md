@@ -43,8 +43,10 @@ const sessionResponse = await apiClient.startSession({
     viewport: '1200x800',
     browser: 'chrome',
     browserVersion: '113',
+    browserFullVersion: '113.0.5672.126',
     os: 'macOS',
-    app: 'MyProject'
+    app: 'MyProject',
+    branch: 'main'
 });
 
 
@@ -55,7 +57,13 @@ const sessionResponse = await apiClient.startSession({
 Once the session is started, you can perform a visual check:
 
 ```js
-// Assuming `imageBuffer` is the Buffer instance of the screenshot to check
+import { createHash } from 'node:crypto';
+
+// `imageBuffer` is the Buffer instance of the screenshot to check.
+// `hashCode` is a SHA-512 (or SHA-256) hex digest of the image buffer — the
+// server uses it to skip re-uploading an image it already stores.
+const hashCode = createHash('sha512').update(imageBuffer).digest('hex');
+
 // The `checkResponse` will contain the result of the visual comparison
 const checkResponse = await apiClient.coreCheck(imageBuffer, {
     name: 'homepage',
@@ -64,6 +72,10 @@ const checkResponse = await apiClient.coreCheck(imageBuffer, {
     os: 'macOS',
     app: 'MyProject',
     branch: 'main',
+    suite: 'suite-name',
+    browserVersion: '113',
+    browserFullVersion: '113.0.5672.126',
+    hashCode,
     testId: sessionResponse.testId // obtained from the startSession call
 });
 ```
@@ -80,6 +92,10 @@ const checkResponse = await apiClient.coreCheck(imageBuffer, {
     os: 'macOS',
     app: 'MyProject',
     branch: 'main',
+    suite: 'suite-name',
+    browserVersion: '113',
+    browserFullVersion: '113.0.5672.126',
+    hashCode,
     testId: sessionResponse.testId,
     toleranceThreshold: 0.5 // Allow up to 0.5% pixel difference
 });

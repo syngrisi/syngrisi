@@ -49,7 +49,8 @@ var diff = resemble(file).compareTo(file2).ignoreColors().onComplete(function(da
 	  misMatchPercentage : 100, // %
 	  isSameDimensions: true, // or false
 	  dimensionDifference: { width: 0, height: -1 }, // defined if dimensions are not the same
-	  getImageDataUrl: function(){}
+	  getDiffImage: function(){}, // returns the diff image (PNG object)
+	  getDiffImageAsJPEG: function(quality){} // returns the diff image as a JPEG buffer
 	}
 	*/
 });

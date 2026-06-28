@@ -80,7 +80,7 @@ Start a test session with the desired parameters.
 const sessionParams = {
     os: 'Windows',
     viewport: '1920x1080',
-    browserName: 'chrome',
+    browserName: 'chromium',
     browserVersion: '89.0',
     test: 'Homepage Test',
     app: 'Your App',
@@ -106,7 +106,7 @@ await driver.check({
     imageBuffer: fullPageScreenshot,
     params: {
         viewport: '1200x800',
-        browserName: 'chrome',
+        browserName: 'chromium',
         os: 'Windows',
         app: 'MyProject',
         branch: 'develop'
@@ -258,6 +258,33 @@ Region coordinates:
 - `right`: X coordinate of the right edge
 - `bottom`: Y coordinate of the bottom edge
 
+### Collect DOM data for RCA
+
+The SDK can attach a DOM dump to a check so Syngrisi can run Root Cause Analysis (RCA). Either let `check()` collect it automatically by passing `collectDom: true`:
+
+```js
+await driver.check({
+    checkName: 'Header',
+    imageBuffer: screenshot,
+    params: { app: 'MyProject', branch: 'main' },
+    collectDom: true // collects the current page DOM and sends it with the check
+});
+```
+
+Or collect the dump yourself and pass it via `domDump`:
+
+```js
+const domDump = await driver.collectDomDump(); // returns the DOM tree, or null
+await driver.check({
+    checkName: 'Header',
+    imageBuffer: screenshot,
+    params: { app: 'MyProject', branch: 'main' },
+    domDump
+});
+```
+
+DOM collection is skipped when `SYNGRISI_DISABLE_DOM_DATA` is `"true"`.
+
 ## Environment variables
 
 Environment variables are used to modify the behavior of the Syngrisi Playwright SDK without code changes.
@@ -267,8 +294,6 @@ Example: To set the log level to debug, use the following command:
 Windows: `set SYNGRISI_LOG_LEVEL=debug`
 macOS/Linux: `export SYNGRISI_LOG_LEVEL=debug`
 
-`ENV_POSTFIX` - will add to platform property, you can use this to set some unique platform name for particular
-environment
 `SYNGRISI_LOG_LEVEL` - logging level (`"trace" | "debug" | "info" | "warn" | "error"`)
 `SYNGRISI_DISABLE_DOM_DATA` - disable DOM data collection for RCA (`"true" | "false"`), default: `"true"`
 
