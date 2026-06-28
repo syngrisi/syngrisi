@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Divider, Group, Menu, ActionIcon, Badge, Tooltip as MantineTooltip } from '@mantine/core';
+import { Divider, Group, Menu, ActionIcon } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze, IconBoxModel, IconSparkles } from '@tabler/icons-react';
+import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze, IconSparkles } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -16,7 +16,6 @@ import { RegionsToolbar } from '@index/components/Tests/Table/Checks/CheckDetail
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 import { DeleteBaselineModal } from '../Modals/DeleteBaselineModal';
 import { ShareModal } from '../Modals/ShareModal';
-import { DOMDiffResult } from '@shared/interfaces/IRCA';
 
 
 interface Props {
@@ -38,9 +37,6 @@ interface Props {
     navigationReady?: boolean
     rcaEnabled?: boolean
     onToggleRCA?: () => void
-    rcaStats?: DOMDiffResult['stats']
-    isWireframeEnabled?: boolean
-    onToggleWireframe?: () => void
     isShareEnabled?: boolean
     isRCAFeatureEnabled?: boolean
     apikey?: string
@@ -68,9 +64,6 @@ export function Toolbar(
         navigationReady,
         rcaEnabled,
         onToggleRCA,
-        rcaStats,
-        isWireframeEnabled,
-        onToggleWireframe,
         isShareEnabled = true,
         isRCAFeatureEnabled = false,
         apikey,
@@ -320,78 +313,6 @@ export function Toolbar(
                                 >
                                     <IconAnalyze size={toolbarGlyphSize} />
                                 </ActionIcon>
-
-                                {rcaEnabled && onToggleWireframe && (
-                                    <ActionIcon
-                                        onClick={onToggleWireframe}
-                                        title="Toggle Wireframe"
-                                        variant={isWireframeEnabled ? 'filled' : 'default'}
-                                        color={isWireframeEnabled ? 'blue' : undefined}
-                                        data-test="rca-wireframe-toggle"
-                                        size={toolbarActionIconSize}
-                                    >
-                                        <IconBoxModel size={toolbarGlyphSize} />
-                                    </ActionIcon>
-                                )}
-
-                                {rcaEnabled && rcaStats && (
-                                    <Group gap={4} ml={4}>
-                                        <MantineTooltip label="Total changes" withinPortal>
-                                            <div style={{ display: 'flex' }}>
-                                                <Badge
-                                                    size="sm"
-                                                    color="gray"
-                                                    variant="light"
-                                                    data-test="rca-stats-total-toolbar"
-                                                >
-                                                    {rcaStats.totalChanges}
-                                                </Badge>
-                                            </div>
-                                        </MantineTooltip>
-                                        {rcaStats.addedNodes > 0 && (
-                                            <MantineTooltip label="Added elements" withinPortal>
-                                                <div style={{ display: 'flex' }}>
-                                                    <Badge
-                                                        size="sm"
-                                                        color="green"
-                                                        variant="light"
-                                                        data-test="rca-stats-added-toolbar"
-                                                    >
-                                                        +{rcaStats.addedNodes}
-                                                    </Badge>
-                                                </div>
-                                            </MantineTooltip>
-                                        )}
-                                        {rcaStats.removedNodes > 0 && (
-                                            <MantineTooltip label="Removed elements" withinPortal>
-                                                <div style={{ display: 'flex' }}>
-                                                    <Badge
-                                                        size="sm"
-                                                        color="red"
-                                                        variant="light"
-                                                        data-test="rca-stats-removed-toolbar"
-                                                    >
-                                                        -{rcaStats.removedNodes}
-                                                    </Badge>
-                                                </div>
-                                            </MantineTooltip>
-                                        )}
-                                        {rcaStats.styleChanges > 0 && (
-                                            <MantineTooltip label="Style changes" withinPortal>
-                                                <div style={{ display: 'flex' }}>
-                                                    <Badge
-                                                        size="sm"
-                                                        color="orange"
-                                                        variant="light"
-                                                        data-test="rca-stats-style-toolbar"
-                                                    >
-                                                        {rcaStats.styleChanges}
-                                                    </Badge>
-                                                </div>
-                                            </MantineTooltip>
-                                        )}
-                                    </Group>
-                                )}
                             </Group>
                         </>
                     )}
