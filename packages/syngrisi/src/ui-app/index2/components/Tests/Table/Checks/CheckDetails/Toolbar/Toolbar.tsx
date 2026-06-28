@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Divider, Group, Menu, ActionIcon, Tooltip as MantineTooltip } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze, IconSparkles, IconBinoculars } from '@tabler/icons-react';
+import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconMicroscope, IconSparkles, IconBinoculars, IconDownload } from '@tabler/icons-react';
+import config from '@config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -102,6 +103,43 @@ export function Toolbar(
     const handleDeleteBaseline = () => {
         if (baselineId) {
             mutationRemoveBaseline.mutate(baselineId);
+        }
+    };
+
+    // Download the current check's available screenshots (actual / baseline / diff)
+    // as separate PNG files, named after the check.
+    const screenshotFiles: Array<{ filename?: string; label: string }> = [
+        { filename: curCheck?.actualSnapshotId?.filename, label: 'actual' },
+        { filename: curCheck?.baselineId?.filename, label: 'baseline' },
+        { filename: curCheck?.diffId?.filename, label: 'diff' },
+    ];
+    const hasScreenshots = screenshotFiles.some((f) => f.filename);
+
+    const handleDownloadScreenshots = async () => {
+        const safeName = String(curCheck?.name || 'check').replace(/[^\w.-]+/g, '_');
+        let downloaded = 0;
+        for (const { filename, label } of screenshotFiles) {
+            if (!filename) continue;
+            try {
+                const res = await fetch(`${config.baseUri}/snapshoots/${filename}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${safeName}_${label}.png`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                downloaded += 1;
+            } catch (e) {
+                console.error(`Failed to download ${label} screenshot`, e);
+                errorMsg({ error: `Cannot download the ${label} screenshot` });
+            }
+        }
+        if (downloaded > 0) {
+            successMsg({ message: `Downloaded ${downloaded} screenshot${downloaded > 1 ? 's' : ''}` });
         }
     };
 
@@ -284,7 +322,7 @@ export function Toolbar(
                                             data-test="rca-toggle-button"
                                             size={toolbarActionIconSize}
                                         >
-                                            <IconAnalyze size={toolbarGlyphSize} />
+                                            <IconMicroscope size={toolbarGlyphSize} />
                                         </ActionIcon>
                                     )}
                                     {canFindSimilar && (
@@ -337,6 +375,15 @@ export function Toolbar(
                                     </Menu.Target>
 
                                     <Menu.Dropdown>
+                                        <Menu.Item
+                                            leftSection={<IconDownload size={14} />}
+                                            onClick={handleDownloadScreenshots}
+                                            disabled={!hasScreenshots}
+                                            data-test="menu-download-screenshots"
+                                            title={hasScreenshots ? 'Download actual / baseline / diff screenshots' : 'No screenshots available'}
+                                        >
+                                            Download screenshots
+                                        </Menu.Item>
                                         <Menu.Item
                                             leftSection={<IconShare size={14} />}
                                             onClick={isShareEnabled ? () => setShareModalOpened(true) : undefined}

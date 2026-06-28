@@ -332,7 +332,7 @@ export function CheckDetails({
                             'checks',
                             { _id: targetCheckId },
                             {
-                                populate: 'baselineId,actualSnapshotId,diffId,test,suite,app',
+                                populate: 'baselineId,actualSnapshotId,diffId,test,suite,app,run',
                                 limit: '1',
                                 share: apikey,
                             },

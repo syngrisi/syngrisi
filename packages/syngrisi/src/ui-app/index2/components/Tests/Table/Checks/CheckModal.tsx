@@ -105,7 +105,7 @@ export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Pr
                 'checks',
                 { _id: initCheckId },
                 {
-                    populate: 'baselineId,actualSnapshotId,diffId,test,suite,app',
+                    populate: 'baselineId,actualSnapshotId,diffId,test,suite,app,run',
                     limit: '1',
                     share: apikey,
                 },
