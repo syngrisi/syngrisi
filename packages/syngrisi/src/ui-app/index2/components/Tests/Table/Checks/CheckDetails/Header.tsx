@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ActionIcon, Group, Loader, Text, Tooltip, useMantineTheme, useComputedColorScheme } from '@mantine/core';
-import { useLocalStorage } from '@mantine/hooks';
+import { useLocalStorage, useClipboard } from '@mantine/hooks';
+import { IconCopy, IconCheck } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { Status } from '@shared/components/Check/Status';
 import { TriageVerdict } from '@shared/components/Check/TriageVerdict';
@@ -17,6 +18,40 @@ interface Props {
     toleranceSource?: 'api' | 'baseline'
 }
 
+// Build a Markdown summary of the check for the clipboard (title + all key fields).
+function buildCheckMarkdown(check: any): string {
+    const status = Array.isArray(check?.status) ? check.status[0] : check?.status;
+    const verdict = check?.triage?.verdict;
+    let diff = '';
+    try {
+        const r = check?.result ? JSON.parse(check.result) : null;
+        const m = r?.misMatchPercentage ?? r?.rawMisMatchPercentage;
+        if (m !== undefined && m !== null && `${m}`.length > 0) diff = `${m}%`;
+    } catch { /* result not JSON — skip diff */ }
+    const browser = [check?.browserName, check?.browserVersion].filter(Boolean).join(' ');
+    const date = check?.createdDate ? new Date(check.createdDate).toLocaleString() : '';
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const url = check?._id ? `${origin}/?checkId=${check._id}&modalIsOpen=true` : '';
+
+    const rows: Array<[string, any]> = [
+        ['Project', check?.app?.name],
+        ['Suite', check?.suite?.name],
+        ['Test', check?.test?.name],
+        ['Run', check?.run?.name],
+        ['Resolution', check?.viewport],
+        ['Browser', browser],
+        ['OS', check?.os],
+        ['Branch', check?.branch],
+        ['Diff', diff],
+        ['Date', date],
+        ['ID', check?._id ? `\`${check._id}\`` : ''],
+        ['Link', url],
+    ];
+    const head = `**${check?.name ?? 'Check'}** — ${String(status ?? '').toUpperCase()}${verdict ? ` · Triage: ${verdict}` : ''}`;
+    const body = rows.filter(([, v]) => v).map(([k, v]) => `- **${k}:** ${v}`).join('\n');
+    return `${head}\n\n${body}`;
+}
+
 export const Header = React.memo(function Header(
     {
         classes,
@@ -27,6 +62,7 @@ export const Header = React.memo(function Header(
 ) {
     const theme = useMantineTheme();
     const colorScheme = useComputedColorScheme();
+    const clipboard = useClipboard({ timeout: 1500 });
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
     const textLoader = <Loader size="xs" color="blue" variant="dots" />;
     const statusMsg = currentCheck.status ? getStatusMessage(currentCheck) : textLoader;
@@ -141,6 +177,18 @@ export const Header = React.memo(function Header(
                 gap="xs"
                 style={{ flexShrink: 0 }}
             >
+                <Tooltip label={clipboard.copied ? 'Copied!' : 'Copy check info (Markdown)'} withinPortal>
+                    <ActionIcon
+                        variant="subtle"
+                        color={clipboard.copied ? 'green' : 'gray'}
+                        size={32}
+                        onClick={() => clipboard.copy(buildCheckMarkdown(currentCheck))}
+                        data-test="copy-check-info"
+                        aria-label="Copy check info"
+                    >
+                        {clipboard.copied ? <IconCheck size={18} /> : <IconCopy size={18} />}
+                    </ActionIcon>
+                </Tooltip>
                 {
                     toleranceThreshold > 0 && (
                         <Tooltip

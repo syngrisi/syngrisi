@@ -31,7 +31,7 @@ import {
     IconTextCaption,
     IconListDetails,
     IconCode,
-    IconBoxModel,
+    IconVectorTriangle,
 } from '@tabler/icons-react';
 
 import {
@@ -443,9 +443,9 @@ export function RCAPanel({
                     </Text>
                 </Group>
 
-                {/* Panel toolbar: wireframe toggle + change stats */}
+                {/* Panel toolbar: change stats (left) + wireframe toggle (right) */}
                 <Group
-                    justify="flex-start"
+                    justify="space-between"
                     align="center"
                     gap="sm"
                     px="sm"
@@ -453,6 +453,7 @@ export function RCAPanel({
                     wrap="nowrap"
                     data-test="rca-panel-toolbar"
                 >
+                    <StatsSummary stats={diffResult.stats} />
                     {onToggleWireframe && (
                         <Tooltip label="Toggle wireframe overlay" withinPortal>
                             <ActionIcon
@@ -463,11 +464,10 @@ export function RCAPanel({
                                 data-test="rca-wireframe-toggle"
                                 size="md"
                             >
-                                <IconBoxModel size={18} />
+                                <IconVectorTriangle size={18} />
                             </ActionIcon>
                         </Tooltip>
                     )}
-                    <StatsSummary stats={diffResult.stats} />
                 </Group>
             </Box>
 
