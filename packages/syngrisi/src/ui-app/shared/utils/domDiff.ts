@@ -204,13 +204,39 @@ export function diffDOMTrees(
         geometryChanges: 0,
     };
 
-    if (!baseline || !actual) {
+    // A DOM snapshot is only usable if its root node actually has a tag name.
+    // An empty/cleared page (e.g. empty <body>) can serialize to a degenerate
+    // tree with no root tag — treat that the same as a missing snapshot.
+    const isValid = (n: DOMNode | null): n is DOMNode => !!n && typeof n.tagName === 'string';
+    const validBaseline = isValid(baseline);
+    const validActual = isValid(actual);
+
+    if (!validBaseline && !validActual) {
         return { changes, issues: [], stats };
     }
 
-    // Build xpath -> node maps
-    const baselineMap = buildNodeMap(baseline);
-    const actualMap = buildNodeMap(actual);
+    // One-sided snapshot: everything in the present tree is added (or removed)
+    // relative to an empty/missing other side, instead of "no changes".
+    if (!validBaseline || !validActual) {
+        const presentMap = buildNodeMap((validActual ? actual : baseline) as DOMNode);
+        const type: DOMChangeType = validActual ? 'added' : 'removed';
+        for (const [xpath, node] of presentMap) {
+            changes.push({
+                id: generateId(),
+                type,
+                xpath,
+                ...(validActual ? { actualNode: node } : { baselineNode: node }),
+                affectedVisualRegions: [createRegionFromNode(node)],
+            });
+            if (validActual) stats.addedNodes++; else stats.removedNodes++;
+        }
+        stats.totalChanges = changes.length;
+        return { changes, issues: groupChangesIntoIssues(changes), stats };
+    }
+
+    // Build xpath -> node maps (both sides validated above)
+    const baselineMap = buildNodeMap(baseline as DOMNode);
+    const actualMap = buildNodeMap(actual as DOMNode);
 
     // Find removed nodes (in baseline but not in actual)
     for (const [xpath, baseNode] of baselineMap) {
@@ -346,7 +372,57 @@ export function groupChangesIntoIssues(changes: DOMChange[]): LogicalIssue[] {
         }
     }
 
-    // Create individual issues for remaining changes
+    // Aggregate the remaining structural / geometry / content changes so the panel
+    // doesn't repeat one near-identical card per element (e.g. 12x "New element added: div").
+    // Added/removed are bucketed by tag name; geometry/content by kind.
+    const buckets = new Map<string, DOMChange[]>();
+    for (const change of changes) {
+        if (processedChangeIds.has(change.id)) continue;
+        let key: string | null = null;
+        if (change.type === 'added') key = `added:${change.actualNode?.tagName || 'element'}`;
+        else if (change.type === 'removed') key = `removed:${change.baselineNode?.tagName || 'element'}`;
+        else if (change.type === 'geometry_changed') key = 'geometry';
+        else if (change.type === 'content_changed') key = 'content';
+        if (!key) continue;
+        if (!buckets.has(key)) buckets.set(key, []);
+        buckets.get(key)!.push(change);
+    }
+    for (const [key, bucketChanges] of buckets) {
+        if (bucketChanges.length < 2) continue; // singletons handled individually below
+        const allRegions: AffectedRegion[] = [];
+        for (const c of bucketChanges) {
+            allRegions.push(...c.affectedVisualRegions);
+            processedChangeIds.add(c.id);
+        }
+        const n = bucketChanges.length;
+        let rootCause: string;
+        let description: string;
+        if (key.startsWith('added:')) {
+            const tag = key.slice(6);
+            rootCause = `${n} elements added (${tag})`;
+            description = `${n} <${tag}> elements were added to the page`;
+        } else if (key.startsWith('removed:')) {
+            const tag = key.slice(8);
+            rootCause = `${n} elements removed (${tag})`;
+            description = `${n} <${tag}> elements were removed from the page`;
+        } else if (key === 'geometry') {
+            rootCause = `${n} elements moved or resized`;
+            description = `${n} elements changed position or size`;
+        } else {
+            rootCause = `${n} text changes`;
+            description = `Text content changed in ${n} elements`;
+        }
+        issues.push({
+            id: generateId(),
+            rootCause,
+            description,
+            affectedChanges: bucketChanges,
+            visualRegions: allRegions,
+            severity: getChangeSeverity(bucketChanges[0]),
+        });
+    }
+
+    // Create individual issues for remaining (singleton) changes
     for (const change of changes) {
         if (!processedChangeIds.has(change.id)) {
             issues.push({

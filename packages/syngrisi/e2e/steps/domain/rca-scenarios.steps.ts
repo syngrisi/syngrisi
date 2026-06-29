@@ -809,3 +809,40 @@ Then(
         expect(hasChangesIndicator || panelText?.length > 0).toBeTruthy();
     }
 );
+
+// --- Strict regression assertions (the older steps above fall back to "panel has
+// any text", which is why these bugs slipped through). These fail on the actual
+// regressions: empty-baseline reported as "no changes", missing geometry/content
+// stat badges, and un-aggregated duplicate issue cards. ---
+
+// Panel reached a specific state: ready | no-changes | error | loading.
+Then(
+    'the RCA panel state should be {string}',
+    async ({ page }: { page: any }, expected: string) => {
+        const panel = page.locator('[data-test="rca-panel"]');
+        await expect(panel).toHaveAttribute('data-test-state', expected, { timeout: 15000 });
+    }
+);
+
+// A specific stats badge is visible: total | added | removed | style | geometry | content.
+Then(
+    'the RCA stats should include {string}',
+    async ({ page }: { page: any }, kind: string) => {
+        const badge = page.locator(`[data-test="rca-stats-${kind}"]`);
+        await expect(badge).toBeVisible({ timeout: 15000 });
+    }
+);
+
+// Issues are aggregated: an "N elements added/removed/moved or resized" card is present
+// and no element type appears as repeated identical "New element added: <tag>" cards.
+Then(
+    'the RCA issues should be aggregated',
+    async ({ page }: { page: any }) => {
+        const panel = page.locator('[data-test="rca-panel"]');
+        await expect(panel).toBeVisible();
+        const text = (await panel.textContent()) || '';
+        expect(/\d+\s+elements\s+(added|removed|moved or resized)/i.test(text)).toBeTruthy();
+        const singles = text.match(/New element added: \w+/g) || [];
+        expect(singles.length).toBe(new Set(singles).size);
+    }
+);

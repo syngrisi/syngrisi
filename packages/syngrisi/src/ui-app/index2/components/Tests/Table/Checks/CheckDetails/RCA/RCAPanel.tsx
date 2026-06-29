@@ -100,7 +100,7 @@ function getChangeColor(type: DOMChangeType): string {
  * Get severity color
  */
 function getSeverityColor(severity: string): string {
-    switch (severity) {
+    switch ((severity || '').toLowerCase()) {
         case 'high':
             return 'red';
         case 'medium':
@@ -112,22 +112,31 @@ function getSeverityColor(severity: string): string {
     }
 }
 
+// Lighter surface + brighter border used to highlight an expanded accordion item.
+const ACTIVE_ITEM_STYLE = {
+    backgroundColor: 'light-dark(var(--mantine-color-white), var(--mantine-color-dark-5))',
+    borderColor: 'light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-3))',
+} as const;
+
 /**
  * Format XPath for display
  */
 function formatXPath(xpath: string) {
-    const parts = xpath.split('/');
-    const relevantParts = parts.slice(-3);
+    const relevantParts = xpath.split('/').filter(Boolean).slice(-3);
+    const inline = { display: 'inline' } as const;
     return (
-        <Group gap={4} style={{ flexWrap: 'wrap', rowGap: 0 }}>
-            <Text size="xs" c="dimmed">... &gt;</Text>
+        <Box
+            title={xpath}
+            style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}
+        >
+            <Text span size="xs" c="dimmed" style={inline}>...&nbsp;&gt;&nbsp;</Text>
             {relevantParts.map((part, i) => (
                 <React.Fragment key={i}>
-                    {i > 0 && <Text size="xs" c="dimmed">&gt;</Text>}
-                    <Text size="xs" c="blue" style={{ wordBreak: 'break-all' }}>{part}</Text>
+                    {i > 0 && <Text span size="xs" c="dimmed" style={inline}>&nbsp;&gt;&nbsp;</Text>}
+                    <Text span size="xs" c="blue" style={inline}>{part}</Text>
                 </React.Fragment>
             ))}
-        </Group>
+        </Box>
     );
 }
 
@@ -225,21 +234,32 @@ function BoundingBoxVisualizer({ baseline, actual }: { baseline?: DOMNode, actua
 function ChangeItem({
     change,
     onSelect,
+    active,
 }: {
     change: DOMChange;
     onSelect: () => void;
+    active?: boolean;
 }) {
     const color = getChangeColor(change.type);
     const icon = getChangeIcon(change.type);
 
     return (
-        <Accordion.Item value={change.id} style={{ borderColor: 'var(--mantine-color-default-border)', backgroundColor: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))', marginBottom: 4, borderRadius: 4 }}>
+        <Accordion.Item
+            value={change.id}
+            style={{
+                ...(active
+                    ? ACTIVE_ITEM_STYLE
+                    : { borderColor: 'var(--mantine-color-default-border)', backgroundColor: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))' }),
+                marginBottom: 4,
+                borderRadius: 4,
+            }}
+        >
             <Accordion.Control onClick={onSelect}>
                 <Group gap="xs" wrap="nowrap">
                     <ThemeIcon size="sm" variant="light" color={color} style={{ flexShrink: 0 }}>
                         {icon}
                     </ThemeIcon>
-                    <Box style={{ flex: 1, overflow: 'hidden' }}>
+                    <Box style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
                         {formatXPath(change.xpath)}
                     </Box>
                     <Badge size="xs" color={color} variant="light">
@@ -263,12 +283,15 @@ function ChangeItem({
 function IssueItem({
     issue,
     onSelectChange,
+    active,
 }: {
     issue: LogicalIssue;
     onSelectChange: (change: DOMChange) => void;
+    active?: boolean;
 }) {
+    const [openChange, setOpenChange] = useState<string | null>(null);
     return (
-        <Accordion.Item value={issue.id}>
+        <Accordion.Item value={issue.id} style={active ? ACTIVE_ITEM_STYLE : undefined}>
             <Accordion.Control>
                 <Group gap="xs">
                     <ThemeIcon
@@ -293,11 +316,12 @@ function IssueItem({
                 <Text size="xs" fw={500} mb="xs">
                     Affected elements ({issue.affectedChanges.length}):
                 </Text>
-                <Accordion variant="separated" chevronPosition="left">
+                <Accordion variant="separated" chevronPosition="left" value={openChange} onChange={setOpenChange}>
                     {issue.affectedChanges.map((change) => (
                         <ChangeItem
                             key={change.id}
                             change={change}
+                            active={openChange === change.id}
                             onSelect={() => onSelectChange(change)}
                         />
                     ))}
@@ -331,6 +355,16 @@ function StatsSummary({ stats }: { stats: DOMDiffResult['stats'] }) {
                     {stats.styleChanges} style
                 </Badge>
             )}
+            {stats.geometryChanges > 0 && (
+                <Badge size="sm" color="blue" variant="light" data-test="rca-stats-geometry">
+                    {stats.geometryChanges} geometry
+                </Badge>
+            )}
+            {stats.contentChanges > 0 && (
+                <Badge size="sm" color="grape" variant="light" data-test="rca-stats-content">
+                    {stats.contentChanges} text
+                </Badge>
+            )}
         </Group>
     );
 }
@@ -349,6 +383,8 @@ export function RCAPanel({
     onToggleWireframe,
 }: RCAPanelProps) {
     const [activeTab, setActiveTab] = useState<string | null>('issues');
+    const [openIssue, setOpenIssue] = useState<string | null>(null);
+    const [openChange, setOpenChange] = useState<string | null>(null);
 
     if (isLoading) {
         return (
@@ -507,11 +543,12 @@ export function RCAPanel({
                                 No grouped issues found.
                             </Text>
                         ) : (
-                            <Accordion variant="separated">
+                            <Accordion variant="separated" value={openIssue} onChange={setOpenIssue}>
                                 {diffResult.issues.map((issue) => (
                                     <IssueItem
                                         key={issue.id}
                                         issue={issue}
+                                        active={openIssue === issue.id}
                                         onSelectChange={onSelectChange}
                                     />
                                 ))}
@@ -522,11 +559,12 @@ export function RCAPanel({
 
                 <Tabs.Panel value="changes" style={{ flex: 1, minHeight: 0 }}>
                     <ScrollArea h="100%" p="xs" style={{ overscrollBehavior: 'contain' }}>
-                        <Accordion variant="separated" chevronPosition="left">
+                        <Accordion variant="separated" chevronPosition="left" value={openChange} onChange={setOpenChange}>
                             {diffResult.changes.map((change) => (
                                 <ChangeItem
                                     key={change.id}
                                     change={change}
+                                    active={openChange === change.id}
                                     onSelect={() => onSelectChange(change)}
                                 />
                             ))}
