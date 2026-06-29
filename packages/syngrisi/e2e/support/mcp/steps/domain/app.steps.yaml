@@ -1,14 +1,15 @@
 metadata:
   category: domain/app
-  generatedAt: '2026-06-24T05:53:26.305Z'
-  totalFiles: 27
-  totalSteps: 228
+  generatedAt: '2026-06-29T05:37:26.369Z'
+  totalFiles: 29
+  totalSteps: 254
   sourceFiles:
     - steps/domain/admin-data.steps.ts
     - steps/domain/ai.steps.ts
     - steps/domain/api-key.steps.ts
     - steps/domain/app.steps.ts
     - steps/domain/auth.steps.ts
+    - steps/domain/changeSig.steps.ts
     - steps/domain/check-details.steps.ts
     - steps/domain/checks.steps.ts
     - steps/domain/cli-tasks.steps.ts
@@ -26,6 +27,7 @@ metadata:
     - steps/domain/plugin-api.steps.ts
     - steps/domain/rca-scenarios.steps.ts
     - steps/domain/rca.steps.ts
+    - steps/domain/sdk-integration.steps.ts
     - steps/domain/server.steps.ts
     - steps/domain/sso.steps.ts
     - steps/domain/stored-values.steps.ts
@@ -143,6 +145,27 @@ steps:
   - pattern: I login with user:{string} password {string}
     description: ''
     line: 9
+  - pattern: I add an unrelated failed change {string} to run {string} at viewport {string}
+    description: |-
+      Add an UNRELATED change (A -> C) to the same run; it must NOT be returned as a sibling and must
+      be filtered out by "show in table".
+    line: 59
+  - pattern: I add the same change {string} to run {string} at viewport {string} with browser {string}
+    description: |-
+      Add the SAME change (A -> B) at the SAME viewport but a different browser; it must be returned as
+      a similar check too (similarity is NOT limited to other resolutions).
+    line: 72
+  - pattern: I create a run {string} with the same change at viewports {string}
+    description: |-
+      Create ONE run where the SAME change (A -> B) is produced at several viewports — one test per
+      viewport so the table rows are addressable; all share a run so they are sibling candidates.
+    line: 42
+  - pattern: the change {string} has {int} similar checks ranked by score including the same viewport
+    description: |-
+      Query the similar checks for the failed ChangeCheck at the first viewport; assert it returns the
+      FULL ranked list (best first) with 0..1 scores, INCLUDING the same-viewport candidate, excluding
+      the query check itself and the unrelated change.
+    line: 86
   - pattern: I click the {string} button
     description: ''
     line: 127
@@ -347,6 +370,11 @@ steps:
   - pattern: 'I create via http log with params:'
     description: ''
     line: 199
+  - pattern: I delete via http run with name {string}
+    description: |-
+      Resolve a run by name and DELETE it via the API (triggers the cascade:
+      run -> tests -> checks -> snapshots).
+    line: 278
   - pattern: I expect exact {string} snapshot files
     description: ''
     line: 107
@@ -517,9 +545,12 @@ steps:
   - pattern: I create RCA actual check with {string} without DOM data
     description: ''
     line: 332
+  - pattern: I create RCA baselines for the showcase changes
+    description: ''
+    line: 557
   - pattern: I create RCA baselines for the triage changes
-    description: 'Phase 1: capture each case''s baseline and accept it (creates the app).'
-    line: 495
+    description: ''
+    line: 550
   - pattern: I create RCA test with {string} as baseline
     description: ''
     line: 227
@@ -530,29 +561,51 @@ steps:
     description: ''
     line: 234
   - pattern: I create the changed checks for triage
-    description: 'Phase 2: push the changed screenshots → one failed check per case (triage candidates).'
-    line: 519
+    description: ''
+    line: 553
+  - pattern: I create the showcase changed checks
+    description: ''
+    line: 560
+  - pattern: I re-run the showcase checks as passing
+    description: Re-send the same changed screenshots after their baselines were re-accepted → checks now pass.
+    line: 565
   - pattern: I wait for RCA data to be ready
     description: ''
     line: 346
+  - pattern: the RCA issues should be aggregated
+    description: |-
+      Issues are aggregated: an "N elements added/removed/moved or resized" card is present
+      and no element type appears as repeated identical "New element added: <tag>" cards.
+    line: 838
   - pattern: the RCA panel should show added elements
     description: ''
-    line: 666
+    line: 698
   - pattern: the RCA panel should show changes summary
     description: ''
-    line: 758
+    line: 790
   - pattern: the RCA panel should show no DOM data message
     description: ''
-    line: 734
+    line: 766
   - pattern: the RCA panel should show removed elements
     description: ''
-    line: 683
+    line: 715
   - pattern: the RCA panel should show style changes
     description: ''
-    line: 717
+    line: 749
   - pattern: the RCA panel should show text changes
     description: ''
-    line: 700
+    line: 732
+  - pattern: the RCA panel state should be {string}
+    description: |-
+      --- Strict regression assertions (the older steps above fall back to "panel has
+      any text", which is why these bugs slipped through). These fail on the actual
+      regressions: empty-baseline reported as "no changes", missing geometry/content
+      stat badges, and un-aggregated duplicate issue cards. ---
+      Panel reached a specific state: ready | no-changes | error | loading.
+    line: 819
+  - pattern: the RCA stats should include {string}
+    description: 'A specific stats badge is visible: total | added | removed | style | geometry | content.'
+    line: 828
   - pattern: I create RCA demo actual check with DOM changes
     description: Accepts the baseline and creates actual check with broken state
     line: 271
@@ -562,6 +615,45 @@ steps:
   - pattern: I take RCA debug screenshot {string}
     description: Step to take RCA debug screenshot
     line: 362
+  - pattern: accepting a non-existent check returns an error object
+    description: ''
+    line: 229
+  - pattern: getBaselines for check {string} returns at least {int} result
+    description: ''
+    line: 141
+  - pattern: getBaselines with a no-match filter yields no baselines
+    description: ''
+    line: 238
+  - pattern: getSnapshots for check {string} returns at least {int} result
+    description: ''
+    line: 165
+  - pattern: I accept the last SDK check
+    description: ''
+    line: 131
+  - pattern: I create a {string} Syngrisi driver
+    description: ''
+    line: 48
+  - pattern: I create a {string} Syngrisi driver with auto-accept
+    description: ''
+    line: 68
+  - pattern: I create a core-api client
+    description: '--- core-api direct contract (error-object semantics, not exceptions) ---'
+    line: 221
+  - pattern: I set ignore regions on the last baseline
+    description: ''
+    line: 177
+  - pattern: I start an SDK test session for app {string}
+    description: ''
+    line: 88
+  - pattern: I stop the SDK test session
+    description: ''
+    line: 213
+  - pattern: the last baseline has ignore regions
+    description: ''
+    line: 190
+  - pattern: the SDK check {string} with image {string} has status {string}
+    description: ''
+    line: 112
   - pattern: I clear database
     description: ''
     line: 278
@@ -816,6 +908,9 @@ steps:
       (asserts a well-formed verdict, not a specific one) and slow, so excluded from default runs.
       eslint-disable-next-line @typescript-eslint/no-explicit-any
     line: 59
+  - pattern: I cancel AI triage for the {ordinal} check named {string}
+    description: Cancel triage for a check from the queue (stamps the reserved 'cancelled' verdict).
+    line: 227
   - pattern: I configure the triage provider for the local vision model
     description: ''
     line: 97
@@ -857,3 +952,6 @@ steps:
   - pattern: the project {string} has triage prompt {string}
     description: ''
     line: 178
+  - pattern: the triage queue contains a run with check {string}
+    description: Assert the triage queue (grouped by run) contains a check with the given name.
+    line: 236

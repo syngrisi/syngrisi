@@ -16,6 +16,7 @@ const getSettings = catchAsync(async (req: ExtRequest, res: Response) => {
 });
 
 import { env } from '@env';
+import { isTriageEnabled } from '@services/triage/config';
 
 const getPublicSettings = catchAsync(async (req: ExtRequest, res: Response) => {
     const AppSettings = appSettings;
@@ -23,6 +24,12 @@ const getPublicSettings = catchAsync(async (req: ExtRequest, res: Response) => {
     result.push({
         name: 'rca_enabled',
         value: env.SYNGRISI_RCA,
+        enabled: true,
+    });
+    // Expose the global AI-triage on/off so the UI can hide triage-only controls.
+    result.push({
+        name: 'ai_triage_enabled',
+        value: await isTriageEnabled(),
         enabled: true,
     });
     res.json(result);

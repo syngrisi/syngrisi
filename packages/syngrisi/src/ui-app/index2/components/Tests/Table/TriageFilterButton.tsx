@@ -2,7 +2,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { ActionIcon, Popover, Stack, Checkbox, NumberInput, TextInput, Button, Group, Text, Indicator } from '@mantine/core';
 import { IconSparkles2 } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@hooks/useParams';
+import { GenericService } from '@shared/services';
 
 const VERDICT_OPTIONS = [
     { value: 'intended_change', label: 'Intended change' },
@@ -18,6 +20,15 @@ const toArray = (v: any): string[] => (Array.isArray(v) ? v.filter(Boolean) : (v
 // Writes the `checkFilter` URL param; checks are filtered client-side in Checks.tsx.
 export function TriageFilterButton() {
     const { query, setQuery } = useParams();
+    // Hide the AI-verdict filter entirely when AI triage is globally disabled.
+    const settingsQuery = useQuery({
+        queryKey: ['settings-public'],
+        queryFn: () => GenericService.get('settings/public'),
+    });
+    const triageEnabled = (() => {
+        const s = settingsQuery.data?.find((x: any) => x.name === 'ai_triage_enabled');
+        return s?.value === true || s?.value === 'true';
+    })();
     const cf: any = (query.checkFilter && typeof query.checkFilter === 'object') ? query.checkFilter : {};
     const [opened, setOpened] = useState(false);
     const [verdicts, setVerdicts] = useState<string[]>(toArray(cf['triage.verdict']));
@@ -52,6 +63,8 @@ export function TriageFilterButton() {
         setQuery({ checkFilter: null });
         setOpened(false);
     };
+
+    if (!triageEnabled) return null;
 
     return (
         <Popover opened={opened} onChange={setOpened} position="bottom-end" withArrow shadow="md" trapFocus>

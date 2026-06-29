@@ -21,6 +21,7 @@ import { stringify } from '@shared/utils/queryParams';
 import config from '@config';
 import { AcceptButton } from '@index/components/Tests/Table/Checks/AcceptButton';
 import { RemoveButton } from '@index/components/Tests/Table/Checks/RemoveButton';
+import { PreviewCardMenu } from '@index/components/Tests/Table/Checks/PreviewCardMenu';
 import { ViewPortLabel } from '@index/components/Tests/Table/Checks/ViewPortLabel';
 import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
 import { Status } from '@shared/components/Check/Status';
@@ -347,28 +348,31 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
                                         : theme.white,
                                 }}
                             >
-                                <Group gap={8} wrap="nowrap" align="center">
-                                    <Status check={check} size="xs" iconOnly />
-                                    {similarityBadge}
-                                    <Tooltip
-                                        label={check.name}
-                                        multiline
-                                        withinPortal
-                                    >
-                                        <Text
-                                            lineClamp={1}
-                                            fw={500}
-                                            fz={12}
-                                            style={{
-                                                lineHeight: '16px',
-                                                letterSpacing: '-0.005em',
-                                                fontFamily: '"Roboto","Helvetica Neue","Arial",sans-serif',
-                                            }}
-                                            data-table-check-name={check.name}
+                                <Group gap={8} wrap="nowrap" align="center" justify="space-between">
+                                    <Group gap={8} wrap="nowrap" align="center" style={{ minWidth: 0, flex: 1 }}>
+                                        <Status check={check} size="xs" iconOnly />
+                                        {similarityBadge}
+                                        <Tooltip
+                                            label={check.name}
+                                            multiline
+                                            withinPortal
                                         >
-                                            {check.name}
-                                        </Text>
-                                    </Tooltip>
+                                            <Text
+                                                lineClamp={1}
+                                                fw={500}
+                                                fz={12}
+                                                style={{
+                                                    lineHeight: '16px',
+                                                    letterSpacing: '-0.005em',
+                                                    fontFamily: '"Roboto","Helvetica Neue","Arial",sans-serif',
+                                                }}
+                                                data-table-check-name={check.name}
+                                            >
+                                                {check.name}
+                                            </Text>
+                                        </Tooltip>
+                                    </Group>
+                                    <PreviewCardMenu check={check} />
                                 </Group>
                             </Box>
                             <Card.Section m={0}>
