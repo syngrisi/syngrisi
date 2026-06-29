@@ -1,7 +1,7 @@
 {
   "name": "create-sy",
   "displayName": "Syngrisi Setup Package",
-  "version": "3.9.0",
+  "version": "3.9.1",
   "description": "Easily install and configure Syngrisi — open-source Visual Testing Platform.",
   "author": {
     "name": "Viktar Silakou",
