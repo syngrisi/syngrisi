@@ -1,5 +1,29 @@
 # @syngrisi/syngrisi
 
+## 3.8.0
+
+### Minor Changes
+
+-   76c9fd2: Check Details, RCA and reporting improvements
+
+    -   **RCA panel**: controls moved into a dedicated panel toolbar (wireframe toggle + change-stats badges), full light/dark theme support, neutral (non status-colored) Issues / All Changes tabs, and a fix for the wireframe overlay being hidden behind the screenshot. New icons for the RCA toggle (microscope) and the wireframe toggle.
+    -   **Copy check info**: a button in the Check Details header copies a Markdown summary (status, project/suite/test/run, resolution, browser, OS, branch, diff %, id, deep link) to the clipboard.
+    -   **Download screenshots**: a Check Details menu item saves the actual / baseline / diff images as PNG files named after the check.
+    -   **Toolbar layout**: the three-dots menu moved to the far right, the RCA toggle restyled to match the other toolbar icons, and RCA / AI Match / Triage grouped together without dividers.
+    -   **Run report API**: new `GET /ai/report/:runId` endpoint returning an aggregated run report (run metadata, status breakdown, diff summary, and the tests with their checks).
+
+-   79adf9b: RCA bug fixes and panel polish
+
+    -   **Empty baseline**: a check whose baseline DOM is empty/degenerate (e.g. a cleared `<body>`) now reports its added/removed elements instead of "No DOM changes detected".
+    -   **Issue aggregation**: many similar structural changes are grouped into a single issue card (e.g. "4 elements added (div)", "9 elements moved or resized") instead of one near-identical card per element.
+    -   **Stats badges**: the RCA panel now shows geometry and content/text badges so the per-type counts reconcile with the total.
+    -   **Panel layout**: stats on the left and the wireframe toggle on the right of the panel toolbar, theme-aware light/dark, neutral Issues/All Changes tabs, the severity icon color matches its badge, long XPaths are truncated to one line with the full path on hover, and the expanded issue/change card is highlighted.
+    -   **Wireframe overlay** is now actually visible (it was rendering but at a near-invisible opacity).
+
+### Patch Changes
+
+-   @syngrisi/node-resemble.js@3.8.0
+
 ## 3.7.0
 
 ### Minor Changes
