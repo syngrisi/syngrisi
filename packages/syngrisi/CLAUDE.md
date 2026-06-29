@@ -127,8 +127,10 @@ See root `AGENTS.md` for full release documentation. Quick reference:
 npx changeset add
 # Select @syngrisi/syngrisi, choose version type (patch/minor/major), add description
 
-# 2. Commit and push
-git add .changeset/ && git commit -m "chore: add changeset" && git push
+# 2. Commit and push.
+#    If the relevant E2E tests already passed locally, add [skip-e2e] to the
+#    HEAD commit message so CI does not re-run E2E (see "Skip E2E on CI" below).
+git add .changeset/ && git commit -m "chore: add changeset [skip-e2e]" && git push
 
 # 3. Wait for "chore(release): version packages" PR from GitHub Actions
 # 4. Merge PR → automatic npm publish + GitHub Release
@@ -138,6 +140,14 @@ Version types:
 - **patch**: Bug fixes, CI/Docker improvements, docs updates
 - **minor**: New features (backwards compatible)
 - **major**: Breaking changes
+
+### Skip E2E on CI when it already passed locally
+
+CI keys off the **HEAD commit message** (`ci.yml`: `!contains(head_commit.message, '[skip-e2e]')`).
+If you have already run the relevant E2E suite locally and it is green, add
+`[skip-e2e]` to the commit you push so CI skips E2E while still running build,
+unit tests and the release workflow. Do **not** use `[skip ci]` — that blocks
+the release workflow too. See `docs-src/RELEASE_CYCLE.md`.
 
 ## Data Model
 

@@ -10,6 +10,8 @@
 
 If a user asks to run "syngrisi tests" or "e2e tests", treat that as running `yarn test` from `packages/syngrisi`.
 
+If the relevant E2E suite already passed locally, add `[skip-e2e]` to the HEAD commit message when pushing so CI does not re-run E2E (build, unit tests and the release workflow still run). Never use `[skip ci]` — it blocks the release workflow. See [Release Cycle Documentation](docs-src/RELEASE_CYCLE.md).
+
 ## Design & Coding Principles
 
 -   не усложнять, без оверинжиниринга, но с сохранением требуемой функциональности
