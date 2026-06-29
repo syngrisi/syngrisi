@@ -77,6 +77,12 @@ Feature: AI Triage verdicts and per-project auto-accept
     Then the element with locator "[data-triage-verdict='likely_bug']" should be visible
 
   Scenario: Re-run triage from the check toolbar updates the verdict
+    # Triage UI controls (run button) are gated behind the global ai_triage_enabled flag
+    Given I update via http setting "ai_triage_enabled" with params:
+      """
+      value: "true"
+      enabled: true
+      """
     Given I create "1" tests with:
       """
       testName: TriageToolbarTest
@@ -111,6 +117,12 @@ Feature: AI Triage verdicts and per-project auto-accept
     Then the element with locator "[data-triage-verdict='noise']" should be visible
 
   Scenario: Clicking a verdict badge filters checks to that verdict
+    # Triage filter button is gated behind the global ai_triage_enabled flag
+    Given I update via http setting "ai_triage_enabled" with params:
+      """
+      value: "true"
+      enabled: true
+      """
     # Test 1 → noise
     Given I create "1" tests with:
       """
@@ -189,6 +201,12 @@ Feature: AI Triage verdicts and per-project auto-accept
     Then the element with locator "[data-triage-verdict='likely_bug']" should be visible
 
   Scenario: Filter checks by minimum confidence
+    # Triage filter button is gated behind the global ai_triage_enabled flag
+    Given I update via http setting "ai_triage_enabled" with params:
+      """
+      value: "true"
+      enabled: true
+      """
     Given I create "1" tests with:
       """
       testName: HighConfTest
@@ -252,6 +270,12 @@ Feature: AI Triage verdicts and per-project auto-accept
     Then the element with locator "[data-check='LowConfCheck']" should be hidden
 
   Scenario: Filter checks by reason substring
+    # Triage filter button is gated behind the global ai_triage_enabled flag
+    Given I update via http setting "ai_triage_enabled" with params:
+      """
+      value: "true"
+      enabled: true
+      """
     Given I create "1" tests with:
       """
       testName: BannerTest
