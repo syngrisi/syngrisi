@@ -1,8 +1,8 @@
 metadata:
   category: common/other
-  generatedAt: '2026-06-24T05:53:26.305Z'
+  generatedAt: '2026-06-29T05:37:26.369Z'
   totalFiles: 4
-  totalSteps: 21
+  totalSteps: 27
   sourceFiles:
     - steps/common/demo.steps.ts
     - steps/common/dialog.steps.ts
@@ -16,35 +16,74 @@ steps:
       Displays a banner with the text.
       In Demo Mode: Speaks the text and waits for it to finish.
       In Silent Mode: Skips speech, shows banner briefly.
-    line: 26
+    line: 61
   - pattern: 'I announce: {string} and PAUSE'
     description: |-
       Step definition: `When I announce: {string} and PAUSE`
 
       In Demo Mode: Speaks, shows banner, and PAUSES execution for manual inspection.
       In Silent Mode: Acts like normal announce (skips pause).
-    line: 47
+    line: 82
+  - pattern: I clear arrows
+    description: 'Step definition: `When I clear arrows`'
+    line: 175
   - pattern: I clear highlight
     description: 'Step definition: `When I clear highlight`'
-    line: 80
+    line: 157
   - pattern: I end the demo
     description: |-
       Step definition: `When I end the demo`
 
       Shows confetti animation.
-    line: 100
+    line: 225
   - pattern: I highlight element {string}
     description: |-
       Step definition: `When I highlight element {string}`
 
       Applies a "liquid glass" highlight effect to the element.
-    line: 72
+    line: 149
+  - pattern: I point an arrow at {string} labeled {string}
+    description: |-
+      Step definition: `When I point an arrow at {string} labeled {string}`
+
+      Draws a single red arrow (with a label) pointing at an element — used by the AI Match reel.
+    line: 167
+  - pattern: I reveal verdicts with caption {string}
+    description: |-
+      Step definition: `When I reveal verdicts with caption {string}`
+
+      Shows the verdict caption and reveals the red verdict arrows one group at a time, timed
+      to the moments the voice-over names each verdict. The reveal order matches the sentence:
+      "…intended change, noise, or a likely bug." Fractions are of the caption's voice-over
+      length; tune them against the built audio if the wording/timing changes.
+    line: 188
+  - pattern: I save a screenshot to {string}
+    description: |-
+      Step definition: `When I save a screenshot to {string}`
+
+      Saves the current viewport as a PNG (path is relative to the e2e dir). Used to capture
+      marketing screenshots for the README.
+    line: 124
   - pattern: 'I set demo step {int} of {int}: {string}'
     description: |-
       Step definition: `When I set demo step {int} of {int}: {string}`
 
       Updates the progress overlay in the corner.
-    line: 90
+    line: 215
+  - pattern: I start the reel timeline
+    description: |-
+      Step definition: `When I start the reel timeline`
+
+      Marks t=0 for the marketing reel (≈ video start) and resets the caption timeline.
+    line: 136
+  - pattern: I subtitle {string}
+    description: |-
+      Step definition: `When I subtitle {string}`
+
+      Marketing caption: compact, no background, outlined text. No speech (TTS is added in
+      post-production). Stays on screen for the matching voice-over clip duration so the
+      recorded video lines up with the generated audio.
+    line: 109
   - pattern: I prepare to accept confirmation dialog with text {string}
     description: ''
     line: 7

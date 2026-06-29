@@ -311,11 +311,13 @@ export default function AdminDataManagement() {
                 <Table striped highlightOnHover withBorder>
                     <thead>
                         <tr>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Progress</th>
-                            <th>Stats</th>
-                            <th>Actions</th>
+                            {/* Left-align headers so they line up with the left-aligned cell values
+                                (native <th> defaults to text-align: center). */}
+                            <th style={{ textAlign: 'left' }}>Type</th>
+                            <th style={{ textAlign: 'left' }}>Status</th>
+                            <th style={{ textAlign: 'left' }}>Progress</th>
+                            <th style={{ textAlign: 'left' }}>Stats</th>
+                            <th style={{ textAlign: 'left' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>

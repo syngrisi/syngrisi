@@ -226,6 +226,13 @@ export function CheckDetails({
         return setting.value === true || setting.value === 'true';
     }, [settingsQuery.data]);
 
+    const isTriageEnabled = useMemo(() => {
+        if (!settingsQuery.data) return false;
+        const setting = settingsQuery.data.find((s: any) => s.name === 'ai_triage_enabled');
+        if (!setting) return false;
+        return setting.value === true || setting.value === 'true';
+    }, [settingsQuery.data]);
+
     // Navigation Logic
     const hasInitialSiblingChecks = initialSiblingChecks.length > 0
         && initialSiblingChecks.some((item) => item?._id === currentCheck?._id);
@@ -680,7 +687,7 @@ export function CheckDetails({
                     onToggleRCA={rca.toggle}
                     isShareEnabled={isShareEnabled}
                     apikey={apikey}
-                    onRunTriage={handleRunTriage}
+                    onRunTriage={isTriageEnabled ? handleRunTriage : undefined}
                     triageRunning={triageRunning}
                 />
 
