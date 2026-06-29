@@ -100,10 +100,12 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
                     />
                 </Group>
                 <Switch
-                    label="Enabled"
+                    label="Enable AI Triage (whole instance)"
+                    description="Master switch. Turns the feature and its UI controls (verdict filter, Run AI triage) on or off for the entire instance."
                     checked={enabled}
                     onChange={(e) => setEnabled(e.currentTarget.checked)}
                     data-test="ai-triage-enabled-switch"
+                    styles={{ description: { maxWidth: 320 } }}
                 />
             </Group>
             <Select

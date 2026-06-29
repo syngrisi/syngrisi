@@ -164,7 +164,7 @@ function PerProjectTriage() {
             />
             {!appId ? <Text size="sm" c="dimmed">Select a project to configure its verdicts and policy.</Text> : (
                 <>
-                    <Switch label="AI Triage enabled for this project" checked={enabled} onChange={(e) => setEnabled(e.currentTarget.checked)} data-test="ai-project-enabled" mb="md" />
+                    <Switch label="Auto-triage for this project" description="Automatically classify new failed checks in this project. Requires AI Triage enabled instance-wide (Settings tab)." checked={enabled} onChange={(e) => setEnabled(e.currentTarget.checked)} data-test="ai-project-enabled" mb="md" styles={{ description: { maxWidth: 420 } }} />
                     <Group mb="md" align="end">
                         <Select label="Policy" value={mode} onChange={(v) => setMode(v || 'suggest')} data-test="ai-policy-mode"
                             data={[{ value: 'suggest', label: 'Suggest (UI only)' }, { value: 'auto', label: 'Auto-accept' }]} />
