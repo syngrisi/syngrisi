@@ -367,7 +367,7 @@ export class RCAOverlay {
                     width: canvasRect.width,
                     height: canvasRect.height,
                     fill: 'transparent',
-                    stroke: 'rgba(0, 150, 255, 0.2)',
+                    stroke: 'rgba(0, 120, 255, 0.6)',
                     strokeWidth: 1,
                     selectable: false,
                     evented: false,
