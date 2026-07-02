@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { Checkbox, Button, Group, Title, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ISettingForm, ISettingFormUpdateData } from '@admin/components/Settings/Forms/interfaces';
 import SafeSelect from '@shared/components/SafeSelect';
 // actually this component not represent boolean data,
@@ -15,6 +15,14 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
             },
         },
     );
+
+    // Resync the form to fresh props (e.g. after save or a react-query
+    // refetch-on-window-focus), otherwise the shown value/enabled would
+    // stay frozen at the initial values forever.
+    useEffect(() => {
+        form.setValues({ value, enabled });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value, enabled]);
 
     const handleSubmit = (values: ISettingFormUpdateData) => {
         updateSetting.mutate(values);
