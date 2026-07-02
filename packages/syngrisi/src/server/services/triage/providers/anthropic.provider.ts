@@ -49,7 +49,9 @@ export class AnthropicProvider implements TriageProvider {
             signal: AbortSignal.timeout(this.cfg.timeoutMs ?? 120000),
         });
         if (!resp.ok) {
-            throw new Error(`Anthropic provider HTTP ${resp.status}: ${await resp.text()}`);
+            // Do not reflect the upstream response body — cfg.baseUrl is user-controlled
+            // and this error is surfaced back to the caller (SSRF info-disclosure risk).
+            throw new Error(`Anthropic provider HTTP ${resp.status}`);
         }
         const data: any = await resp.json();
         const content = Array.isArray(data?.content)
@@ -72,7 +74,9 @@ export class AnthropicProvider implements TriageProvider {
             body: JSON.stringify({ model, max_tokens: 1, messages: [{ role: 'user', content: 'ping' }] }),
             signal: AbortSignal.timeout(15000),
         });
-        if (!resp.ok) throw new Error(`Anthropic provider HTTP ${resp.status}: ${await resp.text()}`);
+        // Do not reflect the upstream response body — cfg.baseUrl is user-controlled
+        // and this error is surfaced back to the caller (SSRF info-disclosure risk).
+        if (!resp.ok) throw new Error(`Anthropic provider HTTP ${resp.status}`);
         return { model };
     }
 }

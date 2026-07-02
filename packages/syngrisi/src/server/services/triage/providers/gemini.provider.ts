@@ -38,7 +38,9 @@ export class GeminiProvider implements TriageProvider {
             signal: AbortSignal.timeout(this.cfg.timeoutMs ?? 120000),
         });
         if (!resp.ok) {
-            throw new Error(`Gemini provider HTTP ${resp.status}: ${await resp.text()}`);
+            // Do not reflect the upstream response body — cfg.baseUrl is user-controlled
+            // and this error is surfaced back to the caller (SSRF info-disclosure risk).
+            throw new Error(`Gemini provider HTTP ${resp.status}`);
         }
         const data: any = await resp.json();
         const content = data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text || '').join('') ?? '';
@@ -52,7 +54,9 @@ export class GeminiProvider implements TriageProvider {
         const resp = await fetch(`${baseUrl}/v1beta/models/${model}?key=${this.cfg.apiKey ?? ''}`, {
             signal: AbortSignal.timeout(15000),
         });
-        if (!resp.ok) throw new Error(`Gemini provider HTTP ${resp.status}: ${await resp.text()}`);
+        // Do not reflect the upstream response body — cfg.baseUrl is user-controlled
+        // and this error is surfaced back to the caller (SSRF info-disclosure risk).
+        if (!resp.ok) throw new Error(`Gemini provider HTTP ${resp.status}`);
         return { model };
     }
 }
