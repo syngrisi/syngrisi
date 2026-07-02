@@ -3,11 +3,13 @@ import { Types } from 'mongoose';
 import { Check, App, Test, Suite } from '@models';
 import { accept } from '@services/check.service';
 import log from '@lib/logger';
+import { env } from '@/server/envConfig';
 import { buildTriageInput } from './analysis.service';
 import { buildSystemPrompt, substitutePlaceholders } from './prompt';
 import { createProvider } from './factory';
 import { getProviderConfig } from './config';
 import { shouldAutoAccept } from './policy';
+import { shouldRetryTriage } from './retryPolicy';
 import { getVerdictConfig, findVerdict, fallbackVerdict, UNKNOWN_VERDICT, CANCELLED_VERDICT } from './verdicts';
 import { TriageVerdictResult, VerdictDef } from './types';
 
@@ -58,13 +60,27 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
 
     let result: TriageVerdictResult;
     let failed = false;
+    const priorAttempts = check.triage?.attempts ?? 0;
     try {
         const input = await buildTriageInput(checkId, verdicts, { systemPrompt, examples });
         if (!input) throw new Error(`check not found: ${checkId}`);
         result = await createProvider(cfg).classify(input);
     } catch (e) {
-        failed = true;
         log.warn(`triage failed for ${checkId}: ${e}`, { scope });
+        if (shouldRetryTriage(priorAttempts, env.SYNGRISI_AI_TRIAGE_MAX_ATTEMPTS)) {
+            // Transient provider failure (429 / timeout / cold local VLM) and attempts remain:
+            // re-queue for the scheduler instead of permanently burning the check on a failed verdict.
+            // ponytail: retries are spaced by the scheduler poll interval; no per-check backoff.
+            // Add exponential backoff keyed on triage.at if a persistently-down provider proves too chatty.
+            log.warn(`triage retry queued for ${checkId} (attempt ${priorAttempts + 1}/${env.SYNGRISI_AI_TRIAGE_MAX_ATTEMPTS})`, { scope });
+            return requeueCheck(checkId, {
+                attempts: priorAttempts + 1,
+                failed: false,
+                reason: 'triage failed, will retry',
+                at: new Date(),
+            });
+        }
+        failed = true;
         const fb = fallbackVerdict(verdicts);
         result = { verdict: fb.key, confidence: 0, reason: 'triage failed', model: cfg.model ?? cfg.type };
     }
@@ -88,6 +104,7 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
         color: def?.color ?? 'gray',
         icon: def?.icon,
     };
+    if (failed) triage.attempts = priorAttempts + 1; // observability: total attempts made before giving up
 
     // Apply per-project auto-accept policy (verdict flags + policy allowlist + threshold).
     // Uses the model's real verdict; below-threshold can't auto-accept anyway (confidence gate).
@@ -129,6 +146,25 @@ export async function cancelCheck(checkId: string): Promise<Record<string, unkno
     };
     await Check.findByIdAndUpdate(checkId, { $set: { triage } }).exec();
     await updateTestWorstVerdict(check.test, verdicts);
+    return triage;
+}
+
+// Put a check back into the scheduler's pending queue: the shared primitive behind the bulk
+// "restart" action (queue restart runs async via the background scheduler instead of blocking
+// the request) and the bounded-retry path in `triageCheck` (a transient provider failure with
+// attempts remaining). Overwrites the whole `triage` subdocument with `{ pending: true, ...extra }`
+// so `triage.verdict` no longer exists and `findUntriagedCheckIds` re-selects this check on the
+// next poll. `extra` lets the retry path stamp `attempts`/`reason`/`at` alongside `pending`.
+export async function requeueCheck(checkId: string, extra: Record<string, unknown> = {}): Promise<Record<string, unknown>> {
+    const check: any = await Check.findById(checkId).exec();
+    if (!check) throw new Error(`check not found: ${checkId}`);
+    const triage = { pending: true, ...extra };
+    await Check.findByIdAndUpdate(checkId, { $set: { triage } }).exec();
+    // Kick the scheduler so analysis starts right away instead of waiting for the next poll.
+    // Lazy import avoids a module-load cycle (triageScheduler statically imports this module).
+    import('@lib/schedulers/triageScheduler')
+        .then((m) => m.triageScheduler.kick())
+        .catch((e) => log.warn(`triage kick failed for check ${checkId}: ${e}`, { scope }));
     return triage;
 }
 

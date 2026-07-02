@@ -9,7 +9,7 @@ import { accept, remove } from '@services/check.service';
 import { ExtRequest } from '@types';
 import log from '@lib/logger';
 import { HttpStatus } from '@utils';
-import { triageCheck, cancelCheck } from '@services/triage';
+import { triageCheck, cancelCheck, requeueCheck } from '@services/triage';
 import { createProvider } from '@services/triage/factory';
 import { getProviderConfig } from '@services/triage/config';
 
@@ -680,8 +680,12 @@ const bulkTriageOp = async (body: any, op: (id: string) => Promise<unknown>) => 
 const triageQueueCancel = catchAsync(async (req: ExtRequest, res: Response) => {
     res.json({ results: await bulkTriageOp(req.body, cancelCheck) });
 });
+// Restart re-queues each check (mark pending + kick the scheduler) instead of running the full
+// classification inline — "restart all" on a large run must not block the HTTP request for
+// minutes. The background scheduler picks the checks back up. The per-check toolbar "re-run"
+// stays synchronous (triageRun -> triageCheck below), since the user is waiting on one result.
 const triageQueueRestart = catchAsync(async (req: ExtRequest, res: Response) => {
-    res.json({ results: await bulkTriageOp(req.body, triageCheck) });
+    res.json({ results: await bulkTriageOp(req.body, requeueCheck) });
 });
 
 // Admin "Test connection": run one classification against the current/provided provider config.
