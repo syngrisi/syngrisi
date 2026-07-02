@@ -15,7 +15,7 @@ Feature: Plugin System Initialization
           testName: NoPluginTest
           checks:
             - checkName: TestCheck
-              filePath: files/a.png
+              filePath: files/A.png
       """
     Then I expect via http 1st check filtered as "name=TestCheck" matched:
       """
@@ -35,7 +35,7 @@ Feature: Plugin System Initialization
           testName: WithPluginTest
           checks:
             - checkName: PluginCheck
-              filePath: files/a.png
+              filePath: files/A.png
       """
     Then I expect via http 1st check filtered as "name=PluginCheck" matched:
       """

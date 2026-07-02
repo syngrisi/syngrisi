@@ -1024,3 +1024,38 @@ When(
     expect(updated.toleranceThreshold).toBe(tolerance);
   }
 );
+
+When(
+  'I set via http baseline {string} matchType to {string}',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    baselineName: string,
+    matchType: string
+  ) => {
+    const filter = encodeURIComponent(JSON.stringify({ name: baselineName }));
+    const uri = `${appServer.baseURL}/v1/baselines?limit=1&filter=${filter}`;
+    logger.info(`Looking up baseline "${baselineName}"`);
+    const response = await requestWithSession(uri, testData, appServer);
+    const baselines = response.json.results;
+    expect(baselines.length).toBeGreaterThan(0);
+    const baselineId = baselines[0]._id;
+
+    const putUri = `${appServer.baseURL}/v1/baselines/${baselineId}`;
+    logger.info(`Setting matchType "${matchType}" on baseline ${baselineId}`);
+    const headers = createAuthHeaders(testData, appServer);
+    await got.put(putUri, {
+      json: { matchType },
+      headers,
+    }).json<any>();
+
+    // Verify via GET
+    const verifyResponse = await requestWithSession(
+      `${appServer.baseURL}/v1/baselines?limit=1&filter=${filter}`,
+      testData,
+      appServer
+    );
+    const updated = verifyResponse.json.results[0];
+    logger.info(`Baseline matchType verified: ${updated.matchType}`);
+    expect(updated.matchType).toBe(matchType);
+  }
+);
