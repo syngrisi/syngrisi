@@ -4,7 +4,7 @@ import { useForm } from '@mantine/form';
 import { ActionIcon, Group, TextInput } from '@mantine/core';
 import { IconEdit, IconSend, IconX } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { errorMsg, log } from '@shared/utils';
 import { Password } from '@shared/components/Password';
 import ActionPopoverIcon from '@shared/components/ActionPopoverIcon';
@@ -47,12 +47,32 @@ export default function UserForm(
         },
     });
 
+    // Resync the form to fresh props (e.g. after "Reload users" or another admin's change).
+    // Guarded by !editMode so a refetch mid-edit never clobbers the user's unsaved input.
+    // editMode is in the deps so the row resyncs right after the user exits edit mode.
+    // Local-only fields (password) are intentionally left untouched.
+    useEffect(() => {
+        if (!editMode) {
+            form.setValues({
+                id,
+                username,
+                firstName,
+                lastName,
+                role,
+                updatedDate,
+                createdDate,
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id, username, firstName, lastName, role, updatedDate, createdDate, editMode]);
+
     const updateUser = useMutation(
         {
             mutationFn: (data: IUser) => GenericService.update('users', data),
             onSuccess: async (result: any) => {
                 successMsg({ message: `User: '${result.username}' has been successfully updated` });
                 log.debug({ result });
+                setEditMode(false);
                 refetch();
             },
             onError: (e: any) => {
@@ -79,7 +99,6 @@ export default function UserForm(
     const update = () => {
         if (form.validate().hasErrors) return;
         updateUser.mutate(form.values);
-        setEditMode(false);
     };
 
     const removeUser = () => {
@@ -107,7 +126,6 @@ export default function UserForm(
                         style={{ width: '11%' }}
                         data-test="user-list-first-name"
                         aria-label="First Name"
-                        value={firstName}
                         disabled={!editMode}
                         {...form.getInputProps('firstName')}
                     />
@@ -115,7 +133,6 @@ export default function UserForm(
                         style={{ width: '11%' }}
                         data-test="user-list-last-name"
                         aria-label="Last Name"
-                        value={lastName}
                         disabled={!editMode}
                         {...form.getInputProps('lastName')}
                     />

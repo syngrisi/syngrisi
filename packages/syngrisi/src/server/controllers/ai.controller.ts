@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Response } from 'express';
 import { Check, Webhook, App, Run, Test } from '@models';
-import { catchAsync, ApiError } from '@utils';
+import { catchAsync, ApiError, escapeHtml } from '@utils';
 import { config } from '@config';
 import fs from 'fs';
 import path from 'path';
@@ -9,17 +9,19 @@ import { accept, remove } from '@services/check.service';
 import { ExtRequest } from '@types';
 import log from '@lib/logger';
 import { HttpStatus } from '@utils';
-import { triageCheck, cancelCheck } from '@services/triage';
+import { triageCheck, cancelCheck, requeueCheck } from '@services/triage';
 import { createProvider } from '@services/triage/factory';
 import { getProviderConfig } from '@services/triage/config';
 
-const htmlShell = (title: string, content: string) => `
+const htmlShell = (title: string, content: string) => {
+    const safeTitle = escapeHtml(title);
+    return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
+    <title>${safeTitle}</title>
     <style>
         body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 1rem; }
         header, footer { margin-bottom: 1rem; border-bottom: 1px solid #ccc; padding-bottom: 0.5rem; }
@@ -37,7 +39,7 @@ const htmlShell = (title: string, content: string) => `
 </head>
 <body>
     <header>
-        <h1>${title}</h1>
+        <h1>${safeTitle}</h1>
         <nav><a href="/ai/checks">Checks</a></nav>
     </header>
     <main>
@@ -49,6 +51,7 @@ const htmlShell = (title: string, content: string) => `
 </body>
 </html>
 `;
+};
 
 const getIndex = (req: ExtRequest, res: Response) => {
     const today = new Date().toISOString().split('T')[0];
@@ -291,13 +294,13 @@ const getChecks = catchAsync(async (req: ExtRequest, res: Response) => {
         <section aria-labelledby="filter-form">
             <h2 id="filter-form" class="sr-only">Filter Checks</h2>
             <form method="GET" aria-label="Check filter form" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; padding: 0.5rem; background: #f9f9f9;">
-                <input type="text" name="run" placeholder="Run ID" value="${run || ''}" aria-label="Run ID">
-                <input type="text" name="status" placeholder="Status" value="${status || ''}" aria-label="Status">
-                <input type="text" name="name" placeholder="Name (regex)" value="${name || ''}" aria-label="Check name">
-                <input type="text" name="branch" placeholder="Branch" value="${branch || ''}" aria-label="Branch">
-                <input type="text" name="browser" placeholder="Browser" value="${browser || ''}" aria-label="Browser">
-                <input type="text" name="os" placeholder="OS" value="${os || ''}" aria-label="Operating system">
-                <input type="text" name="viewport" placeholder="Viewport" value="${viewport || ''}" aria-label="Viewport">
+                <input type="text" name="run" placeholder="Run ID" value="${escapeHtml(run)}" aria-label="Run ID">
+                <input type="text" name="status" placeholder="Status" value="${escapeHtml(status)}" aria-label="Status">
+                <input type="text" name="name" placeholder="Name (regex)" value="${escapeHtml(name)}" aria-label="Check name">
+                <input type="text" name="branch" placeholder="Branch" value="${escapeHtml(branch)}" aria-label="Branch">
+                <input type="text" name="browser" placeholder="Browser" value="${escapeHtml(browser)}" aria-label="Browser">
+                <input type="text" name="os" placeholder="OS" value="${escapeHtml(os)}" aria-label="Operating system">
+                <input type="text" name="viewport" placeholder="Viewport" value="${escapeHtml(viewport)}" aria-label="Viewport">
                 <select name="markedAs" aria-label="Marked as">
                     <option value="">Marked As...</option>
                     <option value="accepted" ${markedAs === 'accepted' ? 'selected' : ''}>Accepted</option>
@@ -306,9 +309,9 @@ const getChecks = catchAsync(async (req: ExtRequest, res: Response) => {
                 <label>
                     <input type="checkbox" name="hasDiff" value="true" ${hasDiff === 'true' ? 'checked' : ''}> Has Diff
                 </label>
-                <input type="date" name="fromDate" value="${fromDate || ''}" aria-label="From date">
-                <input type="date" name="toDate" value="${toDate || ''}" aria-label="To date">
-                <input type="number" name="lastSeconds" placeholder="Last X seconds" value="${lastSeconds || ''}" aria-label="Last seconds" min="1">
+                <input type="date" name="fromDate" value="${escapeHtml(fromDate)}" aria-label="From date">
+                <input type="date" name="toDate" value="${escapeHtml(toDate)}" aria-label="To date">
+                <input type="number" name="lastSeconds" placeholder="Last X seconds" value="${escapeHtml(lastSeconds)}" aria-label="Last seconds" min="1">
                 <select name="limit" aria-label="Items per page">
                     <option value="20" ${itemsPerPage === 20 ? 'selected' : ''}>20 per page</option>
                     <option value="50" ${itemsPerPage === 50 ? 'selected' : ''}>50 per page</option>
@@ -342,13 +345,13 @@ const getChecks = catchAsync(async (req: ExtRequest, res: Response) => {
                     <li>
                         <article style="border: 1px solid #eee; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">
                             <label style="display: flex; gap: 1rem; align-items: start;">
-                                <input type="checkbox" name="ids" value="${check._id}" aria-label="Select ${check.name}">
+                                <input type="checkbox" name="ids" value="${check._id}" aria-label="Select ${escapeHtml(check.name)}">
                                 <div style="flex: 1;">
-                                    <h3 style="margin: 0 0 0.5rem 0;"><a href="/ai/checks/${check._id}">${check.name}</a></h3>
-                                    <p style="margin: 0 0 0.5rem 0;">Status: <span class="status-${check.status[0]}">${check.status[0]}</span></p>
+                                    <h3 style="margin: 0 0 0.5rem 0;"><a href="/ai/checks/${check._id}">${escapeHtml(check.name)}</a></h3>
+                                    <p style="margin: 0 0 0.5rem 0;">Status: <span class="status-${escapeHtml(check.status[0])}">${escapeHtml(check.status[0])}</span></p>
                                     <dl class="meta" style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 0.5rem;">
                                         <dt>ID:</dt><dd style="margin: 0;">${check._id}</dd>
-                                        <dt>Run:</dt><dd style="margin: 0;">${check.run}</dd>
+                                        <dt>Run:</dt><dd style="margin: 0;">${escapeHtml(check.run)}</dd>
                                         <dt>Date:</dt><dd style="margin: 0;">${new Date(check.createdDate).toISOString()}</dd>
                                     </dl>
                                 </div>
@@ -397,14 +400,14 @@ const getCheckDetails = catchAsync(async (req: ExtRequest, res: Response) => {
         return;
     }
 
-    const actual = check.actualSnapshotId ? `/ snapshoots / ${check.actualSnapshotId.filename} ` : '';
-    const baseline = check.baselineId ? `/ snapshoots / ${check.baselineId.filename} ` : '';
-    const diff = check.diffId ? `/ snapshoots / ${check.diffId.filename} ` : '';
+    const actual = check.actualSnapshotId ? `/ snapshoots / ${escapeHtml(check.actualSnapshotId.filename)} ` : '';
+    const baseline = check.baselineId ? `/ snapshoots / ${escapeHtml(check.baselineId.filename)} ` : '';
+    const diff = check.diffId ? `/ snapshoots / ${escapeHtml(check.diffId.filename)} ` : '';
 
     let html = `
         <article>
-            <h2>${check.name}</h2>
-            <p>Status: ${check.status[0]}</p>
+            <h2>${escapeHtml(check.name)}</h2>
+            <p>Status: ${escapeHtml(check.status[0])}</p>
             <p>ID: ${check._id}</p>
             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
     `;
@@ -437,7 +440,7 @@ const getCheckDetails = catchAsync(async (req: ExtRequest, res: Response) => {
     html += `
             </div>
             <h3>Metadata</h3>
-            <pre>${JSON.stringify(check.meta || {}, null, 2)}</pre>
+            <pre>${escapeHtml(JSON.stringify(check.meta || {}, null, 2))}</pre>
             <h3>Actions</h3>
             <form method="POST" action="/ai/batch">
                 <input type="hidden" name="ids" value="${check._id}">
@@ -447,7 +450,7 @@ const getCheckDetails = catchAsync(async (req: ExtRequest, res: Response) => {
         </article>
     `;
 
-    res.send(htmlShell(`Check: ${check.name} `, html));
+    res.send(htmlShell(`Check: ${check.name} `, html)); // htmlShell escapes the title internally
 });
 
 const getAnalysis = catchAsync(async (req: ExtRequest, res: Response) => {
@@ -677,15 +680,26 @@ const bulkTriageOp = async (body: any, op: (id: string) => Promise<unknown>) => 
 const triageQueueCancel = catchAsync(async (req: ExtRequest, res: Response) => {
     res.json({ results: await bulkTriageOp(req.body, cancelCheck) });
 });
+// Restart re-queues each check (mark pending + kick the scheduler) instead of running the full
+// classification inline — "restart all" on a large run must not block the HTTP request for
+// minutes. The background scheduler picks the checks back up. The per-check toolbar "re-run"
+// stays synchronous (triageRun -> triageCheck below), since the user is waiting on one result.
 const triageQueueRestart = catchAsync(async (req: ExtRequest, res: Response) => {
-    res.json({ results: await bulkTriageOp(req.body, triageCheck) });
+    res.json({ results: await bulkTriageOp(req.body, requeueCheck) });
 });
 
 // Admin "Test connection": run one classification against the current/provided provider config.
 const triageTest = catchAsync(async (req: ExtRequest, res: Response) => {
-    const cfg = (req.body && Object.keys(req.body).length) ? req.body : await getProviderConfig();
+    let cfg = (req.body && Object.keys(req.body).length) ? req.body : await getProviderConfig();
     if (!cfg) {
         throw new ApiError(HttpStatus.BAD_REQUEST, 'No triage provider configured');
+    }
+    // The admin form omits the apiKey (or sends the masked placeholder) when the stored key
+    // wasn't retyped. Backfill it from the stored provider config, mirroring the save path's
+    // preservation logic, so "Test connection" authenticates with the real stored secret.
+    if (!cfg.apiKey || cfg.apiKey === '***') {
+        const stored = await getProviderConfig();
+        cfg = { ...cfg, apiKey: stored?.apiKey || '' };
     }
     const started = Date.now();
     try {
@@ -694,7 +708,10 @@ const triageTest = catchAsync(async (req: ExtRequest, res: Response) => {
         const result = await createProvider(cfg).ping();
         res.json({ ok: true, latencyMs: Date.now() - started, result });
     } catch (e) {
-        res.json({ ok: false, latencyMs: Date.now() - started, error: e instanceof Error ? e.message : String(e) });
+        // Belt-and-suspenders cap: providers no longer inline upstream response bodies,
+        // but keep the message short regardless of what threw.
+        const message = (e instanceof Error ? e.message : String(e)).slice(0, 200);
+        res.json({ ok: false, latencyMs: Date.now() - started, error: message });
     }
 });
 

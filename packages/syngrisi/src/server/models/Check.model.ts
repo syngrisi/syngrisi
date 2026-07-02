@@ -49,6 +49,7 @@ export interface CheckDocument extends Document {
         icon?: string;
         autoAccepted?: boolean;
         failed?: boolean; // provider error/timeout → fallback verdict
+        attempts?: number; // number of classification attempts made so far (bounded retry)
     };
     changeSig?: {
         vector: number[]; // color_hist Lab descriptor of the change (resolution-invariant)
@@ -197,6 +198,7 @@ const CheckSchema = new Schema<CheckDocument>({
             icon: { type: String },
             autoAccepted: { type: Boolean },
             failed: { type: Boolean },
+            attempts: { type: Number },
         },
         _id: false,
         default: undefined,
