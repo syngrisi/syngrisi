@@ -110,8 +110,8 @@ const BaselinePutSchema = z.object({
         description: 'JSON string representing the checked area (only compare within this region)',
         example: '[{"left":0,"top":0,"right":500,"bottom":300}]'
     }).optional(),
-    matchType: z.enum(['antialiasing', 'nothing', 'colors']).openapi({
-        description: 'Comparison mode: nothing (standard), antialiasing (auto-ignore), or colors (ignore color differences)',
+    matchType: z.enum(['antialiasing', 'nothing', 'colors', 'tolerant']).openapi({
+        description: 'Comparison mode: nothing (pixel-perfect, exact, default), tolerant (allow minor per-pixel differences, ±16), antialiasing (auto-ignore anti-aliasing), or colors (ignore color differences)',
         example: 'nothing'
     }).optional(),
     toleranceThreshold: z.number().min(0).max(100).openapi({
