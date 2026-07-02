@@ -15,6 +15,10 @@ Feature: Check Details Difference Highlight
               filePath: files/A.png
       """
     When I accept via http the 1st check with name "CheckName"
+    # Difference highlighting is only available when the diff is < 5%.
+    # Use the "tolerant" (±16) mode so A.png vs B.png stays at ~1.34% instead of
+    # the exact-mode 5.73%, keeping the highlight feature under test.
+    When I set via http baseline "CheckName" matchType to "tolerant"
     Given I create "1" tests with:
       """
           testName: "TestName"

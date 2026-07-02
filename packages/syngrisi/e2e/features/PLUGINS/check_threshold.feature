@@ -49,7 +49,7 @@ Feature: Plugin System - Check Mismatch Threshold
           testName: PluginThresholdAboveTest
           checks:
             - checkName: AboveThresholdCheck
-              filePath: files/a.png
+              filePath: files/A.png
       """
     When I accept via http the 1st check with name "AboveThresholdCheck"
 
@@ -59,7 +59,7 @@ Feature: Plugin System - Check Mismatch Threshold
           testName: PluginThresholdAboveTest
           checks:
             - checkName: AboveThresholdCheck
-              filePath: files/b.png
+              filePath: files/B.png
       """
 
     # Verify: check status should be failed (above threshold)

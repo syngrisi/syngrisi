@@ -147,8 +147,8 @@ Feature: Check Detail Appearance
     When I wait 10 seconds for the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" to be visible
     Then the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
     Then the css attribute "color" from element "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"
-    # diff percent
-    Then the element with locator "[data-check='diff-percent']" should have contains text "1.34%"
+    # diff percent (exact/Pixel Perfect default: every differing pixel counts)
+    Then the element with locator "[data-check='diff-percent']" should have contains text "5.73%"
 
     # default view
     Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-active" "true"
@@ -160,7 +160,9 @@ Feature: Check Detail Appearance
     Then the element with locator "[data-segment-value='slider']" should have attribute "data-segment-disabled" "false"
 
     # action icons (FAILED check - has baseline, add enabled, but no regions so save is disabled)
-    Then  the element "[data-check='highlight-icon']" does not have attribute "data-disabled" "true"
+    # highlight-icon is disabled here: diff highlighting is only offered when the
+    # difference is < 5%, and the exact default puts A.png vs B.png at 5.73%.
+    Then  the element "[data-check='highlight-icon']" has attribute "data-disabled" "true"
     Then  the element "[data-check='remove-ignore-region']" has attribute "data-disabled" "true"
     Then  the element "[data-check='add-ignore-region']" does not have attribute "data-disabled" "true"
     Then  the element "[data-check='save-ignore-region']" has attribute "data-disabled" "true"

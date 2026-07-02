@@ -10,4 +10,4 @@ The default comparison mode (`matchType: 'nothing'`, previously labelled **Stand
 - `node-resemble.js` gains an `exact()` method (all tolerances set to 0). `ignoreNothing()` keeps its ±16 behaviour and now backs the Tolerant mode.
 - Baseline match-type options: `nothing` (Pixel Perfect, exact, default), `tolerant` (allow minor per-pixel differences), `antialiasing`, `colors`.
 
-⚠️ **Behaviour change (no data migration):** existing baselines with `matchType: 'nothing'` (or unset) are now compared strictly. Renders that previously passed thanks to the ±16 tolerance may start reporting differences. To restore the old leniency for a baseline, switch its match type to **Tolerant**.
+⚠️ **Behaviour change (no data migration):** existing baselines with `matchType: 'nothing'` (or unset) are now compared strictly. Renders that previously passed thanks to the ±16 tolerance may start reporting differences, and reported diff percentages go up (so more checks exceed the 5% ceiling under which the diff-highlight tool is offered). To restore the old leniency for a baseline, switch its match type to **Tolerant**.
