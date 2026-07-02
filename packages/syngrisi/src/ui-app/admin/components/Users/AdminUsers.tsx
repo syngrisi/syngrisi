@@ -49,7 +49,7 @@ export default function AdminUsers() {
             </ActionIcon>,
             50,
         );
-    }, []);
+    }, [colorScheme, refetch]);
 
     const [addUser, setAddUser] = useState(false);
 
