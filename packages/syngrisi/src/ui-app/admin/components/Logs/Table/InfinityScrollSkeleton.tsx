@@ -42,44 +42,34 @@ function InfinityScrollSkeleton({ infinityQuery, visibleFields, scrollRootRef }:
         };
     }, [scrollRootRef, root]);
 
-    // Scroll-based detection for loading more items
+    // Fallback auto-load for non-overflowing content.
+    // The primary fetch trigger for infinite scroll is ScrollArea's `onBottomReached`
+    // prop (see AdminLogsTable), which only ever fires from inside the viewport's
+    // native `scroll` event handler. If the loaded rows don't overflow the scroll
+    // container (scrollHeight <= clientHeight), the browser never dispatches a
+    // `scroll` event, so `onBottomReached` can structurally never fire and paging
+    // would stall. This effect covers exactly that gap; it does not duplicate
+    // `onBottomReached` (no scroll listener here) and only acts while there is no
+    // overflow to scroll.
     useEffect(() => {
         if (!root || infinityQuery === null) return;
+        if (!infinityQuery.hasNextPage || infinityQuery.isFetchingNextPage) return;
 
-        const checkShouldLoad = () => {
-            if (!root) return;
-            if (!infinityQuery.hasNextPage || infinityQuery.isFetchingNextPage) return;
-
-            const { scrollHeight, scrollTop, clientHeight } = root;
-
-            if (scrollHeight <= clientHeight + 5) {
-                // Content fits within viewport: fetch next page
-                infinityQuery.fetchNextPage();
-            } else {
-                // Content overflows: fetch if scrolled near bottom
-                const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-                if (distanceFromBottom < 600) {
-                    infinityQuery.fetchNextPage();
-                }
-            }
-        };
-
-        const handleScroll = () => {
-            checkShouldLoad();
-        };
-
-        // Delay initial check to let DOM render
+        // Delay the check to let the DOM render before measuring.
         const rafId = requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-                checkShouldLoad();
+                if (!root) return;
+                const { scrollHeight, clientHeight } = root;
+
+                if (scrollHeight <= clientHeight + 5) {
+                    // Content fits within viewport: fetch next page
+                    infinityQuery.fetchNextPage();
+                }
             });
         });
 
-        root.addEventListener('scroll', handleScroll, { passive: true });
-
         return () => {
             cancelAnimationFrame(rafId);
-            root.removeEventListener('scroll', handleScroll);
         };
     }, [root, infinityQuery?.hasNextPage, infinityQuery?.isFetchingNextPage]);
 
