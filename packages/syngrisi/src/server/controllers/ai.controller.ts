@@ -697,7 +697,10 @@ const triageTest = catchAsync(async (req: ExtRequest, res: Response) => {
         const result = await createProvider(cfg).ping();
         res.json({ ok: true, latencyMs: Date.now() - started, result });
     } catch (e) {
-        res.json({ ok: false, latencyMs: Date.now() - started, error: e instanceof Error ? e.message : String(e) });
+        // Belt-and-suspenders cap: providers no longer inline upstream response bodies,
+        // but keep the message short regardless of what threw.
+        const message = (e instanceof Error ? e.message : String(e)).slice(0, 200);
+        res.json({ ok: false, latencyMs: Date.now() - started, error: message });
     }
 });
 

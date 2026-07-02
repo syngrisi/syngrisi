@@ -47,7 +47,9 @@ export class OpenAIProvider implements TriageProvider {
             signal: AbortSignal.timeout(this.cfg.timeoutMs ?? 120000),
         });
         if (!resp.ok) {
-            throw new Error(`OpenAI provider HTTP ${resp.status}: ${await resp.text()}`);
+            // Do not reflect the upstream response body — cfg.baseUrl is user-controlled
+            // and this error is surfaced back to the caller (SSRF info-disclosure risk).
+            throw new Error(`OpenAI provider HTTP ${resp.status}`);
         }
         const data: any = await resp.json();
         const msg = data?.choices?.[0]?.message ?? {};
@@ -64,7 +66,9 @@ export class OpenAIProvider implements TriageProvider {
             headers: { ...(this.cfg.apiKey ? { Authorization: `Bearer ${this.cfg.apiKey}` } : {}) },
             signal: AbortSignal.timeout(15000),
         });
-        if (!resp.ok) throw new Error(`OpenAI provider HTTP ${resp.status}: ${await resp.text()}`);
+        // Do not reflect the upstream response body — cfg.baseUrl is user-controlled
+        // and this error is surfaced back to the caller (SSRF info-disclosure risk).
+        if (!resp.ok) throw new Error(`OpenAI provider HTTP ${resp.status}`);
         const data: any = await resp.json();
         const ids = (data?.data ?? []).map((m: any) => m.id);
         if (ids.length && !ids.includes(model)) {
