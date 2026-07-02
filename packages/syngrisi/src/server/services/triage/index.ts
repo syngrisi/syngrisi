@@ -7,9 +7,9 @@ import { env } from '@/server/envConfig';
 import { buildTriageInput } from './analysis.service';
 import { buildSystemPrompt, substitutePlaceholders } from './prompt';
 import { createProvider } from './factory';
-import { getProviderConfig } from './config';
+import { getProviderConfig, isTriageEnabled } from './config';
 import { shouldAutoAccept } from './policy';
-import { shouldRetryTriage } from './retryPolicy';
+import { shouldRetryTriage, canBackgroundDrain } from './retryPolicy';
 import { getVerdictConfig, findVerdict, fallbackVerdict, UNKNOWN_VERDICT, CANCELLED_VERDICT } from './verdicts';
 import { TriageVerdictResult, VerdictDef } from './types';
 
@@ -67,7 +67,13 @@ export async function triageCheck(checkId: string): Promise<Record<string, unkno
         result = await createProvider(cfg).classify(input);
     } catch (e) {
         log.warn(`triage failed for ${checkId}: ${e}`, { scope });
-        if (shouldRetryTriage(priorAttempts, env.SYNGRISI_AI_TRIAGE_MAX_ATTEMPTS)) {
+        // Only take the requeue path when the background scheduler will actually drain the
+        // check again (global triage on AND this app's triage on) — otherwise a requeued check
+        // would sit as `{ pending: true }` forever, invisible to the scheduler's query. Fall
+        // through to the terminal failed-verdict path below instead.
+        const canRetry = shouldRetryTriage(priorAttempts, env.SYNGRISI_AI_TRIAGE_MAX_ATTEMPTS)
+            && canBackgroundDrain(await isTriageEnabled(), app?.triageEnabled === true);
+        if (canRetry) {
             // Transient provider failure (429 / timeout / cold local VLM) and attempts remain:
             // re-queue for the scheduler instead of permanently burning the check on a failed verdict.
             // ponytail: retries are spaced by the scheduler poll interval; no per-check backoff.
@@ -160,6 +166,11 @@ export async function requeueCheck(checkId: string, extra: Record<string, unknow
     if (!check) throw new Error(`check not found: ${checkId}`);
     const triage = { pending: true, ...extra };
     await Check.findByIdAndUpdate(checkId, { $set: { triage } }).exec();
+    // The check's `triage.verdict` is gone now, so the parent test's cached worst verdict may be
+    // stale (same reason `cancelCheck` refreshes it) — recompute it the same way.
+    const app: any = await App.findById(check.app).exec();
+    const verdicts = getVerdictConfig(app);
+    await updateTestWorstVerdict(check.test, verdicts);
     // Kick the scheduler so analysis starts right away instead of waiting for the next poll.
     // Lazy import avoids a module-load cycle (triageScheduler statically imports this module).
     import('@lib/schedulers/triageScheduler')

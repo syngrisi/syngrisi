@@ -12,3 +12,10 @@
 export function shouldRetryTriage(priorAttempts: number, maxAttempts: number): boolean {
     return priorAttempts + 1 < maxAttempts;
 }
+
+// The retry path re-queues a check for the background scheduler, which only drains
+// checks when global triage is enabled AND the check's project has per-project triage on.
+// If neither, a re-queued check would never be processed — so only retry when drainable.
+export function canBackgroundDrain(globalEnabled: boolean, appTriageEnabled: boolean): boolean {
+    return globalEnabled && appTriageEnabled;
+}
