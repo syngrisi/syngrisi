@@ -2,6 +2,7 @@
 import { appSettings } from '@settings';
 import { env } from '@/server/envConfig';
 import { TriageProviderConfig } from './types';
+import { mergeProviderConfig } from './mergeProviderConfig';
 
 // Global on/off: env override wins over DB (same precedence as other settings).
 export async function isTriageEnabled(): Promise<boolean> {
@@ -21,18 +22,9 @@ export async function getProviderConfig(): Promise<TriageProviderConfig | null> 
         try { cfg = JSON.parse(raw); } catch { /* ignore */ }
     }
 
-    const merged: TriageProviderConfig = {
-        type: (cfg.type as any) || 'openai',
-        baseUrl: cfg.baseUrl || env.OPENAI_API_BASE_URL || undefined,
-        apiKey: env.OPENAI_API_KEY || env.SYNGRISI_AI_KEY || cfg.apiKey || undefined,
-        model: cfg.model || undefined,
-        maxTokens: cfg.maxTokens,
-        temperature: cfg.temperature,
-        timeoutMs: cfg.timeoutMs,
-        fakeVerdict: cfg.fakeVerdict,
-        fakeConfidence: cfg.fakeConfidence,
-        fakeReason: cfg.fakeReason,
-    };
-    if (!merged.type) return null;
-    return merged;
+    return mergeProviderConfig(cfg, {
+        OPENAI_API_KEY: env.OPENAI_API_KEY,
+        OPENAI_API_BASE_URL: env.OPENAI_API_BASE_URL,
+        SYNGRISI_AI_KEY: env.SYNGRISI_AI_KEY,
+    });
 }
