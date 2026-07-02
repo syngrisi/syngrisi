@@ -59,6 +59,7 @@ export const env = cleanEnv(process.env, {
     // AI Triage
     SYNGRISI_AI_TRIAGE_POLL_INTERVAL_MS: num({ default: 30 * 1000 }),
     SYNGRISI_AI_TRIAGE_BATCH_SIZE: num({ default: 10 }),
+    SYNGRISI_AI_TRIAGE_MAX_ATTEMPTS: num({ default: 3 }), // give up and stamp a failed verdict after this many attempts
     SYNGRISI_V8_COVERAGE_ON_EXIT: bool({ default: false }),
 
     // Rate Limiting

@@ -11,7 +11,7 @@ function RefreshActionIcon({ newestItemsQuery, firstPageQuery }: Props) {
     const theme = useMantineTheme();
     const colorScheme = useComputedColorScheme();
     const newestItems = newestItemsQuery?.data?.results.length > 50 ? '50+' : newestItemsQuery?.data?.results.length;
-    const pluralCharset = newestItems > 1 ? 's' : '';
+    const pluralCharset = newestItemsQuery?.data?.results.length > 1 ? 's' : '';
     return (
         <ActionIcon
             color={colorScheme === 'dark' ? 'green.8' : 'green.6'}

@@ -4,11 +4,16 @@ import { appController } from '@controllers';
 import { Midleware } from '@types';
 import { validateRequest } from '@utils/validateRequest';
 import { AppInfoRespSchema, AppRespSchema } from '@root/src/server/schemas/App.schema';
+import { AppTriagePolicyUpdateSchema } from '@root/src/server/schemas/AppTriagePolicy.schema';
 import {
     createApiResponse,
     createPaginatedApiResponse,
 } from '@api-docs/openAPIResponseBuilders';
 import { SkipValid } from '@schemas/SkipValid.schema';
+import { ensureLoggedIn } from '@middlewares/ensureLogin';
+import { ensureLoggedInOrApiKey } from '@middlewares/ensureLogin/ensureLoggedIn';
+import { authorization } from '@middlewares';
+import { createRequestBodySchema } from '../../schemas/utils/createRequestBodySchema';
 import { RequestPaginationSchema } from '../../schemas/common/RequestPagination.schema';
 import { createRequestQuerySchema } from '../../schemas/utils/createRequestQuerySchema';
 
@@ -55,13 +60,16 @@ registry.registerPath({
 
 router.get(
     '/',
+    ensureLoggedInOrApiKey(),
     validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/app'),
     appController.get as Midleware
 );
 
 router.patch(
     '/:id/triage-policy',
-    validateRequest(SkipValid, 'patch, /v1/app/:id/triage-policy'),
+    ensureLoggedIn(),
+    authorization('admin') as Midleware,
+    validateRequest(createRequestBodySchema(AppTriagePolicyUpdateSchema), 'patch, /v1/app/:id/triage-policy'),
     appController.updateTriagePolicy as Midleware
 );
 

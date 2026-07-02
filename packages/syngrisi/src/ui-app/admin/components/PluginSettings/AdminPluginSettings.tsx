@@ -5,12 +5,13 @@
  */
 
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Table,
     Badge,
     Switch,
     TextInput,
+    NumberInput,
     Select,
     Button,
     Group,
@@ -62,29 +63,13 @@ interface PluginsResponse {
 }
 
 const fetchPlugins = async (): Promise<PluginsResponse> => {
-    console.log('[PluginSettings] fetchPlugins: Starting request to /v1/plugin-settings');
-    try {
-        const response = await fetch('/v1/plugin-settings', {
-            credentials: 'include', // Required for session-based authentication
-        });
-        console.log('[PluginSettings] fetchPlugins: Response received', {
-            status: response.status,
-            statusText: response.statusText,
-            redirected: response.redirected,
-            url: response.url,
-            type: response.type,
-        });
-        if (!response.ok) {
-            console.error('[PluginSettings] fetchPlugins: Response not OK', response.status);
-            throw new Error('Failed to fetch plugins');
-        }
-        const data = await response.json();
-        console.log('[PluginSettings] fetchPlugins: Data received', data);
-        return data;
-    } catch (error) {
-        console.error('[PluginSettings] fetchPlugins: Error caught', error);
-        throw error;
+    const response = await fetch('/v1/plugin-settings', {
+        credentials: 'include', // Required for session-based authentication
+    });
+    if (!response.ok) {
+        throw new Error('Failed to fetch plugins');
     }
+    return response.json();
 };
 
 const updatePluginSettings = async ({
@@ -127,6 +112,16 @@ function PluginSettingsForm({
     onUpdate: (settings: Record<string, unknown>) => void;
 }) {
     const [localSettings, setLocalSettings] = useState<Record<string, unknown>>(plugin.settings);
+
+    // Resync local settings when the server persists a new version.
+    // Keyed off `plugin.updatedAt` (the server-change signal) rather than
+    // `plugin.settings`, since react-query returns a fresh object reference
+    // on every window-focus refetch even when values are unchanged, which
+    // would otherwise clobber a user's in-progress edits mid-typing.
+    useEffect(() => {
+        setLocalSettings(plugin.settings);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [plugin.updatedAt]);
 
     const handleChange = (key: string, value: unknown) => {
         const newSettings = { ...localSettings, [key]: value };
@@ -201,12 +196,11 @@ function PluginSettingsForm({
                             )}
 
                             {field.type === 'number' && (
-                                <TextInput
+                                <NumberInput
                                     style={{ flex: 1 }}
-                                    type="number"
-                                    value={dbValue !== undefined ? String(dbValue) : ''}
+                                    value={dbValue !== undefined ? Number(dbValue) : ''}
                                     placeholder={effectiveValue?.value !== undefined ? String(effectiveValue.value) : `Enter ${field.label}`}
-                                    onChange={(e) => handleChange(field.key, parseFloat(e.currentTarget.value) || 0)}
+                                    onChange={(value) => handleChange(field.key, value === '' ? undefined : value)}
                                 />
                             )}
 

@@ -32,7 +32,7 @@ export function HelpDoc({ title, lines, docHref, dataTest = 'help-doc' }: Props)
                 <Stack gap={6} data-test="help-doc-popover">
                     <Text size="sm" fw={600}>{title}</Text>
                     {lines.map((l) => <Text key={l} size="xs" c="dimmed">{l}</Text>)}
-                    {docHref && <Anchor href={docHref} target="_blank" size="xs">Open full documentation →</Anchor>}
+                    {docHref && <Anchor href={docHref} target="_blank" rel="noopener noreferrer" size="xs">Open full documentation →</Anchor>}
                 </Stack>
             </Popover.Dropdown>
         </Popover>

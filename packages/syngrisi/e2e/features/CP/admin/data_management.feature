@@ -30,6 +30,7 @@ Feature: Admin Data Management
       """
     When I upload stored file "dbBackupDownload" into file input "Database archive"
     When I click the 1st button "Upload and Restore Database"
+    And I click the 1st button "Confirm Restore"
     Then the latest admin data job "Database Restore" should have status "completed" with message containing "Database restore completed"
 
   Scenario: Admin can back up screenshots through the UI
@@ -75,6 +76,7 @@ Feature: Admin Data Management
     Then the latest admin data job "Database Backup" should have status "completed" with message containing "Database backup completed"
     Then the admin data jobs count should be 1
     When I click the 1st button "Delete"
+    And I click the 1st button "Confirm Delete"
     Then the admin data jobs count should be 0
 
   Scenario: Admin sees an error for an invalid database archive
@@ -84,4 +86,5 @@ Feature: Admin Data Management
       """
     And I upload stored file "invalidDbArchive" into file input "Database archive"
     And I click the 1st button "Upload and Restore Database"
+    And I click the 1st button "Confirm Restore"
     Then the latest admin data job "Database Restore" should have status "failed" with message containing "manifest.json is missing from database archive"
