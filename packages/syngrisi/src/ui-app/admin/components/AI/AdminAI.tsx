@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import {
     ScrollArea, Box, Title, Paper, Select, Switch, NumberInput, MultiSelect, Button, Group, Table,
     TextInput, Checkbox, ActionIcon, Text, Divider, ColorInput, Loader, Badge, Textarea, FileButton, Image, Stack, Tabs,
+    Popover,
 } from '@mantine/core';
 import { IconTrash, IconPlus, IconPhoto } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -85,32 +86,96 @@ function PerProjectTriage() {
     const [simGate, setSimGate] = useState<number>(0.32);
     const [saving, setSaving] = useState(false);
 
+    // Client-only stable render keys for the editable verdict/example rows, kept in a parallel
+    // array so an `id` is never merged into the objects that get sent to the server (the
+    // triageVerdicts payload is validated with a `.strict()` zod schema — an extra field would
+    // fail saving).
+    const [verdictRowIds, setVerdictRowIds] = useState<string[]>(() => DEFAULT_VERDICTS.map(() => crypto.randomUUID()));
+    const [exampleRowIds, setExampleRowIds] = useState<string[]>([]);
+
+    // Snapshot of the config as it was loaded for the currently selected project, used to detect
+    // unsaved edits before silently switching projects. `null` = nothing loaded yet.
+    const [loadedSnapshot, setLoadedSnapshot] = useState<string | null>(null);
+    const [pendingAppId, setPendingAppId] = useState<string | null>(null);
+    const [confirmSwitchOpened, setConfirmSwitchOpened] = useState(false);
+
+    const currentSnapshot = useMemo(
+        () => JSON.stringify({ enabled, mode, threshold, allow, verdicts, prompt, examples, simGate }),
+        [enabled, mode, threshold, allow, verdicts, prompt, examples, simGate],
+    );
+    const isDirty = loadedSnapshot !== null && currentSnapshot !== loadedSnapshot;
+
     useEffect(() => {
         if (!selected) return;
-        setEnabled(selected.triageEnabled === true);
-        setMode(selected.triagePolicy?.policy || 'suggest');
-        setThreshold(typeof selected.triagePolicy?.autoAcceptThreshold === 'number' ? selected.triagePolicy.autoAcceptThreshold : 9);
-        setAllow(selected.triagePolicy?.autoAcceptVerdicts || ['intended_change', 'noise']);
+        const nextEnabled = selected.triageEnabled === true;
+        const nextMode = selected.triagePolicy?.policy || 'suggest';
+        const nextThreshold = typeof selected.triagePolicy?.autoAcceptThreshold === 'number' ? selected.triagePolicy.autoAcceptThreshold : 9;
+        const nextAllow = selected.triagePolicy?.autoAcceptVerdicts || ['intended_change', 'noise'];
         const vlist = Array.isArray(selected.triageVerdicts) && selected.triageVerdicts.length ? selected.triageVerdicts : DEFAULT_VERDICTS;
-        setVerdicts(vlist);
         // Always show the effective prompt: the project's override, or the generated default.
-        setPrompt(selected.triagePrompt ? selected.triagePrompt : buildDefaultPrompt(vlist));
-        setExamples(Array.isArray(selected.triageExamples) ? selected.triageExamples : []);
-        setSimGate(typeof selected.changeSimGate === 'number' ? selected.changeSimGate : 0.32);
+        const nextPrompt = selected.triagePrompt ? selected.triagePrompt : buildDefaultPrompt(vlist);
+        const nextExamples = Array.isArray(selected.triageExamples) ? selected.triageExamples : [];
+        const nextSimGate = typeof selected.changeSimGate === 'number' ? selected.changeSimGate : 0.32;
+
+        setEnabled(nextEnabled);
+        setMode(nextMode);
+        setThreshold(nextThreshold);
+        setAllow(nextAllow);
+        setVerdicts(vlist);
+        setPrompt(nextPrompt);
+        setExamples(nextExamples);
+        setSimGate(nextSimGate);
+        setVerdictRowIds(vlist.map(() => crypto.randomUUID()));
+        setExampleRowIds(nextExamples.map(() => crypto.randomUUID()));
+        setLoadedSnapshot(JSON.stringify({
+            enabled: nextEnabled, mode: nextMode, threshold: nextThreshold, allow: nextAllow, verdicts: vlist, prompt: nextPrompt, examples: nextExamples, simGate: nextSimGate,
+        }));
     }, [selected]);
+
+    const handleProjectChange = (value: string | null) => {
+        if (isDirty && appId) {
+            setPendingAppId(value);
+            setConfirmSwitchOpened(true);
+            return;
+        }
+        setAppId(value);
+    };
+
+    const confirmProjectSwitch = () => {
+        setAppId(pendingAppId);
+        setPendingAppId(null);
+        setConfirmSwitchOpened(false);
+    };
+
+    const cancelProjectSwitch = () => {
+        setPendingAppId(null);
+        setConfirmSwitchOpened(false);
+    };
 
     const addExample = (file: File | null) => {
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = () => setExamples((ex) => [...ex, { verdict: verdicts[0]?.key || '', image: String(reader.result), note: '' }]);
+        reader.onload = () => {
+            setExamples((ex) => [...ex, { verdict: verdicts[0]?.key || '', image: String(reader.result), note: '' }]);
+            setExampleRowIds((ids) => [...ids, crypto.randomUUID()]);
+        };
         reader.readAsDataURL(file); // stored as a data URL (data:image/...;base64,...)
     };
     const updateExample = (i: number, patch: Partial<Example>) => setExamples((ex) => ex.map((row, idx) => (idx === i ? { ...row, ...patch } : row)));
-    const removeExample = (i: number) => setExamples((ex) => ex.filter((_, idx) => idx !== i));
+    const removeExample = (i: number) => {
+        setExamples((ex) => ex.filter((_, idx) => idx !== i));
+        setExampleRowIds((ids) => ids.filter((_, idx) => idx !== i));
+    };
 
     const update = (i: number, patch: Partial<Verdict>) => setVerdicts((v) => v.map((row, idx) => (idx === i ? { ...row, ...patch } : row)));
-    const remove = (i: number) => setVerdicts((v) => v.filter((_, idx) => idx !== i));
-    const add = () => setVerdicts((v) => [...v, { key: '', label: '', color: 'blue', icon: 'flag', severity: v.length + 1, autoAcceptable: false }]);
+    const remove = (i: number) => {
+        setVerdicts((v) => v.filter((_, idx) => idx !== i));
+        setVerdictRowIds((ids) => ids.filter((_, idx) => idx !== i));
+    };
+    const add = () => {
+        setVerdicts((v) => [...v, { key: '', label: '', color: 'blue', icon: 'flag', severity: v.length + 1, autoAcceptable: false }]);
+        setVerdictRowIds((ids) => [...ids, crypto.randomUUID()]);
+    };
 
     const save = async () => {
         if (!appId) return;
@@ -153,15 +218,36 @@ function PerProjectTriage() {
                     docHref="https://github.com/syngrisi/syngrisi/blob/main/packages/syngrisi/AI_TRIAGE.md"
                 />
             </Group>
-            <Select
-                label="Project"
-                placeholder={appsQuery.isLoading ? 'loading…' : 'select a project'}
-                value={appId}
-                onChange={setAppId}
-                data-test="ai-project-select"
-                data={apps.map((a) => ({ value: a._id, label: a.name }))}
-                mb="md"
-            />
+            <Popover
+                opened={confirmSwitchOpened}
+                onChange={(opened) => { setConfirmSwitchOpened(opened); if (!opened) setPendingAppId(null); }}
+                position="bottom-start"
+                withArrow
+                shadow="md"
+                closeOnClickOutside
+                closeOnEscape
+            >
+                <Popover.Target>
+                    <Select
+                        label="Project"
+                        placeholder={appsQuery.isLoading ? 'loading…' : 'select a project'}
+                        value={appId}
+                        onChange={handleProjectChange}
+                        data-test="ai-project-select"
+                        data={apps.map((a) => ({ value: a._id, label: a.name }))}
+                        mb="md"
+                    />
+                </Popover.Target>
+                <Popover.Dropdown>
+                    <Stack gap="xs">
+                        <Text size="sm">Discard unsaved changes to this project&apos;s AI Triage config and switch project?</Text>
+                        <Group gap="xs">
+                            <Button size="xs" variant="default" onClick={cancelProjectSwitch} data-test="ai-project-switch-cancel-button">Cancel</Button>
+                            <Button size="xs" color="red" onClick={confirmProjectSwitch} data-test="ai-project-switch-confirm-button">Discard and switch</Button>
+                        </Group>
+                    </Stack>
+                </Popover.Dropdown>
+            </Popover>
             {!appId ? <Text size="sm" c="dimmed">Select a project to configure its verdicts and policy.</Text> : (
                 <>
                     <Switch label="Auto-triage for this project" description="Automatically classify new failed checks in this project. Requires AI Triage enabled instance-wide (Settings tab)." checked={enabled} onChange={(e) => setEnabled(e.currentTarget.checked)} data-test="ai-project-enabled" mb="md" styles={{ description: { maxWidth: 420 } }} />
@@ -193,8 +279,7 @@ function PerProjectTriage() {
                         </Table.Thead>
                         <Table.Tbody>
                             {verdicts.map((v, i) => (
-                                // eslint-disable-next-line react/no-array-index-key
-                                <Table.Tr key={i} data-test="ai-verdict-row">
+                                <Table.Tr key={verdictRowIds[i] ?? i} data-test="ai-verdict-row">
                                     <Table.Td><TextInput value={v.key} onChange={(e) => update(i, { key: e.currentTarget.value })} placeholder="key" /></Table.Td>
                                     <Table.Td><TextInput value={v.label} onChange={(e) => update(i, { label: e.currentTarget.value })} placeholder="Label" /></Table.Td>
                                     <Table.Td>
@@ -264,8 +349,7 @@ function PerProjectTriage() {
                     <Text size="sm" fw={500} mb={4}>Few-shot examples</Text>
                     <Stack gap="xs" data-test="ai-examples">
                         {examples.map((ex, i) => (
-                            // eslint-disable-next-line react/no-array-index-key
-                            <Group key={i} gap="xs" align="center" data-test="ai-example-row">
+                            <Group key={exampleRowIds[i] ?? i} gap="xs" align="center" data-test="ai-example-row">
                                 <Image src={ex.image} w={64} h={40} fit="contain" radius="sm" />
                                 <Select
                                     value={ex.verdict}
