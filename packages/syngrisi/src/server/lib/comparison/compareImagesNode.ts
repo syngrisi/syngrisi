@@ -28,12 +28,9 @@ export default function compareImages(image1: any, image2: any, options: any): P
             const ignoreTransform: any = {
                 antialiasing: 'ignoreAntialiasing',
                 colors: 'ignoreColors',
-                // 'nothing' is the default and now means true pixel-to-pixel (zero tolerance).
-                nothing: 'exact',
-                // 'tolerant' keeps the previous "Standard" behaviour (±16 per channel).
-                tolerant: 'ignoreNothing',
+                nothing: 'ignoreNothing',
             };
-            const ignoreMethod = ignoreTransform[options.ignore] ? ignoreTransform[options.ignore] : 'exact';
+            const ignoreMethod = ignoreTransform[options.ignore] ? ignoreTransform[options.ignore] : 'ignoreNothing';
 
             const outputOpts = options.output;
             resemble.outputSettings(outputOpts);
