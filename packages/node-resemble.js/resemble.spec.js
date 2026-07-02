@@ -177,16 +177,6 @@ describe('node-resemble.js', function() {
 	  });
   });
 
-  it('exact() is at least as strict as ignoreNothing() (true pixel-to-pixel)', function(done) {
-    resemble(EXAMPLE_PEOPLE_IMAGES[0]).compareTo(EXAMPLE_PEOPLE_IMAGES[1]).exact().onComplete(function(exactData) {
-      resemble(EXAMPLE_PEOPLE_IMAGES[0]).compareTo(EXAMPLE_PEOPLE_IMAGES[1]).ignoreNothing().onComplete(function(tolerantData) {
-        // Zero tolerance must flag at least as many pixels as the ±16 "tolerant" mode.
-        expect(exactData.rawMisMatchPercentage).toBeGreaterThanOrEqual(tolerantData.rawMisMatchPercentage);
-        done();
-      });
-    });
-  });
-
   function getLargeImageComparison() {
     return resemble(EXAMPLE_LARGE_IMAGE).compareTo(EXAMPLE_LARGE_IMAGE);
   }

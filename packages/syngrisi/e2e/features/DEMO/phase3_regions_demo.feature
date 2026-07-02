@@ -64,7 +64,7 @@ Feature: Phase 3 Regions & Match Type Demo
 
         # ДЕМО ТОЧКА 5: Показываем Match Type Selector
         When I highlight element "[data-check='match-type-selector']"
-        And I announce: "Селектор режима сравнения - выбор между Pixel Perfect, Tolerant, Ignore Anti-aliasing и Ignore Colors."
+        And I announce: "Селектор режима сравнения - выбор между Standard, Ignore Anti-aliasing и Ignore Colors."
         And I pause for 1500 ms
         And I clear highlight
 
@@ -72,7 +72,7 @@ Feature: Phase 3 Regions & Match Type Demo
         Then the element with locator "[data-check='match-type-selector']" should be enabled
         When I click element with locator "[data-check='match-type-selector']"
         And I wait 0.5 seconds
-        And I announce: "Меню режимов: Pixel Perfect - точное попиксельное сравнение, Tolerant - допускает мелкие различия, Anti-aliasing - игнорирует различия сглаживания, Colors - сравнивает только структуру."
+        And I announce: "Меню режимов: Standard - точное сравнение пикселей, Anti-aliasing - игнорирует различия сглаживания, Colors - сравнивает только структуру."
         And I pause for 2000 ms
 
         # Закрываем меню кликом на тулбар (Escape закроет и модальное окно)

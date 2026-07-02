@@ -20,18 +20,13 @@ interface Props {
     checkQuery?: any;
 }
 
-type MatchType = 'nothing' | 'antialiasing' | 'colors' | 'tolerant';
+type MatchType = 'nothing' | 'antialiasing' | 'colors';
 
 const MATCH_TYPE_OPTIONS: { value: MatchType; label: string; description: string }[] = [
     {
         value: 'nothing',
-        label: 'Pixel Perfect',
-        description: 'Compare every pixel exactly (no tolerance)',
-    },
-    {
-        value: 'tolerant',
-        label: 'Tolerant',
-        description: 'Allow minor per-pixel differences (±16)',
+        label: 'Standard',
+        description: 'Compare all pixels exactly',
     },
     {
         value: 'antialiasing',

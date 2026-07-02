@@ -532,24 +532,6 @@ _this['resemble'] = function (fileData) {
                 }
                 return self;
             },
-            exact: function () {
-
-                // True pixel-to-pixel comparison: any per-channel difference counts as a mismatch.
-                tolerance.red = 0;
-                tolerance.green = 0;
-                tolerance.blue = 0;
-                tolerance.alpha = 0;
-                tolerance.minBrightness = 0;
-                tolerance.maxBrightness = 255;
-
-                ignoreAntialiasing = false;
-                ignoreColors = false;
-
-                if (hasMethod) {
-                    param();
-                }
-                return self;
-            },
             ignoreAntialiasing: function () {
 
                 tolerance.red = 32;

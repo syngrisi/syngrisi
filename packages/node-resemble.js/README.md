@@ -59,8 +59,7 @@ var diff = resemble(file).compareTo(file2).ignoreColors().onComplete(function(da
 ##### You can also change the comparison method after the first analysis.
 
 ```javascript
-// diff.exact();          // true pixel-to-pixel, zero tolerance
-// diff.ignoreNothing();  // tolerant (±16 per channel)
+// diff.ignoreNothing();
 // diff.ignoreColors();
 diff.ignoreAntialiasing();
 ```
