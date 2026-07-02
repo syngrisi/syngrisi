@@ -71,7 +71,9 @@ Rules:
 }
 
 function PerProjectTriage() {
-    const appsQuery = useQuery({ queryKey: ['apps-for-triage'], queryFn: () => GenericService.get('app', {}, { limit: '0' }) });
+    // No window-focus refetch: a background refetch swaps the `selected` object and the [selected]
+    // effect would silently overwrite unsaved verdict/example edits (the dirty-guard only covers manual switches).
+    const appsQuery = useQuery({ queryKey: ['apps-for-triage'], queryFn: () => GenericService.get('app', {}, { limit: '0' }), refetchOnWindowFocus: false });
     const apps: any[] = appsQuery.data?.results || [];
     const [appId, setAppId] = useState<string | null>(null);
     const selected = useMemo(() => apps.find((a) => a._id === appId), [apps, appId]);
