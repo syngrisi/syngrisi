@@ -21,6 +21,7 @@ export { createTable } from './stringTable';
 export { colors } from './colors';
 export { default as HttpStatus } from './httpStatus';
 export { cookieParser } from './cookieParser';
+export { escapeHtml } from './escapeHtml';
 
 export {
     pick,
