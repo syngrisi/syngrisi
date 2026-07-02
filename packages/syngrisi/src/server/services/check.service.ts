@@ -52,7 +52,7 @@ export interface baselineParamsType extends Document {
     markedByUsername?: string;
     ignoreRegions?: string;
     boundRegions?: string;
-    matchType?: 'antialiasing' | 'nothing' | 'colors';
+    matchType?: 'antialiasing' | 'nothing' | 'colors' | 'tolerant';
     toleranceThreshold?: number;
     meta?: object;
     actualSnapshotId: Schema.Types.ObjectId;
