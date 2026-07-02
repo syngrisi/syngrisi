@@ -10,6 +10,7 @@ import {
     Group,
     Loader,
     Paper,
+    Popover,
     Progress,
     ScrollArea,
     SimpleGrid,
@@ -79,6 +80,11 @@ export default function AdminDataManagement() {
     const [skipExisting, setSkipExisting] = useState(true);
     const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
     const [jobLog, setJobLog] = useState('');
+    // Popover-based confirm state, following the same confirm-before-fire pattern
+    // used by ActionPopoverIcon elsewhere in the app (Popover.Target opens on click,
+    // the mutation only fires from the confirm button in Popover.Dropdown).
+    const [dbRestoreConfirmOpened, setDbRestoreConfirmOpened] = useState(false);
+    const [deleteConfirmJobId, setDeleteConfirmJobId] = useState<string | null>(null);
 
     const jobsQuery = useQuery({
         queryKey: ['admin-data-jobs'],
@@ -255,9 +261,44 @@ export default function AdminDataManagement() {
                             value={dbRestoreFile}
                             onChange={setDbRestoreFile}
                         />
-                        <Button color="red" onClick={() => dbRestoreMutation.mutate()} loading={dbRestoreMutation.isPending} disabled={isBusy || !dbRestoreFile}>
-                            Upload and Restore Database
-                        </Button>
+                        <Popover
+                            opened={dbRestoreConfirmOpened}
+                            onChange={setDbRestoreConfirmOpened}
+                            position="bottom"
+                            withArrow
+                            shadow="md"
+                            closeOnClickOutside
+                            closeOnEscape
+                        >
+                            <Popover.Target>
+                                <Button
+                                    color="red"
+                                    onClick={() => setDbRestoreConfirmOpened((opened) => !opened)}
+                                    loading={dbRestoreMutation.isPending}
+                                    disabled={isBusy || !dbRestoreFile}
+                                >
+                                    Upload and Restore Database
+                                </Button>
+                            </Popover.Target>
+                            <Popover.Dropdown>
+                                <Stack gap="xs">
+                                    <Text size="sm">
+                                        This will drop the current database and replace it with the uploaded archive.
+                                        This cannot be undone.
+                                    </Text>
+                                    <Button
+                                        color="red"
+                                        data-test="db-restore-confirm-button"
+                                        onClick={() => {
+                                            setDbRestoreConfirmOpened(false);
+                                            dbRestoreMutation.mutate();
+                                        }}
+                                    >
+                                        Confirm Restore
+                                    </Button>
+                                </Stack>
+                            </Popover.Dropdown>
+                        </Popover>
                     </Stack>
                 </Paper>
 
@@ -321,81 +362,118 @@ export default function AdminDataManagement() {
                         </tr>
                     </thead>
                     <tbody>
-                        {(jobsQuery.data?.jobs || []).map((job) => (
-                            <tr key={job.id} onClick={() => setSelectedJobId(job.id)} style={{ cursor: 'pointer' }}>
-                                <td>
-                                    <Text fw={500}>{getJobLabel(job.type)}</Text>
-                                    <Text size="xs" c="dimmed"><Code>{job.id}</Code></Text>
-                                </td>
-                                <td>
-                                    <Badge color={getStatusColor(job.status)}>{job.status}</Badge>
-                                    <Text size="xs" c="dimmed">{job.message}</Text>
-                                </td>
-                                <td style={{ minWidth: 180 }}>
-                                    <Progress value={job.progress.percent || 0} size="lg" />
-                                    <Text size="xs" c="dimmed">
-                                        {job.progress.stage}
-                                        {typeof job.progress.current === 'number' && typeof job.progress.total === 'number'
-                                            ? ` (${job.progress.current}/${job.progress.total})`
-                                            : ''}
-                                    </Text>
-                                </td>
-                                <td>
-                                    <Text size="sm">Archive: {formatBytes(job.stats.archiveSizeBytes)}</Text>
-                                    {'processedFiles' in job.stats && (
+                        {(jobsQuery.data?.jobs || []).map((job) => {
+                            const jobBusy = (cancelMutation.isPending && cancelMutation.variables === job.id)
+                                || (deleteMutation.isPending && deleteMutation.variables === job.id);
+                            return (
+                                <tr key={job.id} onClick={() => setSelectedJobId(job.id)} style={{ cursor: 'pointer' }}>
+                                    <td>
+                                        <Text fw={500}>{getJobLabel(job.type)}</Text>
+                                        <Text size="xs" c="dimmed"><Code>{job.id}</Code></Text>
+                                    </td>
+                                    <td>
+                                        <Badge color={getStatusColor(job.status)}>{job.status}</Badge>
+                                        <Text size="xs" c="dimmed">{job.message}</Text>
+                                    </td>
+                                    <td style={{ minWidth: 180 }}>
+                                        <Progress value={job.progress.percent || 0} size="lg" />
                                         <Text size="xs" c="dimmed">
-                                            Processed: {job.stats.processedFiles || 0}
-                                            {job.stats.importedFiles !== undefined ? `, imported ${job.stats.importedFiles}` : ''}
-                                            {job.stats.skippedFiles !== undefined ? `, skipped ${job.stats.skippedFiles}` : ''}
-                                            {job.stats.errorFiles !== undefined ? `, errors ${job.stats.errorFiles}` : ''}
+                                            {job.progress.stage}
+                                            {typeof job.progress.current === 'number' && typeof job.progress.total === 'number'
+                                                ? ` (${job.progress.current}/${job.progress.total})`
+                                                : ''}
                                         </Text>
-                                    )}
-                                </td>
-                                <td>
-                                    <Group gap="xs">
-                                        {job.downloadAvailable && (
-                                            <Button
-                                                component="a"
-                                                href={adminDataService.getDownloadUrl(job.id)}
-                                                variant="outline"
-                                                size="xs"
-                                                leftIcon={<IconDownload size={14} />}
-                                            >
-                                                Download
-                                            </Button>
+                                    </td>
+                                    <td>
+                                        <Text size="sm">Archive: {formatBytes(job.stats.archiveSizeBytes)}</Text>
+                                        {'processedFiles' in job.stats && (
+                                            <Text size="xs" c="dimmed">
+                                                Processed: {job.stats.processedFiles || 0}
+                                                {job.stats.importedFiles !== undefined ? `, imported ${job.stats.importedFiles}` : ''}
+                                                {job.stats.skippedFiles !== undefined ? `, skipped ${job.stats.skippedFiles}` : ''}
+                                                {job.stats.errorFiles !== undefined ? `, errors ${job.stats.errorFiles}` : ''}
+                                            </Text>
                                         )}
-                                        {ACTIVE_STATUSES.has(job.status) && (
-                                            <Button
-                                                color="red"
-                                                variant="outline"
-                                                size="xs"
-                                                leftIcon={<IconX size={14} />}
-                                                onClick={(event) => {
-                                                    event.stopPropagation();
-                                                    cancelMutation.mutate(job.id);
-                                                }}
-                                            >
-                                                Cancel
-                                            </Button>
-                                        )}
-                                        {!ACTIVE_STATUSES.has(job.status) && (
-                                            <Button
-                                                color="gray"
-                                                variant="outline"
-                                                size="xs"
-                                                leftIcon={<IconTrash size={14} />}
-                                                onClick={(event) => {
-                                                    event.stopPropagation();
-                                                    deleteMutation.mutate(job.id);
-                                                }}
-                                            >
-                                                Delete
-                                            </Button>
-                                        )}
-                                    </Group>
-                                </td>
-                            </tr>
-                        ))}
+                                    </td>
+                                    <td>
+                                        <Group gap="xs">
+                                            {job.downloadAvailable && (
+                                                <Button
+                                                    component="a"
+                                                    href={adminDataService.getDownloadUrl(job.id)}
+                                                    variant="outline"
+                                                    size="xs"
+                                                    leftIcon={<IconDownload size={14} />}
+                                                >
+                                                    Download
+                                                </Button>
+                                            )}
+                                            {ACTIVE_STATUSES.has(job.status) && (
+                                                <Button
+                                                    color="red"
+                                                    variant="outline"
+                                                    size="xs"
+                                                    leftIcon={<IconX size={14} />}
+                                                    loading={cancelMutation.isPending && cancelMutation.variables === job.id}
+                                                    disabled={jobBusy}
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        cancelMutation.mutate(job.id);
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </Button>
+                                            )}
+                                            {!ACTIVE_STATUSES.has(job.status) && (
+                                                <Popover
+                                                    opened={deleteConfirmJobId === job.id}
+                                                    onChange={(opened) => setDeleteConfirmJobId(opened ? job.id : null)}
+                                                    position="bottom"
+                                                    withArrow
+                                                    shadow="md"
+                                                    closeOnClickOutside
+                                                    closeOnEscape
+                                                >
+                                                    <Popover.Target>
+                                                        <Button
+                                                            color="gray"
+                                                            variant="outline"
+                                                            size="xs"
+                                                            leftIcon={<IconTrash size={14} />}
+                                                            loading={deleteMutation.isPending && deleteMutation.variables === job.id}
+                                                            disabled={jobBusy}
+                                                            onClick={(event) => {
+                                                                event.stopPropagation();
+                                                                setDeleteConfirmJobId(job.id);
+                                                            }}
+                                                        >
+                                                            Delete
+                                                        </Button>
+                                                    </Popover.Target>
+                                                    <Popover.Dropdown>
+                                                        <Stack gap="xs">
+                                                            <Text size="sm">Delete this job&apos;s data? This cannot be undone.</Text>
+                                                            <Button
+                                                                color="red"
+                                                                size="xs"
+                                                                data-test="job-delete-confirm-button"
+                                                                onClick={(event) => {
+                                                                    event.stopPropagation();
+                                                                    setDeleteConfirmJobId(null);
+                                                                    deleteMutation.mutate(job.id);
+                                                                }}
+                                                            >
+                                                                Confirm Delete
+                                                            </Button>
+                                                        </Stack>
+                                                    </Popover.Dropdown>
+                                                </Popover>
+                                            )}
+                                        </Group>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </Table>
                 </div>
