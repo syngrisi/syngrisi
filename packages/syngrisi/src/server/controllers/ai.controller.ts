@@ -690,9 +690,16 @@ const triageQueueRestart = catchAsync(async (req: ExtRequest, res: Response) => 
 
 // Admin "Test connection": run one classification against the current/provided provider config.
 const triageTest = catchAsync(async (req: ExtRequest, res: Response) => {
-    const cfg = (req.body && Object.keys(req.body).length) ? req.body : await getProviderConfig();
+    let cfg = (req.body && Object.keys(req.body).length) ? req.body : await getProviderConfig();
     if (!cfg) {
         throw new ApiError(HttpStatus.BAD_REQUEST, 'No triage provider configured');
+    }
+    // The admin form omits the apiKey (or sends the masked placeholder) when the stored key
+    // wasn't retyped. Backfill it from the stored provider config, mirroring the save path's
+    // preservation logic, so "Test connection" authenticates with the real stored secret.
+    if (!cfg.apiKey || cfg.apiKey === '***') {
+        const stored = await getProviderConfig();
+        cfg = { ...cfg, apiKey: stored?.apiKey || '' };
     }
     const started = Date.now();
     try {

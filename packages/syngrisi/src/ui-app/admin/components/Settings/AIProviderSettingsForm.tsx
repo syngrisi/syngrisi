@@ -5,6 +5,7 @@ import { GenericService, TriageService } from '@shared/services';
 import { errorMsg } from '@shared/utils';
 import { successMsg } from '@shared/utils/utils';
 import { HelpDoc } from '@admin/components/AI/HelpDoc';
+import { resolveTestApiKey } from './resolveTestApiKey';
 
 type ProviderValue = {
     type?: string;
@@ -74,7 +75,10 @@ export const AIProviderSettingsForm = ({ settings, refetch }: { settings: any[],
         setTesting(true);
         setTestResult(null);
         try {
-            const res = await TriageService.testProvider(providerValue() as Record<string, unknown>);
+            // The stored key comes back masked as '***'; omit it so the server falls back to
+            // the stored secret instead of testing against the literal placeholder.
+            const testPayload = { ...providerValue(), apiKey: resolveTestApiKey(apiKey) };
+            const res = await TriageService.testProvider(testPayload as Record<string, unknown>);
             setTestResult(res);
         } catch (e: any) {
             setTestResult({ ok: false, latencyMs: 0, error: e?.message || String(e) });
