@@ -20,19 +20,23 @@ interface ServerConfig {
   auth: string;
   ssoEnabled: string;
   dbUri: string;
+  // Serialized @env: tag overrides — a scenario with custom server env must never
+  // reuse a server launched without them (and vice versa).
+  envTags: string;
 }
 const serverConfigMap = new Map<number, ServerConfig>();
 
-function getServerConfigHash(): ServerConfig {
+function getServerConfigHash(envTags = ''): ServerConfig {
   return {
     auth: process.env.SYNGRISI_AUTH || 'false',
     ssoEnabled: process.env.SSO_ENABLED || 'false',
     dbUri: process.env.SYNGRISI_DB_URI || '',
+    envTags,
   };
 }
 
 function configsMatch(a: ServerConfig, b: ServerConfig): boolean {
-  return a.auth === b.auth && a.ssoEnabled === b.ssoEnabled && a.dbUri === b.dbUri;
+  return a.auth === b.auth && a.ssoEnabled === b.ssoEnabled && a.dbUri === b.dbUri && a.envTags === b.envTags;
 }
 
 export type AppServerFixture = {
@@ -166,9 +170,13 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           }),
       );
       Object.entries(envOverrides).forEach(([k, v]) => {
+        // Tag-set keys must be restored in teardown too, or they leak into every
+        // following scenario of this worker (they are not in envKeysToReset).
+        if (!(k in originalEnv)) originalEnv[k] = process.env[k];
         process.env[k] = v;
         logger.info(`Applied env override from tag: ${k}=${v}`);
       });
+      const envTagsKey = JSON.stringify(Object.entries(envOverrides).sort());
       const existingInstance = serverInstances.get(cid);
       let fixtureValue: AppServerFixture = {
         baseURL: '',
@@ -321,8 +329,17 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
       if (isFastMode || isFastModeReuse) {
         // Use wide, deterministic spacing to avoid port collisions across 15+ workers
         const preferredPort = 5100 + cid * 50;
+        // In reuse mode our own server from the previous scenario is still listening on its
+        // port — probing for a "free" port would skip right past it and defeat reuse entirely
+        // (and leak the old process). Keep the live server's port; otherwise find a free one.
+        const existingFastInstance = serverInstances.get(cid);
+        const existingFastRunning = isFastModeReuse && existingFastInstance
+          ? await isServerRunning(existingFastInstance.serverPort)
+          : false;
         const portFindStart = performance.now();
-        const workerPort = await findAvailablePort(preferredPort, 200);
+        const workerPort = existingFastRunning
+          ? existingFastInstance!.serverPort
+          : await findAvailablePort(preferredPort, 200);
         timingLogger.info(`[timing] Port finding: ${Math.round(performance.now() - portFindStart)}ms`);
 
         const workerDbName = `SyngrisiDbTest${cid}`;
@@ -348,15 +365,8 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         delete process.env.LOGTO_ENDPOINT;
         delete process.env.LOGTO_ADMIN_ENDPOINT;
 
-        // Always do full database reset in fast-server mode to ensure clean state
-        // This prevents authentication and other settings from persisting between tests
-        const dbClearStart = performance.now();
-        logger.info(`${modeLabel}: full reset enabled, dropping DB and baselines`);
-        await clearDatabase(cid, true, false);
-        timingLogger.info(`[timing] DB clear: ${Math.round(performance.now() - dbClearStart)}ms`);
-
-        const running = await isServerRunning(workerPort);
-        const currentConfig = getServerConfigHash();
+        const running = existingFastRunning || await isServerRunning(workerPort);
+        const currentConfig = getServerConfigHash(envTagsKey);
         const existingConfig = serverConfigMap.get(cid);
         const existingInstance = serverInstances.get(cid);
 
@@ -366,6 +376,16 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           existingInstance &&
           existingConfig &&
           configsMatch(currentConfig, existingConfig);
+
+        // Reset the database to a clean state for every scenario. When the server keeps
+        // running (reuse), preserve the startup-seeded collections (users/sessions/settings)
+        // via soft clean; a fresh launch re-seeds them, so the whole DB can be dropped.
+        const dbClearStart = performance.now();
+        logger.info(canReuseServer
+          ? `${modeLabel}: soft-cleaning DB (server stays up)`
+          : `${modeLabel}: full reset enabled, dropping DB and baselines`);
+        await clearDatabase(cid, true, Boolean(canReuseServer));
+        timingLogger.info(`[timing] DB clear: ${Math.round(performance.now() - dbClearStart)}ms`);
 
         const currentWorkerIndex = getCurrentCid();
 
@@ -389,7 +409,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
             noRetry, // Pass noRetry to skip retries for validation tests
           });
           serverInstances.set(cid, instance);
-          serverConfigMap.set(cid, getServerConfigHash());
+          serverConfigMap.set(cid, getServerConfigHash(envTagsKey));
           lastKnownConfig = instance.config;
           fixtureValue.baseURL = instance.baseURL;
           fixtureValue.backendHost = instance.backendHost;
@@ -404,6 +424,29 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           logger.info(`Fast-server-reuse: reusing existing server on port ${workerPort}`);
           timingLogger.info(`[timing] Server reused (skipped restart)`);
 
+          // Soft clean preserves vrsappsettings for the live server, so feature toggles set by
+          // the previous scenario (AI provider, auto-cleanup) would leak into this one. Reset
+          // them through the server's own API — it updates both the DB and the in-memory
+          // settings cache (direct DB writes would be invisible to the cache for its 30s TTL).
+          const settingsDefaults: Array<{ name: string; value: unknown; enabled: boolean }> = [
+            { name: 'ai_triage_enabled', value: 'false', enabled: true },
+            { name: 'ai_triage_provider', value: { type: 'openai', baseUrl: '', apiKey: '', model: '' }, enabled: true },
+            { name: 'auto_remove_old_checks', value: { days: 365, lastRunAt: null }, enabled: false },
+            { name: 'auto_remove_old_logs', value: { days: 120, lastRunAt: null }, enabled: true },
+          ];
+          for (const setting of settingsDefaults) {
+            try {
+              const resp = await fetch(`${existingInstance.baseURL}/v1/settings/${setting.name}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ value: setting.value, enabled: setting.enabled }),
+              });
+              if (!resp.ok) logger.warn(`Failed to reset setting '${setting.name}': HTTP ${resp.status}`);
+            } catch (e) {
+              logger.warn(`Failed to reset setting '${setting.name}': ${String(e)}`);
+            }
+          }
+
           fixtureValue.baseURL = existingInstance.baseURL;
           fixtureValue.backendHost = existingInstance.backendHost;
           fixtureValue.serverPort = existingInstance.serverPort;
@@ -414,7 +457,16 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           // Need to start fresh server
           if (running) {
             const stopStart = performance.now();
-            logger.info(`${modeLabel}: waiting for existing server on port ${workerPort} to stop (no pkill to avoid cross-kill)`);
+            // In reuse mode the previous scenario's server is intentionally still running
+            // (e.g. after a config-hash mismatch) — stop it explicitly, otherwise the
+            // waitFor below would idle for the full 90s waiting on a server nobody stops.
+            const staleInstance = serverInstances.get(cid);
+            if (staleInstance) {
+              logger.info(`${modeLabel}: stopping existing server on port ${workerPort} before relaunch`);
+              await staleInstance.stop();
+            } else {
+              logger.info(`${modeLabel}: waiting for existing server on port ${workerPort} to stop (no pkill to avoid cross-kill)`);
+            }
             await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
               timeoutMs: 90000,
               description: `Server stop on port ${workerPort}`,
@@ -642,7 +694,8 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           ].join('');
           writeBackendLog(logText);
         }
-        envKeysToReset.forEach((key) => {
+        // originalEnv holds envKeysToReset plus any @env: tag keys captured above
+        Object.keys(originalEnv).forEach((key) => {
           const initial = originalEnv[key];
           if (initial === undefined) {
             delete process.env[key];

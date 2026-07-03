@@ -72,7 +72,9 @@ export const env = cleanEnv(process.env, {
     desc: 'Keep Syngrisi server running between tests to reduce startup overhead'
   }),
   E2E_FAST_SERVER_REUSE: bool({
-    default: false,
+    // Default true: the DB is still dropped before every scenario (same isolation),
+    // only the server process is kept alive — saves a full spawn+teardown per scenario.
+    default: true,
     desc: 'Reuse fast-server instances between tests when @fast-server tag is used'
   }),
   E2E_REUSE_LOGTO: str({
@@ -97,7 +99,9 @@ export const config = {
   timeout: 5 * 60 * 1000,
   expectTimeout: 10_000,
   retriesCI: 2,
-  retriesLocal: 2,
+  // Local retries kept low on purpose: @flaky runs as a separate phase, and silent
+  // triple-runs both hide real flakiness and inflate wall-clock time.
+  retriesLocal: 1,
   blobReportPath: './reports/blob',
   mergedReportPath: './reports/html'
 } as const;

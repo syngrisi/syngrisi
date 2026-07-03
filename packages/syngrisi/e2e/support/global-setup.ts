@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import { existsSync } from 'fs';
+import { existsSync, readdirSync, statSync } from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
 import type { FullConfig } from '@playwright/test';
@@ -47,9 +47,58 @@ const findExecutable = (name: string, searchPaths: string[]): string | null => {
   return null;
 };
 
+// Newest file mtime under a directory tree (node_modules and dot-dirs excluded).
+const newestMtimeMs = (dir: string): number => {
+  let newest = 0;
+  const stack = [dir];
+  while (stack.length) {
+    const current = stack.pop()!;
+    let entries;
+    try {
+      entries = readdirSync(current, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+    for (const entry of entries) {
+      if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue;
+      const full = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        stack.push(full);
+      } else {
+        try {
+          const mtime = statSync(full).mtimeMs;
+          if (mtime > newest) newest = mtime;
+        } catch { /* file vanished mid-scan */ }
+      }
+    }
+  }
+  return newest;
+};
+
+// The build is fresh when both outputs (server bundle + UI) are newer than every source file.
+// ponytail: mtime heuristic, not a content hash — set E2E_FORCE_BUILD=true if it ever misfires.
+const isBuildFresh = (): boolean => {
+  const serverBundle = path.join(syngrisiPackageDir, 'dist', 'server', 'server.js');
+  const uiOutputDir = path.join(syngrisiPackageDir, 'mvc', 'views', 'react');
+  if (!existsSync(serverBundle) || !existsSync(uiOutputDir)) return false;
+  const uiNewest = newestMtimeMs(uiOutputDir);
+  if (!uiNewest) return false;
+  const buildTime = Math.min(statSync(serverBundle).mtimeMs, uiNewest);
+  const srcNewest = Math.max(
+    newestMtimeMs(path.join(syngrisiPackageDir, 'src')),
+    statSync(path.join(syngrisiPackageDir, 'package.json')).mtimeMs,
+  );
+  return buildTime > srcNewest;
+};
+
 const ensureFreshBuild = (): void => {
   if (process.env.E2E_SKIP_BUILD === 'true') {
     logger.info('Skipping build because E2E_SKIP_BUILD=true');
+    return;
+  }
+
+  if (process.env.E2E_FORCE_BUILD !== 'true' && isBuildFresh()) {
+    logger.info('Skipping build: dist/ and mvc/views/react are newer than src/ (set E2E_FORCE_BUILD=true to override)');
     return;
   }
 

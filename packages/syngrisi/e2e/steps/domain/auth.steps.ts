@@ -35,8 +35,7 @@ When(
             }
             if (attempt < 2) {
               logger.warn(`Failed to fill ${label}, retrying (attempt ${attempt + 1}/3)`);
-              await page.goto(loginUrl, { waitUntil: 'networkidle', timeout: 10000 });
-              await page.waitForTimeout(1000);
+              await page.goto(loginUrl, { waitUntil: 'domcontentloaded', timeout: 10000 });
               await waitForLoginInputs();
             }
           }
@@ -47,9 +46,9 @@ When(
       let passwordFieldFound = false;
       for (let attempt = 0; attempt < 5; attempt += 1) {
         try {
-          await page.goto(loginUrl, { waitUntil: 'networkidle', timeout: 10000 });
-          await page.waitForTimeout(attempt === 0 ? 3000 : 2000);
+          await page.goto(loginUrl, { waitUntil: 'domcontentloaded', timeout: 10000 });
 
+          // No fixed sleep: waitFor below is the readiness signal; the outer loop retries.
           const passwordField = page.locator('#password');
           await passwordField.waitFor({ state: 'visible', timeout: 5000 });
           passwordFieldFound = true;
@@ -88,17 +87,15 @@ When(
       if (login && password) {
         const submitButton = page.locator('#submit');
         await submitButton.click();
-        // Wait a bit for form submission to process
-        await page.waitForTimeout(1000);
+        // The Promise.race below is the wait for the submission outcome.
       } else {
-        // For empty credentials, ensure we're still on login page
-        await page.waitForTimeout(1000);
-        // Verify we're on login page by checking URL
+        // For empty credentials, don't submit - just verify the form is still there
+        await waitForLoginInputs();
         const currentUrl = page.url();
         if (!currentUrl.includes('/auth')) {
           // If not on auth page, navigate to login page
-          await page.goto(`${appServer.baseURL}/auth/login`, { waitUntil: 'networkidle' });
-          await page.waitForTimeout(1000);
+          await page.goto(`${appServer.baseURL}/auth/login`, { waitUntil: 'domcontentloaded' });
+          await waitForLoginInputs();
         }
       }
 
