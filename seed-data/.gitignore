@@ -3,3 +3,5 @@ test-results/
 playwright-report/
 *.log
 .DS_Store
+.demo-server.log
+.demo-server.pid
