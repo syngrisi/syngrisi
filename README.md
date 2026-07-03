@@ -94,6 +94,9 @@ expensive, send your screenshots to someone else's servers, and lock you in.
   OpenAI-compatible / Anthropic / Gemini endpoint.
 - 🎛️ **Yours to tune** — per-project verdicts, fully editable prompt with `{{placeholders}}`,
   few-shot example images, and a manual queue (restart / cancel) grouped by run.
+- 🐳 **Private AI out of the box** — `docker compose --profile ai up` starts a bundled
+  **Ollama** with a vision model and wires triage to it via env: zero API keys, zero
+  screenshot egress. See [Private AI with Ollama](packages/syngrisi/docs/AI_FEATURES.md#private-ai-with-ollama-docker-profile).
 
 > Enabled per project, **off by default**. See [AI Triage docs](packages/syngrisi/AI_TRIAGE.md).
 

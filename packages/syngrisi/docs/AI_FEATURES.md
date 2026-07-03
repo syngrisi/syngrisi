@@ -70,3 +70,69 @@ Syngrisi provides a set of features designed to facilitate integration with AI a
 
 All AI endpoints require authentication via API Key or Session cookie.
 Header: `apikey: <your-api-key>`
+
+## Private AI with Ollama (docker profile)
+
+AI Triage can run fully on your own hardware — no API keys, no screenshot egress. The
+`ai` docker compose profile bundles an [Ollama](https://ollama.com) service with a vision
+model and wires the Syngrisi app to it via environment variables.
+
+### Quick start
+
+```bash
+cd packages/syngrisi
+
+SYNGRISI_AI_TRIAGE_ENABLED=true \
+SYNGRISI_AI_TRIAGE_PROVIDER_JSON='{"type":"openai","baseUrl":"http://ollama:11434/v1","model":"gemma4:12b"}' \
+docker compose --profile ai up -d
+```
+
+This starts the regular `syngrisi-app` + `syngrisi-db` services plus:
+
+- **`ollama`** — the Ollama server (official `ollama/ollama` image). Models are stored in
+  the named volume `ollama_data`, so they survive restarts. The healthcheck only verifies
+  the API is up — it never waits for a model download.
+- **`ollama-pull`** — a one-shot helper that pulls the vision model (`OLLAMA_MODEL`,
+  default `gemma4:12b`, several GB on first run) into that volume and exits. Re-runs are
+  instant no-ops once the model is cached. You can also pull manually instead:
+  `docker exec syngrisi-ollama ollama pull gemma4:12b`.
+
+Then enable triage per project (Admin → AI → Projects settings, or
+`PATCH /v1/app/:id/triage-policy` with `{"triageEnabled": true}`) — failed checks get
+classified by the local model.
+
+### Environment variables
+
+| Variable | Default | Description |
+| :--- | :--- | :--- |
+| `OLLAMA_MODEL` | `gemma4:12b` | Vision model pulled by `ollama-pull` (any multimodal Ollama model) |
+| `OLLAMA_PORT` | `11434` | Host port the Ollama API is published on |
+| `SYNGRISI_DOCKER_OLLAMA_DATA_PATH` | `ollama_data` (named volume) | Where model files are stored |
+| `SYNGRISI_AI_TRIAGE_ENABLED` | `false` | Global AI Triage on/off (env wins over the admin UI) |
+| `SYNGRISI_AI_TRIAGE_PROVIDER_JSON` | — | Provider config as a JSON string; applied to the `ai_triage_provider` setting on every startup (env wins over the admin UI). Fields: `type`, `baseUrl`, `apiKey`, `model`, and optional `maxTokens` / `temperature` / `timeoutMs` |
+
+Inside the compose network the app reaches Ollama at `http://ollama:11434/v1`
+(OpenAI-compatible endpoint; `apiKey` may be omitted — Ollama ignores it).
+
+`SYNGRISI_AI_TRIAGE_PROVIDER_JSON` also works outside docker — point any Syngrisi server
+at any OpenAI-compatible endpoint, e.g. a host-local Ollama:
+
+```bash
+SYNGRISI_AI_TRIAGE_PROVIDER_JSON='{"type":"openai","baseUrl":"http://127.0.0.1:11434/v1","model":"gemma4:12b"}'
+```
+
+### Lifecycle
+
+```bash
+docker compose --profile ai up -d     # start everything, pull the model in the background
+docker compose --profile ai down      # stop; the model volume is KEPT
+docker compose --profile ai down -v   # stop and delete the model volume (re-download on next up)
+```
+
+Notes:
+
+- Local VLM inference is CPU/GPU heavy; a single classification can take tens of seconds
+  to minutes depending on hardware. See [AI_TRIAGE.md](../AI_TRIAGE.md) for model
+  recommendations and tuning.
+- Plain `docker compose up` (without `--profile ai`) is unaffected — the Ollama services
+  only exist inside the `ai` profile.

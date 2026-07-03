@@ -99,6 +99,7 @@
         "label": "AI Triage Provider",
         "description": "Model provider for AI Triage (type, baseUrl, apiKey, model)",
         "type": "AIProvider",
+        "env_variable": "SYNGRISI_AI_TRIAGE_PROVIDER_JSON",
         "value": {
             "type": "openai",
             "baseUrl": "",

@@ -36,6 +36,11 @@ services:
       SYNGRISI_HTTP_LOG: "${SYNGRISI_HTTP_LOG:-false}"
       SYNGRISI_DISABLE_DEV_CORS: "true"
       SYNGRISI_RCA: "${SYNGRISI_RCA}"
+      # "Private AI" (docker compose --profile ai): point AI Triage at the bundled Ollama
+      # service instead of a cloud API. No-ops when unset (both default empty/false), so
+      # plain `docker compose up` (no profile) is unaffected. See docs/AI_FEATURES.md.
+      SYNGRISI_AI_TRIAGE_ENABLED: "${SYNGRISI_AI_TRIAGE_ENABLED:-false}"
+      SYNGRISI_AI_TRIAGE_PROVIDER_JSON: "${SYNGRISI_AI_TRIAGE_PROVIDER_JSON:-}"
 
   syngrisi-db:
     cap_add:
@@ -63,3 +68,45 @@ services:
       timeout: 15s
       retries: 3000
       start_period: 40s
+
+  # "Private AI" — bundled Ollama for AI Triage, only started via `docker compose --profile ai up`.
+  # Zero API keys, zero screenshot egress: triage runs entirely against this local vision model.
+  ollama:
+    image: ollama/ollama:latest
+    container_name: syngrisi-ollama
+    profiles: ["ai"]
+    restart: unless-stopped
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - "${SYNGRISI_DOCKER_OLLAMA_DATA_PATH:-ollama_data}:/root/.ollama"
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100m'
+        max-file: '10'
+    healthcheck:
+      # The API being up is enough for "healthy" — pulling the (multi-GB) model happens in the
+      # separate `ollama-pull` service so the healthcheck never blocks on a slow first-time download.
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 20s
+
+  # One-shot: pulls the vision model into the `ollama` service's volume, then exits.
+  # Runs on every `--profile ai up` but `ollama pull` is a no-op once the model is already cached.
+  ollama-pull:
+    image: ollama/ollama:latest
+    container_name: syngrisi-ollama-pull
+    profiles: ["ai"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: "ollama:11434"
+    entrypoint: ["sh", "-c", "ollama pull \"${OLLAMA_MODEL:-gemma4:12b}\""]
+    restart: "no"
+
+volumes:
+  ollama_data: {}
