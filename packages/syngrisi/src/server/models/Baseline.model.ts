@@ -23,6 +23,11 @@ export interface BaselineDocument extends Document {
     matchType?: 'antialiasing' | 'nothing' | 'colors' | 'tolerant';
     toleranceThreshold?: number;
     meta?: Record<string, unknown>;
+    // Cached AI-generated description of the visual change vs the baseline that immediately
+    // precedes this one in its ident's accepted-baseline timeline (time machine feature).
+    // Keyed by fromBaselineId so a stale cache (computed against a different "from") is detected
+    // and regenerated rather than served incorrectly.
+    historySummary?: { fromBaselineId: string; text: string };
 }
 
 const BaselineSchema: Schema<BaselineDocument> = new Schema({
@@ -94,6 +99,9 @@ const BaselineSchema: Schema<BaselineDocument> = new Schema({
         max: 100,
     },
     meta: {
+        type: Object,
+    },
+    historySummary: {
         type: Object,
     },
 });

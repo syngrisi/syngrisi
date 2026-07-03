@@ -122,4 +122,72 @@ const BaselinePutSchema = z.object({
 
 
 
-export { BaselineGetSchema, BaselinePutSchema };
+// Time machine: ident used to look up a check's accepted-baseline history. Unlike the SDK-facing
+// `client.route.ts` ident (where `app` is the app *name*), this mirrors how the UI already reads
+// baselines (`GET /v1/baselines`) - `app` is the App document's ObjectId.
+const BaselineHistoryIdentSchema = z.object({
+    name: z.string().min(1),
+    app: commonValidations.id,
+    branch: z.string().min(1),
+    browserName: z.string().min(1),
+    viewport: z.string().min(1),
+    os: z.string().min(1),
+});
+
+const BaselineHistoryFilterSchema = z
+    .string()
+    .refine((data) => {
+        try {
+            const parsed = JSON.parse(data);
+            BaselineHistoryIdentSchema.parse(parsed);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }, {
+        message: 'Invalid JSON string or does not match the required ident schema',
+    })
+    .openapi({
+        description: 'Check ident (name, app id, branch, browserName, viewport, os) as a JSON string, used to look up its accepted-baseline history',
+        example: '{"name":"Login page","app":"6651dd45b9c3e1e0b8c1ce26","branch":"master","browserName":"chrome","viewport":"1366x768","os":"macOS"}',
+    });
+
+const BaselineHistoryQuerySchema = z.object({
+    filter: BaselineHistoryFilterSchema,
+});
+
+const BaselineHistoryItemSchema = z.object({
+    id: commonValidations.id,
+    createdDate: commonValidations.date,
+    markedByUsername: z.string().optional(),
+    filename: z.string().optional(),
+    imageUrl: z.string().optional(),
+});
+
+const HistorySummaryBodySchema = z.object({
+    fromBaselineId: commonValidations.id.openapi({
+        description: 'Older baseline id in the pair being compared',
+        example: '6651ec20917e9ce26f7c0849',
+    }),
+    toBaselineId: commonValidations.id.openapi({
+        description: 'Newer baseline id in the pair being compared',
+        example: '6651ec20917e9ce26f7c0850',
+    }),
+});
+
+const HistorySummaryResponseSchema = z.object({
+    summary: z.string().nullable(),
+    reason: z.string().optional(),
+    cached: z.boolean().optional(),
+});
+
+export {
+    BaselineGetSchema,
+    BaselinePutSchema,
+    BaselineHistoryIdentSchema,
+    BaselineHistoryFilterSchema,
+    BaselineHistoryQuerySchema,
+    BaselineHistoryItemSchema,
+    HistorySummaryBodySchema,
+    HistorySummaryResponseSchema,
+};

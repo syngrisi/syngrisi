@@ -8,4 +8,5 @@ export { imagePreloadService, ImagePreloadService } from '@shared/services/image
 export { RCAService } from '@shared/services/rca.service';
 export { TriageService } from '@shared/services/triage.service';
 export { adminDataService } from '@shared/services/adminData.service';
+export { BaselineHistoryService } from '@shared/services/baselineHistory.service';
 export type { ICheck } from '@shared/services/imagePreload.service';
