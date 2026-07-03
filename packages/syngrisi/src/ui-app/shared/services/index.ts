@@ -8,4 +8,6 @@ export { imagePreloadService, ImagePreloadService } from '@shared/services/image
 export { RCAService } from '@shared/services/rca.service';
 export { TriageService } from '@shared/services/triage.service';
 export { adminDataService } from '@shared/services/adminData.service';
+export { WebhooksService } from '@shared/services/webhooks.service';
 export type { ICheck } from '@shared/services/imagePreload.service';
+export type { IWebhook, IWebhookInput, WebhookEvent } from '@shared/services/webhooks.service';

@@ -16,6 +16,7 @@ import clientRoute from './client.route';
 import shareRoute from './share.route';
 import pluginSettingsRoute from './plugin-settings.route';
 import adminDataRoute from './admin-data.route';
+import webhooksRoute from './webhooks.route';
 
 const router = express.Router();
 
@@ -87,6 +88,10 @@ const defaultRoutes = [
     {
         path: '/admin/data',
         route: adminDataRoute,
+    },
+    {
+        path: '/webhooks',
+        route: webhooksRoute,
     },
 ];
 

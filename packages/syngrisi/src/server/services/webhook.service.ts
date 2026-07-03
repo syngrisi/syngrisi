@@ -1,8 +1,9 @@
 import { Webhook } from '@models';
+import { PaginateOptions } from '@models/plugins/utils';
 import log from '@logger';
 
 const triggerWebhooks = async (event: string, payload: any) => {
-    const webhooks = await Webhook.find({ events: event });
+    const webhooks = await Webhook.find({ events: event, enabled: { $ne: false } });
 
     for (const webhook of webhooks) {
         try {
@@ -36,6 +37,26 @@ const triggerWebhooks = async (event: string, payload: any) => {
     }
 };
 
+const getWebhooks = async (filter: Record<string, unknown>, options: PaginateOptions) => Webhook.paginate(filter, options);
+
+const createWebhook = async (data: { url: string; events?: string[]; secret?: string; enabled?: boolean }) => Webhook.create(data);
+
+const updateWebhook = async (id: string, data: Partial<{ url: string; events: string[]; secret: string; enabled: boolean }>) => {
+    const webhook = await Webhook.findByIdAndUpdate(id, data, { new: true }).exec();
+    if (!webhook) throw new Error(`cannot find webhook with id: ${id}`);
+    return webhook;
+};
+
+const removeWebhook = async (id: string) => {
+    const webhook = await Webhook.findByIdAndDelete(id).exec();
+    if (!webhook) throw new Error(`cannot find webhook with id: ${id}`);
+    return webhook;
+};
+
 export const webhookService = {
-    triggerWebhooks
+    triggerWebhooks,
+    getWebhooks,
+    createWebhook,
+    updateWebhook,
+    removeWebhook,
 };

@@ -52,6 +52,7 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 - 🤖 **Root Cause Analysis** _(beta)_ — captures a DOM snapshot alongside each screenshot to help explain **why** a check changed.
 - 🔐 **Auth, roles & SSO** — username/password, API keys, plus OAuth2 / SAML 2.0 single sign-on and an admin panel.
 - 🧩 **Plugin system & rich configuration** — extend behaviour and tune everything through environment variables.
+- 🔔 **Webhooks** — check/test lifecycle events with secret signing.
 - 🐳 **Self-hosted & Docker-ready** — Express + MongoDB backend, React + Mantine UI.
 
 ## 📸 Screenshots

@@ -7,6 +7,7 @@ import { ClientStartSessionType } from '@schemas/Client.schema';
 import { UpdateTestType } from '@schemas/Test.schema';
 import { TestDocument } from '@models/Test.model';
 import { CheckDocument } from '@models/Check.model';
+import { webhookService } from './webhook.service';
 
 const updateTest = async (id: string, update: UpdateTestType) => {
     const logOpts: LogOpts = {
@@ -117,6 +118,7 @@ export const endSession = async (testId: string, username: string) => {
     log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`, logOpts);
     const updatedTest = await updateTest(testId, testParams);
     const result = updatedTest?.toObject() as TestDocument;
+    webhookService.triggerWebhooks('test.finished', result).catch((e) => log.error(`Webhook error: ${errMsg(e)}`));
     return result;
 };
 

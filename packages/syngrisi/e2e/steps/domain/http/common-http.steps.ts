@@ -6,6 +6,7 @@ import { requestWithSession } from '@utils/http-client';
 import * as yaml from 'yaml';
 import { expect } from '@playwright/test';
 import { got } from 'got-cjs';
+import { renderTemplate } from '@helpers/template';
 
 const logger = createLogger('CommonHttpSteps');
 
@@ -216,3 +217,123 @@ When(
   }
 );
 
+
+// Generic first-match field assertion. Deliberately worded "to match:" (not
+// "matched:") to avoid colliding with the pre-existing ordinal-based
+// "I expect via http {ordinal} {string} filtered as {string} matched:" step,
+// which is ambiguously registered under both Then and When above and would
+// throw "Multiple definitions matched scenario step" if reused.
+Then(
+  'I expect via http {string} filtered as {string} to match:',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    itemName: string,
+    filter: string,
+    yml: string
+  ) => {
+    const uri = `${appServer.baseURL}/v1/${itemName}s?limit=0&filter={"$and":${convertQueryToMongoFilter(filter)}}`;
+    logger.info(`Fetching ${itemName}s filtered as "${filter}"`);
+    const itemsResponse = await requestWithSession(uri, testData, appServer);
+    const items = itemsResponse.json.results;
+    const item = items[0];
+    if (!item) {
+      throw new Error(`${itemName} filtered as "${filter}" not found`);
+    }
+    const params = yaml.parse(yml);
+    expect(item).toMatchObject(params);
+  }
+);
+
+// Generic resource creator: POSTs the given YAML body to /v1/{itemName}s.
+// Used for resources (e.g. webhooks) that don't yet have a dedicated create step.
+When(
+  'I create via http {string} with params:',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    itemName: string,
+    yml: string
+  ) => {
+    const rendered = renderTemplate(yml, testData);
+    const body = yaml.parse(rendered);
+    const uri = `${appServer.baseURL}/v1/${itemName}s`;
+    logger.info(`Creating ${itemName} via ${uri} with body: ${rendered}`);
+    const result = await requestWithSession(uri, testData, appServer, {
+      method: 'POST',
+      json: body,
+    });
+    const statusCode = result.raw?.statusCode;
+    logger.info(`${itemName} create status: ${statusCode}`);
+    expect(statusCode).toBeGreaterThanOrEqual(200);
+    expect(statusCode).toBeLessThan(300);
+  }
+);
+
+// Generic count assertion: counts /v1/{itemName}s matching the given field filter(s).
+Then(
+  'I expect via http that {string} filtered as {string} exist exactly {string} times',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    itemName: string,
+    filter: string,
+    num: string
+  ) => {
+    const uri = `${appServer.baseURL}/v1/${itemName}s?limit=0&filter={"$and":${convertQueryToMongoFilter(filter)}}`;
+    logger.info(`Checking ${itemName}s filtered as "${filter}"`);
+    const itemsResponse = await requestWithSession(uri, testData, appServer);
+    const items = itemsResponse.json.results;
+    logger.info(`Found ${items.length} ${itemName}s`);
+    expect(items.length).toBe(parseInt(num, 10));
+  }
+);
+
+// Generic find-by-filter-then-PATCH, mirroring the "delete run by name" convention
+// (find the first match, then act on its id).
+When(
+  'I update via http {string} filtered as {string} with params:',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    itemName: string,
+    filter: string,
+    yml: string
+  ) => {
+    const findUri = `${appServer.baseURL}/v1/${itemName}s?limit=0&filter={"$and":${convertQueryToMongoFilter(filter)}}`;
+    const found = await requestWithSession(findUri, testData, appServer);
+    const item = found.json.results?.[0];
+    if (!item?.id) {
+      throw new Error(`${itemName} filtered as "${filter}" not found for update`);
+    }
+    const rendered = renderTemplate(yml, testData);
+    const body = yaml.parse(rendered);
+    const uri = `${appServer.baseURL}/v1/${itemName}s/${item.id}`;
+    logger.info(`Updating ${itemName} "${item.id}" via ${uri} with body: ${rendered}`);
+    const result = await requestWithSession(uri, testData, appServer, {
+      method: 'PATCH',
+      json: body,
+    });
+    const statusCode = result.raw?.statusCode;
+    expect(statusCode).toBe(200);
+  }
+);
+
+// Generic find-by-filter-then-DELETE, mirroring the "delete run by name" convention.
+When(
+  'I delete via http {string} filtered as {string}',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    itemName: string,
+    filter: string
+  ) => {
+    const findUri = `${appServer.baseURL}/v1/${itemName}s?limit=0&filter={"$and":${convertQueryToMongoFilter(filter)}}`;
+    const found = await requestWithSession(findUri, testData, appServer);
+    const item = found.json.results?.[0];
+    if (!item?.id) {
+      throw new Error(`${itemName} filtered as "${filter}" not found for deletion`);
+    }
+    const uri = `${appServer.baseURL}/v1/${itemName}s/${item.id}`;
+    logger.info(`Deleting ${itemName} "${item.id}" via ${uri}`);
+    const result = await requestWithSession(uri, testData, appServer, { method: 'DELETE' });
+    const statusCode = result.raw?.statusCode;
+    logger.info(`${itemName} "${item.id}" delete status: ${statusCode}`);
+    expect(statusCode).toBe(200);
+  }
+);

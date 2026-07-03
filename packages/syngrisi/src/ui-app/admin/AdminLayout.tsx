@@ -11,6 +11,7 @@ import AdminLogs from '@admin/components/Logs/AdminLogs';
 import AdminPluginSettings from '@admin/components/PluginSettings/AdminPluginSettings';
 import AdminDataManagement from '@admin/components/DataManagement/AdminDataManagement';
 import AdminAI from '@admin/components/AI/AdminAI';
+import AdminWebhooks from '@admin/components/Webhooks/AdminWebhooks';
 
 export default function AdminLayout() {
     const theme = useMantineTheme();
@@ -38,6 +39,7 @@ export default function AdminLayout() {
                             <Route path="settings" element={<AdminSettings />} />
                             <Route path="ai" element={<AdminAI />} />
                             <Route path="plugins" element={<AdminPluginSettings />} />
+                            <Route path="webhooks" element={<AdminWebhooks />} />
                             <Route path="logs" element={<AdminLogs />} />
                             <Route path="data" element={<AdminDataManagement />} />
                         </Routes>

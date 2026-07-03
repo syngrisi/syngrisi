@@ -13,6 +13,7 @@ import {
     IconUser,
     IconUserExclamation,
     IconPhoto,
+    IconWebhook,
 } from '@tabler/icons-react';
 import { INavDataItem } from '@shared/navigation/interfaces';
 
@@ -133,6 +134,16 @@ export function navigationData(): INavDataItem[] {
             crumbs: [
                 { title: 'Admin', href: '/admin' },
                 { title: 'Data Management', href: '/admin/data' },
+            ],
+        },
+        {
+            title: 'Webhooks',
+            description: 'Manage webhook registrations',
+            group: 'admin',
+            icon: <IconWebhook size={18} />,
+            crumbs: [
+                { title: 'Admin', href: '/admin' },
+                { title: 'Webhooks', href: '/admin/webhooks' },
             ],
         },
         {
