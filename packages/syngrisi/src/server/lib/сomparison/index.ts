@@ -1,1 +1,0 @@
-export { getDiff } from "./comparator";
