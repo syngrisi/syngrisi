@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
 import { ActionIcon, Menu, Text, Tooltip, Group, NumberInput, Button, Stack, Divider } from '@mantine/core';
-import { IconAdjustments, IconCheck } from '@tabler/icons-react';
+import { IconAdjustments, IconCheck, IconHelpCircle } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import config from '@config';
@@ -22,26 +22,30 @@ interface Props {
 
 type MatchType = 'nothing' | 'antialiasing' | 'colors' | 'tolerant';
 
-const MATCH_TYPE_OPTIONS: { value: MatchType; label: string; description: string }[] = [
+const MATCH_TYPE_OPTIONS: { value: MatchType; label: string; description: string; help: string }[] = [
     {
         value: 'nothing',
         label: 'Pixel Perfect',
         description: 'Compare every pixel exactly (no tolerance)',
+        help: 'Zero tolerance: a pixel counts as different if any of its red, green, blue or alpha channels differ by even 1 (on the 0–255 scale). Catches the smallest visual change, but on real browser screenshots it can flag sub-pixel anti-aliasing or GPU/font-rendering noise — switch to Tolerant if you see such false differences.',
     },
     {
         value: 'tolerant',
         label: 'Tolerant',
         description: 'Allow minor per-pixel differences (±16)',
+        help: 'A pixel is still treated as equal while each of its red, green, blue and alpha channels differs by less than 16 (on the 0–255 scale). This absorbs minor rendering noise such as font smoothing or GPU differences. It was the previous default comparison behaviour.',
     },
     {
         value: 'antialiasing',
         label: 'Ignore Anti-aliasing',
         description: 'Automatically ignore anti-aliasing differences',
+        help: 'Detects anti-aliased (edge-smoothing) pixels and leaves them out of the comparison, and also relaxes the colour tolerance. Use it when only edge smoothing differs between runs. On large images every 6th row and column is sampled to keep the comparison fast.',
     },
     {
         value: 'colors',
         label: 'Ignore Colors',
         description: 'Compare structure, ignore color differences',
+        help: 'Compares only the brightness/structure of each pixel and ignores hue, so two colours of the same brightness (e.g. red vs blue) are treated as equal. Use it when layout and shapes matter but colours may legitimately change between runs.',
     },
 ];
 
@@ -234,9 +238,26 @@ export function MatchTypeSelector({
                         leftSection={matchType === option.value ? <IconCheck size={14} /> : null}
                         onClick={() => setMatchType(option.value)}
                     >
-                        <Text size="sm" fw={matchType === option.value ? 600 : 400}>
-                            {option.label}
-                        </Text>
+                        <Group justify="space-between" wrap="nowrap" gap="xs">
+                            <Text size="sm" fw={matchType === option.value ? 600 : 400}>
+                                {option.label}
+                            </Text>
+                            <Tooltip
+                                label={option.help}
+                                multiline
+                                w={270}
+                                withinPortal
+                                position="right"
+                                events={{ hover: true, focus: true, touch: true }}
+                            >
+                                <IconHelpCircle
+                                    size={15}
+                                    stroke={1.5}
+                                    style={{ color: 'var(--mantine-color-gray-5)', flexShrink: 0, cursor: 'help' }}
+                                    onClick={(e) => e.stopPropagation()}
+                                />
+                            </Tooltip>
+                        </Group>
                         <Text size="xs" c="dimmed">
                             {option.description}
                         </Text>
