@@ -134,8 +134,11 @@ export async function clearDatabase(
     }
   })());
 
-  // Task 2: Clear Baselines (if required)
-  if (removeBaselines && !softClean) {
+  // Task 2: Clear Baselines (if required). Runs in soft-clean mode too: the reused
+  // server reads image files on demand, and the snapshot documents referencing them
+  // are wiped by the same clean — keeping the files would leak state between
+  // scenarios (e.g. "expect exact N snapshot files" assertions).
+  if (removeBaselines) {
     tasks.push((async () => {
       try {
         await fs.rm(baselinesPath, { recursive: true, force: true });
