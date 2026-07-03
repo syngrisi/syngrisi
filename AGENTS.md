@@ -56,6 +56,18 @@ See [packages/syngrisi/e2e/CLAUDE.md](packages/syngrisi/e2e/CLAUDE.md) for detai
 -   [Quick Test Generation](packages/syngrisi/docs/agent/guides/test-generate-quick.md)
 -   [All Guides Index](packages/syngrisi/docs/agent/INDEX.md)
 
+## Demo Environment
+
+After changes that affect the **UI** or **business logic**, offer the user to spin up
+the seeded demo environment so they can review the change live against realistic data.
+
+-   Use the `demo-seed` skill (`seed-data/run-demo.sh`) — it boots an isolated,
+    fully-featured instance (separate DB/images, auth off, RCA + AI Triage on) and
+    seeds a feature tour from real test-app fixtures, grouped by run name.
+-   Offer it as a suggestion, don't run it unprompted; e.g. "Хочешь, подниму
+    засидированный демо-инстанс, чтобы посмотреть изменения?" Then run it only if they agree.
+-   Skip the offer for pure docs/CI/config/test-only changes that have no runtime surface.
+
 ## Definition of Done (DoD) Checklist
 
 Before marking a task as complete, conduct a final self-review using the following checklist:
