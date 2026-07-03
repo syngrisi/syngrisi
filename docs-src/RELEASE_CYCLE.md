@@ -17,9 +17,9 @@ This monorepo uses **Changesets** for version management and automated releases 
    Brief description of changes
    ```
 
-2. **Commit and push** the changeset (add `[skip-e2e]` if E2E tests already passed locally):
+2. **Run E2E locally first** (mandatory unless the user explicitly asked to skip it), then **commit and push** the changeset:
    ```bash
-   git add .changeset/ && git commit -m "chore: add changeset [skip-e2e]" && git push
+   git add .changeset/ && git commit -m "chore: add changeset" && git push
    ```
 
 3. **Wait for CI** (build + unit tests) → Release workflow automatically creates a PR titled "chore(release): version packages"
@@ -28,10 +28,6 @@ This monorepo uses **Changesets** for version management and automated releases 
    ```bash
    git fetch origin changeset-release/main && git merge origin/changeset-release/main && git push
    ```
-   > If the merge commit triggers E2E and they fail on flaky tests, push a retry:
-   > ```bash
-   > git commit --allow-empty -m "ci: retry [skip-e2e]" && git push
-   > ```
 
 5. **Wait for Release workflow** — it publishes packages to npm and creates a GitHub Release
 
@@ -41,27 +37,33 @@ This monorepo uses **Changesets** for version management and automated releases 
    gh release list --limit 3
    ```
 
-## Skip E2E Tests on CI
+## E2E Tests on CI (opt-in, off by default)
 
-Add `[skip-e2e]` to the commit message to skip E2E tests while keeping build, unit tests, and release workflow running:
+**Running E2E locally is mandatory** before merging or releasing. The only
+exception is when the user explicitly asks to skip it.
+
+CI does **not** run E2E by default. To make CI run E2E, add the `[run-e2e]`
+marker to the pushed HEAD commit message — and do so **only when the user
+explicitly asks** for E2E on CI:
 
 ```bash
-git commit -m "chore: add changeset [skip-e2e]"
-# or for an empty retry commit:
-git commit --allow-empty -m "ci: retry [skip-e2e]"
+git commit -m "chore: some change [run-e2e]"
+# or trigger the manual "E2E Tests" workflow from the Actions tab (workflow_dispatch)
 ```
 
-> **Warning**: Do NOT use `[skip ci]` in commit messages — this blocks ALL workflows including the release workflow! Use `[skip-e2e]` instead.
+Without `[run-e2e]`, CI runs only build, unit tests and the release workflow.
 
-## Quick Release (Skip CI Tests)
+> **Warning**: Do NOT use `[skip ci]` in commit messages — this blocks ALL workflows including the release workflow!
 
-If tests have already been run locally and you want to release quickly:
+## Quick Release
 
-### Option A: Skip E2E via commit message (no admin rights needed)
+Since CI does not run E2E by default, a normal push already runs only build + unit tests before the release workflow. Just create the changeset and push:
 
-1. Create changeset and commit with `[skip-e2e]`:
+### Option A: Standard release (no admin rights needed)
+
+1. Create changeset and commit (no marker needed — CI skips E2E by default):
    ```bash
-   git commit -m "chore: add changeset [skip-e2e]" && git push
+   git commit -m "chore: add changeset" && git push
    ```
 2. Wait for CI (build + unit tests only) → Release workflow creates a PR
 3. Merge the PR → Release workflow publishes to npm

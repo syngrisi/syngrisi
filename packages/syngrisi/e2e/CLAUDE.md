@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## E2E run policy
+
+- **Local E2E is mandatory** before merging or releasing any change that can affect runtime behaviour. Run the relevant suite locally and confirm it is green. The only exception is when the user explicitly asks to skip E2E.
+- **CI E2E is opt-in and off by default.** It runs only when the user explicitly asks for it, via the `[run-e2e]` marker in the pushed HEAD commit message (or the manual "E2E Tests" workflow_dispatch). Do not add `[run-e2e]` on your own initiative.
+
 ## Build & Test Commands
 
 ```bash
