@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { promises as fsp } from 'fs';
 import { config } from '@config';
 import { Baseline, Snapshot } from '@models';
 import log from "../lib/logger";
@@ -29,14 +29,13 @@ const removeSnapshotFile = async (snapshot: SnapshotDocument) => {
 
     if (isLastSnapshotFile()) {
         const imagePath = path.join(config.defaultImagesPath, snapshot.filename);
-        log.silly(`path: ${imagePath}`, logOpts);
-        if (fs.existsSync(imagePath)) {
-            log.debug(`removing file: '${imagePath}'`, logOpts, {
-                msgType: 'REMOVE',
-                itemType: 'file',
-            });
-            fs.unlinkSync(imagePath);
-        }
+        log.debug(`removing file: '${imagePath}'`, logOpts, {
+            msgType: 'REMOVE',
+            itemType: 'file',
+        });
+        await fsp.unlink(imagePath).catch((e) => {
+            if (e.code !== 'ENOENT') throw e;
+        });
     }
 };
 

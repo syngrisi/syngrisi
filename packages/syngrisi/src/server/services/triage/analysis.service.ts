@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import fs from 'fs';
+import { promises as fsp } from 'fs';
 import path from 'path';
 import { Check } from '@models';
 import { config } from '@config';
@@ -7,17 +7,14 @@ import { domSnapshotService } from '@services/dom-snapshot.service';
 import log from '@lib/logger';
 import { TriageInput, TriageExample, VerdictDef } from './types';
 
-function getBase64(filename?: string): string | null {
+async function getBase64(filename?: string): Promise<string | null> {
     if (!filename) return null;
     try {
         const filePath = path.join(config.defaultImagesPath, filename);
-        if (fs.existsSync(filePath)) {
-            return fs.readFileSync(filePath, { encoding: 'base64' });
-        }
+        return await fsp.readFile(filePath, { encoding: 'base64' });
     } catch {
         return null;
     }
-    return null;
 }
 
 // Builds the VLM payload for a check: base64 baseline/actual/diff + meta + optional DOM diff.
@@ -40,9 +37,9 @@ export async function buildTriageInput(
 
     return {
         name: check.name,
-        actualB64: check.actualSnapshotId ? getBase64(check.actualSnapshotId.filename) : null,
-        baselineB64: check.baselineId ? getBase64(check.baselineId.filename) : null,
-        diffB64: check.diffId ? getBase64(check.diffId.filename) : null,
+        actualB64: check.actualSnapshotId ? await getBase64(check.actualSnapshotId.filename) : null,
+        baselineB64: check.baselineId ? await getBase64(check.baselineId.filename) : null,
+        diffB64: check.diffId ? await getBase64(check.diffId.filename) : null,
         meta: check.meta,
         domDiff,
         verdicts,

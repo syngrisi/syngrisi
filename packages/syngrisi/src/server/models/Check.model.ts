@@ -50,12 +50,14 @@ export interface CheckDocument extends Document {
         autoAccepted?: boolean;
         failed?: boolean; // provider error/timeout → fallback verdict
         attempts?: number; // number of classification attempts made so far (bounded retry)
+        claimedAt?: Date; // lease stamp: a scheduler instance claimed this check (multi-instance safety)
     };
     changeSig?: {
         vector: number[]; // color_hist Lab descriptor of the change (resolution-invariant)
         version: string; // descriptor version, for re-compute on algorithm change
         at: Date;
         failed?: boolean;
+        claimedAt?: Date; // lease stamp: a scheduler instance claimed this check (multi-instance safety)
     };
 }
 
@@ -199,6 +201,7 @@ const CheckSchema = new Schema<CheckDocument>({
             autoAccepted: { type: Boolean },
             failed: { type: Boolean },
             attempts: { type: Number },
+            claimedAt: { type: Date },
         },
         _id: false,
         default: undefined,
@@ -209,6 +212,7 @@ const CheckSchema = new Schema<CheckDocument>({
             version: { type: String },
             at: { type: Date },
             failed: { type: Boolean },
+            claimedAt: { type: Date },
         },
         _id: false,
         default: undefined,

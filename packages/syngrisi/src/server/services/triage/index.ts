@@ -202,19 +202,37 @@ async function updateTestWorstVerdict(testId: unknown, verdicts: VerdictDef[]): 
     }
 }
 
+// Lease duration for a scheduler claim: long enough for the slowest single classification
+// (provider timeout × retries); after it expires another instance may re-claim the check.
+const CLAIM_TTL_MS = 10 * 60_000;
+
 // Find failed-with-diff, untriaged checks in projects where AI Triage is enabled (off by default).
 // Used by the background scheduler only; manual re-run is always allowed.
+// Each check is claimed atomically (findOneAndUpdate stamps triage.claimedAt), so several server
+// instances polling in parallel never triage the same check twice. Finishing a triage overwrites
+// the whole `triage` subdoc, which clears the claim; a crashed instance's claim expires via the TTL.
 export async function findUntriagedCheckIds(limit: number): Promise<string[]> {
     const enabledAppIds = await App.find({ triageEnabled: true }).distinct('_id');
     if (!enabledAppIds.length) return [];
-    const checks = await Check.find({
-        status: 'failed',
-        diffId: { $exists: true, $ne: null },
-        'triage.verdict': { $exists: false }, // not yet classified (covers fresh + pending)
-        app: { $in: enabledAppIds },
-    })
-        .select('_id')
-        .limit(limit)
-        .exec();
-    return checks.map((c: any) => String(c._id));
+    const staleBefore = new Date(Date.now() - CLAIM_TTL_MS);
+    const ids: string[] = [];
+    for (let i = 0; i < limit; i++) {
+        const claimed: any = await Check.findOneAndUpdate(
+            {
+                status: 'failed',
+                diffId: { $exists: true, $ne: null },
+                'triage.verdict': { $exists: false }, // not yet classified (covers fresh + pending)
+                app: { $in: enabledAppIds },
+                $or: [
+                    { 'triage.claimedAt': { $exists: false } },
+                    { 'triage.claimedAt': { $lt: staleBefore } },
+                ],
+            },
+            { $set: { 'triage.claimedAt': new Date() } },
+            { new: true, projection: { _id: 1 } },
+        ).exec();
+        if (!claimed) break;
+        ids.push(String(claimed._id));
+    }
+    return ids;
 }

@@ -41,7 +41,7 @@ const createCheckParams = (checkParam: CreateCheckParams, suite: SuiteDocument, 
 import mongoose from 'mongoose';
 import * as SnapshotService from './snapshot.service';
 
-import fs, { promises as fsp } from 'fs';
+import { promises as fsp } from 'fs';
 import { config } from '@config';
 import path from 'path';
 
@@ -72,24 +72,20 @@ const cleanupOrphanFiles = async (
     if (actualSnapshot && actualSnapshot.filename === `${actualSnapshot.id}.png`) {
         const imagePath = path.join(config.defaultImagesPath, actualSnapshot.filename);
         try {
-            if (fs.existsSync(imagePath)) {
-                await fsp.unlink(imagePath);
-                log.debug(`deleted orphan file: ${imagePath}`, logOpts);
-            }
-        } catch (err) {
-            log.error(`failed to delete orphan file: ${imagePath}, error: ${errMsg(err)}`, logOpts);
+            await fsp.unlink(imagePath);
+            log.debug(`deleted orphan file: ${imagePath}`, logOpts);
+        } catch (err: any) {
+            if (err.code !== 'ENOENT') log.error(`failed to delete orphan file: ${imagePath}, error: ${errMsg(err)}`, logOpts);
         }
     }
 
     if (diffSnapshot && diffSnapshot.filename) {
         const imagePath = path.join(config.defaultImagesPath, diffSnapshot.filename);
         try {
-            if (fs.existsSync(imagePath)) {
-                await fsp.unlink(imagePath);
-                log.debug(`deleted orphan diff file: ${imagePath}`, logOpts);
-            }
-        } catch (err) {
-            log.error(`failed to delete orphan diff file: ${imagePath}, error: ${errMsg(err)}`, logOpts);
+            await fsp.unlink(imagePath);
+            log.debug(`deleted orphan diff file: ${imagePath}`, logOpts);
+        } catch (err: any) {
+            if (err.code !== 'ENOENT') log.error(`failed to delete orphan diff file: ${imagePath}, error: ${errMsg(err)}`, logOpts);
         }
     }
 };
