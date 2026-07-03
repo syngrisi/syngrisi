@@ -1,5 +1,13 @@
 # @syngrisi/syngrisi
 
+## 3.10.1
+
+### Patch Changes
+
+-   6d10847: CI no longer runs E2E tests by default. E2E on CI is now opt-in and runs only when the pushed HEAD commit message carries the explicit run-e2e opt-in marker (or via the manual "E2E Tests" workflow). Running E2E locally before merging/releasing is required instead. Documentation updated accordingly.
+-   1f7b14d: Add a help "?" icon with a detailed hover tooltip to each comparison mode in the match-type selector, explaining how Pixel Perfect, Tolerant, Ignore Anti-aliasing and Ignore Colors actually work.
+    -   @syngrisi/node-resemble.js@3.10.1
+
 ## 3.10.0
 
 ### Minor Changes
