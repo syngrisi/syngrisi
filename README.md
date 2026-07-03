@@ -211,6 +211,7 @@ stack, it's built for you.
 packages/
 ├── syngrisi/                              # Main application (Express + React)
 ├── core-api/                              # Framework-agnostic REST client
+├── core-api-python/                       # Python REST client (+ Playwright driver)
 ├── playwright-sdk/                        # Playwright SDK
 ├── wdio-sdk/                              # WebdriverIO SDK
 ├── wdio-syngrisi-cucumber-service/        # WebdriverIO + Cucumber service

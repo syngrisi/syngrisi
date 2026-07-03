@@ -12,9 +12,16 @@ license = { text = "MIT" }
 authors = [{ name = "Viktar Silakou" }]
 keywords = ["visual", "regression", "test", "SDK"]
 dependencies = ["requests>=2.25"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
 
 [project.optional-dependencies]
 dev = ["responses>=0.23", "pytest>=7.0"]
+
+[project.urls]
+Homepage = "https://github.com/syngrisi/syngrisi"
 
 [tool.setuptools.packages.find]
 include = ["syngrisi_core_api*"]
