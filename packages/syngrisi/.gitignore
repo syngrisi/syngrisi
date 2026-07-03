@@ -30,3 +30,4 @@ logs/**
 /static/data/custom_devices.json
 mvc/**
 .zencoder/
+.demo-images/
