@@ -11,11 +11,29 @@ import { BaselineDocument } from '../models/Baseline.model';
 import { CreateCheckParamsExtended } from '../../types/Check';
 import { Types } from 'mongoose';
 
+async function findAcceptedBaselineByIdent(ident: IdentType) {
+    const identFieldsAccepted = Object.assign(buildIdentObject(ident), { markedAs: 'accepted' });
+    return Baseline.findOne(identFieldsAccepted, {}, { sort: { createdDate: -1 } });
+}
+
 export async function getAcceptedBaseline(params: IdentType) {
-    const identFieldsAccepted = Object.assign(buildIdentObject(params), { markedAs: 'accepted' });
-    const acceptedBaseline = await Baseline.findOne(identFieldsAccepted, {}, { sort: { createdDate: -1 } });
+    const acceptedBaseline = await findAcceptedBaselineByIdent(params);
     log.debug(`acceptedBaseline: '${acceptedBaseline ? JSON.stringify(acceptedBaseline) : 'not found'}'`, { itemType: 'baseline' });
     if (acceptedBaseline) return acceptedBaseline;
+
+    // Read-time fallback: no accepted baseline for this check's own branch. If the project has a
+    // configured main branch (and it differs from this check's branch), fall back to the main
+    // branch's accepted baseline instead of treating the check as new/not_accepted. Accepting a
+    // check still creates a baseline scoped to the check's own branch (see check.service.ts accept).
+    const app = await App.findById(params.app).select('mainBranch').lean();
+    if (app?.mainBranch && app.mainBranch !== params.branch) {
+        const fallbackBaseline = await findAcceptedBaselineByIdent({ ...params, branch: app.mainBranch });
+        if (fallbackBaseline) {
+            log.debug(`no accepted baseline for branch '${params.branch}', using main-branch ('${app.mainBranch}') fallback baseline: '${JSON.stringify(fallbackBaseline)}'`, { itemType: 'baseline' });
+            return fallbackBaseline;
+        }
+    }
+
     return null;
 }
 

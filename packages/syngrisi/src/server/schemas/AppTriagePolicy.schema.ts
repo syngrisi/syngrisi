@@ -70,6 +70,9 @@ export const AppTriagePolicyUpdateSchema = z.object({
     triagePrompt: z.string().max(20000).optional(),
     triageExamples: z.array(TriageExampleSchema).max(20).optional(),
     changeSimGate: z.number().min(0).max(1).optional(),
+    // Read-time baseline fallback: branch whose accepted baselines cover every other branch for
+    // this project. Empty string clears it (feature disabled, preserving today's behavior).
+    mainBranch: z.string().max(255).optional(),
 }).strict();
 
 export type AppTriagePolicyUpdateType = z.infer<typeof AppTriagePolicyUpdateSchema>;
