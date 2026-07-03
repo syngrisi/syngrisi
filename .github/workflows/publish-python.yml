@@ -1,0 +1,39 @@
+# Requires the PyPI project `syngrisi-core-api` to have GitHub trusted
+# publishing configured by a maintainer.
+#
+# Manual trigger only — NOT tag-based, and intentionally decoupled from the
+# npm/changesets release cycle in `.github/workflows/release.yml`.
+name: Publish Python SDK
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write # Required for OIDC trusted publishing to PyPI
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/core-api-python
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install build tooling
+        run: python -m pip install --upgrade build
+
+      - name: Build distributions
+        run: python -m build
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: packages/core-api-python/dist
