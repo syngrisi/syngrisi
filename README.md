@@ -53,6 +53,7 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 - 🔐 **Auth, roles & SSO** — username/password, API keys, plus OAuth2 / SAML 2.0 single sign-on and an admin panel.
 - 🧩 **Plugin system & rich configuration** — extend behaviour and tune everything through environment variables.
 - 🔔 **Webhooks** — check/test lifecycle events with secret signing.
+- ✅ **GitHub commit status** — report a run's pass/fail state straight to the PR, with a deep link back to the grid.
 - 🐳 **Self-hosted & Docker-ready** — Express + MongoDB backend, React + Mantine UI.
 
 ## 📸 Screenshots

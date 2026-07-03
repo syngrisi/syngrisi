@@ -12,6 +12,7 @@ export interface RunDocument extends Document {
     createdDate?: Date;
     parameters?: string[];
     meta?: Record<string, unknown>;
+    commit?: string;
 }
 
 const RunSchema: Schema<RunDocument> = new Schema({
@@ -44,6 +45,9 @@ const RunSchema: Schema<RunDocument> = new Schema({
     },
     meta: {
         type: Object,
+    },
+    commit: {
+        type: String,
     },
 });
 

@@ -124,6 +124,7 @@ export const ApiSessionParamsSchema = z.object({
     app: z.string(),
     tags: z.array(z.string()).optional(),
     branch: z.string(),
+    commit: z.string().regex(/^[0-9a-fA-F]{7,40}$/).optional(), // Git commit SHA, used to report a commit status back to GitHub
 })
 
 export type ApiSessionParams = z.infer<typeof ApiSessionParamsSchema>;

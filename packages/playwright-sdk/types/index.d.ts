@@ -31,6 +31,8 @@ export interface SessionParams {
     browserVersion?: string;
     browserFullVersion?: string;
     tags?: string[];
+    /** Git commit SHA the run belongs to, used to report a commit status back to GitHub */
+    commit?: string;
 
     [key: string]: string | string[] | undefined;
 }
@@ -48,6 +50,7 @@ export interface ApiSessionParams {
     browserVersion: string;
     os: string;
     app: string;
+    commit?: string;
 
     [key: string]: string | string[] | undefined;
 }
@@ -138,6 +141,7 @@ interface TestParams {
     tags?: string[];
     browserFullVersion?: string;
     testId?: string | undefined;
+    commit?: string;
 }
 
 interface Params {

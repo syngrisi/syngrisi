@@ -162,6 +162,7 @@ class SyngrisiApi {
             // optional
             if (params.tags) form.append('tags', JSON.stringify(params.tags))
             if (params.branch) form.append('branch', params.branch)
+            if (params.commit) form.append('commit', params.commit)
 
             return got.post(this.url('startSession'), {
                 body: form,
