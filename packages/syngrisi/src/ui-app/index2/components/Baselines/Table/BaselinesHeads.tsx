@@ -47,6 +47,7 @@ function BaselinesHeads({ flatData, toggleAllRows, selection, visibleFields }: P
                     },
                 )
             }
+            <th style={{ width: '1%' }} aria-label="Actions" />
         </tr>
     );
 }
