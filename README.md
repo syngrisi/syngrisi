@@ -53,6 +53,7 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 - 🔐 **Auth, roles & SSO** — username/password, API keys, plus OAuth2 / SAML 2.0 single sign-on and an admin panel.
 - 🧩 **Plugin system & rich configuration** — extend behaviour and tune everything through environment variables.
 - 🐳 **Self-hosted & Docker-ready** — Express + MongoDB backend, React + Mantine UI.
+- 🤖 **MCP server** — let AI agents query runs, view diffs and accept checks from the IDE.
 
 ## 📸 Screenshots
 
@@ -216,6 +217,7 @@ packages/
 ├── wdio-syngrisi-cucumber-service/        # WebdriverIO + Cucumber service
 ├── wdio-cucumber-viewport-logger-service/ # In-viewport step logger
 ├── node-resemble.js/                      # Image comparison library
+├── mcp/                                   # MCP server for AI agents
 └── create-sy/                             # `npm init sy` project scaffolder
 ```
 
@@ -226,6 +228,7 @@ packages/
 ## 📚 Documentation
 
 - 📖 [Main App Guide](packages/syngrisi/README.md)
+- 🤖 [MCP Server for AI Agents](packages/mcp/README.md)
 - 🤖 [AI Features](packages/syngrisi/docs/AI_FEATURES.md) · [Root Cause Analysis](packages/syngrisi/docs/RCA.md)
 - 🧩 [Plugins](packages/syngrisi/docs/PLUGINS.md)
 - ⚙️ [Environment Variables](packages/syngrisi/docs/environment_variables.md)
