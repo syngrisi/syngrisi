@@ -48,14 +48,34 @@ async function ensureSig(check: any): Promise<Sig> {
     return computeCheckSig(check);
 }
 
+// Lease duration for a scheduler claim; computing one descriptor takes seconds, the generous
+// TTL only matters when an instance dies mid-compute (the check becomes re-claimable after it).
+const CLAIM_TTL_MS = 10 * 60_000;
+
 // Background worker / backfill: failed-with-diff checks missing a current descriptor.
+// Each check is claimed atomically (changeSig.claimedAt lease) so several server instances
+// polling in parallel don't compute the same descriptor twice; computeCheckSig overwrites the
+// whole `changeSig` subdoc, clearing the claim.
 export async function findChecksNeedingSig(limit: number): Promise<string[]> {
-    const checks = await Check.find({
-        status: 'failed',
-        diffId: { $exists: true, $ne: null },
-        $or: [{ changeSig: { $exists: false } }, { 'changeSig.version': { $ne: SIG_VERSION } }],
-    }).select('_id').limit(limit).exec();
-    return checks.map((c: any) => String(c._id));
+    const staleBefore = new Date(Date.now() - CLAIM_TTL_MS);
+    const ids: string[] = [];
+    for (let i = 0; i < limit; i++) {
+        const claimed: any = await Check.findOneAndUpdate(
+            {
+                status: 'failed',
+                diffId: { $exists: true, $ne: null },
+                $and: [
+                    { $or: [{ changeSig: { $exists: false } }, { 'changeSig.version': { $ne: SIG_VERSION } }] },
+                    { $or: [{ 'changeSig.claimedAt': { $exists: false } }, { 'changeSig.claimedAt': { $lt: staleBefore } }] },
+                ],
+            },
+            { $set: { 'changeSig.claimedAt': new Date() } },
+            { new: true, projection: { _id: 1 } },
+        ).exec();
+        if (!claimed) break;
+        ids.push(String(claimed._id));
+    }
+    return ids;
 }
 
 export async function computeForId(checkId: string): Promise<Sig> {

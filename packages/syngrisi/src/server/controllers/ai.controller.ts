@@ -461,21 +461,18 @@ const getAnalysis = catchAsync(async (req: ExtRequest, res: Response) => {
         return;
     }
 
-    const getBase64 = (filename: string) => {
+    const getBase64 = async (filename: string) => {
         try {
             const filePath = path.join(config.defaultImagesPath, filename);
-            if (fs.existsSync(filePath)) {
-                return fs.readFileSync(filePath, { encoding: 'base64' });
-            }
+            return await fs.promises.readFile(filePath, { encoding: 'base64' });
         } catch {
             return null;
         }
-        return null;
     };
 
-    const actual = check.actualSnapshotId ? getBase64(check.actualSnapshotId.filename) : null;
-    const baseline = check.baselineId ? getBase64(check.baselineId.filename) : null;
-    const diff = check.diffId ? getBase64(check.diffId.filename) : null;
+    const actual = check.actualSnapshotId ? await getBase64(check.actualSnapshotId.filename) : null;
+    const baseline = check.baselineId ? await getBase64(check.baselineId.filename) : null;
+    const diff = check.diffId ? await getBase64(check.diffId.filename) : null;
 
     res.json({
         id: check._id,

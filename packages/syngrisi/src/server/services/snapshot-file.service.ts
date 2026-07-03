@@ -1,4 +1,4 @@
-import fs, { promises as fsp } from 'fs';
+import { promises as fsp } from 'fs';
 import path from 'path';
 import { HttpStatus } from '@utils';
 import { Snapshot } from '@models';
@@ -99,9 +99,9 @@ export async function prepareActualSnapshot(
             throw new Error(`Snapshot filename is missing for hash: ${checkParam.hashCode}`);
         }
         const fullFilename = path.join(config.defaultImagesPath, snapshotFoundedByHashcode.filename);
-        if (!fs.existsSync(fullFilename)) {
+        await fsp.access(fullFilename).catch(() => {
             throw new Error(`Couldn't find the baseline file: '${fullFilename}'`);
-        }
+        });
 
         log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' is already exists, will clone it`, logOpts);
 
