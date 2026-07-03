@@ -66,7 +66,10 @@ jobs:
   test-e2e:
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip-e2e]') && !startsWith(github.event.head_commit.message, 'chore(release):')
+    # E2E on CI is OFF by default and opt-in only: it runs solely when the pushed
+    # HEAD commit message contains the [run-e2e] marker (add it only at the user's
+    # request). E2E must be run locally before merging/releasing instead.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[run-e2e]')
     services:
       mongodb:
         image: mongo:8.0
