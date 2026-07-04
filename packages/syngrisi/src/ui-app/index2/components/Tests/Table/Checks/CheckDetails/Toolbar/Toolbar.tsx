@@ -447,7 +447,8 @@ export function Toolbar(
                 onClose={() => setHistoryOpened(false)}
                 ident={{
                     name: curCheck?.name,
-                    app: initCheckData?.app?.name ?? curCheck?.app?.name ?? '',
+                    // History matches baselines by the app ObjectId (Baseline.app), not the name.
+                    app: initCheckData?.app?._id ?? initCheckData?.app ?? curCheck?.app?._id ?? curCheck?.app ?? '',
                     branch: initCheckData?.branch ?? '',
                     browserName: curCheck?.browserName,
                     viewport: curCheck?.viewport,
