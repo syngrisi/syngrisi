@@ -4,7 +4,7 @@ import { commonValidations } from './utils';
 
 extendZodWithOpenApi(z);
 
-const WebhookEventSchema = z.enum(['check.created', 'check.updated', 'test.finished']);
+const WebhookEventSchema = z.enum(['check.created', 'check.updated', 'test.finished', 'run.finished']);
 
 // Returned by GET/list/create/update. `secret` is intentionally never included -
 // it is write-only (see WebhookCreateSchema/WebhookUpdateSchema) and masked by the controller.

@@ -129,6 +129,26 @@ export const endSession = async (testId: string, username: string) => {
         Run.findById(result.run).exec()
             .then((run) => run && githubStatusService.notifyRunStatus(run))
             .catch((e) => log.error(`GitHub status error: ${errMsg(e)}`));
+
+        // Fire run.finished once the run's last test is no longer 'Running'. If multiple tests in a
+        // run end concurrently this gate could theoretically fire more than once - acceptable,
+        // webhook consumers should be idempotent (mirrors the fire-and-forget posture above).
+        Test.countDocuments({ run: result.run, status: 'Running' }).exec()
+            .then(async (stillRunning) => {
+                if (stillRunning > 0) return;
+                const run = await Run.findById(result.run).lean().exec();
+                if (!run) return;
+                const tests = await Test.find({ run: result.run }).lean().exec();
+                const payload = {
+                    run,
+                    total: tests.length,
+                    passed: tests.filter((t) => t.status === 'Passed').length,
+                    failed: tests.filter((t) => t.status === 'Failed').length,
+                    new: tests.filter((t) => t.status === 'New').length,
+                };
+                await webhookService.triggerWebhooks('run.finished', payload);
+            })
+            .catch((e) => log.error(`Webhook error: ${errMsg(e)}`));
     }
     return result;
 };
