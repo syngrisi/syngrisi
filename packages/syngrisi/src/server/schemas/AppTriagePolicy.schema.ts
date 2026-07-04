@@ -75,6 +75,10 @@ export const AppTriagePolicyUpdateSchema = z.object({
     mainBranch: z.string().max(255).optional(),
     // Explicit opt-in for the mainBranch fallback above; default false.
     branchFallbackEnabled: z.boolean().optional(),
+    // Per-project auto-delete: remove checks older than this many days.
+    retentionDays: z.number().int().min(0).max(3650).optional(),
+    // Explicit opt-in for the per-project retention above; default false.
+    retentionEnabled: z.boolean().optional(),
 }).strict();
 
 export type AppTriagePolicyUpdateType = z.infer<typeof AppTriagePolicyUpdateSchema>;

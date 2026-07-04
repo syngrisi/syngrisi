@@ -8,8 +8,9 @@ import { Response } from "express";
 
 import { ApiError } from '@utils';
 import { ExtRequest } from '@types';
-import { getUsageCountsBySnapshotIds, remove as removeBaseline } from '@services/baseline.service';
+import { getUsageCountsBySnapshotIds, remove as removeBaseline, promoteBaselines, promoteRun } from '@services/baseline.service';
 import { getHistory, getHistorySummary, BaselineHistoryIdent } from '@services/baseline-history.service';
+import { App } from '@models';
 
 const get = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = typeof req.query.filter === 'string'
@@ -95,6 +96,32 @@ const getBaselineHistorySummary = catchAsync(async (req: ExtRequest, res: Respon
     res.send(result);
 });
 
+const promote = catchAsync(async (req: ExtRequest, res: Response) => {
+    if (!req.user) throw new Error("req.user is empty");
+    const { runId, app: appId, fromBranch, toBranch } = req.body;
+
+    if (runId) {
+        const result = await promoteRun({ runId, user: req.user });
+        res.send(result);
+        return;
+    }
+
+    if (!appId || !fromBranch) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, "either 'runId' or both 'app' and 'fromBranch' must be provided");
+    }
+
+    let resolvedToBranch = toBranch;
+    if (!resolvedToBranch) {
+        const app = await App.findById(appId).exec();
+        if (!app) throw new ApiError(HttpStatus.NOT_FOUND, `app not found, id: '${appId}'`);
+        if (!app.mainBranch) throw new ApiError(HttpStatus.BAD_REQUEST, "project has no main branch configured");
+        resolvedToBranch = app.mainBranch;
+    }
+
+    const result = await promoteBaselines({ appId, fromBranch, toBranch: resolvedToBranch, user: req.user });
+    res.send(result);
+});
+
 export {
     get,
     put,
@@ -102,4 +129,5 @@ export {
     getDomSnapshot,
     getBaselineHistory,
     getBaselineHistorySummary,
+    promote,
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ActionIcon, Button, Group, Popover } from '@mantine/core';
+import { ActionIcon, Button, Stack, Popover } from '@mantine/core';
 import { IconDotsVertical } from '@tabler/icons-react';
 
 interface Props {
@@ -8,6 +8,10 @@ interface Props {
     handleRemoveItemClick: any
     type: string
     testAttr?: string
+    // Optional extra action rendered above the Remove button (e.g. "Promote baselines to main"
+    // for runs). Kept optional so this popover stays reusable for other item types (e.g. Suite)
+    // that don't need it.
+    onPromoteClick?: any
 }
 
 export function RemoveItemPopover(
@@ -17,6 +21,7 @@ export function RemoveItemPopover(
         handleRemoveItemClick,
         type,
         testAttr = 'remove-popover-action-icon',
+        onPromoteClick,
 
     }: Props,
 ) {
@@ -36,7 +41,22 @@ export function RemoveItemPopover(
                 </ActionIcon>
             </Popover.Target>
             <Popover.Dropdown p={8}>
-                <Group justify="center">
+                <Stack gap={4} align="stretch">
+                    {onPromoteClick && (
+                        <Button
+                            data-test="run-promote-baselines"
+                            variant="light"
+                            onClick={
+                                (e: any) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    onPromoteClick();
+                                }
+                            }
+                        >
+                            Promote baselines to main
+                        </Button>
+                    )}
                     <Button
                         data-item={`${testAttr}_confirm`}
                         onClick={
@@ -51,7 +71,7 @@ export function RemoveItemPopover(
                         {' '}
                         {type}
                     </Button>
-                </Group>
+                </Stack>
             </Popover.Dropdown>
         </Popover>
     );

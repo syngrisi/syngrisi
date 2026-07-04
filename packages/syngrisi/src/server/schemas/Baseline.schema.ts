@@ -181,6 +181,35 @@ const HistorySummaryResponseSchema = z.object({
     cached: z.boolean().optional(),
 });
 
+// Promote all ACCEPTED baselines from a source branch to a target branch (typically the
+// project's mainBranch). Accepts EITHER a runId (resolves app/fromBranch/toBranch from the
+// run) OR an explicit app + fromBranch (+ optional toBranch, defaults to the app's mainBranch).
+// Both shapes are optional here; the controller validates which combination is actually usable.
+const BaselinePromoteSchema = z.object({
+    runId: commonValidations.id.optional().openapi({
+        description: 'Run identifier - promotes all branches used by the run to the app mainBranch',
+        example: '6651dd45b9c3e1e0b8c1ce27',
+    }),
+    app: commonValidations.id.optional().openapi({
+        description: 'Application identifier',
+        example: '6651dd45b9c3e1e0b8c1ce26',
+    }),
+    fromBranch: z.string().min(1).optional().openapi({
+        description: 'Source branch whose accepted baselines are promoted',
+        example: 'feature-x',
+    }),
+    toBranch: z.string().min(1).optional().openapi({
+        description: 'Target branch to promote baselines to (defaults to the app mainBranch)',
+        example: 'main',
+    }),
+});
+
+const BaselinePromoteResponseSchema = z.object({
+    promoted: z.number(),
+    fromBranch: z.string(),
+    toBranch: z.string(),
+});
+
 export {
     BaselineGetSchema,
     BaselinePutSchema,
@@ -190,4 +219,6 @@ export {
     BaselineHistoryItemSchema,
     HistorySummaryBodySchema,
     HistorySummaryResponseSchema,
+    BaselinePromoteSchema,
+    BaselinePromoteResponseSchema,
 };

@@ -11,4 +11,14 @@ export const RunsService = {
         );
         return resp.json();
     },
+
+    async promoteBaselines({ runId }: { runId: string }) {
+        const resp = await http.post(
+            `${config.baseUri}/v1/baselines/promote`,
+            { runId },
+            {},
+            'RunsService.promoteBaselines'
+        );
+        return resp.json();
+    },
 };

@@ -1,0 +1,62 @@
+# Example — copy into your OWN repo. Not run in this repo.
+#
+# This workflow shows how to wire Syngrisi visual testing into GitHub Actions:
+#   1. Run your Playwright/Syngrisi tests, passing the current commit SHA into
+#      `startTestSession({ params: { commit: ... } })` so the Syngrisi server can
+#      post a `syngrisi/visual` commit status (requires SYNGRISI_GITHUB_TOKEN /
+#      SYNGRISI_GITHUB_REPO / SYNGRISI_PUBLIC_URL to be set on the Syngrisi server).
+#   2. Use the `syngrisi-status` composite action to poll the run's outcome and
+#      gate the job on it (Passed/Failed/New).
+#
+# See packages/syngrisi/docs/CI.md for the full guide.
+#
+# Trigger is workflow_dispatch only so this example never runs automatically
+# in the Syngrisi monorepo itself.
+name: Syngrisi Example
+
+on:
+  workflow_dispatch:
+
+jobs:
+  visual-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --ignore-engines
+
+      - name: Run visual tests
+        id: visual-tests
+        # Placeholder for your own Playwright/Syngrisi test command. Inside your
+        # test setup, pass the commit SHA so the Syngrisi server can report a
+        # commit status back to this PR:
+        #
+        #   await driver.startTestSession({
+        #     params: {
+        #       app: 'My App',
+        #       test: 'Homepage',
+        #       run: 'ci-run',
+        #       commit: '${{ github.event.pull_request.head.sha || github.sha }}',
+        #     },
+        #   });
+        #
+        # The SDK's `startTestSession` response includes the run id, e.g.:
+        #   const session = await driver.startTestSession({ params: { ... } });
+        #   core.setOutput('run-id', session.run); // expose it as a step output
+        run: |
+          echo "Replace this with: yarn test:visual"
+          echo "run-id=${{ github.run_id }}" >> "$GITHUB_OUTPUT"
+
+      - name: Gate on Syngrisi result
+        uses: ./.github/actions/syngrisi-status
+        with:
+          syngrisi-url: ${{ secrets.SYNGRISI_URL }}
+          api-key: ${{ secrets.SYNGRISI_API_KEY }}
+          run-id: ${{ steps.visual-tests.outputs.run-id }}
+          fail-on-new: 'false'

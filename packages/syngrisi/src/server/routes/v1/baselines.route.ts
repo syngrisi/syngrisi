@@ -10,6 +10,8 @@ import {
     BaselineHistoryItemSchema,
     HistorySummaryBodySchema,
     HistorySummaryResponseSchema,
+    BaselinePromoteSchema,
+    BaselinePromoteResponseSchema,
 } from '@schemas/Baseline.schema';
 import { createApiEmptyResponse, createApiResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
 import { ApiErrorSchema } from '@schemas/common/ApiError.schema';
@@ -135,6 +137,22 @@ router.post(
     ensureLoggedIn(),
     validateRequest(createRequestBodySchema(HistorySummaryBodySchema), 'post, /v1/baselines/history-summary'),
     baselineController.getBaselineHistorySummary as Midleware
+);
+
+registry.registerPath({
+    method: 'post',
+    path: '/v1/baselines/promote',
+    summary: "Promote all ACCEPTED baselines from a source branch to a target branch (typically the project's mainBranch)",
+    tags: ['Baselines'],
+    request: { body: createRequestOpenApiBodySchema(BaselinePromoteSchema) },
+    responses: createApiResponse(BaselinePromoteResponseSchema, 'Success'),
+});
+
+router.post(
+    '/promote',
+    ensureLoggedInOrApiKey(),
+    validateRequest(createRequestBodySchema(BaselinePromoteSchema), 'post, /v1/baselines/promote'),
+    baselineController.promote as Midleware
 );
 
 export default router;

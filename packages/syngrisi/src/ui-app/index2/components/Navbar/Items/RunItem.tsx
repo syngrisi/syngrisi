@@ -5,6 +5,7 @@ import * as dateFns from 'date-fns';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import RemoveItemModalAsk from '@index/components/Navbar/Items/RemoveItemModalAsk';
+import PromoteBaselinesModalAsk from '@index/components/Navbar/Items/PromoteBaselinesModalAsk';
 import { StatusesRing } from '@shared/components/Tests/StatusesRing';
 import { RemoveItemPopover } from '@index/components/Navbar/Items/RemoveItemPopover';
 
@@ -32,10 +33,16 @@ export const RunItem = React.memo(function RunItem(
     }: Props,
 ) {
     const [modalOpen, setModalOpen] = useState(false);
+    const [promoteModalOpen, setPromoteModalOpen] = useState(false);
     const [opened, { toggle, close }] = useDisclosure(false);
 
     const handleRemoveItemClick = () => {
         setModalOpen(true);
+        close();
+    };
+
+    const handlePromoteItemClick = () => {
+        setPromoteModalOpen(true);
         close();
     };
 
@@ -115,6 +122,7 @@ export const RunItem = React.memo(function RunItem(
                         }
                         <RemoveItemPopover
                             handleRemoveItemClick={handleRemoveItemClick}
+                            onPromoteClick={handlePromoteItemClick}
                             type={type}
                             opened={opened}
                             toggle={toggle}
@@ -128,6 +136,11 @@ export const RunItem = React.memo(function RunItem(
                 infinityQuery={infinityQuery}
                 item={item}
                 type={type}
+            />
+            <PromoteBaselinesModalAsk
+                opened={promoteModalOpen}
+                setOpened={setPromoteModalOpen}
+                item={item}
             />
         </>
     );
