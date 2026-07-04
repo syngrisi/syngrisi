@@ -35,15 +35,15 @@ Feature: Global Sharing Toggle
     And I wait on element "[data-test='settings_value_share_enabled']" to be visible
 
   Scenario: Admin can disable sharing
-    # Disable Sharing using custom dropdown step
-    When I select dropdown option "false" by clicking div for element "[data-test='settings_value_share_enabled']:visible"
+    # Disable Sharing
+    When I set the switch for element "[data-test='settings_value_share_enabled']" to "false"
     When I click element with locator "[data-test='settings_update_button_share_enabled']"
     When I wait 1 seconds
 
     # Reload to confirm persistence
     When I refresh page
     And I wait on element "[data-test='settings_value_share_enabled']" to be visible
-    Then the element with locator "[data-test='settings_value_share_enabled']" should have value "false"
+    Then the element with locator "[data-test='settings_value_share_enabled']" should be unchecked
 
     # Verify Share Button is disabled in Check Details
     When I go to "main" page
@@ -68,14 +68,14 @@ Feature: Global Sharing Toggle
     # The default is "true".
 
     # Set to true
-    When I select dropdown option "true" by clicking div for element "[data-test='settings_value_share_enabled']:visible"
+    When I set the switch for element "[data-test='settings_value_share_enabled']" to "true"
     When I click element with locator "[data-test='settings_update_button_share_enabled']"
     When I wait 1 seconds
 
     # Reload to confirm persistence
     When I refresh page
     And I wait on element "[data-test='settings_value_share_enabled']" to be visible
-    Then the element with locator "[data-test='settings_value_share_enabled']" should have value "true"
+    Then the element with locator "[data-test='settings_value_share_enabled']" should be checked
 
     # Verify Share Button is enabled in Check Details
     When I go to "main" page

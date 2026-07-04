@@ -3,12 +3,13 @@ import * as React from 'react';
 import {
     Text,
     Group,
+    Stack,
     useMantineTheme, useComputedColorScheme,
     ActionIcon, Table,
 } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useContext, useState } from 'react';
-import { IconAdjustments, IconFilter } from '@tabler/icons-react';
+import { IconAdjustments, IconFilter, IconFileText } from '@tabler/icons-react';
 import { JsonParam, StringParam, useQueryParams } from '@shared/hooks/useQueryParams';
 import { useSubpageEffect, useNavProgressFetchEffect } from '@shared/hooks';
 import { AppContext } from '@admin/AppContext';
@@ -18,6 +19,7 @@ import AdminLogsTable from '@admin/components/Logs/Table/AdminLogsTable';
 import AdminLogsTableSettings from '@admin/components/Logs/Table/AdminLogsTableSettings';
 import AdminLogsTableFilter from '@admin/components/Logs/Table/AdminLogsTableFilter';
 import InfinityScrollSkeletonFiller from '@admin/components/Logs/Table/InfinityScrollSkeletonFIller';
+import { AdminPageHeader } from '@admin/components/common/AdminPageHeader';
 
 /**
  * example:
@@ -112,33 +114,40 @@ export default function AdminLogs() {
     ]);
 
     return (
-        <Group justify="space-between" align="start" wrap="nowrap">
-            {/* eslint-disable-next-line no-nested-ternary */}
-            {infinityQuery.status === 'pending'
-                ? (
-                    <Table>
-                        <InfinityScrollSkeletonFiller visibleFields={visibleFields} />
-                    </Table>
-                )
-                : infinityQuery.status === 'error'
-                    ? (<Text c="red">Error: {infinityQuery.error.message}</Text>)
-                    : (
-                        <AdminLogsTable
-                            infinityQuery={infinityQuery}
-                            visibleFields={visibleFields}
-                        />
-                    )}
-            <AdminLogsTableSettings
-                open={sortOpen}
-                setSortOpen={setSortOpen}
-                visibleFields={visibleFields}
-                setVisibleFields={setVisibleFields}
+        <Stack gap="xs">
+            <AdminPageHeader
+                icon={<IconFileText size={24} />}
+                title="Logs"
+                description="Application logs."
             />
+            <Group justify="space-between" align="start" wrap="nowrap">
+                {/* eslint-disable-next-line no-nested-ternary */}
+                {infinityQuery.status === 'pending'
+                    ? (
+                        <Table>
+                            <InfinityScrollSkeletonFiller visibleFields={visibleFields} />
+                        </Table>
+                    )
+                    : infinityQuery.status === 'error'
+                        ? (<Text c="red">Error: {infinityQuery.error.message}</Text>)
+                        : (
+                            <AdminLogsTable
+                                infinityQuery={infinityQuery}
+                                visibleFields={visibleFields}
+                            />
+                        )}
+                <AdminLogsTableSettings
+                    open={sortOpen}
+                    setSortOpen={setSortOpen}
+                    visibleFields={visibleFields}
+                    setVisibleFields={setVisibleFields}
+                />
 
-            <AdminLogsTableFilter
-                open={isFilterDrawerOpen}
-                setOpen={setIsFilterDrawerOpen}
-            />
-        </Group>
+                <AdminLogsTableFilter
+                    open={isFilterDrawerOpen}
+                    setOpen={setIsFilterDrawerOpen}
+                />
+            </Group>
+        </Stack>
     );
 }

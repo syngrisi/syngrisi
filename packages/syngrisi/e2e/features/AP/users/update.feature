@@ -37,22 +37,22 @@ Feature: Update User
     When I go to "admin2" page
     When I wait 10 seconds for the element with locator "//*[@data-test='j_doe@gmail.com']//button[@aria-label='Edit User']" to be visible
     When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@aria-label='Edit User']"
-    When I set "Alex" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@aria-label='First Name']"
-    When I set "Jonson" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@aria-label='Last Name']"
-    When I select the option with the text "Reviewer" for element "//*[@data-test='j_doe@gmail.com']//select[@data-test='user-list-role']"
+    When I set "Alex" to the inputfield "input[aria-label='First name']"
+    When I set "Jonson" to the inputfield "input[aria-label='Last name']"
+    When I select the option with the text "Reviewer" for element "[data-test='users-form-role']"
 
-    When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@aria-label='Send changes']"
+    When I click element with locator "button[aria-label='Save']"
 
-    Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" should have value "j_doe@gmail.com"
-    Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@aria-label='First Name']" should have value "Alex"
-    Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@aria-label='Last Name']" should have value "Jonson"
-    Then the element with locator "//*[@data-test='j_doe@gmail.com']//select[@data-test='user-list-role']" should have value "reviewer"
+    # wait for the success notification (update applied + table refetched) before asserting cells
     When I wait 10 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
+    When I wait 5 seconds for the element with locator "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-first-name']" to be visible
+    Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-username']" matches the text "j_doe@gmail.com"
+    Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-first-name']" matches the text "Alex"
+    Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-last-name']" matches the text "Jonson"
+    Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-role']" matches the text "REVIEWER"
 
     When I refresh page
-    Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" should have value "j_doe@gmail.com"
-    Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@aria-label='First Name']" should have value "Alex"
-    Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@aria-label='Last Name']" should have value "Jonson"
-    Then the element with locator "//*[@data-test='j_doe@gmail.com']//select[@data-test='user-list-role']" should have value "reviewer"
-
-
+    Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-username']" matches the text "j_doe@gmail.com"
+    Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-first-name']" matches the text "Alex"
+    Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-last-name']" matches the text "Jonson"
+    Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-role']" matches the text "REVIEWER"

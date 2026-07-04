@@ -7,11 +7,14 @@ import {
 } from '@tabler/icons-react';
 import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
 
+// Colors aligned with StatusesRing (shared/components/Tests/StatusesRing.tsx) so the same
+// status reads as the same color across the grid Status cell/run panel and per-check badges.
 const statusColor = (status: string) => {
     const map = {
         new: 'blue',
         passed: 'green',
         failed: 'red',
+        running: 'grape',
     } as { [key: string]: any };
     return map[status] || 'gray';
 };

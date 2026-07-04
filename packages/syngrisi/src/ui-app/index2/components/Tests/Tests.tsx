@@ -50,7 +50,6 @@ export default function Tests({ updateToolbar, navbarWidth }: Props) {
         {
             key: 'visibleFields',
             defaultValue: [
-                '_id',
                 'name',
                 'status',
                 'creatorUsername',

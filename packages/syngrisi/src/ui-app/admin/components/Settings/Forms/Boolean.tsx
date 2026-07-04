@@ -1,9 +1,8 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { Checkbox, Button, Group, Title, Text } from '@mantine/core';
+import { Switch, Button, Group, Title, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import React, { useEffect } from 'react';
 import { ISettingForm, ISettingFormUpdateData } from '@admin/components/Settings/Forms/interfaces';
-import SafeSelect from '@shared/components/SafeSelect';
 // actually this component not represent boolean data,
 // this is string in boolean-like view "true" / "false"
 function Boolean({ name, value, label, description, enabled, updateSetting }: ISettingForm) {
@@ -37,18 +36,15 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
                 {label}
             </Title>
             <Group gap="xl">
-                <SafeSelect
+                <Switch
                     data-test={`settings_value_${name}`}
                     aria-label={label}
-                    style={{ width: '130px' }}
                     size="md"
-                    optionsData={[
-                        { value: 'true', label: 'true' },
-                        { value: 'false', label: 'false' },
-                    ]}
-                    {...form.getInputProps('value')}
+                    label={label}
+                    checked={form.values.value === 'true'}
+                    onChange={(e) => form.setFieldValue('value', e.currentTarget.checked ? 'true' : 'false')}
                 />
-                <Checkbox
+                <Switch
                     data-test={`settings_enabled_${name}`}
                     size="md"
                     label="enabled"
