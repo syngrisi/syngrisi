@@ -124,6 +124,7 @@ async function deleteFilesWithLimit(files: string[], limit: number) {
 export interface HandleOldChecksOptions {
     days: number;
     remove: boolean;
+    appId?: string; // when set, scopes the cleanup to a single project (per-project retention)
 }
 
 /**
@@ -171,6 +172,9 @@ export async function handleOldChecksTask(
         output.write('STAGE #1 Calculate common stats');
 
         const trashHoldDate = subDays(new Date(), options.days);
+        // When appId is set, every Check-match filter below is additionally scoped to that
+        // project (per-project retention). Undefined appId → instance-wide behavior, unchanged.
+        const appMatch: Record<string, unknown> = options.appId ? { app: options.appId } : {};
 
         output.write('> count all checks');
         const allChecksCountBefore = await Check.countDocuments().exec();
@@ -180,12 +184,12 @@ export async function handleOldChecksTask(
         const allFilesBefore = await countPngFiles(config.defaultImagesPath);
 
         output.write('> count old checks');
-        const oldChecksCount = await Check.countDocuments({ createdDate: { $lt: trashHoldDate } }).exec();
+        const oldChecksCount = await Check.countDocuments({ ...appMatch, createdDate: { $lt: trashHoldDate } }).exec();
 
         output.write('>>> collect all baselineId snapshot IDs from old Checks ');
         // Use aggregation to avoid 16MB distinct limit
         const baselineIdResults = await Check.aggregate([
-            { $match: { createdDate: { $lt: trashHoldDate }, baselineId: { $ne: null } } },
+            { $match: { ...appMatch, createdDate: { $lt: trashHoldDate }, baselineId: { $ne: null } } },
             { $group: { _id: '$baselineId' } },
             { $project: { _id: 1 } }
         ]).exec();
@@ -195,7 +199,7 @@ export async function handleOldChecksTask(
 
         output.write('>>> collect all actualSnapshotId from old Checks ');
         const actualSnapshotIdResults = await Check.aggregate([
-            { $match: { createdDate: { $lt: trashHoldDate }, actualSnapshotId: { $ne: null } } },
+            { $match: { ...appMatch, createdDate: { $lt: trashHoldDate }, actualSnapshotId: { $ne: null } } },
             { $group: { _id: '$actualSnapshotId' } },
             { $project: { _id: 1 } }
         ]).exec();
@@ -205,7 +209,7 @@ export async function handleOldChecksTask(
 
         output.write('>>> collect all diffId snapshot IDs from old Checks ');
         const diffIdResults = await Check.aggregate([
-            { $match: { createdDate: { $lt: trashHoldDate }, diffId: { $ne: null } } },
+            { $match: { ...appMatch, createdDate: { $lt: trashHoldDate }, diffId: { $ne: null } } },
             { $group: { _id: '$diffId' } },
             { $project: { _id: 1 } }
         ]).exec();
@@ -299,7 +303,7 @@ export async function handleOldChecksTask(
             let collectedBaselineSnapshotIds: string[] = [];
             try {
                 output.write('> collect current snapshot references');
-                collectedCheckSnapshotIds = await collectCheckSnapshotIds({ createdDate: { $gte: trashHoldDate } });
+                collectedCheckSnapshotIds = await collectCheckSnapshotIds({ ...appMatch, createdDate: { $gte: trashHoldDate } });
                 collectedBaselineSnapshotIds = await collectBaselineSnapshotIds();
                 output.write('>>> snapshot references collected');
             } catch (collectError) {
@@ -310,8 +314,8 @@ export async function handleOldChecksTask(
             try {
                 output.write('> remove checks');
                 const checkRemovingResult = useTransactions && session
-                    ? await Check.deleteMany({ createdDate: { $lt: trashHoldDate } }, { session })
-                    : await Check.deleteMany({ createdDate: { $lt: trashHoldDate } });
+                    ? await Check.deleteMany({ ...appMatch, createdDate: { $lt: trashHoldDate } }, { session })
+                    : await Check.deleteMany({ ...appMatch, createdDate: { $lt: trashHoldDate } });
                 output.write(`>>> removed: '${checkRemovingResult.deletedCount}'`);
 
                 output.write('> remove snapshots');

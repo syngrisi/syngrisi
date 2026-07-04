@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import {
-    Paper, Select, Switch, TextInput, Button, Group, Text, Title,
+    Paper, Select, Switch, TextInput, NumberInput, Button, Group, Text, Title,
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
@@ -17,12 +17,16 @@ export function PerProjectSettings() {
 
     const [branchFallbackEnabled, setBranchFallbackEnabled] = useState(false);
     const [mainBranch, setMainBranch] = useState('');
+    const [retentionEnabled, setRetentionEnabled] = useState(false);
+    const [retentionDays, setRetentionDays] = useState<number>(90);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         if (!selected) return;
         setBranchFallbackEnabled(selected.branchFallbackEnabled === true);
         setMainBranch(typeof selected.mainBranch === 'string' ? selected.mainBranch : '');
+        setRetentionEnabled(selected.retentionEnabled === true);
+        setRetentionDays(typeof selected.retentionDays === 'number' ? selected.retentionDays : 90);
     }, [selected]);
 
     const save = async () => {
@@ -32,6 +36,8 @@ export function PerProjectSettings() {
             const resp = await http.patch(`${config.baseUri}/v1/app/${appId}/triage-policy`, {
                 mainBranch: mainBranch.trim(),
                 branchFallbackEnabled,
+                retentionEnabled,
+                retentionDays,
             }, {}, 'PerProjectSettings.save');
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             successMsg({ message: 'Project settings saved' });
@@ -74,6 +80,26 @@ export function PerProjectSettings() {
                         onChange={(e) => setMainBranch(e.currentTarget.value)}
                         data-test="settings-main-branch"
                         disabled={!branchFallbackEnabled}
+                        w={260}
+                        mb="md"
+                    />
+                    <Switch
+                        label="Enable retention (auto-delete old checks)"
+                        description="Older checks in this project are deleted automatically; baselines are never removed."
+                        checked={retentionEnabled}
+                        onChange={(e) => setRetentionEnabled(e.currentTarget.checked)}
+                        data-test="settings-retention-enabled"
+                        mb="md"
+                        styles={{ description: { maxWidth: 420 } }}
+                    />
+                    <NumberInput
+                        label="Keep checks for (days)"
+                        description="Checks older than this many days are removed automatically; baselines are never removed."
+                        value={retentionDays}
+                        onChange={(v) => setRetentionDays(typeof v === 'number' ? v : 90)}
+                        data-test="settings-retention-days"
+                        disabled={!retentionEnabled}
+                        min={1}
                         w={260}
                         mb="md"
                     />
