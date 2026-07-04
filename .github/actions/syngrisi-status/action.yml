@@ -1,0 +1,175 @@
+name: 'Syngrisi Status Gate'
+description: 'Poll a Syngrisi run until it finishes and gate the job on its outcome (Passed/Failed/New).'
+author: 'Syngrisi'
+branding:
+  icon: 'eye'
+  color: 'purple'
+
+inputs:
+  syngrisi-url:
+    description: 'Base URL of the Syngrisi server, e.g. https://syngrisi.example.com'
+    required: true
+  api-key:
+    description: 'Syngrisi API key (sent as the raw `apikey` header).'
+    required: true
+  run-id:
+    description: 'The run id returned by startTestSession, used to filter /v1/tests.'
+    required: true
+  fail-on-new:
+    description: 'Fail the job if any test in the run is still `New` (no accepted baseline).'
+    required: false
+    default: 'false'
+  timeout-seconds:
+    description: 'Max time to wait for all tests in the run to leave the `Running` state.'
+    required: false
+    default: '300'
+  poll-interval-seconds:
+    description: 'Delay between polls.'
+    required: false
+    default: '5'
+
+outputs:
+  state:
+    description: '`success`, `failure`, or `pending` (timed out while still Running).'
+    value: ${{ steps.poll.outputs.state }}
+  passed:
+    description: 'Number of tests with status Passed.'
+    value: ${{ steps.poll.outputs.passed }}
+  failed:
+    description: 'Number of tests with status Failed.'
+    value: ${{ steps.poll.outputs.failed }}
+  new:
+    description: 'Number of tests with status New.'
+    value: ${{ steps.poll.outputs.new }}
+  total:
+    description: 'Total number of tests found for the run.'
+    value: ${{ steps.poll.outputs.total }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Poll Syngrisi run and gate
+      id: poll
+      shell: bash
+      env:
+        SYNGRISI_URL: ${{ inputs.syngrisi-url }}
+        SYNGRISI_API_KEY: ${{ inputs.api-key }}
+        SYNGRISI_RUN_ID: ${{ inputs.run-id }}
+        FAIL_ON_NEW: ${{ inputs.fail-on-new }}
+        TIMEOUT_SECONDS: ${{ inputs.timeout-seconds }}
+        POLL_INTERVAL_SECONDS: ${{ inputs.poll-interval-seconds }}
+      run: |
+        set -euo pipefail
+
+        if ! command -v jq >/dev/null 2>&1; then
+          echo "::error::jq is required by the syngrisi-status action but was not found on this runner." >&2
+          exit 1
+        fi
+
+        # URL-encode the MongoDB-style filter JSON (curl --data-urlencode style, via jq's @uri).
+        filter_json=$(printf '{"run":"%s"}' "$SYNGRISI_RUN_ID")
+        encoded_filter=$(jq -rn --arg v "$filter_json" '$v|@uri')
+        endpoint="${SYNGRISI_URL%/}/v1/tests?filter=${encoded_filter}&limit=1000"
+
+        deadline=$(( $(date +%s) + TIMEOUT_SECONDS ))
+        response=""
+        timed_out="false"
+
+        echo "Polling ${SYNGRISI_URL%/}/v1/tests for run '${SYNGRISI_RUN_ID}' (timeout ${TIMEOUT_SECONDS}s, interval ${POLL_INTERVAL_SECONDS}s)..."
+
+        while true; do
+          http_code=""
+          body_file=$(mktemp)
+          if http_code=$(curl -sS -o "$body_file" -w '%{http_code}' -H "apikey: ${SYNGRISI_API_KEY}" "$endpoint" 2>/tmp/curl_err.log); then
+            :
+          else
+            http_code=""
+          fi
+
+          if [ "$http_code" = "200" ] && jq -e . "$body_file" >/dev/null 2>&1; then
+            response=$(cat "$body_file")
+            rm -f "$body_file"
+
+            running_count=$(echo "$response" | jq '[.results[]? | select(.status == "Running")] | length')
+
+            if [ "$running_count" -eq 0 ]; then
+              break
+            fi
+          else
+            echo "::warning::Request to Syngrisi failed (http_code='${http_code:-none}'), retrying... $(cat /tmp/curl_err.log 2>/dev/null || true)"
+            rm -f "$body_file"
+          fi
+
+          now=$(date +%s)
+          if [ "$now" -ge "$deadline" ]; then
+            timed_out="true"
+            break
+          fi
+
+          sleep "$POLL_INTERVAL_SECONDS"
+        done
+
+        if [ -z "$response" ]; then
+          echo "::error::Could not reach Syngrisi at ${SYNGRISI_URL} (or it never returned valid JSON) within ${TIMEOUT_SECONDS}s."
+          {
+            echo "state=failure"
+            echo "passed=0"
+            echo "failed=0"
+            echo "new=0"
+            echo "total=0"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "### Syngrisi status"
+            echo ""
+            echo "Could not reach Syngrisi (network error or no valid response) within ${TIMEOUT_SECONDS}s."
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 1
+        fi
+
+        total=$(echo "$response" | jq '.results? | length // 0')
+        passed=$(echo "$response" | jq '[.results[]? | select(.status == "Passed")] | length')
+        failed=$(echo "$response" | jq '[.results[]? | select(.status == "Failed")] | length')
+        new=$(echo "$response" | jq '[.results[]? | select(.status == "New")] | length')
+        running=$(echo "$response" | jq '[.results[]? | select(.status == "Running")] | length')
+
+        {
+          echo "passed=${passed}"
+          echo "failed=${failed}"
+          echo "new=${new}"
+          echo "total=${total}"
+        } >> "$GITHUB_OUTPUT"
+
+        state="success"
+        exit_code=0
+
+        if [ "$total" -eq 0 ]; then
+          echo "::warning::No tests found for run '${SYNGRISI_RUN_ID}'."
+        fi
+
+        if [ "$timed_out" = "true" ] && [ "$running" -gt 0 ]; then
+          state="pending"
+          echo "::error::Timed out after ${TIMEOUT_SECONDS}s waiting for ${running} test(s) still in 'Running' state (run '${SYNGRISI_RUN_ID}')."
+          exit_code=1
+        elif [ "$failed" -gt 0 ]; then
+          state="failure"
+          echo "::error::${failed} test(s) failed in run '${SYNGRISI_RUN_ID}'."
+          exit_code=1
+        elif [ "$new" -gt 0 ] && [ "$FAIL_ON_NEW" = "true" ]; then
+          state="failure"
+          echo "::error::${new} test(s) are 'New' (no accepted baseline) in run '${SYNGRISI_RUN_ID}' and fail-on-new is enabled."
+          exit_code=1
+        fi
+
+        echo "state=${state}" >> "$GITHUB_OUTPUT"
+
+        {
+          echo "### Syngrisi status: run \`${SYNGRISI_RUN_ID}\`"
+          echo ""
+          echo "| Total | Passed | Failed | New |"
+          echo "|---|---|---|---|"
+          echo "| ${total} | ${passed} | ${failed} | ${new} |"
+          echo ""
+          echo "Result: **${state}**"
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        exit "$exit_code"

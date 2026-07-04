@@ -196,6 +196,32 @@ Also available: [`@syngrisi/wdio-sdk`](packages/wdio-sdk/README.md) for Webdrive
 Cucumber, and the framework-agnostic
 [`@syngrisi/core-api`](packages/core-api/README.md) REST client.
 
+### CI / GitHub Action
+
+Pass the commit SHA into `startTestSession` so the Syngrisi server can post a
+`syngrisi/visual` commit status on your PR (requires `SYNGRISI_GITHUB_TOKEN` /
+`SYNGRISI_GITHUB_REPO` / `SYNGRISI_PUBLIC_URL` on the server):
+
+```ts
+await driver.startTestSession({
+  params: { app: 'My App', test: 'Homepage', run: 'ci-run', commit: process.env.GITHUB_SHA },
+});
+```
+
+Then gate the job on the run's outcome with the bundled composite action:
+
+```yaml
+- name: Gate on Syngrisi result
+  uses: syngrisi/syngrisi/.github/actions/syngrisi-status@main
+  with:
+    syngrisi-url: ${{ secrets.SYNGRISI_URL }}
+    api-key: ${{ secrets.SYNGRISI_API_KEY }}
+    run-id: ${{ steps.visual-tests.outputs.run-id }}
+```
+
+See [CI Guide](packages/syngrisi/docs/CI.md) for the full setup, required env
+vars, and the `/v1/tests` poll API.
+
 ## ⚖️ How it compares
 
 | | **Syngrisi** | Applitools | Percy | Chromatic |
@@ -240,6 +266,7 @@ packages/
 - 🤖 [AI Features](packages/syngrisi/docs/AI_FEATURES.md) · [Root Cause Analysis](packages/syngrisi/docs/RCA.md)
 - 🧩 [Plugins](packages/syngrisi/docs/PLUGINS.md)
 - ⚙️ [Environment Variables](packages/syngrisi/docs/environment_variables.md)
+- 🔁 [CI / GitHub Action](packages/syngrisi/docs/CI.md)
 - 🛠️ [Development Guide](packages/syngrisi/docs/DEVELOPMENT.md) · [Release Cycle](docs-src/RELEASE_CYCLE.md)
 - 🔗 API reference: Swagger UI at `/swagger/` on a running instance.
 
