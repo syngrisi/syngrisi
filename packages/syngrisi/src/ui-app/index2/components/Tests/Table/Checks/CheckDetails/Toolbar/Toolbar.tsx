@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Divider, Group, Menu, ActionIcon, Tooltip as MantineTooltip } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconMicroscope, IconSparkles, IconBinoculars, IconDownload } from '@tabler/icons-react';
+import { useNavigate } from 'react-router';
+import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconMicroscope, IconSparkles, IconBinoculars, IconDownload, IconTable, IconHistory } from '@tabler/icons-react';
 import config from '@config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
@@ -17,6 +18,7 @@ import { RegionsToolbar } from '@index/components/Tests/Table/Checks/CheckDetail
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 import { DeleteBaselineModal } from '../Modals/DeleteBaselineModal';
 import { ShareModal } from '../Modals/ShareModal';
+import { HistoryModal } from '@index/components/Baselines/Table/Modals/HistoryModal';
 
 
 interface Props {
@@ -73,9 +75,11 @@ export function Toolbar(
     }: Props,
 ) {
     const { query, setQuery } = useParams();
+    const navigate = useNavigate();
     const [view, setView] = useState(() => (curCheck?.diffId?.filename ? 'diff' : 'actual'));
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
     const [shareModalOpened, setShareModalOpened] = useState(false);
+    const [historyOpened, setHistoryOpened] = useState(false);
     const queryClient = useQueryClient();
     const isShareMode = !!query.share;
     const toolbarActionIconSize = 32;
@@ -403,6 +407,22 @@ export function Toolbar(
                                         >
                                             Delete Baseline
                                         </Menu.Item>
+                                        <Menu.Item
+                                            leftSection={<IconTable size={14} />}
+                                            disabled={!curCheck?.name}
+                                            onClick={() => navigate(`/baselines?filter=${encodeURIComponent(JSON.stringify({ name: curCheck.name }))}&sortBy=name:asc`)}
+                                            data-test="menu-open-baselines"
+                                        >
+                                            Open in Baselines
+                                        </Menu.Item>
+                                        <Menu.Item
+                                            leftSection={<IconHistory size={14} />}
+                                            disabled={!baselineId}
+                                            onClick={() => setHistoryOpened(true)}
+                                            data-test="menu-time-machine"
+                                        >
+                                            Time machine
+                                        </Menu.Item>
                                     </Menu.Dropdown>
                                 </Menu>
                             </>
@@ -421,6 +441,20 @@ export function Toolbar(
                 opened={shareModalOpened}
                 onClose={() => setShareModalOpened(false)}
                 checkId={curCheck?._id}
+            />
+            <HistoryModal
+                opened={historyOpened}
+                onClose={() => setHistoryOpened(false)}
+                ident={{
+                    name: curCheck?.name,
+                    // History matches baselines by the app ObjectId (Baseline.app), not the name.
+                    app: initCheckData?.app?._id ?? initCheckData?.app ?? curCheck?.app?._id ?? curCheck?.app ?? '',
+                    branch: initCheckData?.branch ?? '',
+                    browserName: curCheck?.browserName,
+                    viewport: curCheck?.viewport,
+                    os: curCheck?.os,
+                }}
+                baselineName={curCheck?.name}
             />
         </>
     );

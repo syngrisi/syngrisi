@@ -1,7 +1,7 @@
 import config from '@config';
 import { http } from '@shared/lib/http';
 
-export type WebhookEvent = 'check.created' | 'check.updated' | 'test.finished';
+export type WebhookEvent = 'check.created' | 'check.updated' | 'test.finished' | 'run.finished';
 
 export interface IWebhook {
     id: string;

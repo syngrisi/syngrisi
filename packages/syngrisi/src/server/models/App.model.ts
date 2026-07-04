@@ -30,6 +30,7 @@ export interface AppDocument extends Document {
     triageExamples?: Array<{ verdict: string; image: string; note?: string }>; // few-shot examples (data-URL images)
     changeSimGate?: number; // cosine cutoff for "same change at other resolutions" (per-project)
     mainBranch?: string; // read-time baseline fallback: branch whose accepted baselines cover every other branch; empty = disabled
+    branchFallbackEnabled?: boolean; // explicit opt-in for the mainBranch fallback; default false
 }
 
 const AppSchema: Schema<AppDocument> = new Schema({
@@ -101,6 +102,10 @@ const AppSchema: Schema<AppDocument> = new Schema({
     },
     mainBranch: {
         type: String,
+    },
+    branchFallbackEnabled: {
+        type: Boolean,
+        default: false,
     },
 });
 
