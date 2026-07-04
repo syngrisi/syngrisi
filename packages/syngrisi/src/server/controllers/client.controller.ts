@@ -14,7 +14,7 @@ const startSession = catchAsync(async (req: ExtRequest, res: Response) => {
     const params = pick(
         req.body,
         ['name', 'status', 'app', 'tags', 'branch', 'viewport', 'browser', 'browserVersion', 'browserFullVersion',
-            'os', 'run', 'runident', 'suite']
+            'os', 'run', 'runident', 'suite', 'commit']
     ) as ClientStartSessionType;
     const result = await clientService.startSession(params, String(req?.user?.username));
     res.send(result);

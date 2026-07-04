@@ -1,5 +1,5 @@
 import { removeEmptyProperties, waitUntil, errMsg, calculateAcceptedStatus } from '@utils';
-import { Check, Test } from '@models';
+import { Check, Test, Run } from '@models';
 import { createRunIfNotExist, createSuiteIfNotExist, createItemIfNotExistAsync, createTest, updateItemDate } from '@lib/dbItems';
 import log from '@logger';
 import { LogOpts } from '@types';
@@ -7,6 +7,8 @@ import { ClientStartSessionType } from '@schemas/Client.schema';
 import { UpdateTestType } from '@schemas/Test.schema';
 import { TestDocument } from '@models/Test.model';
 import { CheckDocument } from '@models/Check.model';
+import { webhookService } from './webhook.service';
+import { githubStatusService } from './github-status.service';
 
 const updateTest = async (id: string, update: UpdateTestType) => {
     const logOpts: LogOpts = {
@@ -56,10 +58,15 @@ export const startSession = async (params: ClientStartSessionType, username: str
         opts.app = app._id;
 
         const run = await createRunIfNotExist(
-            { name: params.run, ident: params.runident, app: app._id },
+            { name: params.run, ident: params.runident, app: app._id, commit: params.commit },
             { user: username, itemType: 'run' }
         );
         opts.run = run._id;
+
+        // Backfill the commit on a pre-existing run (createRunIfNotExist only sets it on insert)
+        if (params.commit && !run.commit) {
+            await Run.findByIdAndUpdate(run._id, { commit: params.commit }).exec();
+        }
 
         const suite = await createSuiteIfNotExist(
             { name: params.suite || 'Others', app: app._id, createdDate: new Date() },
@@ -117,6 +124,12 @@ export const endSession = async (testId: string, username: string) => {
     log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`, logOpts);
     const updatedTest = await updateTest(testId, testParams);
     const result = updatedTest?.toObject() as TestDocument;
+    webhookService.triggerWebhooks('test.finished', result).catch((e) => log.error(`Webhook error: ${errMsg(e)}`));
+    if (result?.run) {
+        Run.findById(result.run).exec()
+            .then((run) => run && githubStatusService.notifyRunStatus(run))
+            .catch((e) => log.error(`GitHub status error: ${errMsg(e)}`));
+    }
     return result;
 };
 

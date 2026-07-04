@@ -14,6 +14,7 @@ import { registry as settings } from '../routes/v1/settings.route';
 import { registry as testDistinct } from '../routes/v1/test_distinct.route';
 import { registry as client } from '../routes/v1/client.route';
 import { registry as snapshots } from '../routes/v1/snapshots.route';
+import { registry as webhooks } from '../routes/v1/webhooks.route';
 
 export function generateOpenAPIDocument() {
   const registry = new OpenAPIRegistry([
@@ -30,7 +31,8 @@ export function generateOpenAPIDocument() {
     settings,
     testDistinct,
     client,
-    snapshots
+    snapshots,
+    webhooks
   ]);
   const generator = new OpenApiGeneratorV3(registry.definitions);
 

@@ -101,7 +101,8 @@ export class WDIODriver {
                 suite: params.suite || 'Unknown',
                 tags: params.tags,
 
-                browserFullVersion: params.browserFullVersion || await getBrowserFullVersion()
+                browserFullVersion: params.browserFullVersion || await getBrowserFullVersion(),
+                commit: params.commit
             }
 
             // noinspection DuplicatedCode

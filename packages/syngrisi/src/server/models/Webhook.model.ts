@@ -6,6 +6,7 @@ export interface WebhookDocument extends Document {
     url: string;
     events: string[];
     secret?: string;
+    enabled: boolean;
     createdDate?: Date;
     meta?: Record<string, unknown>;
 }
@@ -21,6 +22,10 @@ const WebhookSchema: Schema<WebhookDocument> = new Schema({
     },
     secret: {
         type: String,
+    },
+    enabled: {
+        type: Boolean,
+        default: true,
     },
     createdDate: {
         type: Date,

@@ -59,6 +59,22 @@
     - Default Value: `false`
     - Note: To actually send DOM snapshots for RCA, set `SYNGRISI_DISABLE_DOM_DATA=false` (default is to skip DOM data).
 
+15. `SYNGRISI_GITHUB_TOKEN`
+    - Description: Personal/fine-grained GitHub access token with `repo:status` scope, used to report a run's outcome back to GitHub as a commit status. Never logged or persisted to the database.
+    - Default Value: `-` (dormant, zero requests, until set together with `SYNGRISI_GITHUB_REPO` and a session's `commit` param)
+
+16. `SYNGRISI_GITHUB_REPO`
+    - Description: The `<owner>/<name>` GitHub repository to post commit statuses to.
+    - Default Value: `-`
+
+17. `SYNGRISI_PUBLIC_URL`
+    - Description: Public base URL of this Syngrisi instance, used to build the `target_url` deep link on the GitHub commit status (points at the run's grid).
+    - Default Value: `-`
+
+18. `SYNGRISI_GITHUB_API_URL`
+    - Description: Override for the GitHub API base URL (e.g. for GitHub Enterprise, or to point at a stub in tests).
+    - Default Value: `https://api.github.com`
+
 ### Docker Mode
 
 1. `SYNGRISI_DOCKER_IMAGES_PATH`

@@ -49,7 +49,11 @@ const ClientStartSessionSchema = z.object({
     suite: z.string().min(1).openapi({
         description: 'Suite name',
         example: 'Smoke tests'
-    })
+    }),
+    commit: z.string().regex(/^[0-9a-fA-F]{7,40}$/).openapi({
+        description: 'Git commit SHA the run belongs to, used to report a commit status back to GitHub',
+        example: 'a1b2c3d'
+    }).optional()
 });
 
 export type ClientStartSessionType = z.infer<typeof ClientStartSessionSchema>

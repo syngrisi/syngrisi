@@ -9,6 +9,7 @@ import { Response } from "express";
 import { ApiError } from '@utils';
 import { ExtRequest } from '@types';
 import { getUsageCountsBySnapshotIds, remove as removeBaseline } from '@services/baseline.service';
+import { getHistory, getHistorySummary, BaselineHistoryIdent } from '@services/baseline-history.service';
 
 const get = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = typeof req.query.filter === 'string'
@@ -82,9 +83,23 @@ const getDomSnapshot = catchAsync(async (req: ExtRequest, res: Response) => {
     res.json(content);
 });
 
+const getBaselineHistory = catchAsync(async (req: ExtRequest, res: Response) => {
+    const ident = deserializeIfJSON(String(req.query.filter)) as BaselineHistoryIdent;
+    const result = await getHistory(ident);
+    res.send(result);
+});
+
+const getBaselineHistorySummary = catchAsync(async (req: ExtRequest, res: Response) => {
+    const { fromBaselineId, toBaselineId } = req.body;
+    const result = await getHistorySummary(fromBaselineId, toBaselineId);
+    res.send(result);
+});
+
 export {
     get,
     put,
     remove,
     getDomSnapshot,
+    getBaselineHistory,
+    getBaselineHistorySummary,
 };

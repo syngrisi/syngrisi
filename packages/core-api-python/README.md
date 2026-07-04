@@ -6,6 +6,12 @@ functional parity. SDK version: **3.6.0**.
 ## Install
 
 ```bash
+pip install syngrisi-core-api
+```
+
+For local development:
+
+```bash
 python3 -m venv .venv
 .venv/bin/pip install -e .            # runtime (requests)
 .venv/bin/pip install -e ".[dev]"     # + test deps (responses, pytest)
@@ -54,6 +60,28 @@ Method names are Pythonic (`start_session`, `core_check`, `get_baselines`,
 aliases (`startSession`, `coreCheck`, `getBaselines`, `transformOs`, ...).
 Wire behaviour (field names, URL shapes, header names) is identical to the JS
 package.
+
+## Playwright quickstart
+
+```python
+from syngrisi_core_api.playwright_driver import PlaywrightDriver
+
+driver = PlaywrightDriver(page, "http://localhost:3000/", "your-api-key")
+
+driver.start_test_session({
+    "run": "run-id", "suite": "suite-name", "runident": "run-identifier",
+    "name": "homepage test", "app": "MyProject", "branch": "main",
+})
+
+driver.check("homepage")  # image_buffer defaults to page.screenshot()
+
+driver.stop_test_session()
+```
+
+`PlaywrightDriver` is a minimal port of the JS `@syngrisi/playwright-sdk`
+driver's session/check surface only. Not yet ported: DOM collection for RCA,
+`setIgnoreRegions`, and auto-accept — see
+`syngrisi_core_api/playwright_driver.py` docstring for details.
 
 ## Public surface
 

@@ -3,7 +3,14 @@ import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import * as baselineController from '@controllers/baseline.controller';
 import { Midleware } from '@types';
 import { validateRequest } from '@utils/validateRequest';
-import { BaselineGetSchema, BaselinePutSchema } from '@schemas/Baseline.schema';
+import {
+    BaselineGetSchema,
+    BaselinePutSchema,
+    BaselineHistoryQuerySchema,
+    BaselineHistoryItemSchema,
+    HistorySummaryBodySchema,
+    HistorySummaryResponseSchema,
+} from '@schemas/Baseline.schema';
 import { createApiEmptyResponse, createApiResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
 import { ApiErrorSchema } from '@schemas/common/ApiError.schema';
 import { HttpStatus } from '@utils';
@@ -96,6 +103,38 @@ router.get(
     ensureLoggedInOrApiKey(),
     validateRequest(getByIdParamsSchema(), 'get, /v1/baselines/{id}/dom'),
     baselineController.getDomSnapshot as Midleware
+);
+
+registry.registerPath({
+    method: 'get',
+    path: '/v1/baselines/history',
+    summary: "Ordered accepted-baseline timeline for one check ident (baseline time machine)",
+    tags: ['Baselines'],
+    request: { query: BaselineHistoryQuerySchema },
+    responses: createApiResponse(BaselineHistoryItemSchema.array(), 'Success'),
+});
+
+router.get(
+    '/history',
+    ensureLoggedInOrApiKeyOrShareToken(),
+    validateRequest(createRequestQuerySchema(BaselineHistoryQuerySchema), 'get, /v1/baselines/history'),
+    baselineController.getBaselineHistory as Midleware
+);
+
+registry.registerPath({
+    method: 'post',
+    path: '/v1/baselines/history-summary',
+    summary: "AI-generated summary of the visual change between two baselines (baseline time machine)",
+    tags: ['Baselines'],
+    request: { body: createRequestOpenApiBodySchema(HistorySummaryBodySchema) },
+    responses: createApiResponse(HistorySummaryResponseSchema, 'Success'),
+});
+
+router.post(
+    '/history-summary',
+    ensureLoggedIn(),
+    validateRequest(createRequestBodySchema(HistorySummaryBodySchema), 'post, /v1/baselines/history-summary'),
+    baselineController.getBaselineHistorySummary as Midleware
 );
 
 export default router;

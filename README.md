@@ -50,9 +50,13 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 - 🧠 **AI Triage** _(beta)_ — a vision-LLM classifies each failed check (intended change / likely bug / noise) with a confidence score; auto-accept policies, per-project prompts & verdicts, and a fully self-hosted local-model option via Ollama.
 - 🎯 **AI Match** _(beta)_ — from one failed check, instantly find the **same visual change** on every other resolution and browser, ranked by a similarity score — review the whole cluster of "one bug, many viewports" in a single pass. 100% local, no model required.
 - 🤖 **Root Cause Analysis** _(beta)_ — captures a DOM snapshot alongside each screenshot to help explain **why** a check changed.
+- 🕰️ **Baseline Time Machine** — scrub through a check's accepted baselines over time with a history slider, with an optional AI-generated one-line summary of what changed between steps.
 - 🔐 **Auth, roles & SSO** — username/password, API keys, plus OAuth2 / SAML 2.0 single sign-on and an admin panel.
 - 🧩 **Plugin system & rich configuration** — extend behaviour and tune everything through environment variables.
+- 🔔 **Webhooks** — check/test lifecycle events with secret signing.
+- ✅ **GitHub commit status** — report a run's pass/fail state straight to the PR, with a deep link back to the grid.
 - 🐳 **Self-hosted & Docker-ready** — Express + MongoDB backend, React + Mantine UI.
+- 🤖 **MCP server** — let AI agents query runs, view diffs and accept checks from the IDE.
 
 ## 📸 Screenshots
 
@@ -90,6 +94,9 @@ expensive, send your screenshots to someone else's servers, and lock you in.
   OpenAI-compatible / Anthropic / Gemini endpoint.
 - 🎛️ **Yours to tune** — per-project verdicts, fully editable prompt with `{{placeholders}}`,
   few-shot example images, and a manual queue (restart / cancel) grouped by run.
+- 🐳 **Private AI out of the box** — `docker compose --profile ai up` starts a bundled
+  **Ollama** with a vision model and wires triage to it via env: zero API keys, zero
+  screenshot egress. See [Private AI with Ollama](packages/syngrisi/docs/AI_FEATURES.md#private-ai-with-ollama-docker-profile).
 
 > Enabled per project, **off by default**. See [AI Triage docs](packages/syngrisi/AI_TRIAGE.md).
 
@@ -211,11 +218,13 @@ stack, it's built for you.
 packages/
 ├── syngrisi/                              # Main application (Express + React)
 ├── core-api/                              # Framework-agnostic REST client
+├── core-api-python/                       # Python REST client (+ Playwright driver)
 ├── playwright-sdk/                        # Playwright SDK
 ├── wdio-sdk/                              # WebdriverIO SDK
 ├── wdio-syngrisi-cucumber-service/        # WebdriverIO + Cucumber service
 ├── wdio-cucumber-viewport-logger-service/ # In-viewport step logger
 ├── node-resemble.js/                      # Image comparison library
+├── mcp/                                   # MCP server for AI agents
 └── create-sy/                             # `npm init sy` project scaffolder
 ```
 
@@ -226,6 +235,7 @@ packages/
 ## 📚 Documentation
 
 - 📖 [Main App Guide](packages/syngrisi/README.md)
+- 🤖 [MCP Server for AI Agents](packages/mcp/README.md)
 - 🤖 [AI Features](packages/syngrisi/docs/AI_FEATURES.md) · [Root Cause Analysis](packages/syngrisi/docs/RCA.md)
 - 🧩 [Plugins](packages/syngrisi/docs/PLUGINS.md)
 - ⚙️ [Environment Variables](packages/syngrisi/docs/environment_variables.md)

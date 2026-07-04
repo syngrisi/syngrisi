@@ -1059,3 +1059,115 @@ When(
     expect(updated.matchType).toBe(matchType);
   }
 );
+
+// =============================================================================
+// Baseline "time machine": GET /v1/baselines/history and POST /v1/baselines/history-summary
+// =============================================================================
+
+When(
+  'I fetch via http baseline history for check {string}',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    checkName: string
+  ) => {
+    // Read one existing baseline for this check to recover its ident (name/app/branch/
+    // browserName/viewport/os) - the history endpoint is looked up by ident, not by baseline id.
+    const nameFilter = encodeURIComponent(JSON.stringify({ name: checkName }));
+    const baselinesRes = await requestWithSession(
+      `${appServer.baseURL}/v1/baselines?limit=0&filter=${nameFilter}`,
+      testData,
+      appServer
+    );
+    const baselines = baselinesRes.json.results || [];
+    if (!baselines.length) {
+      throw new Error(`No baselines found for check "${checkName}"`);
+    }
+    const ident = {
+      name: baselines[0].name,
+      app: baselines[0].app,
+      branch: baselines[0].branch,
+      browserName: baselines[0].browserName,
+      viewport: baselines[0].viewport,
+      os: baselines[0].os,
+    };
+
+    const historyFilter = encodeURIComponent(JSON.stringify(ident));
+    const uri = `${appServer.baseURL}/v1/baselines/history?filter=${historyFilter}`;
+    logger.info(`Fetching baseline history from: ${uri}`);
+    const historyRes = await requestWithSession(uri, testData, appServer);
+    logger.info(`Baseline history for "${checkName}": ${JSON.stringify(historyRes.json)}`);
+    testData.set('baselineHistory', historyRes.json);
+  }
+);
+
+Then(
+  'the baseline history should have {int} items ordered by date',
+  async (
+    { testData }: { testData: TestStore },
+    expectedCount: number
+  ) => {
+    const history = (testData.get('baselineHistory') as any[]) || [];
+    expect(history.length).toBe(expectedCount);
+    for (let i = 1; i < history.length; i += 1) {
+      const prevTime = new Date(history[i - 1].createdDate).getTime();
+      const currTime = new Date(history[i].createdDate).getTime();
+      expect(currTime).toBeGreaterThanOrEqual(prevTime);
+    }
+  }
+);
+
+When(
+  'I request the baseline history summary for the last two history items',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore }
+  ) => {
+    const history = (testData.get('baselineHistory') as any[]) || [];
+    expect(history.length).toBeGreaterThanOrEqual(2);
+    const fromBaselineId = history[history.length - 2].id;
+    const toBaselineId = history[history.length - 1].id;
+
+    const uri = `${appServer.baseURL}/v1/baselines/history-summary`;
+    logger.info(`Requesting history summary from ${fromBaselineId} to ${toBaselineId}`);
+    const result = await requestWithSession(uri, testData, appServer, {
+      method: 'POST',
+      json: { fromBaselineId, toBaselineId },
+    });
+    logger.info(`History summary result: ${JSON.stringify(result.json)}`);
+    testData.set('historySummaryResult', result.json);
+  }
+);
+
+Then(
+  'the baseline history summary should be null with reason {string}',
+  async (
+    { testData }: { testData: TestStore },
+    reason: string
+  ) => {
+    const result = testData.get('historySummaryResult') as any;
+    expect(result.summary).toBeNull();
+    expect(result.reason).toBe(reason);
+  }
+);
+
+Then(
+  'the baseline history summary should be a non-empty string',
+  async (
+    { testData }: { testData: TestStore }
+  ) => {
+    const result = testData.get('historySummaryResult') as any;
+    expect(typeof result.summary).toBe('string');
+    expect(result.summary.length).toBeGreaterThan(0);
+  }
+);
+
+Then(
+  'the baseline history summary should be cached',
+  async (
+    { testData }: { testData: TestStore }
+  ) => {
+    const result = testData.get('historySummaryResult') as any;
+    expect(result.cached).toBe(true);
+    expect(typeof result.summary).toBe('string');
+    expect(result.summary.length).toBeGreaterThan(0);
+  }
+);

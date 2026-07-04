@@ -110,4 +110,11 @@ export const env = cleanEnv(process.env, {
     // Custom Check Validator Plugin
     CHECK_MISMATCH_THRESHOLD: str({ default: '0' }),  // Mismatch % below which checks pass
     CHECK_VALIDATOR_SCRIPT: str({ default: '' }),     // Path to custom validation script
+
+    // GitHub commit-status integration: reports a run's outcome back to the commit as a status check.
+    // Dormant (zero requests) unless SYNGRISI_GITHUB_TOKEN, SYNGRISI_GITHUB_REPO and the run's commit are all present.
+    SYNGRISI_GITHUB_TOKEN: str({ default: '' }),          // Personal/fine-grained access token with `repo:status` scope
+    SYNGRISI_GITHUB_REPO: str({ default: '' }),           // '<owner>/<name>'
+    SYNGRISI_PUBLIC_URL: str({ default: '' }),            // Public base URL used as the status target_url
+    SYNGRISI_GITHUB_API_URL: str({ default: 'https://api.github.com' }), // Override for self-hosted GitHub Enterprise / tests
 });

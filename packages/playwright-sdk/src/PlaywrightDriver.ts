@@ -119,7 +119,8 @@ export class PlaywrightDriver {
                 runident: params.runident,
                 suite: params.suite,
                 tags: params.tags,
-                browserFullVersion: params.browserFullVersion || getBrowserFullVersion(this.browser.version())
+                browserFullVersion: params.browserFullVersion || getBrowserFullVersion(this.browser.version()),
+                commit: params.commit
             }
 
             // @ts-ignore

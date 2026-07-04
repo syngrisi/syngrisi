@@ -12,7 +12,8 @@ export const SessionParamsSchema = z.object({
     browserName: z.string().min(1).optional(),
     browserVersion: z.string().min(1).optional(),
     browserFullVersion: z.string().min(1).optional(),
-    tags: z.array(z.string()).optional()
+    tags: z.array(z.string()).optional(),
+    commit: z.string().regex(/^[0-9a-fA-F]{7,40}$/).optional(), // Git commit SHA, used to report a commit status back to GitHub
 }).catchall(z.union([z.string(), z.array(z.string()), z.undefined()]))
 
 export type SessionParams = z.infer<typeof SessionParamsSchema>;
