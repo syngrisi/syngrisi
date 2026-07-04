@@ -337,3 +337,33 @@ When(
     expect(statusCode).toBe(200);
   }
 );
+
+// Verifies checks can be looked up by their exact baselineId (the field the "N checks" link in
+// the Delete Baseline modal filters on: GET /v1/checks?filter={"baselineId":"<id>"}). baselineId
+// is an ObjectId, so it can't use the generic $regex-based filter steps above - this reads the
+// baselineId off the named check itself, then re-queries with an exact-match filter.
+Then(
+  'I expect via http checks referencing the baseline of check {string} count to be at least {string}',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    checkName: string,
+    minCount: string
+  ) => {
+    const findUri = `${appServer.baseURL}/v1/checks?limit=0&sortBy=createdDate:desc&filter={"$and":[{"name":{"$regex":"${checkName}","$options":"im"}}]}`;
+    const found = await requestWithSession(findUri, testData, appServer);
+    const referenceCheck = found.json.results?.[0];
+    if (!referenceCheck?.baselineId) {
+      throw new Error(`Check "${checkName}" has no baselineId set - cannot verify the baselineId filter`);
+    }
+    const baselineId = typeof referenceCheck.baselineId === 'string'
+      ? referenceCheck.baselineId
+      : referenceCheck.baselineId._id;
+
+    const uri = `${appServer.baseURL}/v1/checks?limit=0&filter=${encodeURIComponent(JSON.stringify({ baselineId }))}`;
+    logger.info(`Fetching checks filtered by baselineId "${baselineId}"`);
+    const itemsResponse = await requestWithSession(uri, testData, appServer);
+    const items = itemsResponse.json.results;
+    logger.info(`Found ${items.length} checks referencing baselineId "${baselineId}"`);
+    expect(items.length).toBeGreaterThanOrEqual(parseInt(minCount, 10));
+  }
+);

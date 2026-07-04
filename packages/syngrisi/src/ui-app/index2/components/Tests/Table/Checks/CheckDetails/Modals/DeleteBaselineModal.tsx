@@ -29,7 +29,7 @@ export const DeleteBaselineModal: React.FC<DeleteBaselineModalProps> = ({
                         <Text size="sm" c="dimmed">
                             This baseline is used in{' '}
                             <Anchor
-                                href={`/checks?filter=${encodeURIComponent(JSON.stringify({ baselineId: snapshotId }))}`}
+                                href={`/checks-list?baselineId=${encodeURIComponent(snapshotId)}`}
                                 target="_blank"
                             >
                                 {usageCount} checks

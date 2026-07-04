@@ -30,6 +30,7 @@ import { OsIcon } from '@shared/components/Check/OsIcon';
 export function ChecksList() {
     const [searchParams, setSearchParams] = useSearchParams();
     const checkName = searchParams.get('name');
+    const baselineId = searchParams.get('baselineId');
     const apiKey = searchParams.get('apikey');
     const [previewSize, setPreviewSize] = React.useState('medium');
 
@@ -43,25 +44,25 @@ export function ChecksList() {
 
     const checksQuery = useQuery(
         {
-            queryKey: ['checks_list', checkName],
+            queryKey: ['checks_list', checkName, baselineId],
             queryFn: () => GenericService.get(
                 'checks',
-                { name: checkName },
+                { ...(checkName ? { name: checkName } : {}), ...(baselineId ? { baselineId } : {}) },
                 {
                     populate: 'baselineId,actualSnapshotId,diffId',
-                    limit: '5',
+                    limit: baselineId ? '50' : '5',
                     sortBy: 'createdDate:desc',
                     apikey: apiKey,
                 },
                 'checksListQuery',
             ),
-            enabled: !!checkName,
+            enabled: !!checkName || !!baselineId,
             refetchOnWindowFocus: false,
         },
     );
 
-    if (!checkName) {
-        return <Text>Please provide a check name in the URL query parameter, e.g. ?name=test123</Text>;
+    if (!checkName && !baselineId) {
+        return <Text>Please provide a check name or baselineId in the URL query parameter, e.g. ?name=test123</Text>;
     }
 
     if (checksQuery.isLoading) {
@@ -75,8 +76,9 @@ export function ChecksList() {
     if (!checksQuery.data?.results?.length) {
         return (
             <Text>
-                No checks found with name:
-                {checkName}
+                No checks found with
+                {checkName ? ' name: ' : ' baselineId: '}
+                {checkName || baselineId}
             </Text>
         );
     }
@@ -88,7 +90,7 @@ export function ChecksList() {
                     <Text truncate>
                         Latest for:
                         {' '}
-                        {checkName}
+                        {checkName || baselineId}
                     </Text>
                 </Title>
                 <SegmentedControl
