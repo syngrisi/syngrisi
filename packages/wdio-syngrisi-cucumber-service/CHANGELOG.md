@@ -1,5 +1,11 @@
 # wdio-syngrisi-cucumber-service
 
+## 3.13.0
+
+### Patch Changes
+
+-   @syngrisi/wdio-sdk@3.13.0
+
 ## 3.12.0
 
 ### Patch Changes
