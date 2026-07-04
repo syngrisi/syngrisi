@@ -1,4 +1,4 @@
-import { Snapshot, Check, App, Baseline } from '@models';
+import { Snapshot, Check, App, Baseline, Run } from '@models';
 import { buildIdentObject, prettyCheckParams, ApiError } from '@utils';
 import log from "@logger";
 import { LogOpts } from '@types';
@@ -207,3 +207,110 @@ export const getUsageCountsBySnapshotIds = async (snapshootIds: Array<Types.Obje
 
     return buildUsageCountMap(usageRows);
 };
+
+export type PromoteBaselinesParams = {
+    appId: string;
+    fromBranch: string;
+    toBranch: string;
+    user: { _id: unknown; username: string };
+};
+
+export type PromoteBaselinesResult = { promoted: number, fromBranch: string, toBranch: string };
+
+/**
+ * Promote all ACCEPTED baselines of an app on `fromBranch` to `toBranch` (typically the
+ * project's mainBranch), so a feature branch's approved baselines become the main-branch
+ * baselines. Mirrors the upsert shape of createNewBaseline (check.service.ts), but clones
+ * the source baseline's snapshootId onto a different branch instead of creating a fresh
+ * snapshot. Since getAcceptedBaseline resolves the accepted baseline by sorting
+ * createdDate desc, the newly-created (or refreshed) baseline naturally becomes the active
+ * one for toBranch without needing to explicitly demote any prior accepted baseline there.
+ */
+export async function promoteBaselines(params: PromoteBaselinesParams): Promise<PromoteBaselinesResult> {
+    const { appId, fromBranch, toBranch, user } = params;
+    const logOpts: LogOpts = {
+        scope: 'promoteBaselines',
+        itemType: 'baseline',
+        user: user?.username,
+        msgType: 'PROMOTE',
+    };
+
+    const sourceBaselines = await Baseline.find({ app: appId, branch: fromBranch, markedAs: 'accepted' } as any).exec();
+    log.info(`promoting ${sourceBaselines.length} accepted baseline(s) for app: '${appId}' from branch: '${fromBranch}' to branch: '${toBranch}'`, logOpts);
+
+    let promoted = 0;
+    for (const source of sourceBaselines) {
+        const identFields = buildIdentObject({
+            name: source.name,
+            viewport: source.viewport,
+            browserName: source.browserName,
+            os: source.os,
+            app: source.app.toString(),
+            branch: toBranch,
+        });
+
+        const filter = { ...identFields, snapshootId: source.snapshootId };
+
+        const baselineParams: Record<string, unknown> = { ...identFields };
+        if (source.ignoreRegions) baselineParams.ignoreRegions = source.ignoreRegions;
+        if (source.boundRegions) baselineParams.boundRegions = source.boundRegions;
+        if (source.matchType) baselineParams.matchType = source.matchType;
+        if (typeof source.toleranceThreshold === 'number') baselineParams.toleranceThreshold = source.toleranceThreshold;
+
+        const update = {
+            $setOnInsert: {
+                ...baselineParams,
+                snapshootId: source.snapshootId,
+                createdDate: new Date(),
+            },
+            $set: {
+                markedAs: 'accepted',
+                markedById: user._id,
+                markedByUsername: user.username,
+                lastMarkedDate: new Date(),
+            },
+        };
+
+        await Baseline.findOneAndUpdate(filter as any, update, { new: true, upsert: true }).exec();
+        promoted += 1;
+    }
+
+    return { promoted, fromBranch, toBranch };
+}
+
+export type PromoteRunParams = { runId: string, user: { _id: unknown; username: string } };
+
+/**
+ * Promote the baselines of a run's app/branch(es) to the app's configured mainBranch.
+ * Resolves the run's app and the distinct branch(es) used by the run's checks, then
+ * promotes each distinct branch (skipping the mainBranch itself) to the mainBranch.
+ */
+export async function promoteRun(params: PromoteRunParams): Promise<PromoteBaselinesResult> {
+    const { runId, user } = params;
+
+    const run = await Run.findById(runId).exec();
+    if (!run) {
+        throw new ApiError(HttpStatus.NOT_FOUND, `cannot promote baselines, run not found, id: '${runId}'`);
+    }
+
+    const app = await App.findById(run.app).exec();
+    if (!app) {
+        throw new ApiError(HttpStatus.NOT_FOUND, `cannot promote baselines, app not found for run: '${runId}'`);
+    }
+    if (!app.mainBranch) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, "project has no main branch configured");
+    }
+    const toBranch = app.mainBranch;
+
+    const branches: string[] = await Check.distinct('branch', { run: runId } as any);
+
+    let promoted = 0;
+    for (const fromBranch of branches) {
+        if (!fromBranch || fromBranch === toBranch) continue;
+        // eslint-disable-next-line no-await-in-loop
+        const result = await promoteBaselines({ appId: app.id, fromBranch, toBranch, user });
+        promoted += result.promoted;
+    }
+
+    return { promoted, fromBranch: branches.join(','), toBranch };
+}
