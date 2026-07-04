@@ -23,7 +23,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconUsers, IconAlertCircle, IconPlus, IconTrash, IconPencil, IconRefresh } from '@tabler/icons-react';
-import { showNotification } from '@mantine/notifications';
+import { successMsg, errorMsg } from '@shared/utils/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { UserHooks, useSubpageEffect, useNavProgressFetchEffect } from '@shared/hooks';
@@ -200,15 +200,10 @@ export default function AdminUsers() {
         onSuccess: (result: any) => {
             invalidate();
             setModalMode(null);
-            showNotification({ title: 'User created', message: `User '${result.username}' has been successfully created`, color: 'green' });
+            successMsg({ message: `User '${result.username}' has been successfully created` });
         },
         onError: (err) => {
-            showNotification({
-                title: 'Error',
-                message: err instanceof Error ? err.message : 'Cannot create the user',
-                color: 'red',
-                icon: <IconAlertCircle size={16} />,
-            });
+            errorMsg({ error: err instanceof Error ? err.message : 'Cannot create the user' });
         },
     });
 
@@ -218,15 +213,10 @@ export default function AdminUsers() {
             invalidate();
             setModalMode(null);
             setEditingUser(null);
-            showNotification({ title: 'User updated', message: `User '${result.username}' has been successfully updated`, color: 'green' });
+            successMsg({ message: `User '${result.username}' has been successfully updated` });
         },
         onError: (err) => {
-            showNotification({
-                title: 'Error',
-                message: err instanceof Error ? err.message : 'Cannot update the user',
-                color: 'red',
-                icon: <IconAlertCircle size={16} />,
-            });
+            errorMsg({ error: err instanceof Error ? err.message : 'Cannot update the user' });
         },
     });
 
@@ -235,15 +225,10 @@ export default function AdminUsers() {
         onSuccess: () => {
             invalidate();
             setDeletingUser(null);
-            showNotification({ title: 'User deleted', message: 'User has been successfully removed', color: 'green' });
+            successMsg({ message: 'User has been successfully removed' });
         },
         onError: (err) => {
-            showNotification({
-                title: 'Error',
-                message: err instanceof Error ? err.message : 'Cannot delete the user',
-                color: 'red',
-                icon: <IconAlertCircle size={16} />,
-            });
+            errorMsg({ error: err instanceof Error ? err.message : 'Cannot delete the user' });
         },
     });
 

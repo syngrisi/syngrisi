@@ -43,11 +43,13 @@ Feature: Update User
 
     When I click element with locator "button[aria-label='Save']"
 
+    # wait for the success notification (update applied + table refetched) before asserting cells
+    When I wait 10 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
+    When I wait 5 seconds for the element with locator "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-first-name']" to be visible
     Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-username']" matches the text "j_doe@gmail.com"
     Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-first-name']" matches the text "Alex"
     Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-last-name']" matches the text "Jonson"
     Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-role']" matches the text "REVIEWER"
-    When I wait 10 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
 
     When I refresh page
     Then the element "//*[@data-test='j_doe@gmail.com']//*[@data-test='users-cell-username']" matches the text "j_doe@gmail.com"
