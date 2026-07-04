@@ -55,6 +55,8 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 - 🧩 **Plugin system & rich configuration** — extend behaviour and tune everything through environment variables.
 - 🔔 **Webhooks** — check, test and run (`run.finished`) lifecycle events with secret signing.
 - 🌿 **Branch baseline fallback** _(opt-in)_ — a feature branch with no baseline of its own is compared against the project's main-branch baseline instead of starting from scratch; toggled per project under **Admin → Settings → Project settings**.
+- ⬆️ **Baseline promotion** — promote a feature branch's accepted baselines to the project's main branch in one step, from the run menu or via `POST /v1/baselines/promote` for CI.
+- 🗑️ **Per-project retention** _(opt-in)_ — auto-delete old checks per project on a configurable day window, set under **Admin → Settings → Project settings**.
 - ✅ **GitHub commit status** — report a run's pass/fail state straight to the PR, with a deep link back to the grid.
 - 🐳 **Self-hosted & Docker-ready** — Express + MongoDB backend, React + Mantine UI.
 - 🤖 **MCP server** — let AI agents query runs, view diffs and accept checks from the IDE.
