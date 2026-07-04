@@ -32,6 +32,7 @@ const EVENT_OPTIONS: { value: WebhookEvent; label: string }[] = [
     { value: 'check.created', label: 'check.created' },
     { value: 'check.updated', label: 'check.updated' },
     { value: 'test.finished', label: 'test.finished' },
+    { value: 'run.finished', label: 'run.finished' },
 ];
 
 const emptyForm: IWebhookInput = {

@@ -86,7 +86,6 @@ function PerProjectTriage() {
     const [prompt, setPrompt] = useState<string>('');
     const [examples, setExamples] = useState<Example[]>([]);
     const [simGate, setSimGate] = useState<number>(0.32);
-    const [mainBranch, setMainBranch] = useState<string>('');
     const [saving, setSaving] = useState(false);
 
     // Client-only stable render keys for the editable verdict/example rows, kept in a parallel
@@ -103,8 +102,8 @@ function PerProjectTriage() {
     const [confirmSwitchOpened, setConfirmSwitchOpened] = useState(false);
 
     const currentSnapshot = useMemo(
-        () => JSON.stringify({ enabled, mode, threshold, allow, verdicts, prompt, examples, simGate, mainBranch }),
-        [enabled, mode, threshold, allow, verdicts, prompt, examples, simGate, mainBranch],
+        () => JSON.stringify({ enabled, mode, threshold, allow, verdicts, prompt, examples, simGate }),
+        [enabled, mode, threshold, allow, verdicts, prompt, examples, simGate],
     );
     const isDirty = loadedSnapshot !== null && currentSnapshot !== loadedSnapshot;
 
@@ -119,7 +118,6 @@ function PerProjectTriage() {
         const nextPrompt = selected.triagePrompt ? selected.triagePrompt : buildDefaultPrompt(vlist);
         const nextExamples = Array.isArray(selected.triageExamples) ? selected.triageExamples : [];
         const nextSimGate = typeof selected.changeSimGate === 'number' ? selected.changeSimGate : 0.32;
-        const nextMainBranch = typeof selected.mainBranch === 'string' ? selected.mainBranch : '';
 
         setEnabled(nextEnabled);
         setMode(nextMode);
@@ -129,11 +127,10 @@ function PerProjectTriage() {
         setPrompt(nextPrompt);
         setExamples(nextExamples);
         setSimGate(nextSimGate);
-        setMainBranch(nextMainBranch);
         setVerdictRowIds(vlist.map(() => crypto.randomUUID()));
         setExampleRowIds(nextExamples.map(() => crypto.randomUUID()));
         setLoadedSnapshot(JSON.stringify({
-            enabled: nextEnabled, mode: nextMode, threshold: nextThreshold, allow: nextAllow, verdicts: vlist, prompt: nextPrompt, examples: nextExamples, simGate: nextSimGate, mainBranch: nextMainBranch,
+            enabled: nextEnabled, mode: nextMode, threshold: nextThreshold, allow: nextAllow, verdicts: vlist, prompt: nextPrompt, examples: nextExamples, simGate: nextSimGate,
         }));
     }, [selected]);
 
@@ -198,7 +195,6 @@ function PerProjectTriage() {
                 triagePrompt: prompt.trim() === buildDefaultPrompt(verdicts).trim() ? '' : prompt.trim(),
                 triageExamples: examples,
                 changeSimGate: simGate,
-                mainBranch: mainBranch.trim(),
             }, {}, 'AdminAI.savePerProject');
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             successMsg({ message: 'Project AI Triage config saved' });
@@ -398,31 +394,6 @@ function PerProjectTriage() {
                         value={simGate}
                         onChange={(v) => setSimGate(typeof v === 'number' ? v : 0.32)}
                         data-test="ai-sim-gate"
-                        w={260}
-                        mb="md"
-                    />
-
-                    <Divider my="md" label={(
-                        <Group gap={4}>
-                            <Text size="sm">Branch baselines</Text>
-                            <HelpDoc
-                                title="Main branch"
-                                lines={[
-                                    'When a check on another branch has no accepted baseline of its own, it is compared against the main branch\'s accepted baseline instead of landing as new/not accepted.',
-                                    'Accepting a check always creates a baseline for its own branch — this only affects which baseline a check is compared against, at read time.',
-                                    'Leave empty to disable (today\'s behavior: every branch starts with zero accepted baselines).',
-                                ]}
-                            />
-                        </Group>
-                    )}
-                    />
-                    <TextInput
-                        label="Main branch"
-                        description="Branch whose accepted baselines are used as a fallback for every other branch"
-                        placeholder="e.g. main"
-                        value={mainBranch}
-                        onChange={(e) => setMainBranch(e.currentTarget.value)}
-                        data-test="ai-main-branch"
                         w={260}
                         mb="md"
                     />

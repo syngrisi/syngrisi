@@ -73,6 +73,8 @@ export const AppTriagePolicyUpdateSchema = z.object({
     // Read-time baseline fallback: branch whose accepted baselines cover every other branch for
     // this project. Empty string clears it (feature disabled, preserving today's behavior).
     mainBranch: z.string().max(255).optional(),
+    // Explicit opt-in for the mainBranch fallback above; default false.
+    branchFallbackEnabled: z.boolean().optional(),
 }).strict();
 
 export type AppTriagePolicyUpdateType = z.infer<typeof AppTriagePolicyUpdateSchema>;
