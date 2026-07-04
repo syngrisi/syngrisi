@@ -1,5 +1,20 @@
 # @syngrisi/syngrisi
 
+## 3.11.0
+
+### Minor Changes
+
+-   6124cd0: Add a baseline "time machine": a history slider over a check's accepted baselines (`GET /v1/baselines/history`), with an optional AI-generated one-line summary of what changed between two consecutive baselines (`POST /v1/baselines/history-summary`, reusing the configured AI triage provider; degrades to a plain slider when no provider is configured). New "History" action on the Baselines table opens a modal with the slider and prev/next controls.
+-   6124cd0: Add read-time baseline fallback to a project's configured main branch: when a check on another branch has no accepted baseline of its own, it is now compared against the main branch's accepted baseline instead of landing as `new`/`not_accepted`. Configure it per project via the new `mainBranch` field (Admin → AI → Projects settings, or `PATCH /v1/app/:id/triage-policy`). Accepting stays branch-scoped — a check's own branch still gets its own baseline on accept. Empty/unset `mainBranch` preserves today's behavior.
+-   6124cd0: Add GitHub commit-status integration: an optional `commit` param on `startSession` (SDKs and core-api) is persisted on the Run, and a session's outcome (pending/success/failure) is reported back to GitHub via `POST /repos/{owner}/{repo}/statuses/{sha}` with a deep link to the run's grid. Configure via `SYNGRISI_GITHUB_TOKEN`, `SYNGRISI_GITHUB_REPO`, `SYNGRISI_PUBLIC_URL` (and optional `SYNGRISI_GITHUB_API_URL`); dormant (zero requests) unless all of these plus a run's `commit` are set. See `docs/environment_variables.md`.
+-   6124cd0: "Private AI" out of the box: `docker compose --profile ai up` now brings up a bundled Ollama service with a vision model (`OLLAMA_MODEL`, default `gemma4:12b`) for AI Triage — zero API keys, zero screenshot egress. The model is pulled by a one-shot `ollama-pull` helper into a persistent named volume, so the Ollama healthcheck never blocks on a multi-GB download. The triage provider can now also be seeded from env via `SYNGRISI_AI_TRIAGE_PROVIDER_JSON` (raw JSON: `type`, `baseUrl`, `apiKey`, `model`, …), which is applied to the `ai_triage_provider` setting on startup with env-over-admin precedence — headless/CI provisioning without touching the admin UI. Documented in `docs/AI_FEATURES.md` ("Private AI with Ollama").
+-   6124cd0: Add webhooks management: a CRUD API (`GET/POST/PATCH/DELETE /v1/webhooks`) and admin UI to register, enable/disable and delete webhooks on top of the existing delivery engine, plus a new `test.finished` event fired when a test session ends. See `packages/syngrisi/docs/WEBHOOKS.md`.
+
+### Patch Changes
+
+-   082150f: Server hardening: reject unknown Mongo operators in client-supplied filters (blocks NoSQL operator injection such as `$where`/`$expr`), make AI Triage and AI Match background schedulers safe for multi-instance deployments via atomic per-check claims with a lease, and replace synchronous `fs` calls in request paths with `fs.promises`.
+    -   @syngrisi/node-resemble.js@3.11.0
+
 ## 3.10.1
 
 ### Patch Changes
