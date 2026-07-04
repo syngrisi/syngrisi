@@ -16,7 +16,6 @@ import {
     Button,
     Group,
     Stack,
-    Title,
     Text,
     Modal,
     ActionIcon,
@@ -27,6 +26,7 @@ import { IconWebhook, IconAlertCircle, IconPlus, IconTrash, IconPencil, IconRefr
 import { showNotification } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { WebhooksService, IWebhook, IWebhookInput, WebhookEvent } from '@shared/services';
+import { AdminPageHeader } from '@admin/components/common/AdminPageHeader';
 
 const EVENT_OPTIONS: { value: WebhookEvent; label: string }[] = [
     { value: 'check.created', label: 'check.created' },
@@ -186,39 +186,29 @@ export default function AdminWebhooks() {
 
     return (
         <Stack gap="lg" p="md">
-            <Group justify="space-between">
-                <Group>
-                    <IconWebhook size={24} />
-                    <Title order={3}>Webhooks</Title>
-                </Group>
-                <Group>
-                    <ActionIcon
-                        title="reload webhooks"
-                        variant="subtle"
-                        onClick={() => refetch()}
-                        loading={isFetching}
-                    >
-                        <IconRefresh stroke={1} size={20} />
-                    </ActionIcon>
-                    <Button
-                        leftSection={<IconPlus size={16} />}
-                        onClick={() => setModalMode('create')}
-                    >
-                        Add Webhook
-                    </Button>
-                </Group>
-            </Group>
-
-            <Text c="dimmed" size="sm">
-                Webhooks receive a JSON payload (
-                <code>{'{ event, payload, timestamp }'}</code>
-                {' '}
-                ) via POST whenever a subscribed event fires, signed with the
-                {' '}
-                <code>X-Syngrisi-Secret</code>
-                {' '}
-                header.
-            </Text>
+            <AdminPageHeader
+                icon={<IconWebhook size={24} />}
+                title="Webhooks"
+                description="Webhooks receive a JSON payload ({ event, payload, timestamp }) via POST whenever a subscribed event fires, signed with the X-Syngrisi-Secret header."
+                actions={(
+                    <>
+                        <ActionIcon
+                            title="reload webhooks"
+                            variant="subtle"
+                            onClick={() => refetch()}
+                            loading={isFetching}
+                        >
+                            <IconRefresh stroke={1} size={20} />
+                        </ActionIcon>
+                        <Button
+                            leftSection={<IconPlus size={16} />}
+                            onClick={() => setModalMode('create')}
+                        >
+                            Add Webhook
+                        </Button>
+                    </>
+                )}
+            />
 
             {webhooks.length === 0 ? (
                 <Alert color="gray">No webhooks registered yet.</Alert>

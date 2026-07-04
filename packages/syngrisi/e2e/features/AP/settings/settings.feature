@@ -11,9 +11,9 @@ Feature: Admin Settings
       """
   When I go to "settings" page
   When I wait 10 seconds for the element with label "Authentication" to be visible
-  Then the element with label "Authentication" should have value "false"
-  When I select the option with the text "true" for element "select[data-test='settings_value_authentication']"
-  Then the element with label "Authentication" should have value "true"
+  Then the element with label "Authentication" should be unchecked
+  When I click element with label "Authentication"
+  Then the element with label "Authentication" should be checked
   When I click element with locator "button[aria-label='Update Authentication']"
   When I wait 10 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
 
@@ -47,9 +47,9 @@ Feature: Admin Settings
   When I go to "settings" page
   When I wait 10 seconds for the element with label "First Run" to be visible
 
-  Then the element with label "First Run" should have value "true"
-  When I select the option with the text "false" for element "select[data-test='settings_value_first_run']"
-  Then the element with label "First Run" should have value "false"
+  Then the element with label "First Run" should be checked
+  When I click element with label "First Run"
+  Then the element with label "First Run" should be unchecked
   When I click element with locator "button[aria-label='Update First Run']"
   When I wait 10 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
   When I go to "logout" page

@@ -21,9 +21,10 @@ import {
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { IconAlertTriangle, IconDatabaseExport, IconDownload, IconPhotoUp, IconRefresh, IconRestore, IconTrash, IconX } from '@tabler/icons-react';
+import { IconAlertTriangle, IconDatabase, IconDatabaseExport, IconDownload, IconPhotoUp, IconRefresh, IconRestore, IconTrash, IconX } from '@tabler/icons-react';
 import { adminDataService, AdminDataJob } from '@shared/services/adminData.service';
 import { useSubpageEffect } from '@shared/hooks';
+import { AdminPageHeader } from '@admin/components/common/AdminPageHeader';
 
 const ACTIVE_STATUSES = new Set(['pending', 'running']);
 
@@ -217,20 +218,21 @@ export default function AdminDataManagement() {
     return (
         <ScrollArea type="auto" h="calc(100vh - 120px)">
         <Stack gap="lg">
-            <Group justify="space-between">
-                <div>
-                    <Title order={2}>Data Management</Title>
-                    <Text c="dimmed">Backup and restore database dumps and screenshots through background jobs.</Text>
-                </div>
-                <Button
-                    variant="outline"
-                    leftIcon={<IconRefresh size={16} />}
-                    onClick={() => jobsQuery.refetch()}
-                    loading={jobsQuery.isFetching}
-                >
-                    Refresh
-                </Button>
-            </Group>
+            <AdminPageHeader
+                icon={<IconDatabase size={24} />}
+                title="Data Management"
+                description="Backup and restore database dumps and screenshots through background jobs."
+                actions={(
+                    <Button
+                        variant="outline"
+                        leftIcon={<IconRefresh size={16} />}
+                        onClick={() => jobsQuery.refetch()}
+                        loading={jobsQuery.isFetching}
+                    >
+                        Refresh
+                    </Button>
+                )}
+            />
 
             <SimpleGrid cols={2} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
                 <Paper withBorder p="md">

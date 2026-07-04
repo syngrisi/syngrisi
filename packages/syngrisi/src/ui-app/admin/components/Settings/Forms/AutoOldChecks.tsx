@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Checkbox, Group, NumberInput, Stack, Text, Title } from '@mantine/core';
+import { Button, Switch, Group, NumberInput, Stack, Text, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { ISettingForm } from '@admin/components/Settings/Forms/interfaces';
 
@@ -73,7 +73,7 @@ export function AutoOldChecks({ name, value, label, description, enabled, update
                         step={1}
                         {...form.getInputProps('days')}
                     />
-                    <Checkbox
+                    <Switch
                         data-test={`settings_enabled_${name}`}
                         label="Enabled"
                         aria-label={`Enable ${label}`}

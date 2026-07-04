@@ -18,3 +18,35 @@ When(
         await targetLocator.selectOption({ value: renderedOptionValue });
     }
 );
+
+/**
+ * Step definition: `When I set the switch for element {string} to {string}`
+ *
+ * Sets a Mantine Switch (checkbox input) to an absolute "true"/"false" state,
+ * clicking it only if its current checked state differs from the desired one.
+ * Mirrors the old absolute-set semantics of "I select dropdown option" for
+ * settings that used to be a `<select>` and are now a Switch.
+ *
+ * @param selector - Locator query for the switch/checkbox input.
+ * @param desired - Desired state, "true" (checked) or "false" (unchecked).
+ *
+ * @example
+ * ```gherkin
+ * When I set the switch for element "[data-test='settings_value_share_enabled']" to "false"
+ * ```
+ */
+When(
+    'I set the switch for element {string} to {string}',
+    async ({ page, testData }, selector: string, desired: string) => {
+        const renderedSelector = renderTemplate(selector, testData);
+        const wantChecked = desired === 'true';
+
+        const locator = getLocatorQuery(page, renderedSelector).first();
+        await locator.waitFor({ state: 'visible', timeout: 10000 });
+
+        const isChecked = await locator.isChecked();
+        if (isChecked !== wantChecked) {
+            await locator.click();
+        }
+    }
+);

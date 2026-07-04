@@ -1,12 +1,14 @@
 /* eslint-disable react/jsx-one-expression-per-line,no-nested-ternary,indent,react/jsx-indent */
 import * as React from 'react';
-import { Title, LoadingOverlay, Text, Box, ScrollArea, Tabs } from '@mantine/core';
+import { LoadingOverlay, Text, Box, ScrollArea, Tabs } from '@mantine/core';
+import { IconSettings } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useSubpageEffect, useNavProgressFetchEffect } from '@shared/hooks';
 import { ISettingForm } from '@admin/components/Settings/Forms/interfaces';
 
 import { FormWrapper } from '@admin/components/Settings/Forms/FormWrapper';
 import { GenericService } from '@shared/services';
+import { AdminPageHeader } from '@admin/components/common/AdminPageHeader';
 
 import { SsoSettingsForm } from './SsoSettingsForm';
 import { PerProjectSettings } from './PerProjectSettings';
@@ -23,7 +25,11 @@ export default function AdminSettings() {
     return (
         <ScrollArea type="auto" h="calc(100vh - 120px)">
             <Box p={10} style={{ minHeight: '100%' }}>
-                <Title>Admin Settings</Title>
+                <AdminPageHeader
+                    icon={<IconSettings size={24} />}
+                    title="Admin Settings"
+                    description="Instance configuration and per-project settings."
+                />
                 <Tabs defaultValue="settings" mt="sm" keepMounted={false}>
                     <Tabs.List>
                         <Tabs.Tab value="settings" data-test="settings-tab-general">Settings</Tabs.Tab>

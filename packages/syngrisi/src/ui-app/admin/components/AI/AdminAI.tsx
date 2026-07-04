@@ -6,7 +6,7 @@ import {
     TextInput, Checkbox, ActionIcon, Text, Divider, ColorInput, Loader, Badge, Textarea, FileButton, Image, Stack, Tabs,
     Popover,
 } from '@mantine/core';
-import { IconTrash, IconPlus, IconPhoto } from '@tabler/icons-react';
+import { IconTrash, IconPlus, IconPhoto, IconSparkles } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useSubpageEffect } from '@shared/hooks';
 import { GenericService } from '@shared/services';
@@ -17,6 +17,7 @@ import { AIProviderSettingsForm } from '@admin/components/Settings/AIProviderSet
 import { TriageIcon, TRIAGE_ICON_NAMES } from '@shared/components/Check/triageIcons';
 import { HelpDoc } from '@admin/components/AI/HelpDoc';
 import { TriageQueue } from '@admin/components/AI/TriageQueue';
+import { AdminPageHeader } from '@admin/components/common/AdminPageHeader';
 
 type Verdict = {
     key: string; label: string; color: string; icon?: string; severity: number;
@@ -414,10 +415,12 @@ export default function AdminAI() {
     return (
         <ScrollArea type="auto" h="calc(100vh - 120px)">
             <Box p={10} style={{ minHeight: '100%' }}>
-                <Group gap="sm" align="center">
-                    <Title>AI</Title>
-                    <Badge color="grape" variant="light" data-test="ai-beta-badge">Beta</Badge>
-                </Group>
+                <AdminPageHeader
+                    icon={<IconSparkles size={24} />}
+                    title="AI"
+                    description="AI Triage & Match configuration."
+                    actions={<Badge color="grape" variant="light" data-test="ai-beta-badge">Beta</Badge>}
+                />
                 <Tabs defaultValue="settings" mt="sm" keepMounted={false}>
                     <Tabs.List>
                         <Tabs.Tab value="settings" data-test="ai-tab-settings">Settings</Tabs.Tab>

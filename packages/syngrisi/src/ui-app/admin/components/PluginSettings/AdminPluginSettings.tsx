@@ -28,6 +28,7 @@ import {
 import { IconPlugConnected, IconAlertCircle, IconCheck, IconX, IconRefresh } from '@tabler/icons-react';
 import { showNotification } from '@mantine/notifications';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { AdminPageHeader } from '@admin/components/common/AdminPageHeader';
 
 interface PluginSettingSchema {
     key: string;
@@ -335,24 +336,20 @@ export default function AdminPluginSettings() {
 
     return (
         <Stack gap="lg" p="md">
-            <Group justify="space-between">
-                <Group>
-                    <IconPlugConnected size={24} />
-                    <Title order={3}>Plugin Settings</Title>
-                </Group>
-                <Button
-                    variant="subtle"
-                    leftIcon={<IconRefresh size={16} />}
-                    onClick={() => refetch()}
-                >
-                    Refresh
-                </Button>
-            </Group>
-
-            <Text c="dimmed" size="sm">
-                Configure plugins here. UI settings have priority over environment variables.
-                Changes may require a server restart to take effect.
-            </Text>
+            <AdminPageHeader
+                icon={<IconPlugConnected size={24} />}
+                title="Plugin Settings"
+                description="Configure plugins here. UI settings have priority over environment variables. Changes may require a server restart to take effect."
+                actions={(
+                    <Button
+                        variant="subtle"
+                        leftIcon={<IconRefresh size={16} />}
+                        onClick={() => refetch()}
+                    >
+                        Refresh
+                    </Button>
+                )}
+            />
 
             <Divider />
 
