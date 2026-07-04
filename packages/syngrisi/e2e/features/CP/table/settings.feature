@@ -16,8 +16,8 @@ Feature: Tests Table Settings
               checkName: Check - 1
         """
         When I go to "main" page
-        When I wait 30 seconds for the element with locator "[data-test='table-header-Id']" to be visible
-        Then the element with locator "[data-test='table-header-Id']" should be visible
+        When I wait 30 seconds for the element with locator "[data-test='table-header-Name']" to be visible
+        Then the element with locator "[data-test='table-header-Id']" should not be visible
         Then the element with locator "[data-test='table-header-Name']" should be visible
         Then the element with locator "[data-test='table-header-Status']" should be visible
         Then the element with locator "[data-test='table-header-Created']" should be visible
@@ -26,9 +26,9 @@ Feature: Tests Table Settings
         Then the element with locator "[data-test='table-header-Browser']" should be visible
         Then the element with locator "[data-test='table-header-Platform']" should be visible
         Then the element with locator "[data-test='table-header-Viewport']" should be visible
-        Then the element "th" does appear exactly "10" times
+        Then the element "th" does appear exactly "9" times
 
-        Then the element with locator "[data-test='table-row-Id']" should be visible
+        Then the element with locator "[data-test='table-row-Id']" should not be visible
         Then the element with locator "[data-test='table-row-Name']" should be visible
         Then the element with locator "[data-test='table-row-Status']" should be visible
         Then the element with locator "[data-test='table-row-Created']" should be visible
@@ -37,19 +37,22 @@ Feature: Tests Table Settings
         Then the element with locator "[data-test='table-row-Browser']" should be visible
         Then the element with locator "[data-test='table-row-Platform']" should be visible
         Then the element with locator "[data-test='table-row-Viewport']" should be visible
-        Then the element "tbody tr:first-of-type td" does appear exactly "10" times
+        Then the element "tbody tr:first-of-type td" does appear exactly "9" times
 
+        # Id column is hidden by default; enable it via the settings drawer chip
         When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
         When I wait on element "[aria-label='Toggle Id column visibility']" to exist
+        When I click on the element "[aria-label='Toggle Id column visibility']" via js
+        When I wait 30 seconds for the element with locator "[data-test='table-header-Id']" to be visible
+        Then the element with locator "[data-test='table-row-Id']" should be visible
+        Then the element "th" does appear exactly "10" times
+        Then the element "tbody tr:first-of-type td" does appear exactly "10" times
+
+        # Toggle it back off and confirm the grid returns to the default (Id hidden) state
         When I click on the element "[aria-label='Toggle Id column visibility']" via js
         When I wait on element "[data-test='table-header-Id']" to not be displayed
         Then the element "th" does appear exactly "9" times
         Then the element "tbody tr:first-of-type td" does appear exactly "9" times
-
-        When I click on the element "[aria-label='Toggle Id column visibility']" via js
-        When I wait 30 seconds for the element with locator "[data-test='table-header-Id']" to be visible
-        Then the element "th" does appear exactly "10" times
-        Then the element "tbody tr:first-of-type td" does appear exactly "10" times
 
 
     Scenario: Sorting
