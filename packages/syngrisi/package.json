@@ -1,6 +1,6 @@
 {
     "name": "@syngrisi/syngrisi",
-    "version": "3.10.1",
+    "version": "3.11.0",
     "description": "Syngrisi - Visual Testing Platform - open-source visual regression testing platform",
     "main": "./dist/server/server.js",
     "type": "module",
@@ -110,7 +110,7 @@
         "@asteasolutions/zod-to-openapi": "^8.5.0",
         "@inquirer/prompts": "^8.5.2",
         "@node-saml/passport-saml": "^5.1.0",
-        "@syngrisi/node-resemble.js": "^3.10.1",
+        "@syngrisi/node-resemble.js": "^3.11.0",
         "bson": "^7.3.0",
         "compression": "^1.8.1",
         "connect-mongo": "^6.0.0",

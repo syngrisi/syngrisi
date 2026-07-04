@@ -1,5 +1,7 @@
 # @syngrisi/node-resemble.js
 
+## 3.11.0
+
 ## 3.10.1
 
 ## 3.10.0
