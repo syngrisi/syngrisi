@@ -1,5 +1,19 @@
 # @syngrisi/syngrisi
 
+## 3.14.0
+
+### Minor Changes
+
+-   c1a0f17: Add baseline promotion and per-project retention.
+
+    -   **Baseline promotion on merge**: promote a feature branch's accepted baselines to the project's main branch via a new `POST /v1/baselines/promote` endpoint (accepts `{runId}` or `{app, fromBranch, toBranch?}`, CI-callable with an API key) and a "Promote baselines to main" action in the run kebab menu.
+    -   **Per-project retention**: auto-delete old checks per project, configured in Admin → Settings → Project settings (`retentionEnabled` / `retentionDays`). The cleanup scheduler now also runs per-project retention on top of the instance-wide policy.
+
+### Patch Changes
+
+-   c1a0f17: Add an official `syngrisi-status` composite GitHub Action (poll `/v1/tests?filter={"run":...}` and gate the job on Passed/Failed/New) plus an example reusable workflow, and document the two-piece CI setup (server-side `commit` status via `startTestSession`, CI-side poll-and-gate) in a new `docs/CI.md` guide linked from the README.
+    -   @syngrisi/node-resemble.js@3.14.0
+
 ## 3.13.0
 
 ### Minor Changes
