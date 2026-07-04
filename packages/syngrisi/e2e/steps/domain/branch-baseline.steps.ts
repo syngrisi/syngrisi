@@ -59,3 +59,25 @@ When(
         expect(resp.raw?.statusCode).toBe(200);
     },
 );
+
+// Set the project's per-project retention (auto-delete old checks) via the same
+// PATCH /v1/app/:id/triage-policy endpoint (retentionEnabled / retentionDays fields — see
+// AppTriagePolicy.schema.ts / app.controller.ts).
+Given(
+    'the project {string} has retention enabled {string} days {string}',
+    async (
+        { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+        project: string,
+        enabled: string,
+        days: string,
+    ) => {
+        const app = await getAppByName(appServer, testData, project);
+        const id = app._id || app.id;
+        const patchUri = `${appServer.baseURL}/v1/app/${id}/triage-policy`;
+        const resp = await requestWithSession(patchUri, testData, appServer, {
+            method: 'PATCH',
+            json: { retentionEnabled: enabled === 'true', retentionDays: parseInt(days, 10) },
+        });
+        expect(resp.raw?.statusCode).toBe(200);
+    },
+);

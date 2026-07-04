@@ -31,6 +31,8 @@ export interface AppDocument extends Document {
     changeSimGate?: number; // cosine cutoff for "same change at other resolutions" (per-project)
     mainBranch?: string; // read-time baseline fallback: branch whose accepted baselines cover every other branch; empty = disabled
     branchFallbackEnabled?: boolean; // explicit opt-in for the mainBranch fallback; default false
+    retentionDays?: number; // per-project auto-delete: remove checks older than this many days
+    retentionEnabled?: boolean; // explicit opt-in for per-project retention; default false
 }
 
 const AppSchema: Schema<AppDocument> = new Schema({
@@ -104,6 +106,13 @@ const AppSchema: Schema<AppDocument> = new Schema({
         type: String,
     },
     branchFallbackEnabled: {
+        type: Boolean,
+        default: false,
+    },
+    retentionDays: {
+        type: Number,
+    },
+    retentionEnabled: {
         type: Boolean,
         default: false,
     },

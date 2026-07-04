@@ -70,6 +70,8 @@ const updateTriagePolicy = catchAsync(async (req: Request, res: Response) => {
     if (req.body.changeSimGate !== undefined) set.changeSimGate = Number(req.body.changeSimGate);
     if (req.body.mainBranch !== undefined) set.mainBranch = req.body.mainBranch;
     if (req.body.branchFallbackEnabled !== undefined) set.branchFallbackEnabled = req.body.branchFallbackEnabled;
+    if (req.body.retentionDays !== undefined) set.retentionDays = Number(req.body.retentionDays);
+    if (req.body.retentionEnabled !== undefined) set.retentionEnabled = req.body.retentionEnabled;
     const app = await App.findByIdAndUpdate(id, { $set: set }, { new: true }).exec();
     if (!app) {
         res.status(HttpStatus.NOT_FOUND).json({ error: 'App not found' });
