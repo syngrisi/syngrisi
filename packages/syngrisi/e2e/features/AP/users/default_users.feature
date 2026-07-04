@@ -2,7 +2,7 @@
 Feature: Default Users
 
   Background:
-#         
+#
     When I set env variables:
     """
     SYNGRISI_TEST_MODE: true
@@ -24,10 +24,10 @@ Feature: Default Users
   @smoke
   Scenario: Default Administrator and Guest should be created after first server start
     When I go to "admin>users" page
-    Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//input[@aria-label='First Name' and @value='Syngrisi']" should be visible
-    Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//input[@aria-label='Last Name' and @value='Admin']" should be visible
-    Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//select[@data-test='user-list-role']" should have value "admin"
+    Then the element "//*[@data-test='Administrator']//*[@data-test='users-cell-first-name']" matches the text "Syngrisi"
+    Then the element "//*[@data-test='Administrator']//*[@data-test='users-cell-last-name']" matches the text "Admin"
+    Then the element "//*[@data-test='Administrator']//*[@data-test='users-cell-role']" matches the text "ADMIN"
 
-    Then the element with locator "//*[@data-test='user-list-email' and @value='Guest']/../../..//input[@aria-label='First Name' and @value='Syngrisi']" should be visible
-    Then the element with locator "//*[@data-test='user-list-email' and @value='Guest']/../../..//input[@aria-label='Last Name' and @value='Guest']" should be visible
-    Then the element with locator "//*[@data-test='user-list-email' and @value='Guest']/../../..//select[@data-test='user-list-role']" should have value "user"
+    Then the element "//*[@data-test='Guest']//*[@data-test='users-cell-first-name']" matches the text "Syngrisi"
+    Then the element "//*[@data-test='Guest']//*[@data-test='users-cell-last-name']" matches the text "Guest"
+    Then the element "//*[@data-test='Guest']//*[@data-test='users-cell-role']" matches the text "USER"
