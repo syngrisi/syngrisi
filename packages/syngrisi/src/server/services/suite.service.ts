@@ -25,6 +25,9 @@ const remove = async (id: string, user: RequestUser) => {
     return suite;
 };
 
+const getByName = async (name: string) => Suite.findOne({ name }).exec();
+
 export {
+    getByName,
     remove,
 };

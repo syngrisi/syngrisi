@@ -612,7 +612,10 @@ const createCheckDocument = async (checkParams: any, session?: any): Promise<Che
     return check;
 };
 
+const getById = async (id: string) => Check.findById(id).exec();
+
 export {
+    getById,
     accept,
     remove,
     update,

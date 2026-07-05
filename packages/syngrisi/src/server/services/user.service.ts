@@ -79,11 +79,14 @@ const updateUserById = async (userId: string, updateBody: UserCreateReq) => {
 
 const deleteUserById = async (userId: string) => User.findByIdAndDelete(userId).exec();
 
+const getUserByUsername = async (username: string | undefined) => User.findOne({ username });
+
 export {
     createUser,
     queryUsers,
     getUserById,
     getUserByEmail,
+    getUserByUsername,
     updateUserById,
     deleteUserById,
 };
