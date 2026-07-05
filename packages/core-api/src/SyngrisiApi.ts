@@ -461,7 +461,7 @@ class SyngrisiApi {
 }
 
 export { SyngrisiApi }
-export { transformOs } from './utils'
+export { transformOs, paramsGuard } from './utils'
 export * from '../schemas/SyngrisiApi.schema'
 export * from './compression'
 export { collectDomTree, getCollectDomTreeScript, COLLECT_DOM_TREE_SCRIPT } from './domCollector'
