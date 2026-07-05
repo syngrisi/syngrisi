@@ -7,7 +7,6 @@
         "src/tasks"
     ],
     "exclude": [
-        "tests_old/**",
         "example",
         "scripts",
         "dist",
