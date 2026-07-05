@@ -48,6 +48,13 @@ test('name regex is length-bounded', () => {
     assert.ok(nameFilter.$regex.length <= NAME_MAX);
 });
 
+test('name at the length boundary of metacharacters yields a valid regex (no dangling backslash)', () => {
+    const f = buildChecksFilter({ name: '.'.repeat(NAME_MAX) });
+    const rx = (f.name as { $regex: string }).$regex;
+    assert.doesNotThrow(() => new RegExp(rx));
+    assert.ok(!/(^|[^\\])\\$/.test(rx), 'regex must not end with a lone (unescaped) backslash');
+});
+
 test('happy path: status is preserved as a plain string', () => {
     const filter = buildChecksFilter({ status: 'failed' });
     assert.equal(filter.status, 'failed');

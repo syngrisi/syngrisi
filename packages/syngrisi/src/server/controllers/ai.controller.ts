@@ -43,7 +43,9 @@ export const buildChecksFilter = (q: Record<string, unknown>): Record<string, un
 
     if (run) filter.run = run;
     if (status) filter.status = status;
-    if (name) filter.name = { $regex: escapeRegExp(name).slice(0, NAME_MAX), $options: 'i' };
+    // Cap the RAW input BEFORE escaping so a `\x` escape pair can never be split
+    // in half, which would leave a dangling backslash and an invalid regex.
+    if (name) filter.name = { $regex: escapeRegExp(name.slice(0, NAME_MAX)), $options: 'i' };
     if (branch) filter.branch = branch;
     if (browser) filter.browserName = browser;
     if (os) filter.os = os;
