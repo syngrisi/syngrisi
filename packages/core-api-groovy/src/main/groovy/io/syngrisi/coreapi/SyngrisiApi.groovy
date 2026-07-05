@@ -125,6 +125,9 @@ class SyngrisiApi {
             if (params.branch) {
                 multipart << [name: 'branch', value: params.branch.toString()]
             }
+            if (params.commit) {
+                multipart << [name: 'commit', value: params.commit.toString()]
+            }
             return requestExecutor([
                     method   : 'POST',
                     url      : url('startSession'),

@@ -105,6 +105,8 @@ class SyngrisiApi:
                 fields["tags"] = (None, json.dumps(params["tags"], separators=(",", ":")))
             if params.get("branch"):
                 fields["branch"] = (None, str(params["branch"]))
+            if params.get("commit"):
+                fields["commit"] = (None, str(params["commit"]))
             return self._get_json("POST", self._url("startSession"),
                                    files=fields, headers=self._headers)
 
