@@ -9,6 +9,7 @@ import tar from 'tar-stream';
 import mongoose from 'mongoose';
 import { UploadedFile } from 'express-fileupload';
 import { config } from '@config';
+import { safeJoinWithin } from './../utils/safeJoinWithin';
 
 const pipelineAsync = promisify(pipeline);
 const { BSON } = mongoose.mongo;
@@ -296,7 +297,12 @@ async function extractTarGzArchive(archivePath: string, destinationDir: string) 
 
     await new Promise<void>((resolve, reject) => {
         extract.on('entry', (header, stream, next) => {
-            const outputPath = path.join(destinationDir, header.name);
+            const outputPath = safeJoinWithin(destinationDir, header.name);
+            if (!outputPath) {
+                stream.resume();
+                next();
+                return;
+            }
             const finishEntry = (error?: Error | null) => {
                 if (error) {
                     reject(error);
@@ -671,7 +677,12 @@ async function runScreenshotsRestore(job: AdminDataJob) {
             }
 
             const relativePath = header.name;
-            const targetPath = path.join(config.defaultImagesPath, relativePath);
+            const targetPath = safeJoinWithin(config.defaultImagesPath, relativePath);
+            if (!targetPath) {
+                stream.resume();
+                finish();
+                return;
+            }
 
             void (async () => {
                 assertNotCancelled(job.id);
