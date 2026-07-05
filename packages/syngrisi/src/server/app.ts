@@ -32,6 +32,12 @@ const logMeta: LogOpts = { scope: 'app.ts', msgType: "Init" };
 log.info('Init the application', logMeta);
 const app = express();
 
+if (env.NODE_ENV === 'production') {
+    // TLS is typically terminated by a reverse proxy; trust X-Forwarded-Proto so
+    // `secure` session cookies are issued over HTTPS-forwarded requests.
+    app.set('trust proxy', 1);
+}
+
 log.info('\t- basic http conf', logMeta);
 
 app.use(helmet(config.helmet));
@@ -59,8 +65,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        // secure: env.NODE_ENV === 'production',
-        secure: false,
+        secure: env.NODE_ENV === 'production',
         httpOnly: true,
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000,

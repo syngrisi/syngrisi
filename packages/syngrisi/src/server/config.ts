@@ -84,7 +84,9 @@ export const config = {
                 scriptSrcAttr: ["'none'"]
             },
         },
-        hsts: false,
+        hsts: env.NODE_ENV === 'production'
+            ? { maxAge: 15552000, includeSubDomains: true }  // 180 days
+            : false,
     },
     rateLimit: {
         windowMs: env.SYNGRISI_RATE_LIMIT_WINDOW_MS,
