@@ -6,7 +6,7 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    //    "types": ["index.d.ts"],
+    "types": ["node"],
     "outDir": "./dist",
     /* Redirect output structure to the directory. */
 //    "rootDir": "./src",

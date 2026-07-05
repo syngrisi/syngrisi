@@ -36,8 +36,6 @@
     "dist"
   ],
   "dependencies": {
-    "form-data": "^4.0.6",
-    "got-cjs": "^12.5.4",
     "loglevel": "^1.9.2",
     "zod": "^4.1.13"
   },
