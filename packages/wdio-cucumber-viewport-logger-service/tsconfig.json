@@ -21,6 +21,7 @@
     "esModuleInterop": true,
 
     /* Advanced Options */
+    "types": ["node"],
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
