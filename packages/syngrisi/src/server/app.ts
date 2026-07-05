@@ -25,6 +25,7 @@ import { openAPIRouter } from './api-docs/openAPIRouter';
 import { LogOpts } from '../types';
 import { env } from './envConfig';
 import { ensureLoggedInOrApiKey, ensureLoggedInOrApiKeyOrShareToken } from './middlewares/ensureLogin/ensureLoggedIn';
+import { scopeSnapshotsToShare } from './middlewares/scopeSnapshotsToShare';
 import { initSSOStrategies } from './services/auth-sso.service';
 
 const logMeta: LogOpts = { scope: 'app.ts', msgType: "Init" };
@@ -97,6 +98,7 @@ log.info('\t- static files', logMeta);
 app.use(
     '/snapshoots',
     ensureLoggedInOrApiKeyOrShareToken(),
+    scopeSnapshotsToShare,
     express.static(config.defaultImagesPath)
 );
 app.use('/assets', express.static(path.join(baseDir, './mvc/views/react/assets'), {

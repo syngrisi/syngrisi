@@ -10,7 +10,8 @@ import { ApiError } from '@utils';
 import { ExtRequest } from '@types';
 import { getUsageCountsBySnapshotIds, remove as removeBaseline, promoteBaselines, promoteRun } from '@services/baseline.service';
 import { getHistory, getHistorySummary, BaselineHistoryIdent } from '@services/baseline-history.service';
-import { App } from '@models';
+import { App, Check } from '@models';
+import { sharedCheckId } from '@services/share.service';
 
 const get = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = typeof req.query.filter === 'string'
@@ -20,6 +21,20 @@ const get = catchAsync(async (req: ExtRequest, res: Response) => {
     if (req.user && req.user.role === 'user') {
         console.log('Filtering baselines for user:', req.user.username, req.user._id);
         filter.markedByUsername = req.user.username;
+    }
+
+    const scopedCheckId = sharedCheckId(req);
+    if (scopedCheckId !== null) {
+        const check = await Check.findById(scopedCheckId).exec();
+        if (!check) throw new ApiError(HttpStatus.NOT_FOUND, 'Shared check not found');
+        // Overwrite any user-supplied scoping with the shared check's ident.
+        delete filter.markedByUsername;
+        filter.name = check.name;
+        filter.app = check.app;
+        filter.branch = check.branch;
+        filter.browserName = check.browserName;
+        filter.viewport = check.viewport;
+        filter.os = check.os;
     }
 
     const includeUsage = String(req.query.includeUsage).toLowerCase() === 'true';
@@ -85,7 +100,27 @@ const getDomSnapshot = catchAsync(async (req: ExtRequest, res: Response) => {
 });
 
 const getBaselineHistory = catchAsync(async (req: ExtRequest, res: Response) => {
-    const ident = deserializeIfJSON(String(req.query.filter)) as BaselineHistoryIdent;
+    let ident = deserializeIfJSON(String(req.query.filter)) as BaselineHistoryIdent;
+
+    const scopedCheckId = sharedCheckId(req);
+    if (scopedCheckId !== null) {
+        // Share mode: derive the ident from the shared check and ignore the client-supplied
+        // one, so a token for check A can only ever see check A's ident lineage.
+        const check = await Check.findById(scopedCheckId).exec();
+        if (!check) throw new ApiError(HttpStatus.NOT_FOUND, 'Shared check not found');
+        if (!check.branch || !check.browserName || !check.viewport || !check.os) {
+            throw new ApiError(HttpStatus.NOT_FOUND, 'Shared check is missing ident fields');
+        }
+        ident = {
+            name: check.name,
+            app: String(check.app),
+            branch: check.branch,
+            browserName: check.browserName,
+            viewport: check.viewport,
+            os: check.os,
+        };
+    }
+
     const result = await getHistory(ident);
     res.send(result);
 });

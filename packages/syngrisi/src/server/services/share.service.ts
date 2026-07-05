@@ -146,6 +146,12 @@ const findShareToken = async (
     return null;
 };
 
+// Returns the shared check id for a share-mode request, or null if the request
+// is not in share mode. Handlers use it to reject cross-check access.
+const sharedCheckId = (req: any): string | null => (
+    req?.isShareMode && req?.shareToken ? String(req.shareToken.checkId) : null
+);
+
 export {
     createShareToken,
     validateShareToken,
@@ -153,4 +159,5 @@ export {
     getShareTokensForCheck,
     revokeAllTokensForCheck,
     findShareToken,
+    sharedCheckId,
 };

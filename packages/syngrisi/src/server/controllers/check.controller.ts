@@ -7,6 +7,7 @@ import { CheckDocument } from '@models';
 import { Response } from "express";
 import { appSettings } from '@settings';
 import * as changeSigService from '@services/changeSig';
+import { sharedCheckId } from '@services/share.service';
 
 const get = catchAsync(async (req: ExtRequest, res: Response) => {
     // const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
@@ -89,6 +90,10 @@ const recompare = catchAsync(async (req: ExtRequest, res: Response) => {
 const getDomSnapshot = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Check ID is required');
+    const scopedCheckId = sharedCheckId(req);
+    if (scopedCheckId !== null && scopedCheckId !== String(id)) {
+        throw new ApiError(HttpStatus.NOT_FOUND, `No DOM snapshot found for check: ${id}`);
+    }
 
     const snapshot = await domSnapshotService.getDomSnapshotByCheckId(id, 'actual');
     if (!snapshot) {
@@ -108,6 +113,10 @@ const getDomSnapshot = catchAsync(async (req: ExtRequest, res: Response) => {
 const getSimilar = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Check ID is required');
+    const scopedCheckId = sharedCheckId(req);
+    if (scopedCheckId !== null && scopedCheckId !== String(id)) {
+        throw new ApiError(HttpStatus.NOT_FOUND, `Check not found: ${id}`);
+    }
     const out = await changeSigService.findSimilar(id);
     res.json(out);
 });
