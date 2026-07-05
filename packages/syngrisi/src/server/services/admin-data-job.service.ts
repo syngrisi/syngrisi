@@ -315,7 +315,6 @@ async function runDbBackup(job: AdminDataJob) {
     });
 }
 
-
 // --- Restore safety net (Problem A: destructive restore with no rollback) ---
 //
 // Decision (Step 2 of plans/016-db-restore-safety.md): Option B — take a
