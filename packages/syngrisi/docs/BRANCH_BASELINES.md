@@ -30,19 +30,56 @@ only affects which baseline a check is compared against at read time. This means
 
 ## Configuring the main branch
 
-Set it per project in **Admin → AI → Projects settings** (the "Branch baselines" section) via the
-"Main branch" field, or via the API:
+Set it per project in **Admin → Settings → Project settings** via the "Main branch" field (enable
+the "branch baseline fallback" switch first), or via the API:
 
 ```bash
 curl -X PATCH "$SYNGRISI_URL/v1/app/<appId>/triage-policy" \
   -H "Content-Type: application/json" \
-  -d '{"mainBranch": "main"}'
+  -d '{"mainBranch": "main", "branchFallbackEnabled": true}'
 ```
 
-Leave it empty to disable the fallback for a project.
+Leave it empty (or the switch off) to disable the fallback for a project.
+
+## Promoting baselines on merge
+
+The fallback above is a **read-time** convenience — the feature branch never gets its own baseline.
+When a feature branch is merged, you usually want its approved baselines to *become* the main
+branch's baselines, so main passes against them directly (no fallback needed) and the feature
+branch's history is preserved. That is **baseline promotion**: it copies every **accepted** baseline
+of a project on a source branch to a target branch (the project's `mainBranch` by default).
+
+Promotion is additive and idempotent — it upserts an accepted baseline for each `{name, viewport,
+browserName, os}` ident on the target branch, pointing at the same snapshot. Re-running it changes
+nothing. It only ever touches the target branch; the source branch is left as-is.
+
+### From the UI
+
+On the main page, open a run's **⋮** menu and choose **Promote baselines to main**, then confirm.
+All accepted baselines on that run's branch(es) are promoted to the project's configured main branch.
+A toast reports how many baselines were promoted.
+
+### From CI / the API
+
+Promote in a post-merge CI step so main is ready before the next run:
+
+```bash
+# Promote a whole run's branch(es) to the project's main branch
+curl -X POST "$SYNGRISI_URL/v1/baselines/promote" \
+  -H "apikey: $SYNGRISI_API_KEY" -H "Content-Type: application/json" \
+  -d '{"runId": "<runId>"}'
+
+# …or promote an explicit branch → branch for a project
+curl -X POST "$SYNGRISI_URL/v1/baselines/promote" \
+  -H "apikey: $SYNGRISI_API_KEY" -H "Content-Type: application/json" \
+  -d '{"app": "<appId>", "fromBranch": "feature-x", "toBranch": "main"}'
+```
+
+The endpoint accepts either `{runId}` (resolves the app + its branch(es) automatically) or
+`{app, fromBranch, toBranch?}` (`toBranch` defaults to the project's `mainBranch`). It responds with
+`{promoted, fromBranch, toBranch}`.
 
 ## What is out of scope (deferred)
 
-- Auto-promotion of feature-branch baselines to `main` on merge.
 - A per-check UI badge indicating "compared against main's baseline".
 - Multi-level fallback chains (only one fallback branch is supported).

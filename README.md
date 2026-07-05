@@ -55,8 +55,8 @@ expensive, send your screenshots to someone else's servers, and lock you in.
 - 🧩 **Plugin system & rich configuration** — extend behaviour and tune everything through environment variables.
 - 🔔 **Webhooks** — check, test and run (`run.finished`) lifecycle events with secret signing.
 - 🌿 **Branch baseline fallback** _(opt-in)_ — a feature branch with no baseline of its own is compared against the project's main-branch baseline instead of starting from scratch; toggled per project under **Admin → Settings → Project settings**.
-- ⬆️ **Baseline promotion** — promote a feature branch's accepted baselines to the project's main branch in one step, from the run menu or via `POST /v1/baselines/promote` for CI.
-- 🗑️ **Per-project retention** _(opt-in)_ — auto-delete old checks per project on a configurable day window, set under **Admin → Settings → Project settings**.
+- ⬆️ **Baseline promotion** — promote a feature branch's accepted baselines to the project's main branch in one step, from the run menu or via `POST /v1/baselines/promote` for CI ([guide](packages/syngrisi/docs/BRANCH_BASELINES.md#promoting-baselines-on-merge)).
+- 🗑️ **Per-project retention** _(opt-in)_ — auto-delete old checks per project on a configurable day window, set under **Admin → Settings → Project settings** ([guide](packages/syngrisi/docs/RETENTION.md)).
 - ✅ **GitHub commit status** — report a run's pass/fail state straight to the PR, with a deep link back to the grid.
 - 🐳 **Self-hosted & Docker-ready** — Express + MongoDB backend, React + Mantine UI.
 - 🤖 **MCP server** — let AI agents query runs, view diffs and accept checks from the IDE.
@@ -268,6 +268,7 @@ packages/
 - 🤖 [AI Features](packages/syngrisi/docs/AI_FEATURES.md) · [Root Cause Analysis](packages/syngrisi/docs/RCA.md)
 - 🧩 [Plugins](packages/syngrisi/docs/PLUGINS.md)
 - ⚙️ [Environment Variables](packages/syngrisi/docs/environment_variables.md)
+- 🌿 [Branch baselines & promotion](packages/syngrisi/docs/BRANCH_BASELINES.md) · [Retention](packages/syngrisi/docs/RETENTION.md)
 - 🔁 [CI / GitHub Action](packages/syngrisi/docs/CI.md)
 - 🛠️ [Development Guide](packages/syngrisi/docs/DEVELOPMENT.md) · [Release Cycle](docs-src/RELEASE_CYCLE.md)
 - 🔗 API reference: Swagger UI at `/swagger/` on a running instance.
