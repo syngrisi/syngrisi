@@ -122,8 +122,13 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_PUBLIC_URL: str({ default: '' }),            // Public base URL used as the status target_url
     SYNGRISI_GITHUB_API_URL: str({ default: 'https://api.github.com' }), // Override for self-hosted GitHub Enterprise / tests
 
-    // Webhook SSRF guard: comma-separated hostname allowlist that may use plain
-    // http and skip the private/loopback/link-local IP-range rejection. Empty
-    // (deny-by-default) unless explicitly configured, e.g. for internal test targets.
+    // Webhook SSRF guard. OFF by default: Syngrisi is self-hosted and webhooks
+    // to localhost / internal http services are a legitimate, long-supported use
+    // case. Set to true on internet-exposed deployments to enforce https-only +
+    // reject private/loopback/link-local targets (with SYNGRISI_WEBHOOK_ALLOWED_HOSTS
+    // as the escape hatch).
+    SYNGRISI_WEBHOOK_SSRF_PROTECTION: bool({ default: false }),
+    // Comma-separated hostname allowlist that may use plain http and skip the
+    // private/loopback/link-local IP-range rejection when SSRF protection is on.
     SYNGRISI_WEBHOOK_ALLOWED_HOSTS: str({ default: '' }),
 });

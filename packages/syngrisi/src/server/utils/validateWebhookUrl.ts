@@ -69,12 +69,22 @@ const parseAllowlist = (): Set<string> => {
     );
 };
 
-export const validateWebhookUrl = async (raw: string): Promise<URL> => {
+export const validateWebhookUrl = async (
+    raw: string,
+    opts: { ssrfProtection?: boolean } = {},
+): Promise<URL> => {
     let parsed: URL;
     try {
         parsed = new URL(raw);
     } catch {
         return reject('not a valid URL');
+    }
+
+    // SSRF protection is opt-in (self-hosted default allows localhost/internal
+    // http webhooks). When off, only the parseability check above applies.
+    const ssrfProtection = opts.ssrfProtection ?? env.SYNGRISI_WEBHOOK_SSRF_PROTECTION;
+    if (!ssrfProtection) {
+        return parsed;
     }
 
     const host = parsed.hostname;
