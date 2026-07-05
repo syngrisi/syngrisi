@@ -17,6 +17,7 @@
 
     /* Module Resolution Options */
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "esModuleInterop": true,
 
     /* Advanced Options */
