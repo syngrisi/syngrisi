@@ -5,12 +5,12 @@ import { Response } from 'express';
 // shaping that's specific to this report and not worth abstracting into a generic
 // service function. Simple lookups (Check by id, Run by id, triage-enabled app ids)
 // are routed through their services.
-import { Check, Test } from '@models';
+import { findByRun as findTestsByRun } from '@services/test.service';
 import { catchAsync, ApiError } from '@utils';
 import { config } from '@config';
 import fs from 'fs';
 import path from 'path';
-import { accept, remove, getById as getCheckById, paginate as paginateChecks } from '@services/check.service';
+import { accept, remove, getById as getCheckById, paginate as paginateChecks, findByRun as findChecksByRun, findForTriageQueue } from '@services/check.service';
 import { getById as getRunById } from '@services/run.service';
 import { getTriageEnabledAppIds } from '@services/app.service';
 import { webhookService } from '@services/webhook.service';
@@ -251,8 +251,8 @@ const getRunReport = catchAsync(async (req: ExtRequest, res: Response) => {
     // Ad-hoc report shaping (select/lean, cross-referencing tests+checks) — kept as
     // direct model queries per plan 022's allowance for one-off report queries.
     const [tests, checks] = await Promise.all([
-        Test.find({ run: runId }).select('_id name status').lean().exec() as Promise<any[]>,
-        Check.find({ run: runId }).select('_id name status test diffId markedAs createdDate').lean().exec() as Promise<any[]>,
+        findTestsByRun(runId, '_id name status') as Promise<any[]>,
+        findChecksByRun(runId, '_id name status test diffId markedAs createdDate') as Promise<any[]>,
     ]);
 
     const statuses: Record<string, number> = {};
@@ -372,12 +372,7 @@ const triageQueue = catchAsync(async (req: ExtRequest, res: Response) => {
     if (pendingOnly) filter['triage.pending'] = true;
     // Ad-hoc select/populate/sort/limit shaping for the queue view — kept as a direct
     // model query per plan 022's allowance for one-off report queries.
-    const checks = await Check.find(filter)
-        .select('name run test status triage createdDate')
-        .populate('run', 'name createdDate')
-        .sort({ createdDate: -1 })
-        .limit(1000)
-        .exec();
+    const checks = await findForTriageQueue(filter);
 
     const runsMap = new Map<string, any>();
     for (const c of checks as any[]) {
