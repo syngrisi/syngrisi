@@ -5,7 +5,18 @@
  * @module PlaywrightDriver
  */
 import { createHash } from 'node:crypto'
-import { SyngrisiApi, SessionResponse, ErrorObject, SnapshotResponse, Snapshot, CheckResponse, DomNode, paramsGuard } from '@syngrisi/core-api'
+import {
+    SyngrisiApi,
+    SessionResponse,
+    ErrorObject,
+    SnapshotResponse,
+    Snapshot,
+    CheckResponse,
+    DomNode,
+    paramsGuard,
+    CheckParams as CheckOptions,
+    CheckParamsSchema as CheckOptionsSchema,
+} from '@syngrisi/core-api'
 import { Browser, Page } from '@playwright/test'
 import { ViewportSize } from 'playwright-core'
 import { LogLevelDesc } from 'loglevel'
@@ -14,7 +25,6 @@ import {
     BaselineParams,
     BaselineParamsSchema,
 } from './schemas/Baseline.schema'
-import { CheckOptions, CheckOptionsSchema } from './schemas/Check.schema'
 import { BrowserName, CheckParams, Config, Params } from '../types'
 import { SessionParams, SessionParamsSchema } from './schemas/SessionParams.schema'
 import { getBrowserFullVersion, getBrowserName, getBrowserVersion, getOS, getViewport } from './lib/pwHelpers'
