@@ -4,7 +4,7 @@
  * Manages RCA (Root Cause Analysis) state and data fetching.
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { RCAService } from '@shared/services';
 import { diffDOMTrees } from '@shared/utils/domDiff';
 import {
@@ -51,6 +51,10 @@ export function useRCA(options: UseRCAOptions): UseRCAReturn {
 
     const { checkId, baselineId, apikey, shareToken } = options;
 
+    // Monotonic request id: only the most recent fetch may commit its result,
+    // so rapid check navigation cannot land a stale check's DOM diff into state.
+    const requestIdRef = useRef(0);
+
     /**
      * Fetch DOM snapshots and perform diff analysis
      */
@@ -64,6 +68,7 @@ export function useRCA(options: UseRCAOptions): UseRCAReturn {
             return;
         }
 
+        const requestId = ++requestIdRef.current;
         setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
         try {
@@ -73,6 +78,7 @@ export function useRCA(options: UseRCAOptions): UseRCAReturn {
                 apikey,
                 shareToken,
             });
+            if (requestId !== requestIdRef.current) return; // superseded
 
             if (!actual) {
                 setState((prev) => ({
@@ -85,6 +91,7 @@ export function useRCA(options: UseRCAOptions): UseRCAReturn {
 
             // Perform diff analysis
             const diffResult = diffDOMTrees(baseline, actual);
+            if (requestId !== requestIdRef.current) return; // superseded
 
             setState((prev) => ({
                 ...prev,
@@ -95,6 +102,7 @@ export function useRCA(options: UseRCAOptions): UseRCAReturn {
                 error: null,
             }));
         } catch (error) {
+            if (requestId !== requestIdRef.current) return; // superseded
             setState((prev) => ({
                 ...prev,
                 isLoading: false,

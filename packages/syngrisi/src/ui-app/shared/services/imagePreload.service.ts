@@ -103,7 +103,12 @@ class ImagePreloadService {
             log.debug(`[ImagePreload] getPreloadedImage returning null. Cache size: ${this.preloadedImages.size}`);
             return null;
         }
-        return this.preloadedImages.get(src)?.image || null;
+        // Refresh recency: re-insert so this becomes the most-recently-used key
+        // (Map preserves insertion order; ensureCacheSize evicts the oldest key).
+        const entry = this.preloadedImages.get(src)!;
+        this.preloadedImages.delete(src);
+        this.preloadedImages.set(src, entry);
+        return entry.image;
     }
 
     /**
@@ -228,7 +233,9 @@ class ImagePreloadService {
     }
 
     /**
-     * Ensure cache doesn't exceed max size (LRU eviction)
+     * Ensure cache doesn't exceed max size. Evicts the least-recently-used
+     * entry: getPreloadedImage() re-inserts on every hit, so the first key in
+     * the Map is always the least-recently-used one.
      */
     private ensureCacheSize(): void {
         if (this.preloadedImages.size >= this.config.maxCacheSize) {

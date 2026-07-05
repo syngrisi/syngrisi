@@ -68,6 +68,18 @@ export function CheckDetails({
     const currentCheck = initCheckData;
     const textLoader = <Loader size="xs" color="blue" variant="dots" />;
 
+    // Parse the check result JSON exactly once; malformed JSON must not crash
+    // the whole view (there is no error boundary at this level).
+    const parsedCheckResult = useMemo<any>(() => {
+        if (!currentCheck?.result) return null;
+        try {
+            return JSON.parse(currentCheck.result);
+        } catch (e) {
+            log.warn(`[CheckDetails] Failed to parse check result JSON: ${e}`);
+            return null;
+        }
+    }, [currentCheck?.result]);
+
     // Fetch baseline document to get the correct baselineId (needed for RCA)
     // Note: currentCheck.baselineId._id is the Snapshot ID, not Baseline document ID!
     const baselineQuery = useQuery({
@@ -113,7 +125,7 @@ export function CheckDetails({
 
     const toleranceThreshold = useMemo<number>(() => {
         // Priority: applied threshold from check result (reflects actual comparison) > baseline setting
-        const parsed = currentCheck?.result ? JSON.parse(currentCheck?.result) : null;
+        const parsed = parsedCheckResult;
         if (parsed?.appliedToleranceThreshold !== undefined) {
             const value = Number(parsed.appliedToleranceThreshold);
             if (Number.isFinite(value) && value >= 0) return value;
@@ -123,12 +135,12 @@ export function CheckDetails({
             return Number.isFinite(value) ? value : 0;
         }
         return 0;
-    }, [baselineQuery.data?.timestamp, currentCheck?.result]);
+    }, [baselineQuery.data?.timestamp, parsedCheckResult]);
 
     const toleranceSource = useMemo<'api' | 'baseline' | undefined>(() => {
-        const parsed = currentCheck?.result ? JSON.parse(currentCheck?.result) : null;
+        const parsed = parsedCheckResult;
         return parsed?.toleranceSource || undefined;
-    }, [currentCheck?.result]);
+    }, [parsedCheckResult]);
 
     // RCA (Root Cause Analysis) hook - uses correct Baseline document ID
     const rca = useRCA({
@@ -146,7 +158,7 @@ export function CheckDetails({
         }
     }, [initCheckData?._id]);
 
-    const currentCheckSafe = {
+    const currentCheckSafe = useMemo(() => ({
         _id: currentCheck?._id,
         name: currentCheck?.name || '',
         status: currentCheck?.status || '',
@@ -181,12 +193,12 @@ export function CheckDetails({
             filename: currentCheck?.diffId?.filename,
         },
 
-        parsedResult: currentCheck?.result ? JSON.parse(currentCheck?.result) : null,
+        parsedResult: parsedCheckResult,
         // Add enriched flags for AcceptButton icon state
         isCurrentlyAccepted: currentCheck?.isCurrentlyAccepted,
         wasAcceptedEarlier: currentCheck?.wasAcceptedEarlier,
         triage: currentCheck?.triage,
-    };
+    }), [currentCheck, parsedCheckResult, textLoader]);
 
     const [triageRunning, setTriageRunning] = useState(false);
     const handleRunTriage = async () => {
