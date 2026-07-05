@@ -55,12 +55,15 @@ const UserSchema = new Schema<UserDocument>({
     },
     password: {
         type: String,
+        private: true,
     },
     token: {
         type: String,
+        private: true,
     },
     apiKey: {
         type: String,
+        private: true,
     },
     authSource: {
         type: String,
@@ -89,6 +92,13 @@ UserSchema.statics.isEmailTaken = async function (username, excludeUserId) {
 UserSchema.plugin(toJSON);
 UserSchema.plugin(paginate);
 UserSchema.plugin(passportLocalMongoose, { hashField: 'password' });
+
+// passport-local-mongoose remaps its hash field onto `password` (hashField:
+// 'password') by re-adding the path via `schema.add(...)`, which replaces the
+// path's SchemaType and drops the `private: true` option declared above. Restore
+// it so the shared `toJSON` plugin keeps stripping the password hash from every
+// serialized user, matching `token`/`apiKey` (which the plugin does not touch).
+(UserSchema.path('password').options as { private?: boolean }).private = true;
 
 const User: Model<UserDocument> = mongoose.model<UserDocument>('VRSUser', UserSchema);
 

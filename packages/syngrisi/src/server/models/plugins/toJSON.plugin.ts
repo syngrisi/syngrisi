@@ -31,6 +31,9 @@ const toJSON = (schema: any): void => {
       delete ret.__v;
       delete ret.createdAt;
       delete ret.updatedAt;
+      // passport-local-mongoose adds `salt` at runtime with no schema path,
+      // so the private-path stripping above can't reach it. Only User has it.
+      delete ret.salt;
       if (transform) {
         return transform(doc, ret, options);
       }
