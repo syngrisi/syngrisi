@@ -19,6 +19,21 @@ const logMeta: LogOpts = { scope: 'saml-provider', msgType: 'SSO' };
 export const SAML_STRATEGY_NAME = 'saml';
 
 /**
+ * Resolve SAML signature-verification flags.
+ * Both signed AuthnResponse and signed assertions are required unless the operator
+ * explicitly opts out via SSO_SAML_ALLOW_UNSIGNED (which disables a core control).
+ */
+export function resolveSamlSigning(allowUnsigned: boolean): {
+    wantAuthnResponseSigned: boolean;
+    wantAssertionsSigned: boolean;
+} {
+    return {
+        wantAuthnResponseSigned: !allowUnsigned,
+        wantAssertionsSigned: !allowUnsigned,
+    };
+}
+
+/**
  * Normalize SAML assertion profile to common format
  */
 function normalizeSAMLProfile(profile: any): NormalizedProfile {
@@ -168,21 +183,34 @@ class SAMLProvider implements SSOProvider {
             ? `${issuer.slice(0, -1)}${callbackPath}`
             : `${issuer}${callbackPath}`;
 
+        const signing = resolveSamlSigning(env.SSO_SAML_ALLOW_UNSIGNED);
         const samlConfig: any = {
             entryPoint,
             issuer,
             idpCert: cert, // v5: renamed from 'cert' to 'idpCert'
             callbackUrl,
             passReqToCallback: true,
-            // Signature validation: match previous passport-saml v3 behavior
-            // Set to true for stricter security with IdPs that support signed assertions
-            wantAssertionsSigned: false,
-            wantAuthnResponseSigned: false,
+            wantAuthnResponseSigned: signing.wantAuthnResponseSigned,
+            wantAssertionsSigned: signing.wantAssertionsSigned,
         };
+
+        if (env.SSO_SAML_ALLOW_UNSIGNED) {
+            log.warn(
+                'SAML signature verification is DISABLED (SSO_SAML_ALLOW_UNSIGNED=true) — '
+                + 'the service will accept UNSIGNED SAML responses/assertions. This is insecure.',
+                logMeta,
+            );
+        }
 
         // Add IdP issuer if configured (for issuer validation)
         if (idpIssuer) {
             samlConfig.idpIssuer = idpIssuer;
+        } else {
+            log.warn(
+                'SAML idpIssuer is not set (SSO_IDP_ISSUER / metadata entityID) — '
+                + 'IdP issuer will not be validated. Set it for stricter security.',
+                logMeta,
+            );
         }
 
         log.debug('SAML config', { ...logMeta, callbackUrl, hasIdpIssuer: !!idpIssuer });

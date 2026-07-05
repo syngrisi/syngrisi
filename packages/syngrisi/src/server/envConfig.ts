@@ -91,6 +91,10 @@ export const env = cleanEnv(process.env, {
     SSO_CERT: str({ default: '' }),
     SSO_IDP_ISSUER: str({ default: '' }),
     SSO_IDP_METADATA_URL: str({ default: '' }), // URL to fetch IdP metadata XML (alternative to manual SSO_ENTRY_POINT/SSO_CERT)
+    // SAML signature verification. Signed responses AND assertions are required by
+    // default. Set to true ONLY for a legacy IdP that cannot sign — this disables a
+    // core SAML security control (auth bypass risk). Emits a startup warning when on.
+    SSO_SAML_ALLOW_UNSIGNED: bool({ default: false }),
     // SSO user settings
     SSO_DEFAULT_ROLE: str({ choices: ['', 'user', 'admin', 'reviewer'], default: 'reviewer' }),
     SSO_AUTO_CREATE_USERS: bool({ default: true }),
