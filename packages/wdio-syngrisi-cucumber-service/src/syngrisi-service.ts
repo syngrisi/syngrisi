@@ -3,9 +3,19 @@ import logger from '@wdio/logger';
 
 const log = logger('wdio-syngrisi-cucumber-service');
 
+// `browser` is a WDIO runtime global injected into the test process; it is
+// not imported here to keep parity with the pre-migration JS source.
+declare const browser: any;
+
 // eslint-disable-next-line require-jsdoc
 // noinspection JSUnusedLocalSymbols
 export default class SyngrisiCucumberService {
+    options: any;
+
+    vDriver: any;
+
+    browser: any;
+
     // eslint-disable-next-line no-unused-vars
     // noinspection JSUnusedLocalSymbols
     // eslint-disable-next-line no-unused-vars

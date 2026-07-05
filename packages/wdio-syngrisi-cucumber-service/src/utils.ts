@@ -1,7 +1,5 @@
-const { faker } = require('@faker-js/faker');
+import { faker } from '@faker-js/faker';
 
-module.exports = {
-    generateRunName: () => faker.lorem.sentence(4)
-        .replace('.', ''),
-    generateRunIdent: () => faker.string.uuid(),
-};
+export const generateRunName = () => faker.lorem.sentence(4)
+    .replace('.', '');
+export const generateRunIdent = () => faker.string.uuid();
