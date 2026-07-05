@@ -40,6 +40,31 @@ jobs:
             packages/syngrisi/mvc/views/react/
           retention-days: 1
 
+  port-drift:
+    # Fail a PR that changes the core-api client contract without updating the
+    # Groovy/Python ports (keeps them at parity — see CLAUDE.md 'API Contract Parity').
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce core-api contract → port parity
+        run: |
+          if git log -1 --format='%B' | grep -q '\[skip-port-drift\]'; then
+            echo "[skip-port-drift] present — bypassing."; exit 0
+          fi
+          BASE="${{ github.event.pull_request.base.sha }}"
+          CHANGED=$(git diff --name-only "$BASE"...HEAD)
+          if ! echo "$CHANGED" | grep -qE '^packages/core-api/src/(Schemas|SyngrisiApi)\.ts$'; then
+            echo "core-api contract files unchanged — ok"; exit 0
+          fi
+          if echo "$CHANGED" | grep -qE '^packages/core-api-(groovy|python)/'; then
+            echo "core-api contract changed and ports updated — ok"; exit 0
+          fi
+          echo "::error::core-api contract (Schemas.ts / SyngrisiApi.ts) changed without updating the Groovy/Python ports. Update packages/core-api-groovy and packages/core-api-python to keep parity (see CLAUDE.md 'API Contract Parity'), or add [skip-port-drift] to the HEAD commit message for a contract-neutral change."
+          exit 1
+
   test-unit:
     runs-on: ubuntu-latest
     needs: build
