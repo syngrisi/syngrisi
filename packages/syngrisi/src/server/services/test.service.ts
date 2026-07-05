@@ -1,9 +1,9 @@
 import { Types } from 'mongoose';
 import { checkService } from './index';
-import { Test, Check } from '@models';
+import { Test, Check, TestDocument } from '@models';
 import log from "../lib/logger";
 import { RequestUser } from '@types';
-import { FilterQuery } from 'mongoose';
+import type { QueryFilter as FilterQuery } from 'mongoose';
 import { PaginateOptions, QueryResult } from '../models/plugins/utils';
 
 const toObjectId = (id: string) => {
@@ -45,7 +45,7 @@ type QueryTestsDeps = {
 };
 
 const queryTests = async (
-    filter: FilterQuery<typeof Test>,
+    filter: FilterQuery<TestDocument>,
     options: PaginateOptions,
     baselineSnapshotId?: string,
     deps: QueryTestsDeps = {},
@@ -64,7 +64,7 @@ const queryTests = async (
     return tests;
 };
 
-const queryTestsDistinct = async (filter: FilterQuery<typeof Test>, options: PaginateOptions) => {
+const queryTestsDistinct = async (filter: FilterQuery<TestDocument>, options: PaginateOptions) => {
     const tests = await Test.paginateDistinct({filter: filter ? JSON.stringify(filter) : null}, options);
     return tests;
 };

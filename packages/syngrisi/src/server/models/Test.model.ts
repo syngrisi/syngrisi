@@ -1,4 +1,5 @@
-import mongoose, { Schema, Document, Model, FilterQuery } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import type { QueryFilter as FilterQuery } from 'mongoose';
 import { toJSON, paginate } from './plugins';
 import { PluginExtededModel, PaginateOptions, QueryResult } from './plugins/utils';
 import { deserializeIfJSON } from '@utils';

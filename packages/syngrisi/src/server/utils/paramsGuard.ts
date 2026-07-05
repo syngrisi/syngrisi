@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ZodObject, SafeParseError } from 'zod';
+import { ZodObject } from 'zod';
+import type { ZodSafeParseError as SafeParseError } from 'zod';
 
 export const paramsGuard = (params: any, functionName: string, schema: ZodObject<any>) => {
     const result = schema.safeParse(params);
