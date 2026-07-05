@@ -393,6 +393,18 @@ const accept = async (
     return enrichedCheck;
 };
 
+// Returns the snapshot ids a check owns, each gated on its OWN field.
+// Order preserved: baseline, actual, diff (matches prior removal order).
+export const collectCheckSnapshotIds = (
+    check: Pick<CheckDocument, 'baselineId' | 'actualSnapshotId' | 'diffId'>,
+): string[] => {
+    const ids: string[] = [];
+    if (check.baselineId) ids.push(check.baselineId.toString());
+    if (check.actualSnapshotId) ids.push(check.actualSnapshotId.toString());
+    if (check.diffId) ids.push(check.diffId.toString());
+    return ids;
+};
+
 async function removeCheck(id: string, user: RequestUser): Promise<CheckDocument> {
     const logMeta = {
         scope: 'removeCheck',
@@ -419,19 +431,9 @@ async function removeCheck(id: string, user: RequestUser): Promise<CheckDocument
         await orm.updateItemDate('VRSSuite', check.suite);
         await test.save();
 
-        if (check.baselineId && String(check.baselineId) !== 'undefined') {
-            log.debug(`try to remove the snapshot, baseline: ${check.baselineId}`, logMeta);
-            await snapshotService.remove(check.baselineId.toString());
-        }
-
-        if (check.actualSnapshotId && String(check.baselineId) !== 'undefined') {
-            log.debug(`try to remove the snapshot, actual: ${check.actualSnapshotId}`, logMeta);
-            await snapshotService.remove(check.actualSnapshotId.toString());
-        }
-
-        if (check.diffId && String(check.baselineId) !== 'undefined') {
-            log.debug(`try to remove snapshot, diff: ${check.diffId}`, logMeta);
-            await snapshotService.remove(check.diffId.toString());
+        for (const snapshotId of collectCheckSnapshotIds(check)) {
+            log.debug(`try to remove the snapshot: ${snapshotId}`, logMeta);
+            await snapshotService.remove(snapshotId);
         }
 
         // Remove DOM snapshots associated with the check
