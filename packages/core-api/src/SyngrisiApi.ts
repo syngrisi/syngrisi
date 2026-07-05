@@ -1,5 +1,3 @@
-import FormData from 'form-data'
-import got from 'got-cjs'
 import { createHash } from 'node:crypto'
 import log from 'loglevel'
 import { LogLevelDesc } from 'loglevel'
@@ -42,6 +40,40 @@ const isDomDataDisabled = (): boolean => {
  */
 function hasha(input: string): string {
     return createHash('sha512').update(input).digest('hex')
+}
+
+/**
+ * Performs an HTTP request using the native `fetch` API and returns the parsed JSON body.
+ * Mimics the error shape that `got` used to throw so downstream error handling
+ * (which inspects `e.response.statusCode` / `e.response.body`) keeps working unchanged.
+ *
+ * @throws {Error} An error with a `response` property (`statusCode`, `statusMessage`, `body`)
+ *                 when the server responds with a non-2xx status code.
+ */
+async function requestJson(url: string, init: RequestInit): Promise<any> {
+    const res = await fetch(url, init)
+
+    const text = await res.text()
+    let parsedBody: any
+    if (text) {
+        try {
+            parsedBody = JSON.parse(text)
+        } catch {
+            parsedBody = text
+        }
+    }
+
+    if (!res.ok) {
+        const err: any = new Error(`Response code ${res.status} (${res.statusText})`)
+        err.response = {
+            statusCode: res.status,
+            statusMessage: res.statusText,
+            body: parsedBody,
+        }
+        throw err
+    }
+
+    return parsedBody
 }
 
 /**
@@ -157,17 +189,18 @@ class SyngrisiApi {
             const form = new FormData()
             const required = ['run', 'suite', 'runident', 'name', 'viewport', 'browser', 'browserVersion', 'os', 'app']
             // @ts-ignore
-            required.forEach(param => form.append(param, params[param]))
+            required.forEach(param => form.append(param, String(params[param])))
 
             // optional
             if (params.tags) form.append('tags', JSON.stringify(params.tags))
             if (params.branch) form.append('branch', params.branch)
             if (params.commit) form.append('commit', params.commit)
 
-            return got.post(this.url('startSession'), {
+            return requestJson(this.url('startSession'), {
+                method: 'POST',
                 body: form,
                 headers: this.headers,
-            }).json() as Promise<SessionResponse>
+            }) as Promise<SessionResponse>
         }, 'startSession', '❌ Error posting start session data')
     }
 
@@ -181,10 +214,11 @@ class SyngrisiApi {
     public async stopSession(testId: string): Promise<SessionResponse | ErrorObject> {
         return this.requestWithRetry(async () => {
             const form = new FormData()
-            return got.post(`${this.url('stopSession')}/${testId}`, {
+            return requestJson(`${this.url('stopSession')}/${testId}`, {
+                method: 'POST',
                 body: form,
                 headers: this.headers,
-            }).json() as Promise<SessionResponse>
+            }) as Promise<SessionResponse>
         }, 'stopSession', `❌ Error posting stop session data for test: '${testId}'`)
     }
 
@@ -299,7 +333,7 @@ class SyngrisiApi {
                 // @ts-ignore
                 if (params[key] !== undefined && params[key] !== null) {
                     // @ts-ignore
-                    form.append(fieldsMapping[key], params[key])
+                    form.append(fieldsMapping[key], String(params[key]))
                 }
             })
 
@@ -315,12 +349,13 @@ class SyngrisiApi {
             }
 
             if (hashCode) form.append('hashcode', hashCode)
-            if (imageBuffer) form.append('file', imageBuffer, 'file')
+            if (imageBuffer) form.append('file', new Blob([new Uint8Array(imageBuffer)]), 'file')
 
-            return got.post(url, {
+            return requestJson(url, {
+                method: 'POST',
                 body: form,
                 headers: requestHeaders,
-            }).json() as Promise<CheckResponse>
+            }) as Promise<CheckResponse>
         }, 'createCheck', `❌ Error posting create check data params: '${JSON.stringify(params)}'`)
     }
 
@@ -329,7 +364,7 @@ class SyngrisiApi {
             ? `${this.url('getIdent')}?apikey=${this.config.apiHash}`
             : `${this.url('getIdent')}`
         return this.requestWithRetry(
-            () => got(url, { headers: this.headers }).json() as Promise<string[]>,
+            () => requestJson(url, { headers: this.headers }) as Promise<string[]>,
             'getIdent',
             '❌ Error getting ident data'
         )
@@ -361,7 +396,7 @@ class SyngrisiApi {
             : `${this.url('baselines')}?filter=${filter}`
 
         return this.requestWithRetry(
-            () => got(url, { headers: this.headers }).json() as Promise<BaselineResponse>,
+            () => requestJson(url, { headers: this.headers }) as Promise<BaselineResponse>,
             'getBaselines',
             `❌ Error getting baselines, params: '${JSON.stringify(params)}' data`
         )
@@ -392,7 +427,7 @@ class SyngrisiApi {
             : `${this.url('snapshots')}?filter=${filter}`
 
         return this.requestWithRetry(
-            () => got.get(url, { headers: this.headers }).json() as Promise<SnapshotResponse>,
+            () => requestJson(url, { headers: this.headers }) as Promise<SnapshotResponse>,
             'getSnapshots',
             `❌ Error getting snapshots, params: '${JSON.stringify(params)}' data`
         )
@@ -421,10 +456,11 @@ class SyngrisiApi {
 
         return this.requestWithRetry(async () => {
             const url = `${this.config.url}v1/checks/${checkId}/accept`
-            return got.put(url, {
-                json: { baselineId },
-                headers: this.headers,
-            }).json() as Promise<CheckResponse>
+            return requestJson(url, {
+                method: 'PUT',
+                body: JSON.stringify({ baselineId }),
+                headers: { ...this.headers, 'content-type': 'application/json' },
+            }) as Promise<CheckResponse>
         }, 'acceptCheck', `❌ Error accepting check, checkId: '${checkId}', baselineId: '${baselineId}'`)
     }
 
@@ -452,10 +488,11 @@ class SyngrisiApi {
         const url = `${this.config.url}v1/baselines/${baselineId}`
 
         return this.requestWithRetry(async () => {
-            return got.put(url, {
-                json: updates,
-                headers: this.headers,
-            }).json()
+            return requestJson(url, {
+                method: 'PUT',
+                body: JSON.stringify(updates),
+                headers: { ...this.headers, 'content-type': 'application/json' },
+            })
         }, 'updateBaseline', `❌ Error updating baseline, baselineId: '${baselineId}', updates: '${JSON.stringify(updates)}'`)
     }
 }
