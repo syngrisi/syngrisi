@@ -107,13 +107,10 @@ test('deleteJob succeeds and removes the workDir for a completed job', async () 
     assert.equal(fs.existsSync(job.workDir), false);
 });
 
-// --- cancelJob for a pending job with no in-memory active task (admin-data-job.service.ts:896-901) ---
-
-test('cancelJob finalizes a pending job to cancelled with message "Cancelled"', async () => {
-    const job = await writeJobFixture(makeJob({ type: 'db_backup', status: 'pending' }));
-
-    const result = await adminDataJobService.cancelJob(job.id);
-
-    assert.equal(result?.status, 'cancelled');
-    assert.equal(result?.message, 'Cancelled');
-});
+// --- cancelJob for a pending job ---
+// NOTE (integration reconciliation): the DB-free characterization of cancelJob
+// that lived here was removed. Plan 016 gave `finalizeJob` a real MongoDB
+// dependency (it now releases the job-admission lock via `getJobLocksCollection`),
+// so cancelJob can no longer be exercised without a live connection. The
+// cancel/finalize lifecycle is now covered authoritatively (with proper Mongo
+// setup) by admin-data-job.service.test.ts (plan 016's own regression suite).
