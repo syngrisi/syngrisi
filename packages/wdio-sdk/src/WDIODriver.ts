@@ -14,7 +14,8 @@ import {
     BaselineResponse,
     SnapshotResponse,
     CheckResponse,
-    collectDomTree
+    collectDomTree,
+    paramsGuard
 } from '@syngrisi/core-api'
 import {
     BaselineParamsSchema,
@@ -23,7 +24,6 @@ import {
 import { CheckParams, Config } from './types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getBrowserFullVersion, getBrowserName, getBrowserVersion, getOS, getViewport } from './lib/wdioHelpers'
-import { paramsGuard } from './lib/paramsGuard'
 
 const log = logger('syngrisi-wdio-sdk')
 // 0 | 4 | 2 | 1 | 3 | 5 | "trace" | "debug" | "info" | "warn" | "error" |
