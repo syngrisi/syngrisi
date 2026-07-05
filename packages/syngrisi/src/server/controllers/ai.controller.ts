@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Response } from 'express';
-import { Check, Webhook, App, Run, Test } from '@models';
+import { Check, App, Run, Test } from '@models';
 import { catchAsync, ApiError, escapeHtml } from '@utils';
 import { config } from '@config';
 import fs from 'fs';
@@ -12,6 +12,7 @@ import { HttpStatus } from '@utils';
 import { triageCheck, cancelCheck, requeueCheck } from '@services/triage';
 import { createProvider } from '@services/triage/factory';
 import { getProviderConfig } from '@services/triage/config';
+import { webhookService } from '@services/webhook.service';
 
 const htmlShell = (title: string, content: string) => {
     const safeTitle = escapeHtml(title);
@@ -590,8 +591,9 @@ const batchUpdate = catchAsync(async (req: ExtRequest, res: Response) => {
 
 const registerWebhook = catchAsync(async (req: ExtRequest, res: Response) => {
     const { url, events, secret } = req.body;
-    const webhook = await Webhook.create({ url, events, secret });
-    res.status(201).json(webhook);
+    const webhook = await webhookService.createWebhook({ url, events, secret });
+    const { secret: _omit, ...safe } = webhook.toJSON();
+    res.status(201).json(safe);
 });
 
 // Re-run AI triage for a single check (toolbar "re-run" action). Returns the persisted triage.
