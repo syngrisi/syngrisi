@@ -60,6 +60,22 @@ When(
     },
 );
 
+// Assert the project's persisted retention settings (used to confirm a UI Save round-tripped
+// through PATCH /v1/app/:id/triage-policy to the App document).
+Then(
+    'the project {string} retention is enabled {string} days {string}',
+    async (
+        { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+        project: string,
+        enabled: string,
+        days: string,
+    ) => {
+        const app = await getAppByName(appServer, testData, project);
+        expect(String(app.retentionEnabled)).toBe(enabled);
+        expect(String(app.retentionDays)).toBe(days);
+    },
+);
+
 // Set the project's per-project retention (auto-delete old checks) via the same
 // PATCH /v1/app/:id/triage-policy endpoint (retentionEnabled / retentionDays fields — see
 // AppTriagePolicy.schema.ts / app.controller.ts).

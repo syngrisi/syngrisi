@@ -42,3 +42,49 @@ Feature: Promote baselines from a feature branch to the project's main branch
             """
 
         And I expect via http that "PromoteCheck" "baseline" exist exactly "2" times
+
+    Scenario: Promoting from the run kebab menu copies accepted baselines to main
+        When I open the app
+        When I clear local storage
+        Given I create "1" tests with:
+            """
+            testName: UiFeatureTest
+            project: PromotionUiApp
+            runName: feature-ui
+            branch: feature-ui
+            checks:
+              - checkName: UiPromoteCheck
+                filePath: files/A.png
+            """
+        When I accept via http the 1st check with name "UiPromoteCheck"
+        And the project "PromotionUiApp" has main branch "main"
+
+        # open the run's kebab menu and promote
+        When I go to "main" page
+        When I wait 10 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'feature-ui')]" to be visible
+        When I click element with locator "[data-item-name='feature-ui'] button"
+        When I wait 6 seconds for the element with locator "[data-test='run-promote-baselines']" to be visible
+        When I click element with locator "[data-test='run-promote-baselines']"
+        When I wait 6 seconds for the element with locator "[data-test='run-promote-confirm']" to be visible
+        When I click element with locator "[data-test='run-promote-confirm']"
+
+        # success toast, and main now has its own accepted baseline for the same ident
+        When I wait 10 seconds for the element with locator "//*[contains(@class,'mantine-Notification-body')]//div[contains(text(),'Promoted')]" to be visible
+        Then I expect via http that "UiPromoteCheck" "baseline" exist exactly "2" times
+
+        # main compares directly against the promoted baseline (no fallback needed)
+        Given I create "1" tests with:
+            """
+            testName: UiMainTest
+            project: PromotionUiApp
+            branch: main
+            checks:
+              - checkName: UiPromoteCheck
+                filePath: files/A.png
+            """
+        Then I expect via http 1st check filtered as "name=UiPromoteCheck" matched:
+            """
+            name: UiPromoteCheck
+            branch: main
+            status: [passed]
+            """
