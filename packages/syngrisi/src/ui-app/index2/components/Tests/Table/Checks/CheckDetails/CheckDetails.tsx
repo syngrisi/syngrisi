@@ -158,7 +158,7 @@ export function CheckDetails({
         }
     }, [initCheckData?._id]);
 
-    const currentCheckSafe = {
+    const currentCheckSafe = useMemo(() => ({
         _id: currentCheck?._id,
         name: currentCheck?.name || '',
         status: currentCheck?.status || '',
@@ -198,7 +198,7 @@ export function CheckDetails({
         isCurrentlyAccepted: currentCheck?.isCurrentlyAccepted,
         wasAcceptedEarlier: currentCheck?.wasAcceptedEarlier,
         triage: currentCheck?.triage,
-    };
+    }), [currentCheck, parsedCheckResult, textLoader]);
 
     const [triageRunning, setTriageRunning] = useState(false);
     const handleRunTriage = async () => {
