@@ -1,5 +1,11 @@
 # @syngrisi/playwright-sdk
 
+## 3.14.1
+
+### Patch Changes
+
+-   @syngrisi/core-api@3.14.1
+
 ## 3.14.0
 
 ### Patch Changes
