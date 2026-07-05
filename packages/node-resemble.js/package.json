@@ -3,13 +3,14 @@
   "version": "3.14.1",
   "description": "Image analysis and comparison for nodejs",
   "main": "resemble.js",
+  "types": "resemble.d.ts",
   "engines": {
     "node": ">=22.19.0"
   },
   "scripts": {
     "test": "jasmine resemble.spec.js",
     "test:auto": "chokidar 'resemble.js' 'resemble.spec.js' -c 'jasmine resemble.spec.js'",
-    "build": "echo build",
+    "build": "echo \"node-resemble.js ships raw resemble.js by design; see README\" && exit 0",
     "release": "release-it --github.release",
     "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
   },
@@ -43,7 +44,8 @@
     "jasmine": "^6.3.0"
   },
   "files": [
-    "resemble.js"
+    "resemble.js",
+    "resemble.d.ts"
   ],
   "gitHead": "12bfda406cbe5aaccf3f17fdab02a9bd1a9d6343"
 }

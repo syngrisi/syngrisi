@@ -10,11 +10,15 @@
   "bugs": {
     "url": "https://github.com/syngrisi/syngrisi/issues"
   },
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "engines": {
     "node": ">=22.19.0"
   },
   "scripts": {
+    "build": "run-s clean compile",
+    "clean": "rimraf ./dist",
+    "compile": "tsc -p ./tsconfig.json",
     "test": "vitest run",
     "pub": "np",
     "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
@@ -32,10 +36,14 @@
     "@wdio/logger": "^9.18.0"
   },
   "devDependencies": {
-    "vitest": "^4.1.9"
+    "vitest": "^4.1.9",
+    "@types/node": "^26.0.0",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^6.1.3",
+    "typescript": "^6.0.3"
   },
   "files": [
-    "src"
+    "dist"
   ],
   "gitHead": "12bfda406cbe5aaccf3f17fdab02a9bd1a9d6343"
 }

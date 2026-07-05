@@ -1,16 +1,29 @@
 /* eslint-disable require-jsdoc */
 /* global document */
-const logger = require('@wdio/logger').default;
-const { renderDebugMsg } = require('./utils');
+import logger from '@wdio/logger';
+import { renderDebugMsg } from './utils';
+
 const log = logger('wdio-cucumber-viewport-logger-service');
+
+// `browser` is a WDIO runtime global injected into the test process; it is
+// not imported here to keep parity with the pre-migration JS source.
+declare const browser: any;
 
 // eslint-disable-next-line require-jsdoc
 // noinspection JSUnusedLocalSymbols
 class ViewportLoggerService {
+    options: any;
+
+    scenario: any;
+
+    feature: any;
+
+    browser: any;
+
     // eslint-disable-next-line no-unused-vars
     // noinspection JSUnusedLocalSymbols
     // eslint-disable-next-line no-unused-vars
-    constructor(serviceOptions, capabilities, config) {
+    constructor(serviceOptions?: any, capabilities?: any, config?: any) {
         log.trace('constructor START');
         log.debug(`service options: ${JSON.stringify(serviceOptions, null, '\t')}`);
         this.options = serviceOptions;
