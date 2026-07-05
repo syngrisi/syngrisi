@@ -11,11 +11,27 @@ const logOpts = {
     msgType: 'API',
 };
 
-const removeSnapshotFile = async (snapshot: SnapshotDocument) => {
-    let relatedSnapshots: SnapshotDocument[];
+export interface RemoveSnapshotFileDeps {
+    SnapshotModel?: typeof Snapshot;
+    unlink?: typeof fsp.unlink;
+}
+
+export const removeSnapshotFile = async (
+    snapshot: SnapshotDocument,
+    deps: RemoveSnapshotFileDeps = {},
+) => {
+    const SnapshotModel = deps.SnapshotModel ?? Snapshot;
+    const unlink = deps.unlink ?? fsp.unlink;
+
+    let relatedSnapshots: SnapshotDocument[] = [];
     if (snapshot.filename) {
-        relatedSnapshots = await Snapshot.find({ filename: snapshot.filename });
-        log.debug(`there are '${relatedSnapshots.length}' snapshots with filename: '${snapshot.filename}'`, logOpts);
+        // Exclude the snapshot being removed; it is still in the DB at this
+        // point. length === 0 => this was the LAST reference to the file.
+        relatedSnapshots = await SnapshotModel.find({
+            filename: snapshot.filename,
+            _id: { $ne: snapshot._id },
+        });
+        log.debug(`there are '${relatedSnapshots.length}' other snapshots with filename: '${snapshot.filename}'`, logOpts);
     }
 
     const isLastSnapshotFile = () => {
@@ -33,7 +49,7 @@ const removeSnapshotFile = async (snapshot: SnapshotDocument) => {
             msgType: 'REMOVE',
             itemType: 'file',
         });
-        await fsp.unlink(imagePath).catch((e) => {
+        await unlink(imagePath).catch((e) => {
             if (e.code !== 'ENOENT') throw e;
         });
     }
