@@ -53,7 +53,7 @@ router
     .route('/')
     .get(
         ensureLoggedIn(),
-        authorization('user') as Midleware,
+        authorization('admin') as Midleware,
         validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/users/'),
         usersController.get as Midleware
     )
