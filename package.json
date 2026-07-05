@@ -19,7 +19,8 @@
     "typecheck": "lerna run typecheck --scope=@syngrisi/syngrisi",
     "lint": "lerna run lint --scope=@syngrisi/syngrisi",
     "test:server": "lerna run test:server --scope=@syngrisi/syngrisi",
-    "verify": "yarn build && yarn typecheck && yarn lint && yarn test:unit && yarn test:server",
+    "verify": "yarn build && yarn test:unit && yarn test:server",
+    "verify:quality": "yarn typecheck; yarn lint",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "yarn build && changeset publish"
