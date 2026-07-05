@@ -70,10 +70,10 @@ export const config = {
         contentSecurityPolicy: {
             useDefaults: false,
             directives: {
-                defaultSrc: ["'self'", "*", "'unsafe-inline'", "'unsafe-eval'", "data:", "blob:"],
-                frameAncestors: ["'self'", "*"],
+                defaultSrc: ["'self'", "*", "'unsafe-inline'", "data:", "blob:"],
+                frameAncestors: ["'self'"],
                 frameSrc: ["'self'", "*"],
-                scriptSrc: ["'self'", "*", "'unsafe-inline'", "'unsafe-eval'"],
+                scriptSrc: ["'self'", "*", "'unsafe-inline'"],
                 styleSrc: ["'self'", "*", "'unsafe-inline'"],
                 imgSrc: ["'self'", "*", "data:", "blob:"],
                 fontSrc: ["'self'", "*", "data:"],
