@@ -26,6 +26,10 @@ after(async () => {
 });
 
 test('runs pending migrations once and records progress', async () => {
+    // runMigrations() skips everything when a *Test DB in TEST_MODE has zero
+    // collections (src/server/lib/migrations/index.ts). Seed one so this test
+    // exercises the real migration-running path instead of the skip.
+    await mongoose.connection.createCollection('_migration_test_seed');
     let counter = 0;
     const fakeMigrations: Migration[] = [
         { name: '0001-test-migration', up: async () => { counter += 1; } },
