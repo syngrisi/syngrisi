@@ -1,6 +1,12 @@
 import log from '@logger';
 import { env } from '@/server/envConfig';
 import { errMsg } from '@/server/utils';
+// NOTE (plan 022): this scheduler lives under lib/ but is a background job entrypoint
+// started from server.ts (like a controller), so it calls into @services to do its work.
+// Left as-is: services/check.service.ts and services/triage/index.ts already lazy-import
+// this module (dynamic import) specifically to avoid a load-time cycle with these static
+// imports — relocating the scheduler would mean reworking that existing mechanism, which
+// is out of scope for this behavior-preserving pass.
 import { isTriageEnabled } from '@services/triage/config';
 import { findUntriagedCheckIds, triageCheck } from '@services/triage';
 

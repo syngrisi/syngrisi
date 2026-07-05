@@ -4,7 +4,7 @@
  */
 
 import { Request, Response } from 'express';
-import { PluginSettings } from '@models';
+import * as pluginSettingsService from '@services/plugin-settings.service';
 import { getPluginManager } from '../plugins/core/PluginLoader';
 import log from '@logger';
 
@@ -17,7 +17,7 @@ export const getAllPluginSettings = async (req: Request, res: Response): Promise
     log.info('getAllPluginSettings: Request received', logOpts);
     try {
         // Get all plugin settings from DB
-        const dbSettings = await PluginSettings.find({});
+        const dbSettings = await pluginSettingsService.find({});
 
         // Get loaded plugins from PluginManager
         const pluginManager = getPluginManager();
@@ -28,7 +28,7 @@ export const getAllPluginSettings = async (req: Request, res: Response): Promise
 
         // Add DB-configured plugins
         for (const doc of dbSettings) {
-            const effectiveConfig = await PluginSettings.getEffectiveConfig(doc.pluginName);
+            const effectiveConfig = await pluginSettingsService.getEffectiveConfig(doc.pluginName);
             const loadedPlugin = loadedPlugins.get(doc.pluginName);
 
             plugins.push({
@@ -48,7 +48,7 @@ export const getAllPluginSettings = async (req: Request, res: Response): Promise
         // Add loaded plugins that don't have DB settings yet
         for (const [name, loadedPlugin] of loadedPlugins) {
             if (!dbSettings.find(d => d.pluginName === name)) {
-                const effectiveConfig = await PluginSettings.getEffectiveConfig(name);
+                const effectiveConfig = await pluginSettingsService.getEffectiveConfig(name);
                 plugins.push({
                     pluginName: name,
                     displayName: loadedPlugin.plugin.manifest.name,
@@ -78,8 +78,8 @@ export const getPluginSettings = async (req: Request, res: Response): Promise<vo
     try {
         const { pluginName } = req.params;
 
-        const doc = await PluginSettings.findOne({ pluginName });
-        const effectiveConfig = await PluginSettings.getEffectiveConfig(pluginName);
+        const doc = await pluginSettingsService.findOne({ pluginName });
+        const effectiveConfig = await pluginSettingsService.getEffectiveConfig(pluginName);
 
         const pluginManager = getPluginManager();
         const loadedPlugin = pluginManager.getPlugin(pluginName);
@@ -112,7 +112,7 @@ export const updatePluginSettings = async (req: Request, res: Response): Promise
 
         // Validate jwt-auth configuration if being enabled or updated
         if (pluginName === 'jwt-auth' && (enabled || settings)) {
-            const effectiveConfig = await PluginSettings.getEffectiveConfig(pluginName);
+            const effectiveConfig = await pluginSettingsService.getEffectiveConfig(pluginName);
             const newSettings = settings || effectiveConfig.config;
 
             // Check for required fields
@@ -148,8 +148,8 @@ export const updatePluginSettings = async (req: Request, res: Response): Promise
         if (description !== undefined) updates.description = description;
         if (settingsSchema !== undefined) updates.settingsSchema = settingsSchema;
 
-        const doc = await PluginSettings.upsertSettings(pluginName, updates);
-        const effectiveConfig = await PluginSettings.getEffectiveConfig(pluginName);
+        const doc = await pluginSettingsService.upsertSettings(pluginName, updates);
+        const effectiveConfig = await pluginSettingsService.getEffectiveConfig(pluginName);
 
         log.info(`Plugin settings updated: ${pluginName}`, logOpts);
 
@@ -183,7 +183,7 @@ export const togglePlugin = async (req: Request, res: Response): Promise<void> =
             return;
         }
 
-        const doc = await PluginSettings.upsertSettings(pluginName, { enabled });
+        const doc = await pluginSettingsService.upsertSettings(pluginName, { enabled });
 
         log.info(`Plugin ${pluginName} ${enabled ? 'enabled' : 'disabled'}`, logOpts);
 
@@ -218,11 +218,11 @@ export const registerPluginSchema = async (
 ): Promise<void> => {
     try {
         // Only update schema, don't override existing settings
-        const existing = await PluginSettings.findOne({ pluginName });
+        const existing = await pluginSettingsService.findOne({ pluginName });
 
         if (existing) {
             // Update schema but keep existing settings
-            await PluginSettings.updateOne(
+            await pluginSettingsService.updateOne(
                 { pluginName },
                 {
                     $set: {
@@ -239,7 +239,7 @@ export const registerPluginSchema = async (
             const initialEnabled = process.env[envEnabledKey]?.toLowerCase() === 'true';
 
             // Create new entry
-            await PluginSettings.create({
+            await pluginSettingsService.create({
                 pluginName,
                 displayName,
                 description,

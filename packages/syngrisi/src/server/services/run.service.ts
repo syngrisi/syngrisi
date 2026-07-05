@@ -5,6 +5,8 @@ import { RequestUser } from '@types';
 import { HttpStatus } from '@utils';
 import { ApiError } from '../utils';
 
+const getById = async (id: string) => Run.findById(id).exec();
+
 const remove = async (id: string, user: RequestUser) => {
    
     const logOpts = {
@@ -28,5 +30,6 @@ const remove = async (id: string, user: RequestUser) => {
 };
 
 export {
+    getById,
     remove,
 };

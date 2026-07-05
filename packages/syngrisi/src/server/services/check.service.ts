@@ -9,6 +9,7 @@ import {
 } from '@models';
 
 import { Types, Schema } from 'mongoose';
+import { PaginateOptions } from '@models/plugins/utils';
 import { calculateAcceptedStatus, buildIdentObject } from '@utils';
 import * as snapshotService from './snapshot.service';
 import { domSnapshotService } from './dom-snapshot.service';
@@ -612,10 +613,17 @@ const createCheckDocument = async (checkParams: any, session?: any): Promise<Che
     return check;
 };
 
-const getById = async (id: string) => Check.findById(id).exec();
+const getById = async (id: string, populate?: string) => {
+    const query = Check.findById(id);
+    if (populate) query.populate(populate);
+    return query.exec();
+};
+
+const paginate = async (filter: Record<string, unknown>, options: PaginateOptions) => Check.paginate(filter, options);
 
 export {
     getById,
+    paginate,
     accept,
     remove,
     update,
