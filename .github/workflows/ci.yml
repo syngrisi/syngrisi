@@ -110,12 +110,35 @@ jobs:
         with:
           name: build-artifacts
           path: packages/
-      - name: Typecheck (informational; 141-error backlog triaged separately)
-        run: yarn typecheck
-        continue-on-error: true
-      - name: Lint (informational; ~202-violation backlog triaged separately)
-        run: yarn lint
-        continue-on-error: true
+      # Ratchet gates: HARD-fail only when the pre-existing backlog GROWS. Green
+      # today (129 tsc / 267 lint); any new error/violation breaks CI. When you
+      # burn the backlog down, lower the baseline numbers below.
+      - name: Typecheck ratchet (must not exceed baseline)
+        working-directory: packages/syngrisi
+        run: |
+          TSC_BASELINE=129
+          OUT=$(yarn typecheck 2>&1) || true
+          if echo "$OUT" | grep -qE "error TS(5101|5103)"; then
+            echo "$OUT" | tail -5
+            echo "::error::typecheck hit a config-level error (TS5101/5103) — the ratchet cannot measure the real error count. Fix the tsc setup before relying on this gate."
+            exit 1
+          fi
+          COUNT=$(echo "$OUT" | grep -c "error TS" || true)
+          echo "tsc errors: $COUNT (baseline $TSC_BASELINE)"
+          if [ "$COUNT" -gt "$TSC_BASELINE" ]; then
+            echo "::error::TypeScript errors increased to $COUNT (baseline $TSC_BASELINE). Fix the new errors; if you legitimately reduced the count, lower TSC_BASELINE in .github/workflows/ci.yml."
+            exit 1
+          fi
+      - name: Lint ratchet (must not exceed baseline)
+        working-directory: packages/syngrisi
+        run: |
+          LINT_BASELINE=267
+          COUNT=$(yarn lint 2>&1 | grep -oE "[0-9]+ problems" | tail -1 | grep -oE "^[0-9]+" || echo 0)
+          echo "lint problems: $COUNT (baseline $LINT_BASELINE)"
+          if [ "$COUNT" -gt "$LINT_BASELINE" ]; then
+            echo "::error::Lint problems increased to $COUNT (baseline $LINT_BASELINE). Fix the new violations; if you reduced them, lower LINT_BASELINE in .github/workflows/ci.yml."
+            exit 1
+          fi
       - name: Server unit tests (HARD GATE)
         run: yarn test:server
         env:
