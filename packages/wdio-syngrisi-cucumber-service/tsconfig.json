@@ -3,6 +3,7 @@
     /* Basic Options */
     "target": "ES2020",
     "module": "es2020",
+    "types": ["node"],
     /* NOTE: module is "es2020" (not "commonjs") because the current Babel
        build emits ESM (import/export) and package.json has no
        "type": "module" field — this preserves the existing publish format.
@@ -21,6 +22,7 @@
 
     /* Module Resolution Options */
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "esModuleInterop": true,
 
     /* Advanced Options */
