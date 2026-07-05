@@ -1,7 +1,7 @@
 import { HttpStatus } from '@utils';
 import passport from 'passport';
 import { Response, NextFunction } from "express"
-import { User } from '@models';
+import { getUserByUsername } from '@services/user.service';
 import { catchAsync, errMsg, hashSync, generateApiKey } from '@utils';
 import log from "@logger";
 import { RequestUser, ExtRequest } from '@types';
@@ -28,7 +28,7 @@ const apikey = catchAsync(async (req: ExtRequest, res: Response) => {
 
     if (!req.user?.username) throw new Error(`Username is empty`);
 
-    const user = await User.findOne({ username: req.user.username });
+    const user = await getUserByUsername(req.user.username);
     if (!user) throw new Error(`cannot find the user with username: '${req.user.username}'`);
 
     user.apiKey = hash;
@@ -97,7 +97,7 @@ const changePassword = catchAsync(async (req: ExtRequest, res: Response) => {
 
     log.debug(`change password for '${username}'`, logOpts);
 
-    const user: RequestUser | null = await User.findOne({ username });
+    const user = await getUserByUsername(username) as RequestUser | null;
     // if (!user) throw new Error(`cannot find user with username: ${username}`);
 
     if (!user) {
@@ -130,7 +130,7 @@ const changePasswordFirstRun = catchAsync(async (req: ExtRequest, res: Response)
 
     if ((await AppSettings.isAuthEnabled()) && ((await AppSettings.isFirstRun()))) {
         log.debug(`first run, change password for default 'Administrator'`, logOpts);
-        const user = await User.findOne({ username: 'Administrator' }).exec();
+        const user = await getUserByUsername('Administrator');
         if (!user) throw new Error(`cannot find the Administrator`);
         logOpts.ref = String(user?.username);
         await user.setPassword(newPassword);

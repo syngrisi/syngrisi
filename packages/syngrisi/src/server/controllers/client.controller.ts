@@ -3,7 +3,9 @@ import { ApiError, catchAsync, pick, deserializeIfJSON, paramsGuard } from '@uti
 import { clientService, genericService } from '@services';
 import { updateItem } from '@lib/dbItems';
 import { RequiredIdentOptionsSchema, RequiredIdentOptionsType, createCheckParamsSchema } from '@schemas';
-import { Test, App, Suite } from '@models';
+import { getById as getTestById } from '@services/test.service';
+import { getByName as getAppByName } from '@services/app.service';
+import { getByName as getSuiteByName } from '@services/suite.service';
 import { Response } from "express";
 import log from "../lib/logger";
 import { ExtRequest } from '@types';
@@ -48,16 +50,16 @@ const createCheck = catchAsync(async (req: ExtRequest, res: Response) => {
     log.info(`start to create check: '${params.name}'`, logOpts);
 
     log.debug(`try to find test with id: '${params.testid}'`, logOpts);
-    const test = await Test.findById(params.testid);
+    const test = await getTestById(params.testid);
     if (!test) {
         const errMsg = `can't find test with id: '${params.testid}', `
             + `parameters: '${JSON.stringify(req.body)}', username: '${currentUser.username}'`;
         // res.status(400).send({ status: 'testNotFound', message: errMsg });
         throw new ApiError(HttpStatus.NOT_FOUND, errMsg);
     }
-    const app = await App.findOne({ name: params.appName });
+    const app = await getAppByName(params.appName);
     if (!app) throw new ApiError(HttpStatus.NOT_FOUND, `cannot get the app: ${params.appName}`);
-    const suite = await Suite.findOne({ name: params.suitename });
+    const suite = await getSuiteByName(params.suitename);
     if (!suite) throw new ApiError(HttpStatus.NOT_FOUND, `cannot get the suite: ${params.suitename}`);
 
     const result = await clientService.createCheck(

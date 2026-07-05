@@ -10,7 +10,8 @@ import { ApiError } from '@utils';
 import { ExtRequest } from '@types';
 import { getUsageCountsBySnapshotIds, remove as removeBaseline, promoteBaselines, promoteRun } from '@services/baseline.service';
 import { getHistory, getHistorySummary, BaselineHistoryIdent } from '@services/baseline-history.service';
-import { App, Check } from '@models';
+import { getById as getCheckById } from '@services/check.service';
+import { getById as getAppById } from '@services/app.service';
 import { sharedCheckId } from '@services/share.service';
 
 const get = catchAsync(async (req: ExtRequest, res: Response) => {
@@ -25,7 +26,7 @@ const get = catchAsync(async (req: ExtRequest, res: Response) => {
 
     const scopedCheckId = sharedCheckId(req);
     if (scopedCheckId !== null) {
-        const check = await Check.findById(scopedCheckId).exec();
+        const check = await getCheckById(scopedCheckId);
         if (!check) throw new ApiError(HttpStatus.NOT_FOUND, 'Shared check not found');
         // Overwrite any user-supplied scoping with the shared check's ident.
         delete filter.markedByUsername;
@@ -106,7 +107,7 @@ const getBaselineHistory = catchAsync(async (req: ExtRequest, res: Response) => 
     if (scopedCheckId !== null) {
         // Share mode: derive the ident from the shared check and ignore the client-supplied
         // one, so a token for check A can only ever see check A's ident lineage.
-        const check = await Check.findById(scopedCheckId).exec();
+        const check = await getCheckById(scopedCheckId);
         if (!check) throw new ApiError(HttpStatus.NOT_FOUND, 'Shared check not found');
         if (!check.branch || !check.browserName || !check.viewport || !check.os) {
             throw new ApiError(HttpStatus.NOT_FOUND, 'Shared check is missing ident fields');
@@ -147,7 +148,7 @@ const promote = catchAsync(async (req: ExtRequest, res: Response) => {
 
     let resolvedToBranch = toBranch;
     if (!resolvedToBranch) {
-        const app = await App.findById(appId).exec();
+        const app = await getAppById(appId);
         if (!app) throw new ApiError(HttpStatus.NOT_FOUND, `app not found, id: '${appId}'`);
         if (!app.mainBranch) throw new ApiError(HttpStatus.BAD_REQUEST, "project has no main branch configured");
         resolvedToBranch = app.mainBranch;

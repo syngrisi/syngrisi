@@ -110,7 +110,10 @@ const accept = async (id: string, user: RequestUser) => {
     return { message: 'success' };
 };
 
+const getById = async (id: string) => Test.findById(id).exec();
+
 export {
+    getById,
     queryTests,
     queryTestsDistinct,
     remove,
