@@ -23,6 +23,20 @@ const get = catchAsync(async (req: ExtRequest, res: Response) => {
         filter.markedByUsername = req.user.username;
     }
 
+    const scopedCheckId = sharedCheckId(req);
+    if (scopedCheckId !== null) {
+        const check = await Check.findById(scopedCheckId).exec();
+        if (!check) throw new ApiError(HttpStatus.NOT_FOUND, 'Shared check not found');
+        // Overwrite any user-supplied scoping with the shared check's ident.
+        delete filter.markedByUsername;
+        filter.name = check.name;
+        filter.app = check.app;
+        filter.branch = check.branch;
+        filter.browserName = check.browserName;
+        filter.viewport = check.viewport;
+        filter.os = check.os;
+    }
+
     const includeUsage = String(req.query.includeUsage).toLowerCase() === 'true';
 
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
