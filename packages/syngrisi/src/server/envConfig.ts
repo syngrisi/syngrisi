@@ -121,4 +121,9 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_GITHUB_REPO: str({ default: '' }),           // '<owner>/<name>'
     SYNGRISI_PUBLIC_URL: str({ default: '' }),            // Public base URL used as the status target_url
     SYNGRISI_GITHUB_API_URL: str({ default: 'https://api.github.com' }), // Override for self-hosted GitHub Enterprise / tests
+
+    // Webhook SSRF guard: comma-separated hostname allowlist that may use plain
+    // http and skip the private/loopback/link-local IP-range rejection. Empty
+    // (deny-by-default) unless explicitly configured, e.g. for internal test targets.
+    SYNGRISI_WEBHOOK_ALLOWED_HOSTS: str({ default: '' }),
 });
