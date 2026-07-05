@@ -5,7 +5,6 @@ import { randomUUID } from 'crypto';
 import { createGzip, createGunzip } from 'zlib';
 import { promisify } from 'util';
 import { pipeline, Readable } from 'stream';
-import tar from 'tar-stream';
 import mongoose from 'mongoose';
 import { UploadedFile } from 'express-fileupload';
 import { config } from '@config';
@@ -32,6 +31,16 @@ import {
     updateProgress,
     normalizeArchiveName,
 } from './admin-data/job-store';
+import {
+    countFilesRecursive,
+    addFileToTar,
+    createTarGzArchive,
+    extractTarGzArchive,
+    countFilesInTarGzArchive,
+    walkFiles,
+    createTarPack,
+    createTarExtract,
+} from './admin-data/archive';
 
 export type {
     AdminDataJobType,
@@ -202,25 +211,6 @@ async function assertCanStartJob() {
     await claimJobSlot(mongoJobAdmissionGate, async () => (await getRunningJobs())[0]?.id);
 }
 
-async function countFilesRecursive(rootDir: string): Promise<number> {
-    let count = 0;
-    const stack = [rootDir];
-    while (stack.length > 0) {
-        const currentDir = stack.pop();
-        if (!currentDir) continue;
-        const dir = await fsp.opendir(currentDir);
-        for await (const entry of dir) {
-            const entryPath = path.join(currentDir, entry.name);
-            if (entry.isDirectory()) {
-                stack.push(entryPath);
-            } else if (entry.isFile()) {
-                count += 1;
-            }
-        }
-    }
-    return count;
-}
-
 function getActiveState(jobId: string) {
     return activeTasks.get(jobId);
 }
@@ -265,107 +255,6 @@ async function createJob(type: AdminDataJobType, params: Record<string, unknown>
     }
 }
 
-async function addFileToTar(pack: tar.Pack, filePath: string, entryName: string) {
-    const stat = await fsp.stat(filePath);
-    await new Promise<void>((resolve, reject) => {
-        const entry = pack.entry({ name: entryName, size: stat.size, mode: stat.mode }, (error) => {
-            if (error) {
-                reject(error);
-                return;
-            }
-            resolve();
-        });
-        fs.createReadStream(filePath).on('error', reject).pipe(entry).on('error', reject);
-    });
-}
-
-async function createTarGzArchive(outputPath: string, items: Array<{ path: string; name: string }>) {
-    await ensureDir(path.dirname(outputPath));
-    const pack = tar.pack();
-    const gzip = createGzip();
-    const output = fs.createWriteStream(outputPath);
-    const pipelinePromise = pipelineAsync(pack, gzip, output);
-
-    for (const item of items) {
-        await addFileToTar(pack, item.path, item.name);
-    }
-
-    pack.finalize();
-    await pipelinePromise;
-}
-
-async function extractTarGzArchive(archivePath: string, destinationDir: string) {
-    await ensureDir(destinationDir);
-    const extract = tar.extract();
-
-    await new Promise<void>((resolve, reject) => {
-        extract.on('entry', (header, stream, next) => {
-            const outputPath = safeJoinWithin(destinationDir, header.name);
-            if (!outputPath) {
-                stream.resume();
-                next();
-                return;
-            }
-            const finishEntry = (error?: Error | null) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                next();
-            };
-
-            if (header.type === 'directory') {
-                void ensureDir(outputPath).then(() => {
-                    stream.resume();
-                    finishEntry();
-                }).catch((error) => finishEntry(error as Error));
-                return;
-            }
-
-            void ensureDir(path.dirname(outputPath))
-                .then(() => pipelineAsync(stream, fs.createWriteStream(outputPath)))
-                .then(() => finishEntry())
-                .catch((error) => finishEntry(error as Error));
-        });
-
-        extract.on('finish', () => resolve());
-        extract.on('error', reject);
-
-        fs.createReadStream(archivePath)
-            .on('error', reject)
-            .pipe(createGunzip())
-            .on('error', reject)
-            .pipe(extract)
-            .on('error', reject);
-    });
-}
-
-async function countFilesInTarGzArchive(archivePath: string) {
-    const extract = tar.extract();
-    let totalFiles = 0;
-
-    await new Promise<void>((resolve, reject) => {
-        extract.on('entry', (_header, stream, next) => {
-            if (_header.type === 'file') {
-                totalFiles += 1;
-            }
-            stream.resume();
-            next();
-        });
-        extract.on('finish', () => resolve());
-        extract.on('error', reject);
-
-        fs.createReadStream(archivePath)
-            .on('error', reject)
-            .pipe(createGunzip())
-            .on('error', reject)
-            .pipe(extract)
-            .on('error', reject);
-    });
-
-    return totalFiles;
-}
-
 async function writeCollectionDump(jobId: string, collectionName: string, outputPath: string) {
     const db = mongoose.connection.db;
     if (!db) {
@@ -397,24 +286,6 @@ async function writeCollectionDump(jobId: string, collectionName: string, output
     });
 
     return documentCount;
-}
-
-async function walkFiles(rootDir: string, onFile: (fullPath: string, relativePath: string) => Promise<void>) {
-    const stack = [rootDir];
-    while (stack.length > 0) {
-        const currentDir = stack.pop();
-        if (!currentDir) continue;
-        const dir = await fsp.opendir(currentDir);
-        for await (const entry of dir) {
-            const fullPath = path.join(currentDir, entry.name);
-            const relativePath = path.relative(rootDir, fullPath);
-            if (entry.isDirectory()) {
-                stack.push(fullPath);
-            } else if (entry.isFile()) {
-                await onFile(fullPath, relativePath);
-            }
-        }
-    }
 }
 
 async function runDbBackup(job: AdminDataJob) {
@@ -754,7 +625,7 @@ async function runScreenshotsBackup(job: AdminDataJob) {
     let processedFiles = 0;
 
     await ensureDir(path.dirname(archivePath));
-    const pack = tar.pack();
+    const pack = createTarPack();
     const gzip = createGzip();
     const output = fs.createWriteStream(archivePath);
     const archivePipeline = pipelineAsync(pack, gzip, output);
@@ -798,7 +669,7 @@ async function runScreenshotsRestore(job: AdminDataJob) {
 
     await updateProgress(job.id, { stage: 'importing', current: 0, total: totalFiles }, 'Importing screenshots', { totalFiles });
 
-    const extract = tar.extract();
+    const extract = createTarExtract();
     await new Promise<void>((resolve, reject) => {
         extract.on('entry', (header, stream, next) => {
             const finish = (error?: Error | null) => {
