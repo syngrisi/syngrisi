@@ -1,6 +1,10 @@
 # Dependencies
 node_modules/
 
+# npm lockfiles — repo is yarn-only
+package-lock.json
+**/package-lock.json
+
 # System
 .DS_Store
 
