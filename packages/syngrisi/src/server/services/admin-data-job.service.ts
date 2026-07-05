@@ -5,85 +5,65 @@ import { randomUUID } from 'crypto';
 import { createGzip, createGunzip } from 'zlib';
 import { promisify } from 'util';
 import { pipeline, Readable } from 'stream';
-import tar from 'tar-stream';
 import mongoose from 'mongoose';
 import { UploadedFile } from 'express-fileupload';
 import { config } from '@config';
 import { safeJoinWithin } from './../utils/safeJoinWithin';
+import {
+    type AdminDataJobType,
+    type AdminDataJobStatus,
+    type AdminDataJobProgress,
+    type AdminDataJobStats,
+    type AdminDataJob,
+    DB_EXPORT_DIRNAME,
+    isActiveStatus,
+    getJobDir,
+    getJobLogPath,
+    ensureDir,
+    removeDirSafe,
+    fileExists,
+    streamToFile,
+    writeJob,
+    appendLog,
+    readJob,
+    listJobsInternal,
+    updateJob,
+    updateProgress,
+    normalizeArchiveName,
+} from './admin-data/job-store';
+import {
+    countFilesRecursive,
+    addFileToTar,
+    createTarGzArchive,
+    extractTarGzArchive,
+    countFilesInTarGzArchive,
+    walkFiles,
+    createTarPack,
+    createTarExtract,
+} from './admin-data/archive';
+import {
+    type DbBackupManifest,
+    writeCollectionDump,
+    recreateIndexes,
+    importCollectionDump,
+} from './admin-data/mongo-dump';
+
+export type {
+    AdminDataJobType,
+    AdminDataJobStatus,
+    AdminDataJobProgress,
+    AdminDataJobStats,
+    AdminDataJob,
+} from './admin-data/job-store';
 
 const pipelineAsync = promisify(pipeline);
-const { BSON } = mongoose.mongo;
-
-export type AdminDataJobType =
-    | 'db_backup'
-    | 'db_restore'
-    | 'screenshots_backup'
-    | 'screenshots_restore';
-
-export type AdminDataJobStatus =
-    | 'pending'
-    | 'running'
-    | 'completed'
-    | 'failed'
-    | 'cancelled';
-
-export interface AdminDataJobProgress {
-    stage: string;
-    current?: number;
-    total?: number;
-    percent?: number;
-}
-
-export interface AdminDataJobStats {
-    archiveSizeBytes?: number;
-    processedFiles?: number;
-    totalFiles?: number;
-    importedFiles?: number;
-    skippedFiles?: number;
-    errorFiles?: number;
-}
-
-export interface AdminDataJob {
-    id: string;
-    type: AdminDataJobType;
-    status: AdminDataJobStatus;
-    params: Record<string, unknown>;
-    progress: AdminDataJobProgress;
-    message: string;
-    stats: AdminDataJobStats;
-    downloadAvailable: boolean;
-    archiveName?: string;
-    archivePath?: string;
-    uploadPath?: string;
-    workDir: string;
-    logFilePath: string;
-    createdAt: string;
-    startedAt?: string;
-    finishedAt?: string;
-    error?: string;
-}
 
 type ActiveTaskState = {
     cancelRequested: boolean;
 };
 
-type DbBackupManifest = {
-    format: 'syngrisi-db-backup-v1';
-    exportedAt: string;
-    databaseName: string;
-    collections: Array<{
-        name: string;
-        dumpFile: string;
-        documentCount: number;
-        indexes: Array<Record<string, unknown>>;
-    }>;
-};
-
 const activeTasks = new Map<string, ActiveTaskState>();
 
-const META_FILENAME = 'job.json';
-const LOG_FILENAME = 'job.log';
-const DB_EXPORT_DIRNAME = 'db-export';
 const PRE_RESTORE_EXPORT_DIRNAME = 'pre-restore-export';
 const PRE_RESTORE_RECOVER_DIRNAME = 'pre-restore-recover';
 const PRE_RESTORE_BACKUP_FILENAME = 'pre-restore-backup.tar.gz';
@@ -93,82 +73,6 @@ const PRE_RESTORE_BACKUP_FILENAME = 'pre-restore-backup.tar.gz';
 // rest of this service — no new client/dependency.
 const JOB_ADMISSION_LOCK_COLLECTION = 'admin_data_job_locks';
 const JOB_ADMISSION_LOCK_ID = 'admin-data-job-admission';
-
-const isActiveStatus = (status: AdminDataJobStatus) => status === 'pending' || status === 'running';
-const getJobDir = (jobId: string) => path.join(config.adminDataJobsPath, jobId);
-const getJobMetaPath = (jobId: string) => path.join(getJobDir(jobId), META_FILENAME);
-const getJobLogPath = (jobId: string) => path.join(getJobDir(jobId), LOG_FILENAME);
-
-async function ensureDir(dirPath: string) {
-    await fsp.mkdir(dirPath, { recursive: true });
-}
-
-async function removeDirSafe(dirPath?: string) {
-    if (!dirPath) return;
-    await fsp.rm(dirPath, { recursive: true, force: true });
-}
-
-async function fileExists(filePath: string) {
-    try {
-        await fsp.access(filePath);
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-async function writeJob(job: AdminDataJob) {
-    await ensureDir(job.workDir);
-    await fsp.writeFile(getJobMetaPath(job.id), JSON.stringify(job, null, 2));
-}
-
-async function appendLog(jobId: string, message: string) {
-    const line = `[${new Date().toISOString()}] ${message}\n`;
-    await fsp.appendFile(getJobLogPath(jobId), line);
-}
-
-async function readJob(jobId: string): Promise<AdminDataJob | null> {
-    try {
-        const raw = await fsp.readFile(getJobMetaPath(jobId), 'utf8');
-        return JSON.parse(raw) as AdminDataJob;
-    } catch {
-        return null;
-    }
-}
-
-async function listJobsInternal(): Promise<AdminDataJob[]> {
-    await ensureDir(config.adminDataJobsPath);
-    const entries = await fsp.readdir(config.adminDataJobsPath, { withFileTypes: true });
-    const jobs = await Promise.all(entries.filter((entry) => entry.isDirectory()).map((entry) => readJob(entry.name)));
-    return jobs
-        .filter((job): job is AdminDataJob => Boolean(job))
-        .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-}
-
-async function updateJob(jobId: string, patch: Partial<AdminDataJob>) {
-    const current = await readJob(jobId);
-    if (!current) {
-        throw new Error(`Job not found: ${jobId}`);
-    }
-    const nextJob = { ...current, ...patch };
-    await writeJob(nextJob);
-    return nextJob;
-}
-
-async function updateProgress(jobId: string, progress: AdminDataJobProgress, message?: string, statsPatch?: Partial<AdminDataJobStats>) {
-    const current = await readJob(jobId);
-    if (!current) return;
-    const nextProgress = { ...current.progress, ...progress };
-    if (typeof nextProgress.current === 'number' && typeof nextProgress.total === 'number' && nextProgress.total > 0) {
-        nextProgress.percent = Math.min(100, Math.round((nextProgress.current / nextProgress.total) * 100));
-    }
-    await writeJob({
-        ...current,
-        progress: nextProgress,
-        message: message ?? current.message,
-        stats: { ...current.stats, ...statsPatch },
-    });
-}
 
 async function finalizeJob(jobId: string, status: AdminDataJobStatus, patch: Partial<AdminDataJob> = {}) {
     const current = await readJob(jobId);
@@ -193,18 +97,6 @@ async function finalizeJob(jobId: string, status: AdminDataJobStatus, patch: Par
         await mongoJobAdmissionGate.release();
     }
     return job;
-}
-
-function normalizeArchiveName(type: AdminDataJobType) {
-    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-    switch (type) {
-        case 'db_backup':
-            return `syngrisi-db-backup-${stamp}.tar.gz`;
-        case 'screenshots_backup':
-            return `syngrisi-screenshots-backup-${stamp}.tar.gz`;
-        default:
-            return `${type}-${stamp}.tar.gz`;
-    }
 }
 
 async function getRunningJobs() {
@@ -312,30 +204,6 @@ async function assertCanStartJob() {
     await claimJobSlot(mongoJobAdmissionGate, async () => (await getRunningJobs())[0]?.id);
 }
 
-async function countFilesRecursive(rootDir: string): Promise<number> {
-    let count = 0;
-    const stack = [rootDir];
-    while (stack.length > 0) {
-        const currentDir = stack.pop();
-        if (!currentDir) continue;
-        const dir = await fsp.opendir(currentDir);
-        for await (const entry of dir) {
-            const entryPath = path.join(currentDir, entry.name);
-            if (entry.isDirectory()) {
-                stack.push(entryPath);
-            } else if (entry.isFile()) {
-                count += 1;
-            }
-        }
-    }
-    return count;
-}
-
-async function streamToFile(sourcePath: string, targetPath: string) {
-    await ensureDir(path.dirname(targetPath));
-    await pipelineAsync(fs.createReadStream(sourcePath), fs.createWriteStream(targetPath));
-}
-
 function getActiveState(jobId: string) {
     return activeTasks.get(jobId);
 }
@@ -380,158 +248,6 @@ async function createJob(type: AdminDataJobType, params: Record<string, unknown>
     }
 }
 
-async function addFileToTar(pack: tar.Pack, filePath: string, entryName: string) {
-    const stat = await fsp.stat(filePath);
-    await new Promise<void>((resolve, reject) => {
-        const entry = pack.entry({ name: entryName, size: stat.size, mode: stat.mode }, (error) => {
-            if (error) {
-                reject(error);
-                return;
-            }
-            resolve();
-        });
-        fs.createReadStream(filePath).on('error', reject).pipe(entry).on('error', reject);
-    });
-}
-
-async function createTarGzArchive(outputPath: string, items: Array<{ path: string; name: string }>) {
-    await ensureDir(path.dirname(outputPath));
-    const pack = tar.pack();
-    const gzip = createGzip();
-    const output = fs.createWriteStream(outputPath);
-    const pipelinePromise = pipelineAsync(pack, gzip, output);
-
-    for (const item of items) {
-        await addFileToTar(pack, item.path, item.name);
-    }
-
-    pack.finalize();
-    await pipelinePromise;
-}
-
-async function extractTarGzArchive(archivePath: string, destinationDir: string) {
-    await ensureDir(destinationDir);
-    const extract = tar.extract();
-
-    await new Promise<void>((resolve, reject) => {
-        extract.on('entry', (header, stream, next) => {
-            const outputPath = safeJoinWithin(destinationDir, header.name);
-            if (!outputPath) {
-                stream.resume();
-                next();
-                return;
-            }
-            const finishEntry = (error?: Error | null) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-                next();
-            };
-
-            if (header.type === 'directory') {
-                void ensureDir(outputPath).then(() => {
-                    stream.resume();
-                    finishEntry();
-                }).catch((error) => finishEntry(error as Error));
-                return;
-            }
-
-            void ensureDir(path.dirname(outputPath))
-                .then(() => pipelineAsync(stream, fs.createWriteStream(outputPath)))
-                .then(() => finishEntry())
-                .catch((error) => finishEntry(error as Error));
-        });
-
-        extract.on('finish', () => resolve());
-        extract.on('error', reject);
-
-        fs.createReadStream(archivePath)
-            .on('error', reject)
-            .pipe(createGunzip())
-            .on('error', reject)
-            .pipe(extract)
-            .on('error', reject);
-    });
-}
-
-async function countFilesInTarGzArchive(archivePath: string) {
-    const extract = tar.extract();
-    let totalFiles = 0;
-
-    await new Promise<void>((resolve, reject) => {
-        extract.on('entry', (_header, stream, next) => {
-            if (_header.type === 'file') {
-                totalFiles += 1;
-            }
-            stream.resume();
-            next();
-        });
-        extract.on('finish', () => resolve());
-        extract.on('error', reject);
-
-        fs.createReadStream(archivePath)
-            .on('error', reject)
-            .pipe(createGunzip())
-            .on('error', reject)
-            .pipe(extract)
-            .on('error', reject);
-    });
-
-    return totalFiles;
-}
-
-async function writeCollectionDump(jobId: string, collectionName: string, outputPath: string) {
-    const db = mongoose.connection.db;
-    if (!db) {
-        throw new Error('MongoDB connection is not available');
-    }
-
-    let documentCount = 0;
-    await ensureDir(path.dirname(outputPath));
-
-    const gzip = createGzip();
-    const output = fs.createWriteStream(outputPath);
-    gzip.pipe(output);
-
-    const cursor = db.collection(collectionName).find({}, { timeout: false });
-    for await (const doc of cursor) {
-        assertNotCancelled(jobId);
-        gzip.write(BSON.serialize(doc));
-        documentCount += 1;
-        if (documentCount % 1000 === 0) {
-            await appendLog(jobId, `Exported ${documentCount} documents from ${collectionName}`);
-        }
-    }
-
-    gzip.end();
-    await new Promise<void>((resolve, reject) => {
-        output.on('finish', () => resolve());
-        output.on('error', reject);
-        gzip.on('error', reject);
-    });
-
-    return documentCount;
-}
-
-async function walkFiles(rootDir: string, onFile: (fullPath: string, relativePath: string) => Promise<void>) {
-    const stack = [rootDir];
-    while (stack.length > 0) {
-        const currentDir = stack.pop();
-        if (!currentDir) continue;
-        const dir = await fsp.opendir(currentDir);
-        for await (const entry of dir) {
-            const fullPath = path.join(currentDir, entry.name);
-            const relativePath = path.relative(rootDir, fullPath);
-            if (entry.isDirectory()) {
-                stack.push(fullPath);
-            } else if (entry.isFile()) {
-                await onFile(fullPath, relativePath);
-            }
-        }
-    }
-}
-
 async function runDbBackup(job: AdminDataJob) {
     const db = mongoose.connection.db;
     if (!db) {
@@ -559,7 +275,7 @@ async function runDbBackup(job: AdminDataJob) {
         const dumpFileName = `${collectionName}.bson.gz`;
         const dumpPath = path.join(exportDir, dumpFileName);
         await updateProgress(job.id, { stage: 'dumping', current: processedCollections, total: collections.length }, `Exporting ${collectionName}`);
-        const documentCount = await writeCollectionDump(job.id, collectionName, dumpPath);
+        const documentCount = await writeCollectionDump(collectionName, dumpPath, () => assertNotCancelled(job.id), (msg) => appendLog(job.id, msg));
         const indexes = await db.collection(collectionName).indexes();
         manifest.collections.push({
             name: collectionName,
@@ -597,76 +313,6 @@ async function runDbBackup(job: AdminDataJob) {
         },
         progress: { stage: 'completed', percent: 100, current: manifest.collections.length, total: manifest.collections.length },
     });
-}
-
-async function recreateIndexes(collectionName: string, indexes: Array<Record<string, unknown>>) {
-    const db = mongoose.connection.db;
-    if (!db) {
-        throw new Error('MongoDB connection is not available');
-    }
-
-    const filtered = indexes.filter((index) => index.name !== '_id_');
-    if (filtered.length === 0) {
-        return;
-    }
-
-    const definitions = filtered.map((index) => {
-        const { key, ...options } = index as { key: Record<string, 1 | -1>; [key: string]: unknown };
-        return { key, ...options };
-    });
-
-    await db.collection(collectionName).createIndexes(definitions as any);
-}
-
-async function importCollectionDump(jobId: string, collectionName: string, dumpPath: string) {
-    const db = mongoose.connection.db;
-    if (!db) {
-        throw new Error('MongoDB connection is not available');
-    }
-
-    const collection = db.collection(collectionName);
-    const batch: Record<string, unknown>[] = [];
-    let inserted = 0;
-    const flush = async () => {
-        if (batch.length === 0) return;
-        await collection.insertMany(batch, { ordered: false });
-        inserted += batch.length;
-        batch.length = 0;
-    };
-
-    const input = fs.createReadStream(dumpPath).pipe(createGunzip());
-    let pending = Buffer.alloc(0);
-
-    for await (const chunk of input) {
-        assertNotCancelled(jobId);
-        pending = Buffer.concat([pending, chunk as Buffer]);
-
-        while (pending.length >= 4) {
-            const documentSize = pending.readInt32LE(0);
-            if (documentSize <= 0) {
-                throw new Error(`Invalid BSON document size ${documentSize} in ${collectionName}`);
-            }
-            if (pending.length < documentSize) {
-                break;
-            }
-
-            const documentBuffer = pending.subarray(0, documentSize);
-            pending = pending.subarray(documentSize);
-            batch.push(BSON.deserialize(documentBuffer) as Record<string, unknown>);
-
-            if (batch.length >= 1000) {
-                await flush();
-                await appendLog(jobId, `Imported ${inserted} documents into ${collectionName}`);
-            }
-        }
-    }
-
-    if (pending.length > 0) {
-        throw new Error(`Unexpected trailing BSON bytes in ${collectionName}`);
-    }
-
-    await flush();
-    return inserted;
 }
 
 // --- Restore safety net (Problem A: destructive restore with no rollback) ---
@@ -732,7 +378,7 @@ async function createPreRestoreSafetyBackup(job: AdminDataJob, archivePath: stri
         assertNotCancelled(job.id);
         const dumpFileName = `${collectionName}.bson.gz`;
         const dumpPath = path.join(exportDir, dumpFileName);
-        const documentCount = await writeCollectionDump(job.id, collectionName, dumpPath);
+        const documentCount = await writeCollectionDump(collectionName, dumpPath, () => assertNotCancelled(job.id), (msg) => appendLog(job.id, msg));
         const indexes = await db.collection(collectionName).indexes();
         manifest.collections.push({
             name: collectionName,
@@ -788,7 +434,7 @@ async function restoreFromSafetyArchive(job: AdminDataJob, archivePath: string) 
         await db.dropDatabase();
         for (const collectionInfo of manifest.collections) {
             const dumpPath = path.join(recoverDir, 'collections', collectionInfo.dumpFile);
-            await importCollectionDump(job.id, collectionInfo.name, dumpPath);
+            await importCollectionDump(collectionInfo.name, dumpPath, () => assertNotCancelled(job.id), (msg) => appendLog(job.id, msg));
             await recreateIndexes(collectionInfo.name, collectionInfo.indexes);
         }
         await removeDirSafe(recoverDir);
@@ -839,7 +485,7 @@ async function runDbRestore(job: AdminDataJob) {
                     { stage: 'restoring', current: importedCollections, total: manifest.collections.length },
                     `Restoring ${collectionInfo.name}`,
                 );
-                await importCollectionDump(job.id, collectionInfo.name, dumpPath);
+                await importCollectionDump(collectionInfo.name, dumpPath, () => assertNotCancelled(job.id), (msg) => appendLog(job.id, msg));
                 await recreateIndexes(collectionInfo.name, collectionInfo.indexes);
                 importedCollections += 1;
                 await updateProgress(
@@ -869,7 +515,7 @@ async function runScreenshotsBackup(job: AdminDataJob) {
     let processedFiles = 0;
 
     await ensureDir(path.dirname(archivePath));
-    const pack = tar.pack();
+    const pack = createTarPack();
     const gzip = createGzip();
     const output = fs.createWriteStream(archivePath);
     const archivePipeline = pipelineAsync(pack, gzip, output);
@@ -913,7 +559,7 @@ async function runScreenshotsRestore(job: AdminDataJob) {
 
     await updateProgress(job.id, { stage: 'importing', current: 0, total: totalFiles }, 'Importing screenshots', { totalFiles });
 
-    const extract = tar.extract();
+    const extract = createTarExtract();
     await new Promise<void>((resolve, reject) => {
         extract.on('entry', (header, stream, next) => {
             const finish = (error?: Error | null) => {
