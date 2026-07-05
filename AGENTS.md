@@ -5,6 +5,24 @@
 -   Answer in the language you are asked in.
 -   Always write comments and debug messages in your code in English.
 
+## API Contract Parity (Groovy / Python / SDK ports)
+
+`packages/core-api` (TypeScript) is the **source of truth** for the client API
+contract (request/response shapes, forwarded session/check fields, and the
+validation schemas in `Schemas.ts` + field forwarding in `SyngrisiApi.ts`). When
+you change that contract (add/rename/remove a forwarded field, or change a
+schema), you MUST update the dependent ports **in the same change** so a field
+can't be silently dropped:
+
+-   `packages/core-api-groovy` (`SyngrisiApi.groovy`, `Schemas.groovy`)
+-   `packages/core-api-python` (`api.py`, `schemas.py`)
+-   the JS SDKs `packages/wdio-sdk`, `packages/playwright-sdk` (shared surface).
+
+CI's `port-drift` check fails a PR that edits
+`packages/core-api/src/{Schemas,SyngrisiApi}.ts` without touching the port
+packages. For a contract-neutral change (e.g. a transport-only refactor), add
+`[skip-port-drift]` to the HEAD commit message to bypass it.
+
 ## Design & Coding Principles
 
 -   не усложнять, без оверинжиниринга, но с сохранением требуемой функциональности

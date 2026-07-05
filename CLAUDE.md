@@ -6,6 +6,29 @@
 -   Always write comments and debug messages in your code in English.
 -   Always use `yarn` instead of `npm` for package management commands in this monorepo.
 
+## API Contract Parity (Groovy / Python / SDK ports)
+
+`packages/core-api` (TypeScript) is the **source of truth** for the client API
+contract — the request/response shapes, the forwarded session/check fields, and
+the validation schemas (`Schemas.ts`, and the field forwarding in
+`SyngrisiApi.ts`). Several hand-maintained ports depend on it and must stay at
+parity:
+
+-   `packages/core-api-groovy` (`SyngrisiApi.groovy`, `Schemas.groovy`)
+-   `packages/core-api-python` (`api.py`, `schemas.py`)
+-   the JS SDKs `packages/wdio-sdk`, `packages/playwright-sdk` (shared surface).
+
+**Rule:** when you change the API contract (add / rename / remove a forwarded
+field, or change a schema), you MUST update the dependent ports **in the same
+change** so a field can't be silently dropped by a port. (This happened once: the
+`commit` field was added to the TS `startSession` but the Groovy/Python ports
+kept dropping it, making GitHub commit-status unreachable from those SDKs.)
+
+CI enforces this with the `port-drift` check: a PR that edits
+`packages/core-api/src/{Schemas,SyngrisiApi}.ts` without also touching the port
+packages fails. For a genuinely contract-neutral change (e.g. a transport-only
+refactor), add `[skip-port-drift]` to the HEAD commit message to bypass it.
+
 ## Test Request Convention
 
 If a user asks to run "syngrisi tests" or "e2e tests", treat that as running `yarn test` from `packages/syngrisi`.

@@ -111,9 +111,11 @@ const accept = async (id: string, user: RequestUser) => {
 };
 
 const getById = async (id: string) => Test.findById(id).exec();
+const findByRun = async (runId: string, projection = '') => Test.find({ run: runId }).select(projection).lean().exec();
 
 export {
     getById,
+    findByRun,
     queryTests,
     queryTestsDistinct,
     remove,

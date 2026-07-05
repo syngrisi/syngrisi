@@ -620,10 +620,20 @@ const getById = async (id: string, populate?: string) => {
 };
 
 const paginate = async (filter: Record<string, unknown>, options: PaginateOptions) => Check.paginate(filter, options);
+const findByRun = async (runId: string, projection = '') => Check.find({ run: runId }).select(projection).lean().exec();
+// Failed checks for the triage-queue view (with their run populated).
+const findForTriageQueue = async (filter: Record<string, unknown>) => Check.find(filter)
+    .select('name run test status triage createdDate')
+    .populate('run', 'name createdDate')
+    .sort({ createdDate: -1 })
+    .limit(1000)
+    .exec();
 
 export {
     getById,
     paginate,
+    findByRun,
+    findForTriageQueue,
     accept,
     remove,
     update,
