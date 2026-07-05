@@ -33,17 +33,6 @@ const get = catchAsync(async (req: ExtRequest, res: Response) => {
     });
 });
 
-const getViaPost = catchAsync(async (req: ExtRequest, res: Response) => {
-    const filter = req.body.filter ? pick(req.body, ['filter']).filter : {};
-    const options = req.body.options ? pick(req.body, ['options']).options : {};
-    const result = await genericService.get('VRSCheck', filter, options);
-    const resultsWithAcceptance = await checkService.enrichChecksWithCurrentAcceptance(result.results as CheckDocument[]);
-    res.send({
-        ...result,
-        results: resultsWithAcceptance,
-    });
-});
-
 const update = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Cannot accept the check - Id not found');
@@ -122,7 +111,6 @@ const getSimilar = catchAsync(async (req: ExtRequest, res: Response) => {
 });
 
 export {
-    getViaPost,
     get,
     accept,
     remove,
