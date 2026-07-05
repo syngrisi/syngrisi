@@ -1,11 +1,19 @@
 import { Webhook } from '@models';
 import { PaginateOptions } from '@models/plugins/utils';
 import log from '@logger';
+import { validateWebhookUrl } from '@utils';
 
 const triggerWebhooks = async (event: string, payload: any) => {
     const webhooks = await Webhook.find({ events: event, enabled: { $ne: false } });
 
     for (const webhook of webhooks) {
+        try {
+            await validateWebhookUrl(webhook.url);
+        } catch (e) {
+            log.error(`Skipping webhook ${webhook.url}: failed URL validation`);
+            continue;
+        }
+
         try {
             log.info(`Triggering webhook ${webhook.url} for event ${event}`);
             const controller = new AbortController();
@@ -23,7 +31,8 @@ const triggerWebhooks = async (event: string, payload: any) => {
                     payload,
                     timestamp: new Date().toISOString()
                 }),
-                signal: controller.signal
+                signal: controller.signal,
+                redirect: 'error'
             });
 
             clearTimeout(timeoutId);
@@ -39,9 +48,13 @@ const triggerWebhooks = async (event: string, payload: any) => {
 
 const getWebhooks = async (filter: Record<string, unknown>, options: PaginateOptions) => Webhook.paginate(filter, options);
 
-const createWebhook = async (data: { url: string; events?: string[]; secret?: string; enabled?: boolean }) => Webhook.create(data);
+const createWebhook = async (data: { url: string; events?: string[]; secret?: string; enabled?: boolean }) => {
+    await validateWebhookUrl(data.url);
+    return Webhook.create(data);
+};
 
 const updateWebhook = async (id: string, data: Partial<{ url: string; events: string[]; secret: string; enabled: boolean }>) => {
+    if (data.url) await validateWebhookUrl(data.url);
     const webhook = await Webhook.findByIdAndUpdate(id, data, { new: true }).exec();
     if (!webhook) throw new Error(`cannot find webhook with id: ${id}`);
     return webhook;
