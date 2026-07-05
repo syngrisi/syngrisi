@@ -6,6 +6,8 @@ export interface ExtRequest extends Request {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     files?: any;
     isShareMode?: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    shareToken?: any;
 }
 
 export type ERequest = ExtRequest | Request; 
