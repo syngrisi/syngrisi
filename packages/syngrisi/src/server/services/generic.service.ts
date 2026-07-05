@@ -1,4 +1,5 @@
-import mongoose, { FilterQuery } from 'mongoose';
+import mongoose from 'mongoose';
+import type { QueryFilter as FilterQuery } from 'mongoose';
 import { removeEmptyProperties } from '@utils';
 import log from '@logger';
 import { ExtededModelMembers, PaginateOptions } from '@models/plugins/utils';

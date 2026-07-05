@@ -1,12 +1,12 @@
-import { Log } from '@models';
+import { Log, LogDocument } from '@models';
 import log from '@lib/logger';
 import { LogOpts } from '@root/src/types';
-import { FilterQuery } from 'mongoose';
+import type { QueryFilter as FilterQuery } from 'mongoose';
 import { PaginateOptions } from '@models/plugins/utils';
 import { env } from '@env';
 
 
-const queryLogs = async (filter: FilterQuery<typeof Log>, options: PaginateOptions) => Log.paginate(filter, options);
+const queryLogs = async (filter: FilterQuery<LogDocument>, options: PaginateOptions) => Log.paginate(filter, options);
 
 const distinct = async (field: string) => Log.distinct(field);
 

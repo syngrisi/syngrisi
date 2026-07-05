@@ -1,8 +1,8 @@
-import { App } from '@models';
-import { FilterQuery } from 'mongoose';
+import { App, AppDocument } from '@models';
+import type { QueryFilter as FilterQuery } from 'mongoose';
 import { PaginateOptions } from '@models/plugins/utils';
 
-const get = async (filter:  FilterQuery<typeof App> , options: PaginateOptions) => App.paginate(filter, options);
+const get = async (filter:  FilterQuery<AppDocument> , options: PaginateOptions) => App.paginate(filter, options);
 const getById = async (id: string) => App.findById(id).exec();
 const getByName = async (name: string) => App.findOne({ name }).exec();
 const getTriageEnabledAppIds = async () => App.find({ triageEnabled: true }).distinct('_id');

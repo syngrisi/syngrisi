@@ -1,4 +1,5 @@
-import { Schema, Document, FilterQuery } from 'mongoose';
+import { Schema, Document } from 'mongoose';
+import type { QueryFilter as FilterQuery } from 'mongoose';
 import { PaginateOptions, QueryResult } from './utils';
 import { deserializeIfJSON } from '@utils';
 

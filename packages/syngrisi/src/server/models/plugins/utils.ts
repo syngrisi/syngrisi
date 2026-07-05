@@ -1,4 +1,5 @@
-import { FilterQuery, Model, Document } from 'mongoose';
+import { Model, Document } from 'mongoose';
+import type { QueryFilter as FilterQuery } from 'mongoose';
 
 export type PaginateOptions = {
   sortBy?: string;

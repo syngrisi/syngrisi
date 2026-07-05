@@ -4,7 +4,7 @@ import { User } from '@models';
 import { ApiError } from '@utils';
 import log from "../lib/logger";
 import { UserCreateReq } from '../schemas/User.schema';
-import { FilterQuery } from 'mongoose';
+import type { QueryFilter as FilterQuery } from 'mongoose';
 import { PaginateOptions } from '../models/plugins/utils';
 
 const createUser = async (userBody: UserCreateReq) => {

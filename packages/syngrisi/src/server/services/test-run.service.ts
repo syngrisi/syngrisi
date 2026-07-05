@@ -115,7 +115,7 @@ export const endSession = async (testId: string, username: string) => {
     const sessionChecks = await Check.find({ test: testId }).lean().exec();
 
     const checksStatuses = sessionChecks.map((x) => x.status[0]);
-    let status = calculateTestStatus(checksStatuses);
+    const status = calculateTestStatus(checksStatuses);
     const blinking = checksStatuses.filter((g) => g === 'blinking').length;
     const testParams = {
         status,
