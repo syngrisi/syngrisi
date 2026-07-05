@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /**
  * Ensure that a user is logged in before proceeding to next route middleware.
  *
@@ -38,6 +34,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { User } from '@models';
+import type { UserDocument } from '@models/User.model';
 import log from "../../lib/logger";
 import { ExtRequest } from '../../../types/ExtRequest';
 import { appSettings } from "@settings";
@@ -55,6 +52,15 @@ const transientGuestUser = {
     lastName: 'Guest',
 };
 
+type AuthUser = UserDocument | typeof transientGuestUser | null;
+
+interface AuthOutcome {
+    type: 'success' | 'error' | 'redirect';
+    status: number;
+    value?: string;
+    user?: AuthUser;
+}
+
 export const normalizeIncomingApiKey = (rawKey: unknown): string | undefined => {
     if (Array.isArray(rawKey)) {
         rawKey = rawKey[0];
@@ -69,7 +75,7 @@ export const normalizeIncomingApiKey = (rawKey: unknown): string | undefined => 
 
 
 
-const handleBasicAuth = async (req: ExtRequest, retryCount = 0): Promise<any> => {
+const handleBasicAuth = async (req: ExtRequest, retryCount = 0): Promise<AuthOutcome> => {
 
     const logOpts = {
         scope: 'handleBasicAuth',
@@ -135,7 +141,7 @@ const handleBasicAuth = async (req: ExtRequest, retryCount = 0): Promise<any> =>
         };
     }
 
-    const result: any = {
+    const result: AuthOutcome = {
         type: 'error',
         status: 400,
         value: '',
@@ -166,22 +172,24 @@ const handleBasicAuth = async (req: ExtRequest, retryCount = 0): Promise<any> =>
         result.value = '/auth';
         return result;
     }
+
+    return result;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ensureLoggedIn(options?: any): (req: Request, res: Response, next: NextFunction) => Promise<void> {
     return async (req: Request, res: Response, next: NextFunction) => {
-        const result = await handleBasicAuth(req);
+        const result = await handleBasicAuth(req as ExtRequest);
         req.user = result.user || req.user;
         if (result.type === 'success') {
             return next();
         }
-        res.status(result.status).redirect(result.value);
+        res.status(result.status).redirect(result.value ?? '/');
         // return next('redirect'); // Do not call next with error for redirect
     };
 }
 
-const handleAPIAuth = async (rawApiKey: unknown, retryCount = 0): Promise<any> => {
+const handleAPIAuth = async (rawApiKey: unknown, retryCount = 0): Promise<AuthOutcome> => {
     const logOpts = {
         scope: 'handleAPIAuth',
         msgType: 'AUTH_API',
@@ -190,7 +198,7 @@ const handleAPIAuth = async (rawApiKey: unknown, retryCount = 0): Promise<any> =
     const MAX_RETRIES = 3;
     const RETRY_DELAY_MS = 500;
 
-    const result: any = {
+    const result: AuthOutcome = {
         status: 400,
         type: 'error',
         value: '',
@@ -257,7 +265,7 @@ const handleAPIAuth = async (rawApiKey: unknown, retryCount = 0): Promise<any> =
     return result;
 };
 
-export function ensureApiKey(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+export function ensureApiKey(): (req: Request, res: Response, next: NextFunction) => Promise<void | Response> {
     const logOpts = {
         scope: 'ensureApiKey',
         msgType: 'AUTH_API',
@@ -282,7 +290,7 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
 
         const rawApiKey = req.headers.apikey ?? req.query.apikey;
         const result = await handleAPIAuth(rawApiKey);
-        req.user = req.user || result.user;
+        req.user = req.user || result.user || undefined;
         if ('apikey' in req.query) {
             delete (req.query as Record<string, unknown>).apikey;
         }
@@ -297,7 +305,7 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
     };
 }
 
-export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: NextFunction) => Promise<void | Response> {
     const logOpts = {
         scope: 'ensureLoggedInOrApiKey',
         msgType: 'AUTH_API',
@@ -324,7 +332,7 @@ export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: Ne
             // Continue to regular auth on plugin error
         }
 
-        const basicAuthResult = await handleBasicAuth(req);
+        const basicAuthResult = await handleBasicAuth(req as ExtRequest);
         req.user = basicAuthResult.user || req.user;
 
         if (basicAuthResult.type === 'success') {
@@ -333,7 +341,7 @@ export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: Ne
 
         const rawApiKey = req.headers.apikey ?? req.query.apikey;
         const apiKeyResult = await handleAPIAuth(rawApiKey);
-        req.user = req.user || apiKeyResult.user;
+        req.user = req.user || apiKeyResult.user || undefined;
         if ('apikey' in req.query) {
             delete (req.query as Record<string, unknown>).apikey;
         }
@@ -357,12 +365,6 @@ export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: Ne
  *
  * Used for pages that can be accessed anonymously via share links.
  */
-import * as shareService from '@services/share.service';
-
-// ... (existing imports)
-
-// ...
-
 export function ensureLoggedInOrShareToken(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
     return async (req: Request, res: Response, next: NextFunction) => {
         // Check if share token is present in query params
@@ -380,19 +382,19 @@ export function ensureLoggedInOrShareToken(): (req: Request, res: Response, next
                 log.debug('Valid share token present, allowing access without login', { scope: 'ensureLoggedInOrShareToken' });
 
                 // Do NOT login as Guest to prevent session creation with write access
-                (req as any).isShareMode = true;
-                (req as any).shareToken = tokenDoc;
+                (req as ExtRequest).isShareMode = true;
+                (req as ExtRequest).shareToken = tokenDoc;
                 return next();
             }
         }
 
         // No share token - require normal authentication
-        const result = await handleBasicAuth(req);
+        const result = await handleBasicAuth(req as ExtRequest);
         req.user = result.user || req.user;
         if (result.type === 'success') {
             return next();
         }
-        res.status(result.status).redirect(result.value);
+        res.status(result.status).redirect(result.value ?? '/');
     };
 }
 
@@ -404,7 +406,7 @@ export function ensureLoggedInOrShareToken(): (req: Request, res: Response, next
  *
  * Used for API endpoints that can be accessed via share links (read-only).
  */
-export function ensureLoggedInOrApiKeyOrShareToken(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+export function ensureLoggedInOrApiKeyOrShareToken(): (req: Request, res: Response, next: NextFunction) => Promise<void | Response> {
     return async (req: Request, res: Response, next: NextFunction) => {
         const logOpts = {
             scope: 'ensureLoggedInOrApiKeyOrShareToken',
@@ -439,8 +441,8 @@ export function ensureLoggedInOrApiKeyOrShareToken(): (req: Request, res: Respon
                 if (guest) {
                     req.user = guest;
                     // Mark request as share mode to skip creator filtering
-                    (req as any).isShareMode = true;
-                    (req as any).shareToken = tokenDoc;
+                    (req as ExtRequest).isShareMode = true;
+                    (req as ExtRequest).shareToken = tokenDoc;
                     return next();
                 } else {
                     log.error(`Guest user not found for share API access after ${MAX_RETRIES} retries`, logOpts);
@@ -451,7 +453,7 @@ export function ensureLoggedInOrApiKeyOrShareToken(): (req: Request, res: Respon
         }
 
         // Try basic auth first
-        const basicAuthResult = await handleBasicAuth(req);
+        const basicAuthResult = await handleBasicAuth(req as ExtRequest);
         req.user = basicAuthResult.user || req.user;
         if (basicAuthResult.type === 'success') {
             return next();
@@ -460,7 +462,7 @@ export function ensureLoggedInOrApiKeyOrShareToken(): (req: Request, res: Respon
         // Try API key
         const rawApiKey = req.headers.apikey ?? req.query.apikey;
         const apiKeyResult = await handleAPIAuth(rawApiKey);
-        req.user = req.user || apiKeyResult.user;
+        req.user = req.user || apiKeyResult.user || undefined;
         if ('apikey' in req.query) {
             delete (req.query as Record<string, unknown>).apikey;
         }
