@@ -1,5 +1,17 @@
 # @syngrisi/wdio-sdk
 
+## 3.15.0
+
+### Patch Changes
+
+-   7771cfb: Consolidate shared SDK code into @syngrisi/core-api: both SDKs now consume the
+    shared paramsGuard and the canonical check schema from core-api; removed dead
+    duplicated utils and RequiredIdentOptionsSchema. No public driver method
+    signatures changed.
+-   Updated dependencies [7771cfb]
+-   Updated dependencies [def1d0f]
+    -   @syngrisi/core-api@3.15.0
+
 ## 3.14.1
 
 ### Patch Changes

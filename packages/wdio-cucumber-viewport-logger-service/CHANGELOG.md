@@ -1,5 +1,11 @@
 # wdio-cucumber-viewport-logger-service
 
+## 3.15.0
+
+### Patch Changes
+
+-   ec69a23: Add tsc build + types; publish compiled `dist/` instead of raw `src/`. Module format unchanged (CommonJS).
+
 ## 3.14.1
 
 ## 3.14.0

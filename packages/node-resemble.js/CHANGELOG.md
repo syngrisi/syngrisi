@@ -1,5 +1,11 @@
 # @syngrisi/node-resemble.js
 
+## 3.15.0
+
+### Patch Changes
+
+-   67f3c32: Ship hand-written type declarations for node-resemble.js and document the raw-JS build decision. No change to `resemble.js` or the comparison algorithm.
+
 ## 3.14.1
 
 ## 3.14.0

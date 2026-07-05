@@ -1,5 +1,13 @@
 # wdio-syngrisi-cucumber-service
 
+## 3.15.0
+
+### Patch Changes
+
+-   6ae1a88: Migrate build from Babel to tsc; no change to published module format (ESM) or public API.
+-   Updated dependencies [7771cfb]
+    -   @syngrisi/wdio-sdk@3.15.0
+
 ## 3.14.1
 
 ### Patch Changes
