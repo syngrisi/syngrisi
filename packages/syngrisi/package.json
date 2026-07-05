@@ -74,7 +74,7 @@
         "staging:test:all": "./scripts/staging/run-all-staging-tests.sh",
         "test:migrations": "tsx --test src/server/migrations/__tests__/migrationRunner.test.ts",
         "test:server": "tsx --test 'src/server/**/*.test.ts'",
-        "typecheck": "tsc -p tsconfig.json --noEmit",
+        "typecheck": "tsc -p tsconfig.json --noEmit --ignoreDeprecations 6.0",
         "lint": "ESLINT_USE_FLAT_CONFIG=false eslint -c ./.eslintrc.cjs 'src/server/**/*.ts'",
         "dev": "npx concurrently -k -n \"UI,SERVER\" -c \"magenta,blue\" \"yarn dev:ui\" \"cross-env SYNGRISI_AUTH=false yarn server:watch\"",
         "dev:ui": "vite",
