@@ -12,6 +12,74 @@ import { HttpStatus } from '@utils';
 import { triageCheck, cancelCheck, requeueCheck } from '@services/triage';
 import { createProvider } from '@services/triage/factory';
 import { getProviderConfig } from '@services/triage/config';
+import { assertSafeMongoFilter } from '../utils/deserializeIfJSON';
+
+// Express (extended query parsing) turns `?status[$ne]=x` into an OBJECT.
+// Scalar filter fields must never be objects — coerce to a trimmed string and
+// drop anything else, so operator objects can't reach the Mongo filter.
+const toScalarString = (v: unknown): string | undefined => (
+    typeof v === 'string' && v.trim() !== '' ? v.trim() : undefined
+);
+
+// Turn a user string into a harmless *literal* substring regex: escape every
+// regex metacharacter and cap the length so it can never be an expensive /
+// catastrophic-backtracking pattern (ReDoS).
+const escapeRegExp = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const NAME_MAX = 200;
+
+export const buildChecksFilter = (q: Record<string, unknown>): Record<string, unknown> => {
+    const filter: Record<string, unknown> = {};
+
+    const run = toScalarString(q.run);
+    const status = toScalarString(q.status);
+    const branch = toScalarString(q.branch);
+    const browser = toScalarString(q.browser);
+    const os = toScalarString(q.os);
+    const viewport = toScalarString(q.viewport);
+    const markedAs = toScalarString(q.markedAs);
+    const app = toScalarString(q.app);
+    const suite = toScalarString(q.suite);
+    const name = toScalarString(q.name);
+
+    if (run) filter.run = run;
+    if (status) filter.status = status;
+    if (name) filter.name = { $regex: escapeRegExp(name).slice(0, NAME_MAX), $options: 'i' };
+    if (branch) filter.branch = branch;
+    if (browser) filter.browserName = browser;
+    if (os) filter.os = os;
+    if (viewport) filter.viewport = viewport;
+    if (markedAs) filter.markedAs = markedAs;
+    if (app) filter.app = app;
+    if (suite) filter.suite = suite;
+
+    if (q.hasDiff === 'true') {
+        filter.diffId = { $exists: true, $ne: null };
+    }
+
+    const lastSeconds = toScalarString(q.lastSeconds);
+    const fromDate = toScalarString(q.fromDate);
+    const toDate = toScalarString(q.toDate);
+    if (lastSeconds) {
+        const seconds = Number(lastSeconds);
+        if (!isNaN(seconds) && seconds > 0) {
+            filter.createdDate = { $gte: new Date(Date.now() - seconds * 1000) };
+        }
+    } else if (fromDate || toDate) {
+        const range: Record<string, Date> = {};
+        if (fromDate) range.$gte = new Date(fromDate);
+        if (toDate) {
+            const date = new Date(toDate);
+            date.setUTCHours(23, 59, 59, 999);
+            range.$lte = date;
+        }
+        filter.createdDate = range;
+    }
+
+    // Defense-in-depth: even after coercion, assert the assembled filter carries
+    // no unexpected operators (mirrors the JSON-filter choke point).
+    assertSafeMongoFilter(filter);
+    return filter;
+};
 
 const htmlShell = (title: string, content: string) => {
     const safeTitle = escapeHtml(title);
@@ -161,37 +229,7 @@ const getChecks = catchAsync(async (req: ExtRequest, res: Response) => {
     // Validate and cap limit
     const itemsPerPage = Math.min(Number(limit) || 20, 5000);
 
-    const filter: any = {};
-    if (run) filter.run = run;
-    if (status) filter.status = status;
-    if (name) filter.name = { $regex: name, $options: 'i' };
-    if (branch) filter.branch = branch;
-    if (browser) filter.browserName = browser;
-    if (os) filter.os = os;
-    if (viewport) filter.viewport = viewport;
-    if (markedAs) filter.markedAs = markedAs;
-    if (app) filter.app = app;
-    if (suite) filter.suite = suite;
-
-    if (hasDiff === 'true') {
-        filter.diffId = { $exists: true, $ne: null };
-    }
-
-    // Last X seconds filter
-    if (lastSeconds) {
-        const seconds = Number(lastSeconds);
-        if (!isNaN(seconds) && seconds > 0) {
-            filter.createdDate = { $gte: new Date(Date.now() - seconds * 1000) };
-        }
-    } else if (fromDate || toDate) {
-        filter.createdDate = {};
-        if (fromDate) filter.createdDate.$gte = new Date(fromDate as string);
-        if (toDate) {
-            const date = new Date(toDate as string);
-            date.setUTCHours(23, 59, 59, 999);
-            filter.createdDate.$lte = date;
-        }
-    }
+    const filter: any = buildChecksFilter(req.query as Record<string, unknown>);
 
     const options = {
         page: Number(page),
