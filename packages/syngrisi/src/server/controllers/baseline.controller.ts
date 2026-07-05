@@ -20,7 +20,6 @@ const get = catchAsync(async (req: ExtRequest, res: Response) => {
         : {};
 
     if (req.user && req.user.role === 'user') {
-        console.log('Filtering baselines for user:', req.user.username, req.user._id);
         filter.markedByUsername = req.user.username;
     }
 

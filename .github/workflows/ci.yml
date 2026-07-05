@@ -24,10 +24,6 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile --ignore-engines
 
-      - name: Install UI dependencies
-        run: yarn install --ignore-engines
-        working-directory: packages/syngrisi/src/ui-app
-
       - name: Build
         run: yarn build
 
@@ -158,10 +154,6 @@ jobs:
         with:
           name: build-artifacts
           path: packages/
-
-      - name: Install UI dependencies
-        run: yarn install --ignore-engines
-        working-directory: packages/syngrisi/src/ui-app
 
       - name: Install E2E dependencies
         run: yarn install --ignore-engines
