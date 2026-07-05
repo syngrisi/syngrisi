@@ -1,7 +1,8 @@
-const logger = require('@wdio/logger').default;
+import logger from '@wdio/logger';
+
 const log = logger('wdio-cucumber-viewport-logger-service');
 
-module.exports.renderDebugMsg = function (browser, params) {
+export function renderDebugMsg(browser: any, params: any) {
     browser.cucumberViewportMessages = browser.cucumberViewportMessages ? browser.cucumberViewportMessages : [];
     const numberOfSteps = params?.numberOfSteps ? (params?.numberOfSteps - 1) : 2;
     if (browser.cucumberViewportMessages && browser.cucumberViewportMessages.length > numberOfSteps) {
