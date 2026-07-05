@@ -5,9 +5,11 @@ import { PaginateOptions } from '@models/plugins/utils';
 const get = async (filter:  FilterQuery<typeof App> , options: PaginateOptions) => App.paginate(filter, options);
 const getById = async (id: string) => App.findById(id).exec();
 const getByName = async (name: string) => App.findOne({ name }).exec();
+const getTriageEnabledAppIds = async () => App.find({ triageEnabled: true }).distinct('_id');
 
 export {
     get,
     getById,
     getByName,
+    getTriageEnabledAppIds,
 };

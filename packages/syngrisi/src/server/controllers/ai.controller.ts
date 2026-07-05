@@ -1,11 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Response } from 'express';
-import { Check, App, Run, Test } from '@models';
+// NOTE (plan 022): `Check`/`Test` stay imported here for the aggregated report/queue
+// queries below (getRunReport, triageQueue) — those do ad-hoc select/lean/populate
+// shaping that's specific to this report and not worth abstracting into a generic
+// service function. Simple lookups (Check by id, Run by id, triage-enabled app ids)
+// are routed through their services.
+import { Check, Test } from '@models';
 import { catchAsync, ApiError } from '@utils';
 import { config } from '@config';
 import fs from 'fs';
 import path from 'path';
-import { accept, remove } from '@services/check.service';
+import { accept, remove, getById as getCheckById, paginate as paginateChecks } from '@services/check.service';
+import { getById as getRunById } from '@services/run.service';
+import { getTriageEnabledAppIds } from '@services/app.service';
 import { webhookService } from '@services/webhook.service';
 import { ExtRequest } from '@types';
 import log from '@lib/logger';
@@ -113,7 +120,7 @@ const getChecks = catchAsync(async (req: ExtRequest, res: Response) => {
         sort: { createdDate: -1 },
     };
 
-    const result = await Check.paginate(filter, options);
+    const result = await paginateChecks(filter, options);
 
     // Field filtering for API responses
     if (fields && format) {
@@ -180,7 +187,7 @@ const getChecks = catchAsync(async (req: ExtRequest, res: Response) => {
 
 const getCheckDetails = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
-    const check: any = await Check.findById(id).populate('actualSnapshotId baselineId diffId');
+    const check: any = await getCheckById(id, 'actualSnapshotId baselineId diffId');
     if (!check) {
         res.status(404).send('Check not found');
         return;
@@ -193,7 +200,7 @@ const getCheckDetails = catchAsync(async (req: ExtRequest, res: Response) => {
 
 const getAnalysis = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
-    const check: any = await Check.findById(id).populate('actualSnapshotId baselineId diffId');
+    const check: any = await getCheckById(id, 'actualSnapshotId baselineId diffId');
     if (!check) {
         res.status(404).json({ error: 'Check not found' });
         return;
@@ -235,12 +242,14 @@ const getAnalysis = catchAsync(async (req: ExtRequest, res: Response) => {
 const getRunReport = catchAsync(async (req: ExtRequest, res: Response) => {
     const { runId } = req.params;
 
-    const run: any = await Run.findById(runId).exec();
+    const run: any = await getRunById(runId);
     if (!run) {
         res.status(404).json({ error: 'Run not found' });
         return;
     }
 
+    // Ad-hoc report shaping (select/lean, cross-referencing tests+checks) — kept as
+    // direct model queries per plan 022's allowance for one-off report queries.
     const [tests, checks] = await Promise.all([
         Test.find({ run: runId }).select('_id name status').lean().exec() as Promise<any[]>,
         Check.find({ run: runId }).select('_id name status test diffId markedAs createdDate').lean().exec() as Promise<any[]>,
@@ -335,7 +344,7 @@ const registerWebhook = catchAsync(async (req: ExtRequest, res: Response) => {
 // Re-run AI triage for a single check (toolbar "re-run" action). Returns the persisted triage.
 const triageRun = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
-    const check = await Check.findById(id).exec();
+    const check = await getCheckById(id);
     if (!check) {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Check not found');
     }
@@ -346,7 +355,7 @@ const triageRun = catchAsync(async (req: ExtRequest, res: Response) => {
 // Cancel analysis for a check from the queue → stamp the reserved 'cancelled' verdict.
 const triageCancel = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
-    const check = await Check.findById(id).exec();
+    const check = await getCheckById(id);
     if (!check) {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Check not found');
     }
@@ -358,9 +367,11 @@ const triageCancel = catchAsync(async (req: ExtRequest, res: Response) => {
 // ?pendingOnly=true → only checks still awaiting analysis.
 const triageQueue = catchAsync(async (req: ExtRequest, res: Response) => {
     const pendingOnly = String(req.query.pendingOnly) === 'true';
-    const enabledAppIds = await App.find({ triageEnabled: true }).distinct('_id');
+    const enabledAppIds = await getTriageEnabledAppIds();
     const filter: Record<string, unknown> = { status: 'failed', diffId: { $exists: true, $ne: null }, app: { $in: enabledAppIds } };
     if (pendingOnly) filter['triage.pending'] = true;
+    // Ad-hoc select/populate/sort/limit shaping for the queue view — kept as a direct
+    // model query per plan 022's allowance for one-off report queries.
     const checks = await Check.find(filter)
         .select('name run test status triage createdDate')
         .populate('run', 'name createdDate')
