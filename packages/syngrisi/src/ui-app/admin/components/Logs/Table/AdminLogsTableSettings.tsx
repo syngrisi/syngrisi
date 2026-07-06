@@ -69,24 +69,24 @@ function AdminLogsTableSettings(
 
             <Text pt="xl" fw={500}>Visible fields</Text>
             <Chip.Group
-                align="self-start"
-                p={8}
                 value={visibleFields}
                 onChange={setVisibleFields}
                 multiple
             >
-                {
-                    Object.keys(adminLogsTableColumns).map((column) => (
-                        <Chip
-                            key={column}
-                            value={column}
-                            data-test={`settings-visible-columns-${adminLogsTableColumns[column].label}`}
+                <Group align="self-start" p={8}>
+                    {
+                        Object.keys(adminLogsTableColumns).map((column) => (
+                            <Chip
+                                key={column}
+                                value={column}
+                                data-test={`settings-visible-columns-${adminLogsTableColumns[column].label}`}
 
-                        >
-                            {adminLogsTableColumns[column].label}
-                        </Chip>
-                    ))
-                }
+                            >
+                                {adminLogsTableColumns[column].label}
+                            </Chip>
+                        ))
+                    }
+                </Group>
             </Chip.Group>
         </RelativeDrawer>
     );

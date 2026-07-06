@@ -141,7 +141,7 @@ const BaselineHistoryFilterSchema = z
             const parsed = JSON.parse(data);
             BaselineHistoryIdentSchema.parse(parsed);
             return true;
-        } catch (e) {
+        } catch {
             return false;
         }
     }, {

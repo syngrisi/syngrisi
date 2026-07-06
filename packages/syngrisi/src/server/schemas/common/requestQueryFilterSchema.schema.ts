@@ -23,7 +23,7 @@ export const requestQueryFilterSchema = z
             const schema = z.record(z.string(), valueSchema);
             schema.parse(parsed);
             return true;
-        } catch (e) {
+        } catch {
             return false;
         }
     }, {

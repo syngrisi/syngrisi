@@ -45,8 +45,8 @@ export function DateFilter({ label, groupRules, updateGroupRules, id }: Props) {
                 <DatePicker
                     data-test="table-filter-value"
                     title={form.getInputProps('value').value}
-                    placeholder="value"
-                    {...form.getInputProps('value')}
+                    value={form.values.value}
+                    onChange={(value) => form.setFieldValue('value', value ?? '')}
                 />
             </Group>
         </form>

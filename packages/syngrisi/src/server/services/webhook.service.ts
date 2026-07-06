@@ -9,7 +9,7 @@ const triggerWebhooks = async (event: string, payload: any) => {
     for (const webhook of webhooks) {
         try {
             await validateWebhookUrl(webhook.url);
-        } catch (e) {
+        } catch {
             log.error(`Skipping webhook ${webhook.url}: failed URL validation`);
             continue;
         }

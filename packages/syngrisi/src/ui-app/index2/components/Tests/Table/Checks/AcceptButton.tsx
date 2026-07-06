@@ -191,7 +191,6 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
             size={buttonSize}
             style={{
                 cursor: isCurrentlyAccepted ? 'default' : 'pointer',
-                '&:hover': { backgroundColor: isCurrentlyAccepted ? 'rgba(255, 255, 255, 0);' : '' },
             }}
             testAttr="check-accept-icon"
             testAttrName={check.name}

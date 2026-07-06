@@ -169,13 +169,13 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                 <Button
                     data-test="table-filter-add-rule-button"
                     title="Add filter rule"
-                    compact
+                    size="compact-sm"
                     onClick={() => updateGroupRules(uuid(), {})}
                     variant="light"
                     color="green"
-                    leftIcon={<IconPlus size={16} />}
+                    leftSection={<IconPlus size={16} />}
                     styles={
-                        { leftIcon: { marginRight: 4 } }
+                        { section: { marginRight: 4 } }
                     }
                 >
                     Rule
@@ -184,16 +184,15 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                     id === 'mainGroup'
                     && (
                         <Button
-                            size="sm"
+                            size="compact-sm"
                             data-test="table-filter-add-group-button"
-                            compact
                             onClick={() => updateGroupsData(uuid(), initGroupObject)}
                             title="Add another group"
                             variant="light"
                             color="green"
-                            leftIcon={<IconPlus size={16} />}
+                            leftSection={<IconPlus size={16} />}
                             styles={
-                                { leftIcon: { marginRight: 4 } }
+                                { section: { marginRight: 4 } }
                             }
                         >
                             Group

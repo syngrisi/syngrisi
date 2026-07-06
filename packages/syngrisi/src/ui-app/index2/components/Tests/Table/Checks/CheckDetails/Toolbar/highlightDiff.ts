@@ -2,12 +2,20 @@
 import { fabric } from 'fabric';
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 
+declare global {
+    interface Window {
+        // Exposed on window for E2E tests / test-only slow-highlight toggle.
+        mainView: MainView;
+        slowHighlight?: boolean;
+    }
+}
+
 export interface IGroup {
     minX: number
     maxX: number
     minY: number
     maxY: number
-    imageData: any,
+    imageData?: any,
     members: { x: number, y: number }[],
 }
 

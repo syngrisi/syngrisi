@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 interface Props {
     num: number
     infinityQuery: any
-    scrollRootRef?: React.RefObject<HTMLDivElement>
+    scrollRootRef?: React.RefObject<HTMLDivElement | null>
 }
 
 export function RelatedChecksSkeleton({ num, infinityQuery, scrollRootRef }: Props) {

@@ -25,6 +25,14 @@ interface Props {
     variant?: string;
     disabled: boolean;
     'aria-label'?: string;
+    title?: string;
+    // Props forwarded by @mantine/form's getInputProps() spread
+    error?: React.ReactNode;
+    onFocus?: React.FocusEventHandler;
+    onBlur?: React.FocusEventHandler;
+    defaultValue?: string;
+    checked?: boolean;
+    defaultChecked?: boolean;
 }
 
 // select component for selenium

@@ -138,20 +138,26 @@ class SyngrisiApi {
     private async requestWithRetry<T>(
         requestFn: () => Promise<T>,
         methodName: string,
-        errorMessage: string
+        errorMessage: string,
+        idempotent = false
     ): Promise<T | ErrorObject> {
         const maxRetries = 3
         const retryDelayMs = 2000
+        // got's default retry status list for idempotent methods.
+        const retryableStatus = new Set([408, 413, 429, 500, 502, 503, 504, 521, 522, 524])
 
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             try {
                 return await requestFn()
             } catch (e: any) {
                 const is401 = e.response?.statusCode === 401
+                // No `response` => network-level failure (ETIMEDOUT/ECONNRESET/EAI_AGAIN/…).
+                const isTransient = idempotent
+                    && (e.response === undefined || retryableStatus.has(e.response?.statusCode))
                 const isLastAttempt = attempt === maxRetries
 
-                if (is401 && !isLastAttempt) {
-                    log.warn(`⚠️ 401 error on ${methodName}, retrying in ${retryDelayMs}ms (attempt ${attempt}/${maxRetries})`)
+                if ((is401 || isTransient) && !isLastAttempt) {
+                    log.warn(`⚠️ ${is401 ? '401' : 'transient'} error on ${methodName}, retrying in ${retryDelayMs}ms (attempt ${attempt}/${maxRetries})`)
                     await new Promise(resolve => setTimeout(resolve, retryDelayMs))
                     continue
                 }
@@ -366,7 +372,8 @@ class SyngrisiApi {
         return this.requestWithRetry(
             () => requestJson(url, { headers: this.headers }) as Promise<string[]>,
             'getIdent',
-            '❌ Error getting ident data'
+            '❌ Error getting ident data',
+            true
         )
     }
 
@@ -398,7 +405,8 @@ class SyngrisiApi {
         return this.requestWithRetry(
             () => requestJson(url, { headers: this.headers }) as Promise<BaselineResponse>,
             'getBaselines',
-            `❌ Error getting baselines, params: '${JSON.stringify(params)}' data`
+            `❌ Error getting baselines, params: '${JSON.stringify(params)}' data`,
+            true
         )
     }
 
@@ -429,7 +437,8 @@ class SyngrisiApi {
         return this.requestWithRetry(
             () => requestJson(url, { headers: this.headers }) as Promise<SnapshotResponse>,
             'getSnapshots',
-            `❌ Error getting snapshots, params: '${JSON.stringify(params)}' data`
+            `❌ Error getting snapshots, params: '${JSON.stringify(params)}' data`,
+            true
         )
     }
 
@@ -461,7 +470,7 @@ class SyngrisiApi {
                 body: JSON.stringify({ baselineId }),
                 headers: { ...this.headers, 'content-type': 'application/json' },
             }) as Promise<CheckResponse>
-        }, 'acceptCheck', `❌ Error accepting check, checkId: '${checkId}', baselineId: '${baselineId}'`)
+        }, 'acceptCheck', `❌ Error accepting check, checkId: '${checkId}', baselineId: '${baselineId}'`, true)
     }
 
     /**
@@ -493,7 +502,7 @@ class SyngrisiApi {
                 body: JSON.stringify(updates),
                 headers: { ...this.headers, 'content-type': 'application/json' },
             })
-        }, 'updateBaseline', `❌ Error updating baseline, baselineId: '${baselineId}', updates: '${JSON.stringify(updates)}'`)
+        }, 'updateBaseline', `❌ Error updating baseline, baselineId: '${baselineId}', updates: '${JSON.stringify(updates)}'`, true)
     }
 }
 

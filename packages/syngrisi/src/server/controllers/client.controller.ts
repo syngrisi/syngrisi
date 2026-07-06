@@ -1,7 +1,6 @@
 import { HttpStatus } from '@utils';
 import { ApiError, catchAsync, pick, deserializeIfJSON, paramsGuard } from '@utils';
 import { clientService, genericService } from '@services';
-import { updateItem } from '@lib/dbItems';
 import { RequiredIdentOptionsSchema, RequiredIdentOptionsType, createCheckParamsSchema } from '@schemas';
 import { getById as getTestById } from '@services/test.service';
 import { getByName as getAppByName } from '@services/app.service';

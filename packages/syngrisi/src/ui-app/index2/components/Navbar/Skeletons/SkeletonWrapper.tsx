@@ -9,7 +9,7 @@ interface Props {
     itemType?: string,
     num?: number,
     itemClass: string,
-    scrollRootRef?: React.RefObject<HTMLDivElement>
+    scrollRootRef?: React.RefObject<HTMLDivElement | null>
 }
 
 function SkeletonWrapper({ infinityQuery, itemType, num, itemClass, scrollRootRef }: Props) {

@@ -20,7 +20,7 @@ export function LabelUser({ username, dataTest = 'user-label', size = 'xs' }: Pr
         && (userQuery.data.results.length > 0)
         && userQuery.data.results[0].firstName
     )
-        ? `${userQuery?.data?.results[0].firstName[0]}${userQuery?.data?.results[0]?.lastName[0]}`
+        ? `${userQuery?.data?.results[0].firstName[0]}${userQuery?.data?.results[0]?.lastName?.[0] ?? ''}`
         : '';
 
     return (

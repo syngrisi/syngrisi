@@ -63,7 +63,7 @@ test('baseline migration removes duplicates and keeps the newest record', async 
         createdDate: new Date('2023-01-01'),
     };
 
-    const older = await Baseline.create({
+    await Baseline.create({
         ...sharedFields,
         lastMarkedDate: new Date('2023-01-01'),
         createdDate: new Date('2023-01-01'),

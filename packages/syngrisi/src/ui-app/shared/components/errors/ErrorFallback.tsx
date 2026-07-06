@@ -19,7 +19,7 @@ Stack Trace: ${error.stack}`,
 
                 <Group justify="center">
                     <Button
-                        leftIcon={<IconRefresh />}
+                        leftSection={<IconRefresh />}
                         variant="outline"
                         size="md"
                         onClick={() => {

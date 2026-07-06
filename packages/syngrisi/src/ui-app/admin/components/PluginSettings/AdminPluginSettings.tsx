@@ -236,7 +236,7 @@ function PluginSettingsForm({
                 );
             })}
 
-            <Button onClick={handleSave} leftIcon={<IconCheck size={16} />}>
+            <Button onClick={handleSave} leftSection={<IconCheck size={16} />}>
                 Save Settings
             </Button>
         </Stack>
@@ -251,7 +251,7 @@ function EffectiveConfigView({ plugin }: { plugin: PluginInfo }) {
     }
 
     return (
-        <Table striped highlightOnHover withBorder>
+        <Table striped highlightOnHover withTableBorder>
             <thead>
                 <tr>
                     <th>Setting</th>
@@ -343,7 +343,7 @@ export default function AdminPluginSettings() {
                 actions={(
                     <Button
                         variant="subtle"
-                        leftIcon={<IconRefresh size={16} />}
+                        leftSection={<IconRefresh size={16} />}
                         onClick={() => refetch()}
                     >
                         Refresh

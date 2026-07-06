@@ -104,7 +104,7 @@ export const buildChecksFilter = (q: Record<string, unknown>): Record<string, un
 const getChecks = catchAsync(async (req: ExtRequest, res: Response) => {
     const {
         run, status, fromDate, toDate, lastSeconds, limit = 20, page = 1,
-        name, branch, browser, os, viewport, markedAs, hasDiff, app, suite, fields, format
+        name, branch, browser, os, viewport, markedAs, hasDiff, fields, format
     } = req.query;
 
     // Validate and cap limit

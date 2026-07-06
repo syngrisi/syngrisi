@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Group, Stack, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { GenericService } from '@shared/services';
+import { GenericService, ICheck } from '@shared/services';
 
 import { ChecksSkeleton } from '@index/components/Tests/Table/Checks/ChecksSkeleton';
 import { Check } from '@index/components/Tests/Table/Checks/Check';
@@ -92,7 +92,7 @@ export function Checks({ item, testUpdateQuery }: Props) {
             (a: any, b: any) => (scoreById.get(String(b._id)) ?? 0) - (scoreById.get(String(a._id)) ?? 0),
         );
     }
-    useImagePreloadBatch(checks, {
+    useImagePreloadBatch(checks as unknown as ICheck[], {
         enabled: checks.length > 0,
         priority: 'medium',
         preloadCount: 30, // Preload first 30 checks (30 * 3 images = 90)
@@ -115,7 +115,7 @@ export function Checks({ item, testUpdateQuery }: Props) {
                                 </Text>
                             )
                             : (
-                                checksQuery?.data?.results?.length < 1
+                                (checksQuery?.data?.results?.length ?? 0) < 1
                                     ? (
                                         <Text size="md">
                                             Test does not have any checks

@@ -22,7 +22,7 @@ export default function Bars({ value }: { value: string }) {
         .fill(0)
         .map((_, index) => (
             <Progress
-                styles={{ bar: { transitionDuration: '0ms' } }}
+                styles={{ section: { transitionDuration: '0ms' } }}
                 value={
                     (value.length > 0 && index === 0)
                         ? 100

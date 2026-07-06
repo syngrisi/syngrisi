@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import path from 'path';
 import { HttpStatus } from '@utils';
 

@@ -97,7 +97,7 @@ export function ShareModal({ opened, onClose, checkId }: ShareModalProps) {
                     />
                 ) : (
                     <Button
-                        leftIcon={<IconShare size={16} />}
+                        leftSection={<IconShare size={16} />}
                         onClick={handleCreateShare}
                         loading={createShareMutation.isPending}
                         data-test="create-share-button"

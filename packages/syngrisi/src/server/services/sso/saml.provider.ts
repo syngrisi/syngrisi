@@ -9,7 +9,7 @@ import type { PassportStatic } from 'passport';
 import log from '@logger';
 import { env } from '../../envConfig';
 import { ssoUserService } from './sso-user.service';
-import { metadataLoaderService, ParsedIdPMetadata } from './metadata-loader.service';
+import { metadataLoaderService } from './metadata-loader.service';
 import type { SSOProvider, NormalizedProfile } from './types';
 import { LogOpts } from '@types';
 

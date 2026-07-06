@@ -23,7 +23,7 @@ function PagesCountAffix({ loaded, total, scrollAreaRef }: Props) {
                         color="dark"
                         style={transitionStyles}
                         title="Scroll to top"
-                        rightIcon={<IconArrowUp size={16} />}
+                        rightSection={<IconArrowUp size={16} />}
                         onClick={
                             () => scrollAreaRef?.current?.querySelector('.mantine-ScrollArea-viewport').scroll(0, 0)
                         }

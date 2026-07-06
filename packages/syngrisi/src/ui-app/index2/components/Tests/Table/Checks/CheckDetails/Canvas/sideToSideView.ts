@@ -28,6 +28,42 @@ export class SideToSideView {
 
     private dividerSlider: any;
 
+    // Event handlers (arrow functions bound in the constructor).
+    private zoomEventHandler!: () => void;
+
+    private canvasMouseCLickHandler!: (e: fabric.IEvent) => void;
+
+    private canvasMouseMoveHandler!: (e: fabric.IEvent) => void;
+
+    private canvasPanHandler!: (e: fabric.IEvent) => void;
+
+    // View state / fabric objects assigned during render().
+    private folowMouse!: boolean;
+
+    divider!: fabric.Group;
+
+    private dividerSliderCircle!: fabric.Circle;
+
+    private dividerSliderText!: fabric.Text;
+
+    private dividerOffset!: number;
+
+    actualImg!: fabric.Image;
+
+    expectedImg!: fabric.Image;
+
+    private actualRectClip!: fabric.Rect;
+
+    private expectedRectClip!: fabric.Rect;
+
+    private actualLabel?: fabric.Object;
+
+    private expectedLabel?: fabric.Object;
+
+    private canvasLeft!: number;
+
+    private canvasTop!: number;
+
     constructor({ mainView }: any) {
         this.mainView = mainView;
         this.canvas = mainView.canvas;
@@ -66,7 +102,7 @@ export class SideToSideView {
         };
     }
 
-    static lockCommon(object) {
+    static lockCommon(object: fabric.Object) {
         object.set({
             lockMovementY: true,
             lockMovementX: true,
@@ -98,10 +134,10 @@ export class SideToSideView {
         );
 
         // moving the object along with mouse cursor
-        this.divider.left = newLeft - (this.divider.width) / 2 + (this.dividerSlider.width / 2);
+        this.divider.left = newLeft - (this.divider.width!) / 2 + (this.dividerSlider.width / 2);
         // (this.expectedRectClip.width * -1) + this.actualImg.getScaledWidth() / 2;
         this.actualRectClip.left = newLeft;
-        this.expectedRectClip.left = newLeft - this.expectedRectClip.width;
+        this.expectedRectClip.left = newLeft - this.expectedRectClip.width!;
         this.divider.top = newTop - (this.dividerSlider.height / this.canvas.getZoom()) / 2;
         this.divider.setCoords();
         this.canvas.renderAll();
@@ -131,7 +167,7 @@ export class SideToSideView {
         return this.canvas.viewportTransform[5];
     }
 
-    divider() {
+    createDivider() {
         const $this = this;
         const dividerFillColor = '#FFFFFF';
         const dividerStrokeColor = '#878a8c';
@@ -231,9 +267,9 @@ export class SideToSideView {
         return divider;
     }
 
-    actualRectClip() {
+    createActualRectClip() {
         return new fabric.Rect({
-            top: this.actualImg.height * -1,
+            top: this.actualImg.height! * -1,
             originX: 'left',
             originY: 'top',
             absolutePositioned: true,
@@ -242,13 +278,13 @@ export class SideToSideView {
             objectCaching: false,
             // opacity: 0.00001,
             // width: 70,
-            height: this.actualImg.height * 3,
+            height: this.actualImg.height! * 3,
         });
     }
 
-    expectedRectClip() {
+    createExpectedRectClip() {
         return new fabric.Rect({
-            top: this.expectedImg.height * -1,
+            top: this.expectedImg.height! * -1,
             // opacity: 0.00001,
             originX: 'left',
             originY: 'top',
@@ -257,7 +293,7 @@ export class SideToSideView {
             lockMovementX: true,
             objectCaching: false,
             // width: 70,
-            height: this.expectedImg.height * 3,
+            height: this.expectedImg.height! * 3,
         });
     }
 
@@ -328,13 +364,13 @@ export class SideToSideView {
         this.actualImg.evented = false;
         SideToSideView.lockCommon(this.actualImg);
 
-        this.divider = this.divider();
+        this.divider = this.createDivider();
         // CLIPS
-        this.actualRectClip = this.actualRectClip();
+        this.actualRectClip = this.createActualRectClip();
         SideToSideView.lockCommon(this.actualRectClip);
         this.actualImg.clipPath = this.actualRectClip;
 
-        this.expectedRectClip = this.expectedRectClip();
+        this.expectedRectClip = this.createExpectedRectClip();
         SideToSideView.lockCommon(this.expectedRectClip);
         this.expectedImg.clipPath = this.expectedRectClip;
 
@@ -344,7 +380,7 @@ export class SideToSideView {
 
         this.actualRectClip.left = Math.max(this.mainView.expectedImage.width, this.mainView.expectedImage.width) / 2;
         this.expectedRectClip.left = Math.max(this.mainView.expectedImage.width, this.mainView.expectedImage.width) / 2
-            - this.expectedRectClip.width;
+            - this.expectedRectClip.width!;
 
         this.divider.left = Math.max(this.mainView.expectedImage.width, this.mainView.expectedImage.width) / 2;
         // RENDER
@@ -352,10 +388,10 @@ export class SideToSideView {
         await this.canvas.add(this.actualImg);
         await this.canvas.add(this.divider);
 
-        this.canvasLeft = document.getElementById('snapshoot')
+        this.canvasLeft = document.getElementById('snapshoot')!
             .getBoundingClientRect().x;
 
-        this.canvasTop = document.getElementById('snapshoot')
+        this.canvasTop = document.getElementById('snapshoot')!
             .getBoundingClientRect().y;
 
         this.addZoomEvents();

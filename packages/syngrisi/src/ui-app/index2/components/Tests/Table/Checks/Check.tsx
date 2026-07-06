@@ -309,7 +309,6 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
 
                                     <RemoveButton
                                         check={check}
-                                        checksQuery={checksQuery}
                                         testUpdateQuery={testUpdateQuery}
                                     />
                                 </Group>
@@ -473,7 +472,6 @@ export const Check = React.memo(function Check({ check, checksViewMode, checksQu
 
                                     <RemoveButton
                                         size={26}
-                                        checksQuery={checksQuery}
                                         testUpdateQuery={testUpdateQuery}
                                         check={check}
                                     />

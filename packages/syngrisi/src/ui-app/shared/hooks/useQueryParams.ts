@@ -2,8 +2,8 @@ import { useSearchParams } from 'react-router';
 import { useCallback, useMemo, useRef } from 'react';
 
 export type ParamType = 'string' | 'json';
-export const StringParam: ParamType = 'string';
-export const JsonParam: ParamType = 'json';
+export const StringParam = 'string' as const;
+export const JsonParam = 'json' as const;
 
 export type QueryConfig = Record<string, ParamType>;
 

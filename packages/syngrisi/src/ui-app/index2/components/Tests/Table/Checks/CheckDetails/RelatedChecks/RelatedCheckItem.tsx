@@ -124,11 +124,10 @@ export function RelatedCheckItem({ checkData, activeCheckId, setRelatedActiveChe
                                 width="125px"
                                 fit="contain"
                                 alt={check.name}
-                                withPlaceholder
                                 style={{ width: '125px', flexShrink: 0 }}
                                 styles={
                                     () => ({
-                                        image: {
+                                        root: {
                                             maxHeight: 150,
                                         },
                                     })

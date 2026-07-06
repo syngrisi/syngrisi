@@ -16,7 +16,6 @@ import {
     CheckCompareContext,
     CheckOverrideResult,
 } from '../sdk/types';
-import { getHookExecutionMode, HOOK_EXECUTION_MODE } from '../sdk/hooks';
 import { CompareResult } from '@services/comparison.service';
 
 const logOpts = {

@@ -78,6 +78,7 @@ const remove = async (id: string) => {
         await removeSnapshotFile(snapshot);
         await Snapshot.findByIdAndDelete(id);
     } else {
+        // ponytail: intentionally ignored
     }
 };
 

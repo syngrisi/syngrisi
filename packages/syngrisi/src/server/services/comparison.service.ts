@@ -7,7 +7,6 @@ import { getDiff } from '@lib/comparison';
 import log from '@logger';
 import { SnapshotDiff } from '@schemas/SnapshotDiff.schema';
 import { LogOpts, RequestUser } from '@types';
-import { UserDocument } from '@models/User.model';
 import { CreateCheckParamsExtended } from '../../types/Check';
 import { createSnapshot } from './snapshot-file.service';
 import { errMsg, ApiError } from '@utils';

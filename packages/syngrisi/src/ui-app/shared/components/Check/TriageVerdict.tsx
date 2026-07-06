@@ -15,7 +15,7 @@ const VERDICT_FALLBACK: Record<string, { color: string; label: string; icon: str
 
 interface Props {
     check: any;
-    size?: number | string;
+    size?: string;
     variant?: string;
     onClick?: (verdict: string) => void;
     compact?: boolean; // icon-only (grid badges); full = icon + text

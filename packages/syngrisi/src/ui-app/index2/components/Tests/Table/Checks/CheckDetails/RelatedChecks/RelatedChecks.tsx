@@ -148,7 +148,7 @@ export function RelatedChecks(
                                 </ActionIcon>
                             </Group>
 
-                            <Chip.Group gap={6} value={filter} onChange={updateFilter} multiple>
+                            <Chip.Group value={filter} onChange={updateFilter} multiple>
                                 <Chip size="xs" value="name" disabled>Name</Chip>
                                 <Chip size="xs" value="browserName">Browser</Chip>
                                 <Chip size="xs" value="browserVersion">Browser ver.</Chip>

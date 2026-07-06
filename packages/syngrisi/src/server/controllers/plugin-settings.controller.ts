@@ -131,7 +131,7 @@ export const updatePluginSettings = async (req: Request, res: Response): Promise
             if (jwksUrl) {
                 try {
                     new URL(jwksUrl);
-                } catch (error) {
+                } catch {
                     res.status(400).json({
                         error: 'Invalid JWKS URL format',
                         details: `jwksUrl must be a valid URL: ${jwksUrl}`

@@ -359,7 +359,7 @@ export function QuickFilter(
                         <ScrollArea style={{ height: '45vh' }}>
                             <Stack gap={8} justify="flex-start">
                                 <Text {...sectionLabelProps}>Browsers:</Text>
-                                <Chip.Group gap={4} multiple value={browserChipsData} onChange={setBrowserChipsData}>
+                                <Chip.Group multiple value={browserChipsData} onChange={setBrowserChipsData}>
                                     <Box style={chipsRowStyle}>
                                         {browsers.map((item: string) => (
                                             <Chip value={item} key={item} styles={chipStyles}>{item}</Chip>
@@ -368,7 +368,7 @@ export function QuickFilter(
                                 </Chip.Group>
 
                                 <Text {...sectionLabelProps}>Platforms:</Text>
-                                <Chip.Group gap={4} multiple value={platformChipsData} onChange={setPlatformChipsData}>
+                                <Chip.Group multiple value={platformChipsData} onChange={setPlatformChipsData}>
                                     <Box style={chipsRowStyle}>
                                         {platforms.map((item: string) => (
                                             <Chip key={item} value={item} styles={chipStyles}>{item}</Chip>
@@ -377,7 +377,7 @@ export function QuickFilter(
                                 </Chip.Group>
 
                                 <Text {...sectionLabelProps}>Viewports:</Text>
-                                <Chip.Group value={viewportChipsData} onChange={setViewportChipsData} gap={4} multiple>
+                                <Chip.Group value={viewportChipsData} onChange={setViewportChipsData} multiple>
                                     <Box style={chipsRowStyle}>
                                         {viewports.map((item: string) => (
                                             <Chip value={item} key={item} styles={chipStyles}>{item}</Chip>
@@ -386,7 +386,7 @@ export function QuickFilter(
                                 </Chip.Group>
 
                                 <Text {...sectionLabelProps}>Status:</Text>
-                                <Chip.Group value={resolvedActiveStatuses} onChange={handleStatusesChange} gap={4} multiple>
+                                <Chip.Group value={resolvedActiveStatuses} onChange={handleStatusesChange} multiple>
                                     <Box style={chipsRowStyle}>
                                         {statuses.map((status) => (
                                             <Chip value={status.key} key={status.key} styles={chipStyles}>{status.label}</Chip>
@@ -395,7 +395,7 @@ export function QuickFilter(
                                 </Chip.Group>
 
                                 <Text {...sectionLabelProps}>Accepted:</Text>
-                                <Chip.Group value={acceptedStatusChipsData} onChange={setAcceptedStatusChipsData} gap={4} multiple>
+                                <Chip.Group value={acceptedStatusChipsData} onChange={setAcceptedStatusChipsData} multiple>
                                     <Box style={chipsRowStyle}>
                                         {acceptStatuses.map((item: string) => (
                                             <Chip value={item} key={item} styles={chipStyles}>{item}</Chip>

@@ -24,9 +24,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
-    "composite": true,
+    "jsx": "react-jsx"
   },
-  "include": ["src"],
-  // "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["index2", "admin", "auth", "shared", "asserts", "config.ts", "ui-app-modules.d.ts"]
 }

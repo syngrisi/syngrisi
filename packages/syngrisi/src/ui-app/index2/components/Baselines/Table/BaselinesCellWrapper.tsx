@@ -57,7 +57,7 @@ export function BaselinesCellWrapper({ type, baseline, itemValue }: Props) {
             <td key={type} style={style}>
                 <Tooltip label={itemValue} multiline withinPortal>
                     <Group gap={6} align="center" wrap="nowrap">
-                        <BrowserIcon size={18} browserName={itemValue} />
+                        <BrowserIcon size={18} browser={itemValue} />
                         <Text lineClamp={1} style={{ wordBreak: 'break-all' }}>
                             {itemValue}
                         </Text>

@@ -100,7 +100,6 @@ export default function AdminLogs() {
                 key="reload"
                 newestItemsQuery={newestItemsQuery}
                 firstPageQuery={firstPageQuery}
-                infinityQuery={infinityQuery}
             />,
             50,
         );

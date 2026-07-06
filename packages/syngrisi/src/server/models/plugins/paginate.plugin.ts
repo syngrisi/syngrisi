@@ -1,4 +1,4 @@
-import { Schema, Document } from 'mongoose';
+import { Schema, Document, PopulateOptions } from 'mongoose';
 import type { QueryFilter as FilterQuery } from 'mongoose';
 import { PaginateOptions, QueryResult } from './utils';
 
@@ -54,14 +54,20 @@ const paginate = (schema: Schema) => {
     if (options.populate) {
       options.populate.split(',')
         .forEach((populateOption: string) => {
-          docsPromise = docsPromise.populate(
-            populateOption
-              .split('.')
-              .reverse()
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              .reduce((a, b) => ({ path: b, populate: a }))
-          );
+          // Build a (possibly nested) populate spec and tolerate populate paths
+          // that are not in this model's schema — skip them instead of throwing
+          // Mongoose's StrictPopulateError, which surfaced as a 500 when a client
+          // sent a populate meant for another resource (e.g. `test` on /v1/tests).
+          const populateSpec = populateOption
+            .split('.')
+            .reverse()
+            .reduce<PopulateOptions>(
+              (nested, path) => (nested.path
+                ? { path, strictPopulate: false, populate: nested }
+                : { path, strictPopulate: false }),
+              {} as PopulateOptions
+            );
+          docsPromise = docsPromise.populate(populateSpec);
         });
     }
 

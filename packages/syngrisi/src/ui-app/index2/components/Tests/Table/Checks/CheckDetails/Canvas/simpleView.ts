@@ -1,5 +1,13 @@
+import type { MainView } from './mainView';
+
+export type SimpleViewType = 'expected' | 'actual' | 'diff';
+
 export class SimpleView {
-    constructor(mainView, type) {
+    private mainView: MainView;
+
+    private type: SimpleViewType;
+
+    constructor(mainView: MainView, type: SimpleViewType) {
         this.mainView = mainView;
         this.type = type;
     }

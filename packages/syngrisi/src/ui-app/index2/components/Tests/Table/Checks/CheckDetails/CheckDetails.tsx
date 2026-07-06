@@ -48,8 +48,8 @@ export function CheckDetails({
     initialSiblingChecks = [],
 }: Props) {
     useDocumentTitle(initCheckData?.name);
-    const canvasElementRef = useRef(null);
-    const canvasContainerRef = useRef(null);
+    const canvasElementRef = useRef<HTMLDivElement>(null);
+    const canvasContainerRef = useRef<HTMLDivElement>(null);
     const { query, setQuery } = useParams();
     const queryClient = useQueryClient();
     const classes = inlineStyles;
@@ -118,7 +118,7 @@ export function CheckDetails({
 
     const usageCount = useMemo<number>(() => {
         if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
-            return baselineQuery.data?.results[0].usageCount || 0;
+            return Number(baselineQuery.data?.results[0].usageCount) || 0;
         }
         return 0;
     }, [baselineQuery.data?.timestamp]);
@@ -214,9 +214,11 @@ export function CheckDetails({
         }
     };
 
+    // `settings/public` returns an array of settings; GenericService.get is loosely
+    // typed as IApiResult, so reinterpret it to the actual public-settings shape.
     const settingsQuery = useQuery({
         queryKey: ['settings-public'],
-        queryFn: () => GenericService.get('settings/public'),
+        queryFn: () => GenericService.get('settings/public') as unknown as Promise<{ name: string; value: unknown; enabled?: boolean }[]>,
         refetchOnWindowFocus: false,
         staleTime: 5 * 60 * 1000,
     });
@@ -271,7 +273,7 @@ export function CheckDetails({
                 limit: initialSiblingChecks.length || 1,
                 totalPages: 1,
                 totalResults: initialSiblingChecks.length,
-                timestamp: Date.now(),
+                timestamp: String(Date.now()),
             }
             : undefined,
         staleTime: hasInitialSiblingChecks ? 10 * 1000 : 0,
@@ -443,8 +445,8 @@ export function CheckDetails({
             const MV = new MainView(
                 {
                     canvasId: '2d',
-                    canvasElementWidth: canvasElementRef.current?.clientWidth,
-                    canvasElementHeight: canvasElementRef.current?.clientHeight,
+                    canvasElementWidth: canvasElementRef.current?.clientWidth ?? 0,
+                    canvasElementHeight: canvasElementRef.current?.clientHeight ?? 0,
                     expectedImage,
                     actualImage,
                     diffImage,
@@ -598,7 +600,9 @@ export function CheckDetails({
             'selection:updated': updateDirtyState, // Maybe not needed for dirty state but good for consistency
         };
 
-        mainView.canvas.on(events);
+        // @types/fabric lacks the object-map overload for `on` (present at runtime and for `off`),
+        // so register each handler individually.
+        Object.entries(events).forEach(([name, handler]) => mainView.canvas.on(name, handler));
 
         return () => {
             mainView.canvas.off(events);
@@ -611,8 +615,10 @@ export function CheckDetails({
 
         // Small timeout to allow layout to update
         const timer = setTimeout(() => {
-            const newWidth = canvasElementRef.current.clientWidth;
-            const newHeight = canvasElementRef.current.clientHeight;
+            const el = canvasElementRef.current;
+            if (!el) return;
+            const newWidth = el.clientWidth;
+            const newHeight = el.clientHeight;
             if (mainView.needsCanvasResize(newWidth, newHeight)) {
                 mainView.resizeCanvas(newWidth, newHeight);
             }
