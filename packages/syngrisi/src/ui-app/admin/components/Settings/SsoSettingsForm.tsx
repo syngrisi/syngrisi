@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Paper, Title, Select, TextInput, Button, Switch, Text, Badge, Group, Alert } from '@mantine/core';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { HelpDoc } from '@admin/components/AI/HelpDoc';
 import { GenericService } from '@shared/services';
 import { errorMsg } from '@shared/utils';
 import { successMsg } from '@shared/utils/utils';
@@ -90,7 +91,17 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
 
     return (
         <Paper withBorder p={20} m={15} style={{ width: '90%' }}>
-            <Title order={4} mb="md">SSO Configuration</Title>
+            <Group gap={8} align="center" mb="md">
+                <Title order={4}>SSO Configuration</Title>
+                <HelpDoc
+                    title="SSO Configuration"
+                    lines={[
+                        'Single Sign-On lets users authenticate through an external Identity Provider (IdP).',
+                        'Pick the protocol (OAuth2 or SAML), then fill the entry point, issuer and client details from your IdP.',
+                    ]}
+                    dataTest="settings_help_sso"
+                />
+            </Group>
             <Switch
                 label="Enable SSO"
                 checked={enabled}

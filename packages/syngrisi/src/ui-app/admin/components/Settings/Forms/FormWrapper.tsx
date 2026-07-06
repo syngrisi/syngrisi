@@ -7,7 +7,7 @@ import { errorMsg } from '@shared/utils';
 import { successMsg } from '@shared/utils/utils';
 import { GenericService } from '@shared/services';
 
-function FormWrapper({ name, value, label, description, enabled, type, settingsQuery }: ISettingForm) {
+function FormWrapper({ name, value, label, description, enabled, type, envControlled, envVariable, settingsQuery }: ISettingForm) {
     const Form: FC<ISettingForm> = SettingsForms[type as keyof typeof SettingsForms];
 
     const updateSetting = useMutation(
@@ -36,6 +36,8 @@ function FormWrapper({ name, value, label, description, enabled, type, settingsQ
                 label={label}
                 value={value}
                 enabled={enabled}
+                envControlled={envControlled}
+                envVariable={envVariable}
                 updateSetting={updateSetting}
             />
         </Paper>

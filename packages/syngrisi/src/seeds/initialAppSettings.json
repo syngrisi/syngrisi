@@ -46,6 +46,15 @@
         "enabled": true
     },
     {
+        "name": "rca_enabled",
+        "label": "Enable RCA",
+        "description": "Root Cause Analysis (DOM diff) for failed checks. Requires checks to carry DOM snapshots. Overridden by the SYNGRISI_RCA environment variable when set.",
+        "type": "Boolean",
+        "value": "false",
+        "env_variable": "SYNGRISI_RCA",
+        "enabled": true
+    },
+    {
         "name": "sso_enabled",
         "label": "Enable SSO",
         "description": "Enable Single Sign-On (SSO) authentication",

@@ -43,8 +43,11 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_AUTO_REMOVE_CHECKS_MIN_INTERVAL_MS: num({ default: 24 * 60 * 60 * 1000 }),
     SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE: bool({ default: false }),
 
-    // RCA
-    SYNGRISI_RCA: bool({ default: false }),
+    // Note: SYNGRISI_RCA is intentionally NOT declared here. It is read directly
+    // from process.env in services/rca.config.ts (only 'true'/'false' are
+    // meaningful; anything else falls back to the persistent `rca_enabled`
+    // setting). Declaring it as a strict envalid bool would crash the server on
+    // an empty string (e.g. `SYNGRISI_RCA=` in docker-compose).
 
     // Change-similarity ("same change at other resolutions"): off by default
     SYNGRISI_CHANGE_SIM: bool({ default: false }),
