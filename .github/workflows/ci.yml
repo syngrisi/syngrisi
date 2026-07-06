@@ -47,10 +47,13 @@ jobs:
           fetch-depth: 0
       - name: Enforce core-api contract → port parity
         run: |
-          if git log -1 --format='%B' | grep -q '\[skip-port-drift\]'; then
+          BASE="${{ github.event.pull_request.base.sha }}"
+          # Search the marker across ALL commits in the PR range: on a
+          # pull_request the checkout is the merge commit, so `git log -1` would
+          # only ever see the merge commit message, never the PR's own commits.
+          if git log --format='%B' "$BASE"...HEAD | grep -q '\[skip-port-drift\]'; then
             echo "[skip-port-drift] present — bypassing."; exit 0
           fi
-          BASE="${{ github.event.pull_request.base.sha }}"
           CHANGED=$(git diff --name-only "$BASE"...HEAD)
           if ! echo "$CHANGED" | grep -qE '^packages/core-api/src/(Schemas|SyngrisiApi)\.ts$'; then
             echo "core-api contract files unchanged — ok"; exit 0
