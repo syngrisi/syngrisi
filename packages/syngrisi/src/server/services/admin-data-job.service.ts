@@ -4,7 +4,7 @@ import path from 'path';
 import { randomUUID } from 'crypto';
 import { createGzip, createGunzip } from 'zlib';
 import { promisify } from 'util';
-import { pipeline, Readable } from 'stream';
+import { pipeline } from 'stream';
 import mongoose from 'mongoose';
 import { UploadedFile } from 'express-fileupload';
 import { config } from '@config';
@@ -12,8 +12,6 @@ import { safeJoinWithin } from './../utils/safeJoinWithin';
 import {
     type AdminDataJobType,
     type AdminDataJobStatus,
-    type AdminDataJobProgress,
-    type AdminDataJobStats,
     type AdminDataJob,
     DB_EXPORT_DIRNAME,
     isActiveStatus,

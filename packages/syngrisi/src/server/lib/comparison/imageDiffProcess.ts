@@ -1,5 +1,4 @@
 import { parentPort } from 'worker_threads';
-import { createRequire } from 'module';
 import compareImages from './compareImagesNode';
 
 // Even though this file will be executed via child_process.fork (CommonJS-like IPC),
@@ -12,8 +11,6 @@ export interface DiffRequest {
     actualOrigin: Buffer;
     options: Record<string, unknown>;
 }
-
-const require = createRequire(import.meta.url);
 
 let currentId: string | null = null;
 

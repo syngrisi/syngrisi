@@ -20,7 +20,7 @@ export const IdentJSONStringSchema = z
             const parsed = JSON.parse(data);
             RequiredIdentOptionsSchema.parse(parsed); // Проверяем поля внутри объекта
             return true;
-        } catch (e) {
+        } catch {
             return false;
         }
     }, {

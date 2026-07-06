@@ -32,7 +32,7 @@ export async function createDomSnapshot(params: CreateDomSnapshotParams): Promis
     const { checkId, baselineId, type, content, compressionHeader } = params;
 
     // Prepare content for storage
-    const { content: parsedContent, wasCompressed, originalSize } = prepareDomDumpForStorage(
+    const { content: parsedContent, originalSize } = prepareDomDumpForStorage(
         content,
         compressionHeader
     );

@@ -1,4 +1,4 @@
-import { Check, CheckDocument } from '@models';
+import { CheckDocument } from '@models';
 import { buildIdentObject, ident, errMsg, ApiError, prettyCheckParams } from '@utils';
 import log from "@logger";
 import { LogOpts, RequestUser } from '@types';
@@ -39,7 +39,6 @@ const createCheckParams = (checkParam: CreateCheckParams, suite: SuiteDocument, 
 });
 
 import mongoose from 'mongoose';
-import * as SnapshotService from './snapshot.service';
 
 import { promises as fsp } from 'fs';
 import { config } from '@config';

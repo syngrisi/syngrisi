@@ -17,12 +17,12 @@ const run = async () => {
             : null;
 
         // Functions are not structured-cloneable; remove all function props and send plain data plus buffer.
-        const plainResult = Object.fromEntries(Object.entries(compareResult || {}).filter(([_, v]) => typeof v !== 'function'));
+        const plainResult = Object.fromEntries(Object.entries(compareResult || {}).filter(([, v]) => typeof v !== 'function'));
 
         try {
             (plainResult as any).baselineDimensions = getPngDimensions(baselineOrigin);
             (plainResult as any).actualDimensions = getPngDimensions(actualOrigin);
-        } catch (e) {
+        } catch {
             // ignore errors reading dimensions
         }
 

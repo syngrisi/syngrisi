@@ -5,14 +5,12 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { config } from '@config';
 import { env } from '@/server/envConfig';
 import log from '@logger';
 import { loadPlugins, pluginManager, hookRegistry } from './core';
 import { PluginSettings } from '@models';
 import { buildPluginContext } from './sdk/context';
 import {
-    PluginContext,
     AuthResult,
     CheckCompareContext,
     CheckOverrideResult,
@@ -145,7 +143,7 @@ export async function initPlugins(): Promise<void> {
             // Validate JWKS URL format
             try {
                 new URL(jwksUrl);
-            } catch (error) {
+            } catch {
                 const errMsg =
                     `Invalid JWKS URL for "jwt-auth" plugin: "${jwksUrl}". ` +
                     'SYNGRISI_PLUGIN_JWT_AUTH_JWKS_URL must be a valid URL.';

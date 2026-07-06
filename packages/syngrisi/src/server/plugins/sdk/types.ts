@@ -6,7 +6,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { SnapshotDocument } from '@models/Snapshot.model';
-import { CheckDocument, Check, User, Baseline } from '@models';
+import { Check, User, Baseline } from '@models';
 import { UserDocument } from '@models/User.model';
 import { BaselineDocument } from '@models/Baseline.model';
 import { CreateCheckParamsExtended } from '../../../types/Check';

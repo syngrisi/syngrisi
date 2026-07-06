@@ -81,7 +81,7 @@ class Logger {
     private static sanitizeForLog(obj: any): any {
         try {
             return JSON.parse(JSON.stringify(obj));
-        } catch (e) {
+        } catch {
             return String(obj);
         }
     }
@@ -99,7 +99,7 @@ class Logger {
             try {
                 // Try to sanitize first to avoid BSON errors during stringify
                 message = JSON.stringify(Logger.sanitizeForLog(msg));
-            } catch (e) {
+            } catch {
                 message = String(msg);
             }
         }

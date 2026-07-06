@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { promises as fsp } from 'fs';
 import path from 'path';
 import { createGzip, createGunzip } from 'zlib';
 import mongoose from 'mongoose';

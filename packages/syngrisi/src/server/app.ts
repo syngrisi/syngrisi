@@ -24,7 +24,7 @@ import errorHandler from './middlewares/errorHandler';
 import { openAPIRouter } from './api-docs/openAPIRouter';
 import { LogOpts } from '../types';
 import { env } from './envConfig';
-import { ensureLoggedInOrApiKey, ensureLoggedInOrApiKeyOrShareToken } from './middlewares/ensureLogin/ensureLoggedIn';
+import { ensureLoggedInOrApiKeyOrShareToken } from './middlewares/ensureLogin/ensureLoggedIn';
 import { scopeSnapshotsToShare } from './middlewares/scopeSnapshotsToShare';
 import { initSSOStrategies } from './services/auth-sso.service';
 

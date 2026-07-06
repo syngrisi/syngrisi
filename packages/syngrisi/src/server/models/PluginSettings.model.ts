@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON } from './plugins';
-import { PluginExtededModel } from './plugins/utils';
 
 /**
  * Plugin Settings Model
