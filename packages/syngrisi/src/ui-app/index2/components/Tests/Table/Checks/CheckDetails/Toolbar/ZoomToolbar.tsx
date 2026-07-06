@@ -26,7 +26,7 @@ export function ZoomToolbar(
      * for example: expectedImage {width: 100, height: 200}, actualImage: {width: 200, height: 300}
      * the function will return ['actualImage', 'height' ]
      */
-    const calculateMaxImagesDimensions = (): { imageName: string, dimension: string, value: number } => {
+    const calculateMaxImagesDimensions = (): { imageName: string, dimension: 'width' | 'height', value: number } => {
         const data: any = [
             { imageName: 'expectedImage', dimension: 'width', value: mainView.expectedImage.width },
             { imageName: 'expectedImage', dimension: 'height', value: mainView.expectedImage.height },
@@ -45,8 +45,8 @@ export function ZoomToolbar(
         mainView.canvas.zoomToPoint(
             new fabric.Point(
                 // mainView.canvas.viewportTransform[4],
-                mainView.canvas.width / 2,
-                mainView.canvas.viewportTransform[5],
+                (mainView.canvas.width ?? 0) / 2,
+                mainView.canvas.viewportTransform?.[5] ?? 0,
             ),
             percent / 100,
         );
@@ -103,13 +103,13 @@ export function ZoomToolbar(
 
         const greatestImage = calculateMaxImagesDimensions();
         // small images
-        if (mainView.canvas[greatestImage.dimension] / greatestImage.value > 7) {
+        if ((mainView.canvas[greatestImage.dimension] ?? 0) / greatestImage.value > 7) {
             zoomByPercent(350);
             initPan(greatestImage.imageName);
             return;
         }
         // normal images (less than canvas)
-        if (greatestImage.value < mainView.canvas[greatestImage.dimension]) {
+        if (greatestImage.value < (mainView.canvas[greatestImage.dimension] ?? 0)) {
             initPan(greatestImage.imageName);
             return;
         }

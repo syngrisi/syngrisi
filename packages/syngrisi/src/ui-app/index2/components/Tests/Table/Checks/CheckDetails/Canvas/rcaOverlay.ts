@@ -164,8 +164,10 @@ export class RCAOverlay {
      * Unbind canvas events
      */
     private unbindEvents(): void {
-        this.canvas.off('mouse:move', this.handleMouseMove);
-        this.canvas.off('mouse:down', this.handleMouseClick);
+        // fabric's `off` typing narrows the handler to IEvent<Event>; our handlers
+        // are the same references registered via `on` (which accepts IEvent<MouseEvent>).
+        this.canvas.off('mouse:move', this.handleMouseMove as (e: fabric.IEvent) => void);
+        this.canvas.off('mouse:down', this.handleMouseClick as (e: fabric.IEvent) => void);
     }
 
     /**

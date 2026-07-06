@@ -81,8 +81,6 @@ function BaselinesSettings(
 
             <Text pt="xl" fw={500}>Visible fields</Text>
             <Chip.Group
-                align="self-start"
-                p={8}
                 value={visibleFields}
                 onChange={setVisibleFields}
                 multiple

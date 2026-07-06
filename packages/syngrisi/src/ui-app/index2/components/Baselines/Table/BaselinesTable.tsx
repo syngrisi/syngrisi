@@ -65,7 +65,7 @@ export default function BaselinesTable(
             <ScrollArea.Autosize
                 data-test="table-scroll-area"
                 ref={scrollAreaRef}
-                maxHeight="100vh"
+                mah="100vh"
                 style={{ width: size }}
                 pb={124}
                 styles={{ scrollbar: { marginTop: '46px' } }}

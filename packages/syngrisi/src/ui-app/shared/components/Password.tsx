@@ -40,7 +40,7 @@ export const Password = {
         }, [form.errors.password]);
 
         return (
-            <Popover opened={popoverOpened} position="bottom" width={200} transition="pop">
+            <Popover opened={popoverOpened} position="bottom" width={200} transitionProps={{ transition: 'pop' }}>
                 <Popover.Target>
                     <PasswordInput
                         onFocusCapture={(e) => {

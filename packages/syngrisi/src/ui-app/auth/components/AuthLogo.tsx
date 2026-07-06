@@ -4,13 +4,12 @@ import {
     Container,
     Paper,
     Text,
-    useMantineTheme,
+    useComputedColorScheme,
 } from '@mantine/core';
 import * as React from 'react';
 
 function AuthLogo() {
-    const theme = useMantineTheme();
-    const { colorScheme } = theme;
+    const colorScheme = useComputedColorScheme('light');
     return (
         <Container style={{
             paddingTop: '50px',

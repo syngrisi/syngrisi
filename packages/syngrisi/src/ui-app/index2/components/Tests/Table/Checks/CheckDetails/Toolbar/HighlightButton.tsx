@@ -38,7 +38,7 @@ export function HighlightButton({ mainView, disabled = false }: Props) {
             <div>
                 <ActionIcon
                     data-check="highlight-icon"
-                    data-disabled={disabled ? "true" : undefined}
+                    data-disabled={disabled ? true : undefined}
                     disabled={disabled}
                     loading={loadHighlights}
                     variant="transparent"

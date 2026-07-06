@@ -7,7 +7,7 @@ import { adminLogsTableColumns } from '@admin/components/Logs/Table/adminLogsTab
 interface Props {
     infinityQuery: any,
     visibleFields: any,
-    scrollRootRef?: React.RefObject<HTMLDivElement>
+    scrollRootRef?: React.RefObject<HTMLDivElement | null>
 }
 
 function InfinityScrollSkeleton({ infinityQuery, visibleFields, scrollRootRef }: Props) {

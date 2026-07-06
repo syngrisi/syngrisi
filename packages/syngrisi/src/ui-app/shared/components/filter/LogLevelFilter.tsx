@@ -27,7 +27,7 @@ export function LogLevelFilter({ label, updateGroupRules, id }: Props) {
 
     let levels: { value: string, label: string }[] = [];
     if (distinctQuery.isSuccess && distinctQuery.data) {
-        levels = distinctQuery.data.map((item) => ({ value: item, label: item }));
+        levels = distinctQuery.data.map((item: string) => ({ value: item, label: item }));
     }
 
     // distinctQuery.isLoading ? ['loading'] : distinctQuery.data;

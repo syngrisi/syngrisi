@@ -7,6 +7,7 @@ import { Group } from '@mantine/core';
 import { GenericService } from '@shared/services';
 import { generateItemFilter } from '@shared/utils';
 import SafeSelect from '@shared/components/SafeSelect';
+import ILog from '@shared/interfaces/ILog';
 
 interface FilterItems {
     value: string,
@@ -42,8 +43,8 @@ export function CommonDistinctFilter({ label, updateGroupRules, id, resource }: 
     let items: FilterItems[] = [];
     if (distinctQuery.isSuccess && distinctQuery?.data?.results) {
         items = distinctQuery.data?.results
-            ?.map((item: { name: string }) => item.name)
-            ?.map((item: FilterItems) => ({ value: item, label: item }));
+            ?.map((item: ILog): string => item.name ?? '')
+            ?.map((item: string): FilterItems => ({ value: item, label: item }));
     }
 
     if (distinctQuery.error) items = [{ value: '', label: 'error loading filter items' }];
@@ -51,7 +52,7 @@ export function CommonDistinctFilter({ label, updateGroupRules, id, resource }: 
     const form = useForm({
         initialValues: {
             operator: 'eq',
-            value: distinctQuery.data ? distinctQuery?.data.results[0].name : '',
+            value: distinctQuery.data?.results[0]?.name ?? '',
             label,
         },
         validateInputOnChange: true,

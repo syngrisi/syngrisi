@@ -79,7 +79,7 @@ export function RegionsToolbar({
         }
         const count = await mainView.createAutoIgnoreRegions();
         if (count > 0) {
-            successMsg({ msg: `Created ${count} ignore region${count > 1 ? 's' : ''} from diff` });
+            successMsg({ message: `Created ${count} ignore region${count > 1 ? 's' : ''} from diff` });
         }
     };
 
@@ -197,7 +197,7 @@ export function RegionsToolbar({
             >
                 <ActionIcon
                     data-check="remove-ignore-region"
-                    data-disabled={!visibleRegionRemoveButton ? "true" : undefined}
+                    data-disabled={!visibleRegionRemoveButton ? true : undefined}
                     disabled={!visibleRegionRemoveButton}
                     variant="transparent"
                     color="gray"
@@ -233,7 +233,7 @@ export function RegionsToolbar({
                 <div>
                     <ActionIcon
                         data-check="add-ignore-region"
-                        data-disabled={((view === 'slider') || !baselineId) ? "true" : undefined}
+                        data-disabled={((view === 'slider') || !baselineId) ? true : undefined}
                         disabled={(view === 'slider') || !baselineId}
                         variant="transparent"
                         color="gray"
@@ -283,7 +283,7 @@ export function RegionsToolbar({
                 <div>
                     <ActionIcon
                         data-check="auto-ignore-region"
-                        data-disabled={((view === 'slider') || !baselineId || !hasDiff) ? "true" : undefined}
+                        data-disabled={((view === 'slider') || !baselineId || !hasDiff) ? true : undefined}
                         disabled={(view === 'slider') || !baselineId || !hasDiff}
                         variant="transparent"
                         color="gray"
@@ -329,7 +329,7 @@ export function RegionsToolbar({
                 <div>
                     <ActionIcon
                         data-check="add-bound-region"
-                        data-disabled={((view === 'slider') || !baselineId || hasBoundRegion) ? "true" : undefined}
+                        data-disabled={((view === 'slider') || !baselineId || hasBoundRegion) ? true : undefined}
                         disabled={(view === 'slider') || !baselineId || hasBoundRegion}
                         variant="transparent"
                         color="gray"
@@ -359,7 +359,7 @@ export function RegionsToolbar({
             >
                 <ActionIcon
                     data-check="save-ignore-region"
-                    data-disabled={(!hasAnyRegion && !isDirty) ? "true" : undefined}
+                    data-disabled={(!hasAnyRegion && !isDirty) ? true : undefined}
                     disabled={!hasAnyRegion && !isDirty}
                     variant="transparent"
                     color="gray"

@@ -226,7 +226,7 @@ export function ChecksList() {
             </ScrollArea>
             <CheckModal
                 relatedRendered={false}
-                apikey={apiKey}
+                apikey={apiKey ?? undefined}
             />
         </Stack>
     );

@@ -36,7 +36,7 @@ export default function useInfinityScrollRelatedChecks(
                 filterObj,
                 {
                     limit: String(infinityScrollLimit),
-                    page: pageParam,
+                    page: String(pageParam),
                     sortBy,
                     populate: 'suite,app,test,baselineId,actualSnapshotId,diffId',
                 },

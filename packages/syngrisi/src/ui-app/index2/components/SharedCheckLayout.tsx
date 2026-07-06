@@ -32,8 +32,8 @@ export default function SharedCheckLayout() {
                 'initial_check_for_check_details_modal',
             ),
             enabled: !!checkId,
-            refetchInterval: (data) => {
-                const check = data?.results?.[0];
+            refetchInterval: (query) => {
+                const check = query.state.data?.results?.[0];
                 if (check && !check.diffId) {
                     pollCountRef.current += 1;
                     const interval = Math.min(2000 * Math.pow(1.5, pollCountRef.current - 1), 10000);

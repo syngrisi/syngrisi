@@ -21,9 +21,11 @@ const toArray = (v: any): string[] => (Array.isArray(v) ? v.filter(Boolean) : (v
 export function TriageFilterButton() {
     const { query, setQuery } = useParams();
     // Hide the AI-verdict filter entirely when AI triage is globally disabled.
+    // `settings/public` returns an array of settings; GenericService.get is loosely
+    // typed as IApiResult, so reinterpret it to the actual public-settings shape.
     const settingsQuery = useQuery({
         queryKey: ['settings-public'],
-        queryFn: () => GenericService.get('settings/public'),
+        queryFn: () => GenericService.get('settings/public') as unknown as Promise<{ name: string; value: unknown }[]>,
     });
     const triageEnabled = (() => {
         const s = settingsQuery.data?.find((x: any) => x.name === 'ai_triage_enabled');

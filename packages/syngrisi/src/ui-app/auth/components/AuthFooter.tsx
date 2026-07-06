@@ -36,6 +36,7 @@ function AuthFooter() {
         return null;
     }
     if (isLoading) return null;
+    if (!data) return null;
 
     const tagUrl = `https://github.com/syngrisi/syngrisi/releases/tag/v${data.version}`;
     const commitUrl = data.commitHash

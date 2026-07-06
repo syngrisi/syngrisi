@@ -139,7 +139,7 @@ export const Row = memo(function Row(
                         transitionTimingFunction="ease-out"
                     >
                         {hasBeenExpanded && (
-                            <Checks item={test} testUpdateQuery={testUpdateQuery} infinityQuery={infinityQuery} />
+                            <Checks item={test} testUpdateQuery={testUpdateQuery} />
                         )}
                     </Collapse>
                 </td>

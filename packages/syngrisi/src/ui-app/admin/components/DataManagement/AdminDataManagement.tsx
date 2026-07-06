@@ -225,7 +225,7 @@ export default function AdminDataManagement() {
                 actions={(
                     <Button
                         variant="outline"
-                        leftIcon={<IconRefresh size={16} />}
+                        leftSection={<IconRefresh size={16} />}
                         onClick={() => jobsQuery.refetch()}
                         loading={jobsQuery.isFetching}
                     >
@@ -234,7 +234,7 @@ export default function AdminDataManagement() {
                 )}
             />
 
-            <SimpleGrid cols={2} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
+            <SimpleGrid cols={{ base: 1, md: 2 }}>
                 <Paper withBorder p="md">
                     <Stack>
                         <Group>
@@ -351,7 +351,7 @@ export default function AdminDataManagement() {
                 </Group>
 
                 <div style={{ overflowX: 'auto' }}>
-                <Table striped highlightOnHover withBorder>
+                <Table striped highlightOnHover withTableBorder>
                     <thead>
                         <tr>
                             {/* Left-align headers so they line up with the left-aligned cell values
@@ -405,7 +405,7 @@ export default function AdminDataManagement() {
                                                     href={adminDataService.getDownloadUrl(job.id)}
                                                     variant="outline"
                                                     size="xs"
-                                                    leftIcon={<IconDownload size={14} />}
+                                                    leftSection={<IconDownload size={14} />}
                                                 >
                                                     Download
                                                 </Button>
@@ -415,7 +415,7 @@ export default function AdminDataManagement() {
                                                     color="red"
                                                     variant="outline"
                                                     size="xs"
-                                                    leftIcon={<IconX size={14} />}
+                                                    leftSection={<IconX size={14} />}
                                                     loading={cancelMutation.isPending && cancelMutation.variables === job.id}
                                                     disabled={jobBusy}
                                                     onClick={(event) => {
@@ -441,7 +441,7 @@ export default function AdminDataManagement() {
                                                             color="gray"
                                                             variant="outline"
                                                             size="xs"
-                                                            leftIcon={<IconTrash size={14} />}
+                                                            leftSection={<IconTrash size={14} />}
                                                             loading={deleteMutation.isPending && deleteMutation.variables === job.id}
                                                             disabled={jobBusy}
                                                             onClick={(event) => {

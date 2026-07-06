@@ -69,7 +69,7 @@ export default function useInfinityScroll(
             staleTime: 30 * 1000,
             refetchOnWindowFocus: false,
         },
-    ) as IFirstPagesQuery<ILog>;
+    ) as unknown as IFirstPagesQuery<ILog>;
 
 
     const firstPageData: { [key: string]: string | undefined } = useMemo(() => {
@@ -139,7 +139,7 @@ export default function useInfinityScroll(
                 newRequestFilter,
                 {
                     limit: String(infinityScrollLimit),
-                    page: pageParam,
+                    page: String(pageParam),
                     sortBy,
                     populate: getPopulate(),
                     ...extraOptions,

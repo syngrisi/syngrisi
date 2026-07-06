@@ -10,16 +10,31 @@ import { RCAOverlay, RCAOverlayCallbacks } from './rcaOverlay';
 import { DOMNode, DOMChange } from '@shared/interfaces/IRCA';
 
 /* eslint-disable dot-notation,no-underscore-dangle */
-interface IRectParams {
-    name: any;
-    fill: any;
-    stroke: any;
-    strokeWidth: any;
-    top: any;
-    left: any;
-    width: any;
-    height: any;
+// Parameters used to build region rects. All optional because `addRect`
+// supplies fallbacks for every field.
+interface IRegionParams {
+    name?: string;
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
+    top?: number;
+    left?: number;
+    width?: number;
+    height?: number;
+    noSelect?: boolean;
 }
+
+// Region shape as returned by the server (resemble.js format).
+interface IServerRegion {
+    name?: string;
+    top: number;
+    left: number;
+    right: number;
+    bottom: number;
+}
+
+// Keys of the SimpleView instances held on MainView.
+type SimpleViewKey = 'actualView' | 'expectedView' | 'diffView';
 
 interface Props {
     canvasElementWidth: number;
@@ -37,7 +52,7 @@ export class MainView {
 
     canvasElementHeight: number;
 
-    sliderView: SideToSideView;
+    sliderView!: SideToSideView;
 
     canvas: fabric.Canvas;
 
@@ -128,7 +143,7 @@ export class MainView {
         this.expectedView = new SimpleView(this, 'expected');
         this.actualView = new SimpleView(this, 'actual');
         this.diffView = new SimpleView(this, 'diff');
-        this[`${this.currentView}View`].render();
+        this[`${this.currentView}View` as SimpleViewKey].render();
         // this.sideToSideView.render()
     }
 
@@ -471,7 +486,7 @@ export class MainView {
                 mainView: this,
             },
         );
-        await this[`${view}View`].render();
+        await this[`${view}View` as SimpleViewKey].render();
 
         if (viewportTransform) {
             this.canvas.setViewportTransform(viewportTransform);
@@ -487,8 +502,8 @@ export class MainView {
 
         this.canvas.absolutePan(new fabric.Point(0, 0));
         const delta = new fabric.Point(
-            ((this.canvas.width / 2)
-                - ((image.width * this.canvas.getZoom()) / 2)
+            ((this.canvas.width! / 2)
+                - ((image.width! * this.canvas.getZoom()) / 2)
             ),
             0,
         );
@@ -511,7 +526,7 @@ export class MainView {
         this.canvas.renderAll();
     }
 
-    addRect(params: IRectParams) {
+    addRect(params: IRegionParams) {
         // eslint-disable-next-line no-param-reassign
         params.name = params.name ? params.name : 'default_rect';
         let lastLeft = null;
@@ -527,11 +542,11 @@ export class MainView {
                 .getScaledHeight();
         }
         // if last elements fit in current viewport create new region near this region
-        const top = (lastTop > document.documentElement.scrollTop
-            && lastTop < document.documentElement.scrollTop + window.innerHeight)
-            ? lastTop + 20
+        const top = (lastTop! > document.documentElement.scrollTop
+            && lastTop! < document.documentElement.scrollTop + window.innerHeight)
+            ? lastTop! + 20
             : document.documentElement.scrollTop + 50;
-        const left = (lastLeft < (this.canvas.width - 80)) ? lastLeft + 20 : lastLeft - 50;
+        const left = (lastLeft! < (this.canvas.width! - 80)) ? lastLeft! + 20 : lastLeft! - 50;
         return new fabric.Rect({
             left: params.left || left,
             top: params.top || top,
@@ -553,7 +568,7 @@ export class MainView {
         });
     }
 
-    addIgnoreRegion(params) {
+    addIgnoreRegion(params: IRegionParams) {
         // @ts-ignore - Always sync window.mainView for E2E tests
         window.mainView = this;
 
@@ -634,7 +649,7 @@ export class MainView {
         }
     }
 
-    addBoundingRegion(name) {
+    addBoundingRegion(name: string) {
         // Check if bound_rect already exists
         const existingBoundRect = this.canvas.getObjects()
             .find((obj) => obj.name === 'bound_rect');
@@ -707,8 +722,10 @@ export class MainView {
         return false;
     }
 
-    getLastRegion() {
-        return this.canvas.item(this.canvas.getObjects().length - 1);
+    getLastRegion(): fabric.Object {
+        // fabric's Collection typings mistype `item()` as returning the canvas
+        // (T = thisArg); at runtime it returns the fabric.Object at the index.
+        return this.canvas.item(this.canvas.getObjects().length - 1) as unknown as fabric.Object;
     }
 
     /**
@@ -719,17 +736,17 @@ export class MainView {
      */
     getRectData() {
         const rects = this.allRects;
-        const data = [];
-        const coef = parseFloat(this.coef);
+        const data: Array<{ name?: string; top: number; left: number; bottom: number; right: number }> = [];
+        const coef = parseFloat(String(this.coef));
 
         rects.forEach((reg) => {
-            const right = reg.left + reg.getScaledWidth();
-            const bottom = reg.top + reg.getScaledHeight();
+            const right = reg.left! + reg.getScaledWidth();
+            const bottom = reg.top! + reg.getScaledHeight();
             if (coef) {
                 data.push({
                     name: reg.name,
-                    top: reg.top * coef,
-                    left: reg.left * coef,
+                    top: reg.top! * coef,
+                    left: reg.left! * coef,
                     bottom: bottom * coef,
                     right: right * coef,
                 });
@@ -746,15 +763,15 @@ export class MainView {
         const rects = this.allRects;
         const ignoreRegions: any[] = [];
         const boundRegions: any[] = [];
-        const coef = parseFloat(this.coef);
+        const coef = parseFloat(String(this.coef));
 
         rects.forEach((reg) => {
-            const right = reg.left + reg.getScaledWidth();
-            const bottom = reg.top + reg.getScaledHeight();
+            const right = reg.left! + reg.getScaledWidth();
+            const bottom = reg.top! + reg.getScaledHeight();
             if (coef) {
                 const regionData = {
-                    top: reg.top * coef,
-                    left: reg.left * coef,
+                    top: reg.top! * coef,
+                    left: reg.left! * coef,
                     bottom: bottom * coef,
                     right: right * coef,
                 };
@@ -778,7 +795,7 @@ export class MainView {
     /**
      * @deprecated Use sendRegions() instead
      */
-    static async sendIgnoreRegions(id: string, regionsData) {
+    static async sendIgnoreRegions(id: string, regionsData: string) {
         try {
             const response = await fetch(`${config.baseUri}/v1/baselines/${id}`, {
                 method: 'PUT',
@@ -796,7 +813,7 @@ export class MainView {
             errorMsg({ error: 'Cannot set baseline ignored regions' });
             // MainView.showToaster('Cannot set baseline ignored regions', 'Error');
         } catch (e: unknown) {
-            log.error(`Cannot set baseline ignored regions: ${errorMsg(e)}`);
+            log.error(`Cannot set baseline ignored regions: ${errorMsg(e as { error: any })}`);
             errorMsg({ error: 'Cannot set baseline ignored regions' });
             // MainView.showToaster('Cannot set baseline ignored regions', 'Error');
         }
@@ -829,7 +846,7 @@ export class MainView {
             errorMsg({ error: 'Cannot set baseline regions' });
             return false;
         } catch (e: unknown) {
-            log.error(`Cannot set baseline regions: ${errorMsg(e)}`);
+            log.error(`Cannot set baseline regions: ${errorMsg(e as { error: any })}`);
             errorMsg({ error: 'Cannot set baseline regions' });
             return false;
         }
@@ -840,9 +857,9 @@ export class MainView {
      * @param {string} regions       JSON string that contain data about regions in resemble.js format
      * @returns {object}             region data in fabric.js format
      */
-    convertRegionsDataFromServer(regions) {
-        const data = [];
-        const coef = parseFloat(this.coef);
+    convertRegionsDataFromServer(regions: IServerRegion[]): IRegionParams[] {
+        const data: IRegionParams[] = [];
+        const coef = parseFloat(String(this.coef));
         regions
             .forEach((reg) => {
                 const width = reg.right - reg.left;
@@ -860,7 +877,7 @@ export class MainView {
         return data;
     }
 
-    drawRegions(data) {
+    drawRegions(data: string) {
         // log.debug({ data });
         if (!data || data === 'undefined') {
             return;
@@ -903,7 +920,7 @@ export class MainView {
             // MainView.showToaster('Cannot get baseline ignored regions', 'Error');
             errorMsg({ error: 'Cannot get baseline ignored regions' });
         } catch (e) {
-            log.error(`Cannot get baseline ignored regions: ${errorMsg(e)}`);
+            log.error(`Cannot get baseline ignored regions: ${errorMsg(e as { error: any })}`);
             // MainView.showToaster('Cannot get baseline ignored regions', 'Error');
             errorMsg({ error: 'Cannot get baseline ignored regions' });
         }

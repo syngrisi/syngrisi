@@ -9,7 +9,7 @@ export function uuid() {
     );
 }
 
-export function errorMsg(params: Required<{ error: any }>) {
+export function errorMsg(params: { error?: any; message?: string }) {
     log.error(params.error);
     showNotification({
         ...params,
