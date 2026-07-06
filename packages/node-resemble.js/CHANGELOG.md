@@ -1,5 +1,7 @@
 # @syngrisi/node-resemble.js
 
+## 3.15.1
+
 ## 3.15.0
 
 ### Patch Changes
