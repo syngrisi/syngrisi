@@ -5,25 +5,35 @@ import { appSettings } from "@settings";
 
 const getSettings = catchAsync(async (req: ExtRequest, res: Response) => {
     const AppSettings = appSettings;
-    // Mask write-only secrets (AI provider API key) without mutating the cache.
     const result = AppSettings.cache.map((s: any) => {
+        // Mask write-only secrets (AI provider API key) without mutating the cache.
         if (s.name === 'ai_triage_provider' && s.value && typeof s.value === 'object') {
             return { ...s, value: { ...s.value, apiKey: s.value.apiKey ? '***' : '' } };
+        }
+        // Env-over-admin precedence: a Boolean setting that declares an
+        // `env_variable` is locked (and shows the env value) when that variable
+        // is explicitly set — the admin toggle must not fight the environment.
+        if (s.type === 'Boolean' && s.env_variable) {
+            const raw = process.env[s.env_variable];
+            if (raw === 'true' || raw === 'false') {
+                return { ...s, value: raw, envControlled: true };
+            }
         }
         return s;
     });
     res.json(result);
 });
 
-import { env } from '@env';
 import { isTriageEnabled } from '@services/triage/config';
+import { isRcaEnabled, isRcaEnvControlled } from '@services/rca.config';
 
 const getPublicSettings = catchAsync(async (req: ExtRequest, res: Response) => {
     const AppSettings = appSettings;
     const result = AppSettings.cache.filter((x: any) => ['share_enabled'].includes(x.name));
     result.push({
         name: 'rca_enabled',
-        value: env.SYNGRISI_RCA,
+        value: await isRcaEnabled(),
+        envControlled: isRcaEnvControlled(),
         enabled: true,
     });
     // Expose the global AI-triage on/off so the UI can hide triage-only controls.

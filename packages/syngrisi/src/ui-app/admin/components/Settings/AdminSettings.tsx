@@ -57,6 +57,8 @@ export default function AdminSettings() {
                                                             value={item.value}
                                                             enabled={item.enabled}
                                                             type={item.type}
+                                                            envControlled={item.envControlled}
+                                                            envVariable={item.env_variable}
                                                             settingsQuery={settingsQuery}
                                                         />
                                                     ),

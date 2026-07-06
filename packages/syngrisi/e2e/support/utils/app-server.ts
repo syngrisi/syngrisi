@@ -127,8 +127,9 @@ export async function launchAppServer(
     SYNGRISI_COVERAGE: coverageFlag === 'true' ? 'true' : 'false',
     // Only enable test mode if not explicitly set to false (allows real SSO testing)
     SYNGRISI_TEST_MODE: runtimeEnv.SYNGRISI_TEST_MODE ?? 'true',
-    // Enable RCA by default for tests
-    SYNGRISI_RCA: 'true',
+    // Enable RCA by default for tests, but let a test override it explicitly
+    // (e.g. to exercise the env-lock / disabled paths).
+    SYNGRISI_RCA: runtimeEnv.SYNGRISI_RCA ?? 'true',
     ...additionalEnv,
   };
 
@@ -138,6 +139,13 @@ export async function launchAppServer(
   } else {
     delete spawnEnv.SYNGRISI_AUTH;
     delete spawnEnv.SYNGRISI_AUTH_OVERRIDE;
+  }
+
+  // An explicitly empty SYNGRISI_RCA ("") means "not set" — drop it so the
+  // persistent admin `rca_enabled` setting governs (unlocked toggle). A non-empty
+  // 'true'/'false' stays and env-locks the toggle.
+  if (runtimeEnv.SYNGRISI_RCA === '') {
+    delete spawnEnv.SYNGRISI_RCA;
   }
 
 

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Button, Switch, Group, NumberInput, Stack, Text, Title } from '@mantine/core';
+import { HelpDoc } from '@admin/components/AI/HelpDoc';
 import { useForm } from '@mantine/form';
 import { ISettingForm } from '@admin/components/Settings/Forms/interfaces';
 
@@ -63,7 +64,12 @@ export function AutoOldChecks({ name, value, label, description, enabled, update
     return (
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
             <Stack gap="sm">
-                <Title style={{ fontSize: '24px', lineHeight: '31.2px' }}>{label}</Title>
+                <Group gap={8} align="center">
+                    <Title style={{ fontSize: '24px', lineHeight: '31.2px' }}>{label}</Title>
+                    {description && (
+                        <HelpDoc title={label} lines={[description]} dataTest={`settings_help_${name}`} />
+                    )}
+                </Group>
                 <Group gap="xl" align="flex-end">
                     <NumberInput
                         data-test={`settings_value_${name}_days`}
@@ -80,7 +86,6 @@ export function AutoOldChecks({ name, value, label, description, enabled, update
                         {...form.getInputProps('enabled', { type: 'checkbox' })}
                     />
                 </Group>
-                <Text size="sm">{description}</Text>
                 <Text size="xs" c="dimmed" data-test={`settings_value_${name}_last_run`}>
                     {lastRunLabel}
                 </Text>
