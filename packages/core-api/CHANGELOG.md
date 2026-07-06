@@ -1,5 +1,15 @@
 # @syngrisi/core-api
 
+## 3.15.1
+
+### Patch Changes
+
+-   a15fb45: Restore transient-failure retries lost in the got→fetch migration: idempotent
+    requests (getIdent/getBaselines/getSnapshots and the accept/updateBaseline PUTs)
+    now retry on network-level errors and retryable 5xx/408/429 statuses, matching
+    got's previous default. POST requests (startSession/createCheck) are still never
+    retried.
+
 ## 3.15.0
 
 ### Minor Changes
