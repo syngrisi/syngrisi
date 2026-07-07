@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TestsService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
 import { log } from '@shared/utils/Logger';
+import { useSimilar } from '@hooks/useSimilar';
+import { useParams } from '@hooks/useParams';
 
 interface Props {
     opened: boolean,
@@ -15,10 +17,20 @@ interface Props {
 
 export default function AcceptTestModalAsk({ opened, setOpened, selection, setSelection, infinityQuery }: Props) {
     const queryClient = useQueryClient();
+    const { similarTo, ids } = useSimilar();
+    const { query } = useParams();
+
+    // When the grid is filtered to a subset of checks (AI-match / similar view,
+    // or a triage "_idIn" set), accept must be scoped to exactly those checks —
+    // otherwise the whole test (including the hidden, non-matching checks) would
+    // be accepted. The server intersects this set with each test's own checks.
+    const scopedCheckIds: string[] | undefined = similarTo
+        ? ids
+        : (Array.isArray(query.checkFilter?._idIn) ? query.checkFilter._idIn.map(String) : undefined);
 
     const mutationAcceptTest = useMutation(
         {
-            mutationFn: (data: { id: string }) => TestsService.acceptTest(data),
+            mutationFn: (data: { id: string; checkIds?: string[] }) => TestsService.acceptTest(data),
             onSuccess: async (resp) => {
                 successMsg({ message: 'Test has been successfully accepted' });
                 await queryClient.invalidateQueries({ queryKey: ['preview_checks', resp.id] });
@@ -34,7 +46,7 @@ export default function AcceptTestModalAsk({ opened, setOpened, selection, setSe
     const handleAcceptButtonClick = async () => {
         // eslint-disable-next-line no-restricted-syntax
         for (const id of selection) {
-            asyncMutations.push(mutationAcceptTest.mutateAsync({ id }));
+            asyncMutations.push(mutationAcceptTest.mutateAsync({ id, checkIds: scopedCheckIds }));
         }
         await Promise.all(asyncMutations);
         setSelection(() => []);

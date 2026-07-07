@@ -95,6 +95,12 @@ const TestAcceptSchema = z.object({
     id: commonValidations.id,
 });
 
+// Optional request body for PUT /v1/tests/accept/:id — when present, only these
+// checks of the test are accepted (the "AI match / similar" filtered subset).
+const TestAcceptBodySchema = z.object({
+    checkIds: z.array(commonValidations.id).optional(),
+});
+
 const validIds = [
     'suite',
     'run',
@@ -123,4 +129,4 @@ export const TestDistinctRequestFieldParamsSchema = z.object({
 
 const TestDistinctSchema = TestGetSchema;
 
-export { TestGetSchema, TestAcceptSchema, TestDistinctSchema };
+export { TestGetSchema, TestAcceptSchema, TestAcceptBodySchema, TestDistinctSchema };
