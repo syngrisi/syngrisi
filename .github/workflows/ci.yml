@@ -114,7 +114,7 @@ jobs:
           name: build-artifacts
           path: packages/
       # Ratchet gates: HARD-fail only when the pre-existing backlog GROWS. Green
-      # today (129 server-tsc / 232 lint / 249 ui-tsc); any new error/violation
+      # today (129 server-tsc / 226 lint / 0 ui-tsc); any new error/violation
       # breaks CI. When you burn the backlog down, lower the baseline numbers below.
       - name: Typecheck ratchet (must not exceed baseline)
         working-directory: packages/syngrisi
@@ -151,7 +151,7 @@ jobs:
       - name: Lint ratchet (must not exceed baseline)
         working-directory: packages/syngrisi
         run: |
-          LINT_BASELINE=232
+          LINT_BASELINE=226
           COUNT=$(yarn lint 2>&1 | grep -oE "[0-9]+ problems" | tail -1 | grep -oE "^[0-9]+" || echo 0)
           echo "lint problems: $COUNT (baseline $LINT_BASELINE)"
           if [ "$COUNT" -gt "$LINT_BASELINE" ]; then

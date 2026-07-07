@@ -92,7 +92,18 @@ const remove = async (id: string, user: RequestUser) => {
     }
 };
 
-const accept = async (id: string, user: RequestUser) => {
+const accept = async (
+    id: string,
+    user: RequestUser,
+    // When provided, only these checks of the test are accepted (e.g. the "AI
+    // match / similar" grid shows a filtered subset — accepting the test must
+    // not silently accept the hidden, non-matching checks). Empty/undefined =
+    // accept the whole test (unchanged behaviour).
+    checkIds?: string[],
+    deps: { CheckModel?: typeof Check; acceptCheck?: typeof checkService.accept } = {},
+) => {
+    const CheckModel = deps.CheckModel || Check;
+    const acceptCheck = deps.acceptCheck || checkService.accept;
     const logOpts = {
         scope: 'acceptTest',
         itemType: 'test',
@@ -100,12 +111,16 @@ const accept = async (id: string, user: RequestUser) => {
         user: user?.username,
         msgType: 'ACCEPT',
     };
-    log.info(`accept test with, id: '${id}', user: '${user.username}'`, logOpts);
+    const scoped = Array.isArray(checkIds) && checkIds.length > 0;
+    log.info(`accept test with, id: '${id}', user: '${user.username}'${scoped ? `, scoped to ${checkIds!.length} check(s)` : ''}`, logOpts);
 
-    const checks = await Check.find({ test: id }).exec();
+    const filter: FilterQuery<unknown> = scoped
+        ? { test: id, _id: { $in: checkIds } }
+        : { test: id };
+    const checks = await CheckModel.find(filter).exec();
 
     for (const check of checks) {
-        await checkService.accept(check._id, String(check.actualSnapshotId), user);
+        await acceptCheck(check._id, String(check.actualSnapshotId), user);
     }
     return { message: 'success' };
 };

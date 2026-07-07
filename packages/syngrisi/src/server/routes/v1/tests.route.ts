@@ -3,7 +3,8 @@ import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import * as testController from '@controllers/test.controller';
 import { Midleware } from '@types';
 import { validateRequest } from '@utils/validateRequest';
-import { TestDistinctRequestFieldParamsSchema, TestGetSchema } from '@schemas/Test.schema';
+import { TestDistinctRequestFieldParamsSchema, TestGetSchema, TestAcceptBodySchema } from '@schemas/Test.schema';
+import { createRequestBodySchema } from '@schemas/utils/createRequestBodySchema';
 import { createApiResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
 import { ensureLoggedIn, ensureLoggedInOrApiKey } from '@middlewares/ensureLogin';
 import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schema';
@@ -83,7 +84,7 @@ registry.registerPath({
 router.put(
     '/accept/:id',
     ensureLoggedIn(),
-    validateRequest(getByIdParamsSchema(), 'put, /v1/tests/accept/{id}'),
+    validateRequest(getByIdParamsSchema().merge(createRequestBodySchema(TestAcceptBodySchema.optional())), 'put, /v1/tests/accept/{id}'),
     testController.accept as Midleware
 );
 

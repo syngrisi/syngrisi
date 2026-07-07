@@ -12,10 +12,10 @@ export const TestsService = {
         return resp.json();
     },
 
-    async acceptTest({ id }: { id: string }) {
+    async acceptTest({ id, checkIds }: { id: string; checkIds?: string[] }) {
         const resp = await http.put(
             `${config.baseUri}/v1/tests/accept/${id}`,
-            undefined,
+            checkIds && checkIds.length > 0 ? { checkIds } : undefined,
             {},
             'TestsService.acceptTest'
         );

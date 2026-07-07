@@ -61,7 +61,10 @@ const accept = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Cannot accept the check - Id not found');
     if (!req.user) throw new ApiError(HttpStatus.BAD_REQUEST, 'Cannot accept the check - req.user is empty');
-    const result = await testService.accept(id, req?.user);
+    // Optional: accept only these checks of the test (the "AI match / similar"
+    // grid shows a filtered subset). Absent => accept the whole test.
+    const checkIds = Array.isArray(req.body?.checkIds) ? req.body.checkIds.map(String) : undefined;
+    const result = await testService.accept(id, req.user, checkIds);
     res.send(result);
 });
 
