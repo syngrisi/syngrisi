@@ -1,6 +1,6 @@
 {
   "name": "wdio-syngrisi-cucumber-service",
-  "version": "3.16.1",
+  "version": "3.17.0",
   "description": "WDIO Service for Syngrisi visual tests using Cucumber",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@faker-js/faker": "^10.5.0",
-    "@syngrisi/wdio-sdk": "^3.16.1",
+    "@syngrisi/wdio-sdk": "^3.17.0",
     "@wdio/logger": "^9.18.0"
   },
   "publishConfig": {
