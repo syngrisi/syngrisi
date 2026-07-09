@@ -56,6 +56,10 @@ After all the preparations, the service adds the following commands to `browser`
 * `opts` - optional check params (e.g. `viewport`, `browserName`, `os`, `app`, `branch`, `autoAccept`, `toleranceThreshold`)
 * `domDump` - optional DOM dump for Root Cause Analysis
 
+> Tip: if the page uses webfonts (`font-display: swap`), wait for them before
+> taking the screenshot to avoid flaky "shifted text" diffs:
+> `await browser.waitUntil(() => browser.execute(() => document.fonts.status === 'loaded'))`
+
 ### `browser.getLastBaseline(opts)`
 
 Returns the most recent baseline matching `opts` (e.g. `{ name, app, branch }`), or `null` if none found.

@@ -57,6 +57,23 @@ describe('PlaywrightDriver', () => {
         })
     })
 
+    describe('waitForFonts', () => {
+        it('resolves when document.fonts.ready resolves', async () => {
+            const page = createMockPage()
+            page.evaluate.mockResolvedValue(true)
+            const driver = new PlaywrightDriver({ page: page as any, url: 'http://localhost:3000/' })
+            await driver.waitForFonts()
+            expect(page.evaluate).toHaveBeenCalled()
+        })
+
+        it('resolves after timeout even if fonts never load', async () => {
+            const page = createMockPage()
+            page.evaluate.mockReturnValue(new Promise(() => { /* never resolves */ }))
+            const driver = new PlaywrightDriver({ page: page as any, url: 'http://localhost:3000/' })
+            await expect(driver.waitForFonts(100)).resolves.toBeUndefined()
+        })
+    })
+
     describe('check schema (shared with core-api)', () => {
         it('accepts the runtime shape PlaywrightDriver.check() builds against core-api CheckParamsSchema', () => {
             // Mirrors the `opts` object built in PlaywrightDriver.check() (PlaywrightDriver.ts)

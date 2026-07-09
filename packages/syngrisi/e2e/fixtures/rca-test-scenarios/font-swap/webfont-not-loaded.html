@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Font swap repro - mongodb.com style cards</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* Same stack as mongodb.com: webfont first, metric-close system fallback after */
+        body {
+            font-family: 'Euclid Circular A', Arial, Helvetica, sans-serif;
+            background: #001E2B; /* mongodb dark navy */
+            padding: 60px 40px;
+        }
+        .cards { display: flex; gap: 24px; justify-content: center; }
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px 28px;
+            width: 300px;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+        .icon {
+            width: 40px; height: 40px;
+            border: 2px solid #001E2B;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .icon::after {
+            content: '';
+            position: absolute; inset: 8px;
+            background: #00ED64; /* mongodb green */
+            border-radius: 4px;
+        }
+        h3 { font-size: 20px; font-weight: 700; color: #001E2B; margin-bottom: 12px; }
+        p  { font-size: 14px; line-height: 1.5; color: #1C2D38; flex-grow: 1; }
+        a  { font-size: 14px; font-weight: 700; color: #016BF8; text-decoration: none; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="cards">
+        <div class="card">
+            <div class="icon"></div>
+            <h3>Visualize application data</h3>
+            <p>Easily create, share, and embed visualizations of your application data.</p>
+            <a href="#">Learn more &#8594;</a>
+        </div>
+        <div class="card">
+            <div class="icon"></div>
+            <h3>Deploy a multi-cloud database</h3>
+            <p>Build and scale with an AI-ready platform. Get started for free in minutes.</p>
+            <a href="#">Learn more &#8594;</a>
+        </div>
+        <div class="card">
+            <div class="icon"></div>
+            <h3>Deliver engaging search experiences</h3>
+            <p>Run your data where you want, and enjoy unparalleled reliability, security, and flexibility.</p>
+            <a href="#">Learn more &#8594;</a>
+        </div>
+    </div>
+</body>
+</html>

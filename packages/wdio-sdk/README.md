@@ -104,6 +104,10 @@ await driver.startTestSession({ params: sessionParams });
 Perform a visual check by providing the check name, image buffer, and any additional parameters.
 
 ```js
+// Wait for webfonts before capturing — screenshots taken before a
+// `font-display: swap` font finishes loading produce flaky "shifted text" diffs
+await driver.waitForFonts();
+
 // Full page screenshot
 const fullPageScreenshot = await browser.saveScreenshot('./screenshot.png');
 await driver.check({

@@ -128,3 +128,22 @@ export const getBrowserVersion = () => {
     }
     return fullVersion.split('.')[0]
 }
+
+/**
+ * Waits until all webfonts declared on the page are loaded.
+ * Call it right before taking a screenshot to avoid flaky "slightly shifted text"
+ * diffs caused by `font-display: swap` fonts swapping in after the capture.
+ * Resolves silently after `timeout` ms even if fonts are still loading.
+ */
+export const waitForFonts = async (timeout = 5000) => {
+    const start = Date.now()
+    // ponytail: polling instead of executeAsync (deprecated in modern WDIO)
+    while (Date.now() - start < timeout) {
+        const loaded = await browser.execute(
+            () => (globalThis as any).document?.fonts?.status === 'loaded'
+        )
+        if (loaded) return
+        await browser.pause(100)
+    }
+    log.warn(`waitForFonts: webfonts are still loading after ${timeout}ms`)
+}

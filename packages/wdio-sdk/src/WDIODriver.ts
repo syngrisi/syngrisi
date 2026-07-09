@@ -23,7 +23,7 @@ import {
 } from './schemas/WDIODriver'
 import { CheckParams, Config } from './types'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { getBrowserFullVersion, getBrowserName, getBrowserVersion, getOS, getViewport } from './lib/wdioHelpers'
+import { getBrowserFullVersion, getBrowserName, getBrowserVersion, getOS, getViewport, waitForFonts } from './lib/wdioHelpers'
 
 const log = logger('syngrisi-wdio-sdk')
 // 0 | 4 | 2 | 1 | 3 | 5 | "trace" | "debug" | "info" | "warn" | "error" |
@@ -217,6 +217,22 @@ export class WDIODriver {
             throw `❌ Get snapshots error: ${JSON.stringify(result, null, '  ')}`
         }
         return result
+    }
+
+    /**
+     * Waits until all webfonts declared on the page are loaded.
+     * Call it right before taking a screenshot to avoid flaky "slightly shifted text"
+     * diffs caused by `font-display: swap` fonts swapping in after the capture.
+     * Resolves silently after `timeout` ms even if fonts are still loading.
+     *
+     * @param {number} [timeout=5000] - Maximum time to wait for fonts, in milliseconds.
+     * @example
+     * await driver.waitForFonts();
+     * const screenshot = Buffer.from(await browser.takeScreenshot(), 'base64');
+     * await driver.check({ checkName: 'Homepage', imageBuffer: screenshot, params: {} });
+     */
+    async waitForFonts(timeout: number = 5000): Promise<void> {
+        await waitForFonts(timeout)
     }
 
     /**
