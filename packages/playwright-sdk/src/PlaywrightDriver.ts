@@ -376,6 +376,29 @@ export class PlaywrightDriver {
     }
 
     /**
+     * Waits until all webfonts declared on the page are loaded (`document.fonts.ready`).
+     * Call it right before taking a screenshot to avoid flaky "slightly shifted text"
+     * diffs caused by `font-display: swap` fonts swapping in after the capture.
+     * Resolves silently after `timeout` ms even if fonts are still loading.
+     *
+     * @param {number} [timeout=5000] - Maximum time to wait for fonts, in milliseconds.
+     * @example
+     * await driver.waitForFonts();
+     * const screenshot = await page.screenshot();
+     * await driver.check({ checkName: 'Homepage', imageBuffer: screenshot, params: {} });
+     */
+    async waitForFonts(timeout: number = 5000): Promise<void> {
+        try {
+            await Promise.race([
+                this.page.evaluate(() => document.fonts.ready.then(() => true)),
+                new Promise<void>((resolve) => setTimeout(resolve, timeout)),
+            ])
+        } catch (e) {
+            log.warn(`waitForFonts failed: ${e}`)
+        }
+    }
+
+    /**
      * Collects DOM tree from the current page for RCA (Root Cause Analysis).
      * This method captures the DOM structure along with computed styles and bounding rectangles.
      *
