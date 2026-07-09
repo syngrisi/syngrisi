@@ -1,5 +1,11 @@
 # @syngrisi/syngrisi
 
+## 3.17.0
+
+### Patch Changes
+
+-   @syngrisi/node-resemble.js@3.17.0
+
 ## 3.16.1
 
 ### Patch Changes
