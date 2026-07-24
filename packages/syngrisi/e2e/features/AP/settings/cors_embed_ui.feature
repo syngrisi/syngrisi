@@ -29,3 +29,39 @@ Feature: Admin CORS & Embed UI
     When I go to "cors" page
     When I wait 10 seconds for the element with locator "[data-test='cors-embed-allowed-origins']" to be visible
     Then the element with locator "[data-test='cors-embed-allowed-origins']" should have value "https://ci.example.com"
+
+  Scenario: CORS & Embed admin page is scrollable
+    When I set env variables:
+      """
+      SYNGRISI_AUTH: "false"
+      SYNGRISI_TEST_MODE: "true"
+      SYNGRISI_DISABLE_DEV_CORS: "false"
+      """
+    Given I start Server
+    And I clear database
+    When I go to "cors" page
+    When I wait 10 seconds for the element with locator "[data-test='admin-main']" to be visible
+    When I wait 10 seconds for the element with locator "[data-test='cors-embed-prepare-cookie']" to be visible
+    # Tall form is clipped without overflow:auto on admin main — assert the scroll container works
+    When I execute javascript code:
+      """
+      const main = document.querySelector("[data-test='admin-main']");
+      if (!main) return "missing-main";
+      const canScroll = main.scrollHeight > main.clientHeight + 8;
+      const overflowY = getComputedStyle(main).overflowY;
+      main.scrollTop = main.scrollHeight;
+      const scrolled = main.scrollTop > 0;
+      return JSON.stringify({ canScroll, overflowY, scrolled, scrollHeight: main.scrollHeight, clientHeight: main.clientHeight });
+      """
+    Then I expect the stored "js" string is contain:
+      """
+      "canScroll":true
+      """
+    Then I expect the stored "js" string is contain:
+      """
+      "scrolled":true
+      """
+    Then I expect the stored "js" string is contain:
+      """
+      "overflowY":"auto"
+      """

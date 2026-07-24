@@ -31,7 +31,12 @@ export default function AdminLayout() {
             </Box>
             <Box style={{ display: 'flex', height: '100vh', overflow: 'hidden', paddingTop: 100 }}>
                 <AdminNavBar />
-                <Box component="main" style={{ flex: 1, padding: 8 }}>
+                {/* minHeight:0 + overflow:auto — flex child must shrink so tall pages (CORS & Embed) can scroll */}
+                <Box
+                    component="main"
+                    data-test="admin-main"
+                    style={{ flex: 1, minWidth: 0, minHeight: 0, padding: 8, overflow: 'auto' }}
+                >
                     <ReactQueryDevtools initialIsOpen={false} />
                     <Paper>
                         <Routes>
