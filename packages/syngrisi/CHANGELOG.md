@@ -1,5 +1,12 @@
 # @syngrisi/syngrisi
 
+## 3.18.1
+
+### Patch Changes
+
+-   1e62228: Fix Admin CORS & Embed page scroll: allow overflow:auto on admin main content area.
+    -   @syngrisi/node-resemble.js@3.18.1
+
 ## 3.18.0
 
 ### Minor Changes
