@@ -1,5 +1,11 @@
 # @syngrisi/wdio-sdk
 
+## 3.18.0
+
+### Patch Changes
+
+-   @syngrisi/core-api@3.18.0
+
 ## 3.17.0
 
 ### Minor Changes
