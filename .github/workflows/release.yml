@@ -147,6 +147,27 @@ jobs:
                 published=1
                 break
               fi
+              # e.g. 3.18.0 after 4.0.1 exists — cannot take "latest" implicitly
+              if grep -qE 'previously published version .* is higher|must specify a tag' "$out"; then
+                major="${version%%.*}"
+                echo "Publishing ${name}@${version} with --tag ${major}.x (higher major already on registry)"
+                set +e
+                (cd "$location" && npm publish --access public --provenance=false --tag "${major}.x") >"$out" 2>&1
+                status=$?
+                set -e
+                cat "$out"
+                if [ "$status" -eq 0 ] || npm view "${name}@${version}" version >/dev/null 2>&1; then
+                  # Keep latest on the 3.x line if that is what consumers currently get
+                  cur="$(npm view "${name}" version 2>/dev/null || true)"
+                  cur_major="${cur%%.*}"
+                  if [ -n "$cur" ] && [ "$cur_major" = "$major" ]; then
+                    echo "Moving latest dist-tag to ${name}@${version}"
+                    npm dist-tag add "${name}@${version}" latest || true
+                  fi
+                  published=1
+                  break
+                fi
+              fi
               if grep -qE 'TLOG_CREATE_ENTRY_ERROR|error creating tlog entry|EPUBLISHCONFLICT|cannot publish over' "$out"; then
                 echo "Retryable publish error for ${name} (attempt ${attempt}/5) — sleeping..."
                 sleep $((attempt * 8))
@@ -161,6 +182,20 @@ jobs:
               fail=1
             fi
           done
+          # Soft-fail if only leftover packages with higher majors blocked latest;
+          # require every unpublished version to be on the registry.
+          missing=0
+          for row in "${pkgs[@]}"; do
+            IFS=$'\t' read -r name version location <<<"$row"
+            if ! npm view "${name}@${version}" version >/dev/null 2>&1; then
+              echo "Still missing on registry: ${name}@${version}"
+              missing=1
+            fi
+          done
+          if [ "$missing" -eq 0 ]; then
+            echo "All package versions present on npm"
+            exit 0
+          fi
           exit "$fail"
        
       # Step 3: Create GitHub Release
