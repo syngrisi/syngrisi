@@ -100,42 +100,68 @@ jobs:
       # This runs only when changesets actually published (merged version PR)
       - name: Publish to npm with OIDC
         if: steps.changesets.outputs.hasChangesets == 'false'
-        env:
-          # Avoid Sigstore Rekor 409 (TLOG_CREATE_ENTRY_ERROR) that aborts mid-publish when
-          # npm's internal retry re-submits an already-logged attestation. OIDC auth still works.
-          NPM_CONFIG_PROVENANCE: 'false'
         run: |
           npm install -g npm@latest
           npm --version
+          # Force-disable provenance; env alone is ignored under trusted publishing races.
+          npm config set provenance false
+          echo "provenance=$(npm config get provenance)"
 
-          if ! yarn lerna changed --json 2>/dev/null | grep -q '"name"'; then
-            echo "No packages to publish"
+          # Sequential per-package publish: parallel lerna + Sigstore races on TLOG 409
+          # before the registry PUT, so nothing lands and retries keep failing.
+          mapfile -t pkgs < <(npx lerna list --json --loglevel=silent | node -e '
+            const d = JSON.parse(require("fs").readFileSync(0, "utf8"));
+            for (const p of d) {
+              if (p.private) continue;
+              console.log(`${p.name}\t${p.version}\t${p.location}`);
+            }
+          ')
+          if [ "${#pkgs[@]}" -eq 0 ]; then
+            echo "No packages found"
             exit 0
           fi
 
-          echo "Publishing packages with OIDC (provenance disabled)..."
-          set +e
-          for attempt in 1 2 3; do
-            echo "Publish attempt ${attempt}/3"
-            # A failed attempt can leave package.json gitHead edits → EUNCOMMIT on retry
-            git checkout -- . >/dev/null 2>&1 || true
-            out="$(mktemp)"
-            yarn lerna publish from-package --yes --no-verify-access 2>&1 | tee "$out"
-            status=${PIPESTATUS[0]}
-            if [ "$status" -eq 0 ]; then
-              exit 0
-            fi
-            if grep -qE 'TLOG_CREATE_ENTRY_ERROR|error creating tlog entry|EUNCOMMIT' "$out"; then
-              echo "Retryable publish failure — resetting tree and retrying..."
-              git checkout -- . >/dev/null 2>&1 || true
-              sleep $((attempt * 5))
+          fail=0
+          for row in "${pkgs[@]}"; do
+            IFS=$'\t' read -r name version location <<<"$row"
+            if npm view "${name}@${version}" version >/dev/null 2>&1; then
+              echo "Already published: ${name}@${version}"
               continue
             fi
-            echo "Publish failed with a non-retryable error (exit ${status})"
-            exit "$status"
+            echo "Publishing ${name}@${version} from ${location}"
+            published=0
+            for attempt in 1 2 3 4 5; do
+              out="$(mktemp)"
+              set +e
+              (cd "$location" && npm publish --access public --provenance=false) >"$out" 2>&1
+              status=$?
+              set -e
+              cat "$out"
+              if [ "$status" -eq 0 ]; then
+                published=1
+                break
+              fi
+              # Package may have landed even when attestation retry races to 409
+              if npm view "${name}@${version}" version >/dev/null 2>&1; then
+                echo "Treating as published after error (registry has ${name}@${version})"
+                published=1
+                break
+              fi
+              if grep -qE 'TLOG_CREATE_ENTRY_ERROR|error creating tlog entry|EPUBLISHCONFLICT|cannot publish over' "$out"; then
+                echo "Retryable publish error for ${name} (attempt ${attempt}/5) — sleeping..."
+                sleep $((attempt * 8))
+                continue
+              fi
+              echo "Non-retryable publish failure for ${name}"
+              fail=1
+              break
+            done
+            if [ "$published" -ne 1 ]; then
+              echo "Failed to publish ${name}@${version}"
+              fail=1
+            fi
           done
-          echo "Publish failed after retries"
-          exit 1
+          exit "$fail"
        
       # Step 3: Create GitHub Release
       - name: Get published version
