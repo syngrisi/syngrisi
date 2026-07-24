@@ -164,7 +164,10 @@ jobs:
                   cur_major="${cur%%.*}"
                   if [ -n "$cur" ] && [ "$cur_major" = "$major" ]; then
                     echo "Moving latest dist-tag to ${name}@${version}"
-                    npm dist-tag add "${name}@${version}" latest || true
+                    # setup-node injects a dummy NODE_AUTH_TOKEN that breaks dist-tag (E401);
+                    # clear it so npm falls back to OIDC trusted publishing.
+                    env -u NODE_AUTH_TOKEN npm dist-tag add "${name}@${version}" latest || \
+                      npm dist-tag add "${name}@${version}" latest || true
                   fi
                   published=1
                   break
@@ -184,19 +187,33 @@ jobs:
               fail=1
             fi
           done
+          # Registry can lag briefly after publish; retry the presence check.
           missing=0
-          for row in "${pkgs[@]}"; do
-            IFS=$'\t' read -r name version location <<<"$row"
-            if ! npm view "${name}@${version}" version >/dev/null 2>&1; then
-              echo "Still missing on registry: ${name}@${version}"
-              missing=1
-            fi
+          for try in 1 2 3; do
+            missing=0
+            for row in "${pkgs[@]}"; do
+              IFS=$'\t' read -r name version location <<<"$row"
+              if ! npm view "${name}@${version}" version >/dev/null 2>&1; then
+                echo "Still missing on registry (try ${try}): ${name}@${version}"
+                missing=1
+              fi
+            done
+            [ "$missing" -eq 0 ] && break
+            sleep 5
           done
           if [ "$missing" -eq 0 ]; then
             echo "All package versions present on npm"
+            # Ensure cucumber-service latest tracks the 3.x line when published via release-3
+            if npm view "wdio-syngrisi-cucumber-service@3.18.0" version >/dev/null 2>&1; then
+              cur="$(npm view wdio-syngrisi-cucumber-service version 2>/dev/null || true)"
+              if [ "$cur" != "3.18.0" ] && [[ "$cur" == 3.* ]]; then
+                echo "Fixing latest dist-tag for wdio-syngrisi-cucumber-service@3.18.0 (was ${cur})"
+                env -u NODE_AUTH_TOKEN npm dist-tag add wdio-syngrisi-cucumber-service@3.18.0 latest || true
+              fi
+            fi
             exit 0
           fi
-          exit "$fail"
+          exit 1
        
       # Step 3: Create GitHub Release
       - name: Get published version
