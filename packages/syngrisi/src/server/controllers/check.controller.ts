@@ -3,11 +3,18 @@ import { ApiError, catchAsync, deserializeIfJSON, pick, removeEmptyProperties } 
 import { genericService, checkService } from '@services';
 import { domSnapshotService } from '@services/dom-snapshot.service';
 import { ExtRequest } from '@types';
-import { CheckDocument } from '@models';
+import { Check, CheckDocument } from '@models';
 import { Response } from "express";
 import { appSettings } from '@settings';
 import * as changeSigService from '@services/changeSig';
 import { sharedCheckId } from '@services/share.service';
+import {
+    getCorsEmbedSettings,
+    isAllowedCorsOrigin,
+    isCheckAllowedForCorsEmbedAccept,
+    isCrossOriginRequest,
+} from '../lib/corsEmbed';
+import type { CorsEmbedRole } from '../lib/corsEmbed';
 
 const get = catchAsync(async (req: ExtRequest, res: Response) => {
     // const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
@@ -51,6 +58,34 @@ const accept = catchAsync(async (req: ExtRequest, res: Response) => {
     if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Cannot accept the check - Id not found');
     if (!req.body.baselineId) throw new ApiError(HttpStatus.BAD_REQUEST, `Cannot accept the check: ${id} - new Baseline Id not found`);
     if (!req.user) throw new ApiError(HttpStatus.UNAUTHORIZED, 'User not found');
+
+    // Extra guards for credentialed cross-origin Accept (CORS & Embed).
+    const corsSettings = await getCorsEmbedSettings();
+    const origin = req.headers.origin as string | undefined;
+    if (
+        corsSettings.enabled
+        && isCrossOriginRequest(req)
+        && isAllowedCorsOrigin(origin, corsSettings)
+    ) {
+        const role = req.user.role as CorsEmbedRole | undefined;
+        if (!role || !corsSettings.allowedAcceptRoles.includes(role)) {
+            throw new ApiError(
+                HttpStatus.FORBIDDEN,
+                `Cross-origin Accept is not allowed for role "${req.user.role}"`,
+            );
+        }
+        const check = await Check.findById(id).select('status failReasons').lean().exec();
+        if (!check) {
+            throw new ApiError(HttpStatus.NOT_FOUND, `Cannot find check with id: ${id}`);
+        }
+        if (!isCheckAllowedForCorsEmbedAccept(check, corsSettings)) {
+            throw new ApiError(
+                HttpStatus.FORBIDDEN,
+                'Cross-origin Accept is not allowed for this check status / fail reason',
+            );
+        }
+    }
+
     const result = await checkService.accept(id, req.body.baselineId, req.user);
 
     res.send(result);

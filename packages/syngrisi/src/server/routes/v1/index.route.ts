@@ -17,6 +17,7 @@ import shareRoute from './share.route';
 import pluginSettingsRoute from './plugin-settings.route';
 import adminDataRoute from './admin-data.route';
 import webhooksRoute from './webhooks.route';
+import corsEmbedRoute from './cors-embed.route';
 
 const router = express.Router();
 
@@ -92,6 +93,10 @@ const defaultRoutes = [
     {
         path: '/webhooks',
         route: webhooksRoute,
+    },
+    {
+        path: '/cors-embed',
+        route: corsEmbedRoute,
     },
 ];
 

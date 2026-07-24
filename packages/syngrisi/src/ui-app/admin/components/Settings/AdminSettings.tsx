@@ -47,6 +47,8 @@ export default function AdminSettings() {
                                                 .filter((item: ISettingForm) => !item.name.startsWith('sso_'))
                                                 // ai_triage_* get a dedicated AI Providers section (TODO); skip generic form
                                                 .filter((item: ISettingForm) => !item.name.startsWith('ai_triage_'))
+                                                // dedicated Admin → CORS & Embed page
+                                                .filter((item: ISettingForm) => item.name !== 'cors_embed')
                                                 .map(
                                                     (item: ISettingForm) => (
                                                         <FormWrapper

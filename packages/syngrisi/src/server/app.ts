@@ -18,6 +18,7 @@ import uiRoutes from './routes/ui';
 import aiRoutes from './routes/ai.route';
 
 import { compressionFilter, disableCors, apiLimiter, sdkVersionCheck } from './middlewares';
+import { corsEmbedMiddleware } from './middlewares/corsEmbed';
 import { User } from './models';
 import httpLoggerMiddleware from '@lib/httpLoggerWinston';
 import errorHandler from './middlewares/errorHandler';
@@ -93,6 +94,9 @@ initSSOStrategies(passport);
 
 passport.serializeUser(User.serializeUser() as ((user: Express.User, done: (err: unknown) => void) => void));
 passport.deserializeUser(User.deserializeUser());
+
+// Credentialed CORS / CSRF / SameSite upgrade for Admin-configured origins (after session).
+app.use(corsEmbedMiddleware);
 
 log.info('\t- static files', logMeta);
 app.use(

@@ -61,7 +61,10 @@ export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupBy
 
     const handleGroupBySelect = (value: string) => {
         clearActiveItems();
-        setQuery({ groupBy: value });
+        // Clear base_filter in the same setQuery batch as groupBy. Relying only on the
+        // activeItems→[] effect races with useQueryParams microtask flushes and can leave
+        // the previous run/suite filter in the URL (table stays filtered after regrouping).
+        setQuery({ groupBy: value, base_filter: null });
     };
 
     return (

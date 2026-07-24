@@ -116,5 +116,22 @@
             "model": ""
         },
         "enabled": true
+    },
+    {
+        "name": "cors_embed",
+        "label": "CORS & Embed",
+        "description": "Credentialed cross-origin API access (e.g. Accept baselines from Jenkins Allure while logged into Syngrisi). Managed via Admin → CORS & Embed.",
+        "type": "CorsEmbed",
+        "value": {
+            "enabled": false,
+            "allowedOrigins": [],
+            "allowCredentials": true,
+            "sameSite": "lax",
+            "csrfRequired": true,
+            "allowedAcceptRoles": ["admin", "reviewer"],
+            "allowedAcceptStatuses": ["new", "not_accepted", "different_images", "wrong_dimensions"],
+            "frameAncestors": []
+        },
+        "enabled": true
     }
 ]

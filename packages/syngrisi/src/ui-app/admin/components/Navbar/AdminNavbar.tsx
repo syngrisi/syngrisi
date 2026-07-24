@@ -8,6 +8,7 @@ import {
     IconDatabase,
     IconSparkles,
     IconWebhook,
+    IconWorldWww,
 } from '@tabler/icons-react';
 import { LinksGroup } from '@admin/components/Navbar/NavbarLinksGroup';
 import { taskLinks } from '@admin/components/Tasks/tasksList';
@@ -23,6 +24,7 @@ const navbarItems = [
     { label: 'Data Management', icon: IconDatabase, link: '/admin/data' },
     { label: 'Plugins', icon: IconPlugConnected, link: '/admin/plugins' },
     { label: 'Webhooks', icon: IconWebhook, link: '/admin/webhooks' },
+    { label: 'CORS & Embed', icon: IconWorldWww, link: '/admin/cors' },
     { label: 'AI', icon: IconSparkles, link: '/admin/ai' },
     { label: 'Settings', icon: IconSettings, link: '/admin/settings' },
 ];

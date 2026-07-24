@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export { disableCors } from './disableCors';
+export { corsEmbedMiddleware } from './corsEmbed';
 export { authorization } from './authorization';
 export { compressionFilter } from './compressionFilter';
 export { ensureSameOrigin } from './ensureSameOrigin';

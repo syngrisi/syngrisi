@@ -37,6 +37,10 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         viewport: { width: 1366, height: 768 },
         headless: false,  // Demo tests run in headed mode
+        // RECORD_DEMO_VIDEO=true → save Playwright video under reports/test-artifacts/
+        ...(process.env.RECORD_DEMO_VIDEO === 'true'
+          ? { video: { mode: 'on' as const, size: { width: 1366, height: 768 } } }
+          : {}),
       },
     },
     {
