@@ -100,33 +100,34 @@ jobs:
       # This runs only when changesets actually published (merged version PR)
       - name: Publish to npm with OIDC
         if: steps.changesets.outputs.hasChangesets == 'false'
+        env:
+          # Avoid Sigstore Rekor 409 (TLOG_CREATE_ENTRY_ERROR) that aborts mid-publish when
+          # npm's internal retry re-submits an already-logged attestation. OIDC auth still works.
+          NPM_CONFIG_PROVENANCE: 'false'
         run: |
-          # Newer npm treats Sigstore tlog 409 as idempotent; the runner's bundled npm
-          # can abort mid-publish when its internal retry hits an already-logged entry.
           npm install -g npm@latest
           npm --version
-
-          publish_once() {
-            yarn lerna publish from-package --yes --no-verify-access
-          }
 
           if ! yarn lerna changed --json 2>/dev/null | grep -q '"name"'; then
             echo "No packages to publish"
             exit 0
           fi
 
-          echo "Publishing packages with OIDC..."
+          echo "Publishing packages with OIDC (provenance disabled)..."
           set +e
           for attempt in 1 2 3; do
             echo "Publish attempt ${attempt}/3"
+            # A failed attempt can leave package.json gitHead edits → EUNCOMMIT on retry
+            git checkout -- . >/dev/null 2>&1 || true
             out="$(mktemp)"
-            publish_once 2>&1 | tee "$out"
+            yarn lerna publish from-package --yes --no-verify-access 2>&1 | tee "$out"
             status=${PIPESTATUS[0]}
             if [ "$status" -eq 0 ]; then
               exit 0
             fi
-            if grep -qE 'TLOG_CREATE_ENTRY_ERROR|error creating tlog entry' "$out"; then
-              echo "Transient Sigstore tlog conflict — retrying..."
+            if grep -qE 'TLOG_CREATE_ENTRY_ERROR|error creating tlog entry|EUNCOMMIT' "$out"; then
+              echo "Retryable publish failure — resetting tree and retrying..."
+              git checkout -- . >/dev/null 2>&1 || true
               sleep $((attempt * 5))
               continue
             fi
