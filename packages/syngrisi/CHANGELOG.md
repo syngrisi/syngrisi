@@ -1,5 +1,15 @@
 # @syngrisi/syngrisi
 
+## 3.19.0
+
+### Minor Changes
+
+-   abb1ce7: Add instance-wide baseline retention cleanup (age + keep-last) with Admin UI, scheduler, CLI and E2E coverage
+
+### Patch Changes
+
+-   @syngrisi/node-resemble.js@3.19.0
+
 ## 3.18.1
 
 ### Patch Changes
