@@ -14,6 +14,11 @@ const task_handle_old_checks = catchAsync(async (req: ExtRequest, res: Response)
     await tasksService.task_handle_old_checks(options, res);
 });
 
+const task_handle_old_baselines = catchAsync(async (req: ExtRequest, res: Response) => {
+    const options = pick(req.query, ['days', 'keepLast', 'remove', 'dryRun']);
+    await tasksService.task_handle_old_baselines(options, res);
+});
+
 const task_handle_database_consistency = catchAsync(async (req: ExtRequest, res: Response) => {
     const options = pick(req.query, ['days', 'clean', 'dryRun']);
     await tasksService.task_handle_database_consistency(options, res);
@@ -49,6 +54,7 @@ const loadTestUser = catchAsync(async (req: ExtRequest, res: Response) => {
 export {
     task_test,
     task_handle_old_checks,
+    task_handle_old_baselines,
     task_handle_database_consistency,
     task_handle_orphan_files,
     task_handle_orphan_baselines,

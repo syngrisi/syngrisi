@@ -1,3 +1,37 @@
+# Retention
+
+Syngrisi has separate retention paths for **checks** and **baselines**. They are independent.
+
+---
+
+# Instance-wide baseline retention (auto-delete old baselines)
+
+Accepted baselines accumulate on every Accept (time-machine history). Compare only needs the
+**newest** accepted baseline per check identity
+(`name + app + branch + browserName + viewport + os`).
+
+Instance setting `auto_remove_old_baselines` (Admin → Settings) deletes historical accepted
+baselines when **both** conditions are true (AND):
+
+1. `createdDate` is older than `days`
+2. the baseline is outside the last `keepLast` accepted baselines for its identity
+   (sorted newest-first)
+
+**Hard guard:** the newest accepted baseline per identity is **never** deleted, even if
+`keepLast` is set to 0 (clamped to ≥ 1 in code and UI).
+
+- **Default:** disabled; `days: 120`, `keepLast: 5`
+- **Scope:** only `markedAs: 'accepted'` (legacy unmarked baselines are not touched)
+- After a Baseline document is removed, its Snapshot/PNG is deleted only if nothing else
+  references it (no remaining Baseline, no Check `baselineId` / `actualSnapshotId` / `diffId`)
+
+Manual dry-run / execute: Admin → Tasks → **Handle old Baselines**, or
+`yarn task:old-baselines -- --days 120 --keep-last 5` (add `--remove` to delete).
+
+> Deletion shortens time-machine history. Compare continues to use the latest accepted baseline.
+
+---
+
 # Per-project retention (auto-delete old checks)
 
 Over time a busy project accumulates thousands of checks that are no longer interesting once their
@@ -10,8 +44,8 @@ existing projects keep every check until you enable it.
 - **Removes**: checks in the project older than `retentionDays` days (by `createdDate`), together with
   their now-unreferenced snapshots and image files, exactly like the instance-wide "handle old
   checks" task — but scoped to the one project.
-- **Never removes**: baselines. Accepted references are always preserved, so a project whose checks
-  have been cleaned still compares correctly on the next run.
+- **Does not remove baselines** — check retention never deletes Baseline documents. Baseline history
+  is controlled separately by `auto_remove_old_baselines` (see above).
 
 This runs *in addition to* the instance-wide `auto_remove_old_checks` task. The instance task applies
 its own global day window to every project; per-project retention lets an individual project keep a
@@ -46,5 +80,5 @@ Relevant environment variables (see [environment_variables.md](environment_varia
 - `SYNGRISI_AUTO_REMOVE_CHECKS_POLL_INTERVAL_MS` — how often the scheduler tick runs.
 - `SYNGRISI_AUTO_REMOVE_CHECKS_MIN_INTERVAL_MS` — minimum gap between two actual sweeps.
 
-> Deletion is irreversible. Retention removes checks, not baselines, but the checks (and their diffs)
-> are gone — start with a generous window and shorten it once you are comfortable.
+> Deletion is irreversible. Check retention removes checks (and their diffs), not baselines —
+> start with a generous window and shorten it once you are comfortable.

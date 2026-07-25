@@ -11,6 +11,7 @@ import { HttpOutputWriter } from '@/tasks/lib/output-writer';
 import {
     handleDatabaseConsistencyTask,
     handleOldChecksTask,
+    handleOldBaselinesTask,
     handleOrphanFilesTask,
     handleOrphanBaselinesTask,
     removeOldLogsTask,
@@ -100,6 +101,31 @@ const task_handle_old_checks = async (options: any, res: Response) => {
     await handleOldChecksTask({ days, remove }, output);
 };
 
+const task_handle_old_baselines = async (options: any, res: Response) => {
+    const output = new HttpOutputWriter(res);
+    const days = parseInt(options.days, 10);
+    const keepLast = parseInt(options.keepLast, 10);
+
+    let remove: boolean;
+    if (options.dryRun !== undefined) {
+        const dryRun = options.dryRun === 'true' || options.dryRun === true;
+        remove = !dryRun;
+    } else {
+        remove = options.remove === 'true' || options.remove === true;
+    }
+
+    log.info('handle_old_baselines task invocation', {
+        rawOptions: options,
+        parsed: { days, keepLast, remove },
+    });
+
+    await handleOldBaselinesTask({
+        days: Number.isFinite(days) ? days : 120,
+        keepLast: Number.isFinite(keepLast) ? keepLast : 5,
+        remove,
+    }, output);
+};
+
 const task_handle_orphan_files = async (options: any, res: Response) => {
     const output = new HttpOutputWriter(res);
     let dryRun = options.dryRun === 'true' || options.dryRun === true;
@@ -151,6 +177,7 @@ const task_test = async (options = 'empty', req: ExtRequest, res: Response) => {
 export {
     task_test,
     task_handle_old_checks,
+    task_handle_old_baselines,
     task_handle_database_consistency,
     task_handle_orphan_files,
     task_handle_orphan_baselines,

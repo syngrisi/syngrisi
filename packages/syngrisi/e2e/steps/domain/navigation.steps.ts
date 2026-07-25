@@ -40,6 +40,7 @@ When('I go to {string} page', async ({ page, appServer }: { page: Page; appServe
     admin: {
       users: `${baseURL}/admin?task=users`,
       tasks: `${baseURL}/admin/tasks/handle_old_checks`,
+      old_baselines: `${baseURL}/admin/tasks/handle_old_baselines`,
       orphan_baselines: `${baseURL}/admin/tasks/handle_orphan_baselines`,
     },
   };

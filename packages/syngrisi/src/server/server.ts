@@ -47,6 +47,7 @@ connectDB().then(async () => {
         if (!config.testMode || env.SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE) {
             autoCleanupSchedulers.checks.start();
             autoCleanupSchedulers.logs.start();
+            autoCleanupSchedulers.baselines.start();
         } else {
             log.debug('Skipping auto-cleanup schedulers in test mode', logMeta);
         }
@@ -63,6 +64,7 @@ connectDB().then(async () => {
         if (!config.testMode || env.SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE) {
             autoCleanupSchedulers.checks.stop();
             autoCleanupSchedulers.logs.stop();
+            autoCleanupSchedulers.baselines.stop();
         }
         triageScheduler.stop();
         changeSigScheduler.stop();

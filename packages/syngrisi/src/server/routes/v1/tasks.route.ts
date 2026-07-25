@@ -46,6 +46,22 @@ router.get(
 
 registry.registerPath({
     method: 'get',
+    path: '/v1/tasks/task_handle_old_baselines',
+    summary: "Handle old baselines task",
+    tags: ['Tasks'],
+    responses: createApiResponse(SkipValid, 'Success'),
+});
+
+router.get(
+    '/task_handle_old_baselines',
+    ensureLoggedIn(),
+    authorization('admin') as Midleware,
+    validateRequest(SkipValid, 'get, /v1/tasks/task_handle_old_baselines'),
+    tasksController.task_handle_old_baselines as Midleware
+);
+
+registry.registerPath({
+    method: 'get',
     path: '/v1/tasks/task_handle_database_consistency',
     summary: "Handle database consistency task",
     tags: ['Tasks'],

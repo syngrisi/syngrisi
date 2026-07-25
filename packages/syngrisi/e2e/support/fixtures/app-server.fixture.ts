@@ -432,6 +432,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
             { name: 'ai_triage_enabled', value: 'false', enabled: true },
             { name: 'ai_triage_provider', value: { type: 'openai', baseUrl: '', apiKey: '', model: '' }, enabled: true },
             { name: 'auto_remove_old_checks', value: { days: 365, lastRunAt: null }, enabled: false },
+            { name: 'auto_remove_old_baselines', value: { days: 120, keepLast: 5, lastRunAt: null }, enabled: false },
             { name: 'auto_remove_old_logs', value: { days: 120, lastRunAt: null }, enabled: true },
           ];
           for (const setting of settingsDefaults) {
