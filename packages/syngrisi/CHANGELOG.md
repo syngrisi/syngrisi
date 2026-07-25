@@ -1,5 +1,12 @@
 # @syngrisi/syngrisi
 
+## 3.19.1
+
+### Patch Changes
+
+-   6bf281b: Speed up baseline retention snapshot cleanup with indexes and batched reference checks, add Handle Orphan Snapshots task, and keep admin task streams alive past reverse-proxy idle timeouts.
+    -   @syngrisi/node-resemble.js@3.19.1
+
 ## 3.19.0
 
 ### Minor Changes
