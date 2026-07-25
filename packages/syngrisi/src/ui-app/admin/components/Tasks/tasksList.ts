@@ -23,6 +23,16 @@ export const tasksList: ITask[] = [
             { name: 'dryRun', label: 'Dry run', type: 'Checkbox', default: true },
         ],
     },
+    {
+        label: 'Handle old Baselines',
+        name: 'handle_old_baselines',
+        description: 'Deletes accepted baselines that are older than N days AND outside the last K kept per check identity. The newest baseline per identity is never deleted. By default runs in DRY RUN mode. Uncheck "Dry run" to actually delete.',
+        inputs: [
+            { name: 'days', label: 'Baseline older than (days)', type: 'TextInput', default: 120 },
+            { name: 'keepLast', label: 'Keep last (per identity)', type: 'TextInput', default: 5 },
+            { name: 'dryRun', label: 'Dry run', type: 'Checkbox', default: true },
+        ],
+    },
     // {
     //     label: 'Test',
     //     name: 'test',

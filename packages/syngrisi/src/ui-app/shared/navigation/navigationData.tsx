@@ -178,6 +178,16 @@ export function navigationData(): INavDataItem[] {
             ],
         },
         {
+            title: 'Task: Handle old Baselines',
+            description: 'Old baselines retention (age + keep-last)',
+            group: 'tasks',
+            crumbs: [
+                { title: 'Admin', href: '/admin' },
+                { title: 'Tasks', href: '/admin/tasks' },
+                { title: 'Handle old Baselines', href: '/admin/tasks/handle_old_baselines' },
+            ],
+        },
+        {
             title: 'Task: Handle Database Consistency',
             description: 'Database Consistency statistics and cleaning',
             group: 'tasks',

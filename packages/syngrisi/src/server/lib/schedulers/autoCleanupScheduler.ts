@@ -3,16 +3,23 @@ import { appSettings } from '@settings';
 import { env } from '@/server/envConfig';
 import { errMsg } from '@/server/utils';
 
+export type AutoCleanupConfig = {
+    days: number;
+    keepLast?: number;
+};
+
 type AutoCleanupValue = {
     days?: number;
+    keepLast?: number;
     lastRunAt?: string | null;
 };
 
 interface SchedulerOptions {
     settingName: string;
     defaultDays: number;
+    defaultKeepLast?: number;
     scope: string;
-    runTask: (days: number) => Promise<void>;
+    runTask: (config: AutoCleanupConfig) => Promise<void>;
 }
 
 export class AutoCleanupScheduler {
@@ -58,6 +65,9 @@ export class AutoCleanupScheduler {
             const days = typeof value.days === 'number' && value.days >= 0
                 ? value.days
                 : this.options.defaultDays;
+            const keepLast = typeof value.keepLast === 'number'
+                ? value.keepLast
+                : this.options.defaultKeepLast;
             const lastRunAt = value.lastRunAt ? new Date(value.lastRunAt) : null;
             const now = Date.now();
             const minInterval = env.SYNGRISI_AUTO_REMOVE_CHECKS_MIN_INTERVAL_MS;
@@ -67,11 +77,21 @@ export class AutoCleanupScheduler {
                 return;
             }
 
-            log.info(`triggering cleanup for items older than ${days} days`, { scope: this.options.scope });
-            await this.options.runTask(days);
+            const config: AutoCleanupConfig = { days };
+            if (keepLast !== undefined) {
+                config.keepLast = keepLast;
+            }
+
+            log.info(
+                `triggering cleanup for items older than ${days} days`
+                + (keepLast !== undefined ? `, keepLast=${keepLast}` : ''),
+                { scope: this.options.scope },
+            );
+            await this.options.runTask(config);
             await AppSettings.set(this.options.settingName, {
                 ...value,
                 days,
+                ...(keepLast !== undefined ? { keepLast } : {}),
                 lastRunAt: new Date(now).toISOString(),
             });
             log.info(`cleanup completed`, { scope: this.options.scope });

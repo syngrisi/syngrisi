@@ -38,6 +38,18 @@
         "enabled": true
     },
     {
+        "name": "auto_remove_old_baselines",
+        "label": "Auto remove old baselines",
+        "description": "Automatically delete accepted baselines that are older than the configured number of days AND outside the last N kept per check identity. The newest baseline per identity is never deleted.",
+        "type": "AutoOldBaselines",
+        "value": {
+            "days": 120,
+            "keepLast": 5,
+            "lastRunAt": null
+        },
+        "enabled": false
+    },
+    {
         "name": "share_enabled",
         "label": "Enable Sharing",
         "description": "Allow users to share checks via public links",

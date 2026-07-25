@@ -181,6 +181,28 @@ npm run task:old-checks -- 90 true
 
 **Warning**: We strongly recommend running the `task:consistency` task before and after this operation.
 
+### 2b. Handle Old Baselines
+
+**Purpose**: Removes accepted baselines that are older than N days **and** outside the last K
+kept per check identity. The newest baseline per identity is never deleted.
+
+**CLI Options**:
+- `--days <number>, -d <number>` - Age threshold (default: 120)
+- `--keep-last <number>, -k <number>` - Keep last N per identity (default: 5, min 1)
+- `--remove, -r` - Actually remove (default: false, dry run)
+
+**HTTP Query Parameters**:
+- `days=<number>`, `keepLast=<number>`
+- `dryRun=true|false` (default dry run)
+
+```bash
+yarn task:old-baselines
+yarn task:old-baselines -- --days 90 --keep-last 3
+yarn task:old-baselines -- --days 120 --keep-last 5 --remove
+```
+
+See also [RETENTION.md](../docs/RETENTION.md).
+
 ### 3. Remove Old Logs
 
 **Purpose**: Removes log entries that are older than specified days.
