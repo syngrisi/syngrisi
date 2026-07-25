@@ -126,6 +126,22 @@ router.get(
 
 registry.registerPath({
     method: 'get',
+    path: '/v1/tasks/task_handle_orphan_snapshots',
+    summary: "Handle orphan snapshots task",
+    tags: ['Tasks'],
+    responses: createApiResponse(SkipValid, 'Success'),
+});
+
+router.get(
+    '/task_handle_orphan_snapshots',
+    ensureLoggedIn(),
+    authorization('admin') as Midleware,
+    validateRequest(SkipValid, 'get, /v1/tasks/task_handle_orphan_snapshots'),
+    tasksController.task_handle_orphan_snapshots as Midleware
+);
+
+registry.registerPath({
+    method: 'get',
     path: '/v1/tasks/loadTestUser',
     summary: "Load test user",
     tags: ['Tasks'],

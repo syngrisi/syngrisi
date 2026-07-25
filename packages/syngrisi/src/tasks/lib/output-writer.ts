@@ -23,23 +23,38 @@ export interface IOutputWriter {
     end(): void;
 }
 
+/** Interval for SSE comment heartbeats that keep reverse proxies from timing out. */
+export const HTTP_TASK_HEARTBEAT_MS = 15_000;
+
 /**
  * Output writer for HTTP streaming (Server-Sent Events)
  * Writes output to an Express Response object
  */
 export class HttpOutputWriter implements IOutputWriter {
-    constructor(private res: Response) {
+    private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
+
+    constructor(
+        private res: Response,
+        private heartbeatMs: number = HTTP_TASK_HEARTBEAT_MS,
+    ) {
         this.res.writeHead(200, {
             'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            'Content-Encoding': 'none',
-            'x-no-compression': 'true',
+            'Cache-Control': 'no-cache, no-transform',
+            'Content-Encoding': 'identity',
+            // Disable nginx response buffering for this stream
+            'X-Accel-Buffering': 'no',
+            Connection: 'keep-alive',
         });
+        this.startHeartbeat();
     }
 
     write(message: string): void {
+        if (this.res.writableEnded) {
+            return;
+        }
         this.res.write(`${message}\n`);
         log.debug(message);
+        this.flush();
     }
 
     flush(): void {
@@ -49,13 +64,40 @@ export class HttpOutputWriter implements IOutputWriter {
     }
 
     end(): void {
-        this.res.end();
+        this.stopHeartbeat();
+        if (!this.res.writableEnded) {
+            this.res.end();
+        }
+    }
+
+    private startHeartbeat(): void {
+        if (this.heartbeatMs <= 0) {
+            return;
+        }
+        this.heartbeatTimer = setInterval(() => {
+            if (this.res.writableEnded) {
+                this.stopHeartbeat();
+                return;
+            }
+            // SSE comment — ignored by Task UI, resets proxy_read_timeout
+            this.res.write(': \n\n');
+            this.flush();
+        }, this.heartbeatMs);
+        // Do not keep the process alive solely for heartbeats
+        this.heartbeatTimer.unref?.();
+    }
+
+    private stopHeartbeat(): void {
+        if (this.heartbeatTimer) {
+            clearInterval(this.heartbeatTimer);
+            this.heartbeatTimer = null;
+        }
     }
 }
 
 /**
  * Output writer for CLI execution
- * Writes output to console.log
+ * Writes to console.log
  */
 export class ConsoleOutputWriter implements IOutputWriter {
     write(message: string): void {

@@ -224,6 +224,10 @@ CheckSchema.index({ run: 1, 'triage.verdict': 1 });
 CheckSchema.index({ app: 1, 'triage.verdict': 1 });
 // Change-similarity: fetch run-scoped failed checks fast
 CheckSchema.index({ run: 1, status: 1 });
+// Retention cleanup: snapshot reference lookups ($in / distinct by snapshot id)
+CheckSchema.index({ baselineId: 1 }, { name: 'check_baselineId_idx' });
+CheckSchema.index({ actualSnapshotId: 1 }, { name: 'check_actualSnapshotId_idx' });
+CheckSchema.index({ diffId: 1 }, { name: 'check_diffId_idx' });
 
 CheckSchema.plugin(toJSON);
 CheckSchema.plugin(paginate);

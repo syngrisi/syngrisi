@@ -39,6 +39,11 @@ const task_handle_orphan_baselines = catchAsync(async (req: ExtRequest, res: Res
     await tasksService.task_handle_orphan_baselines(options, res);
 });
 
+const task_handle_orphan_snapshots = catchAsync(async (req: ExtRequest, res: Response) => {
+    const options = pick(req.query, ['execute', 'dryRun']);
+    await tasksService.task_handle_orphan_snapshots(options, res);
+});
+
 const status = catchAsync(async (req: ExtRequest, res: Response) => {
     res.send(await tasksService.status(req.user));
 });
@@ -58,6 +63,7 @@ export {
     task_handle_database_consistency,
     task_handle_orphan_files,
     task_handle_orphan_baselines,
+    task_handle_orphan_snapshots,
     task_remove_old_logs,
     status,
     loadTestUser,

@@ -68,6 +68,14 @@ export const tasksList: ITask[] = [
         ],
     },
     {
+        label: 'Handle Orphan Snapshots',
+        name: 'handle_orphan_snapshots',
+        description: 'Finds and removes Snapshot documents (and their PNG files) that are not referenced by any Baseline or Check. Use after baseline retention if snapshot cleanup did not finish. By default runs in dry-run mode. Uncheck "Dry run" to actually remove.',
+        inputs: [
+            { name: 'dryRun', label: 'Dry run', type: 'Checkbox', default: true },
+        ],
+    },
+    {
         label: 'Handle Orphan Baselines',
         name: 'handle_orphan_baselines',
         description: 'Finds and removes baselines whose snapshots are not referenced by any checks. By default runs in dry-run mode (only shows statistics). Uncheck "Dry run" to actually remove baselines.',

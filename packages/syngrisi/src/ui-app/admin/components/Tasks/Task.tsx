@@ -14,6 +14,19 @@ type TaskStatus = 'idle' | 'running' | 'completed' | 'error' | 'aborted';
 
 const VALID_MANTINE_INPUTS = ['TextInput', 'NumberInput', 'Checkbox', 'Select', 'Textarea'];
 
+/** Strip SSE comment heartbeats (`: ...`) used to keep reverse proxies alive. */
+function stripSseComments(chunk: string): string {
+    return chunk.replace(/(^|\n):[^\n]*\n?/g, '$1');
+}
+
+function isNetworkStreamError(error: { name?: string; message?: string }): boolean {
+    if (error.name !== 'TypeError') {
+        return false;
+    }
+    const msg = (error.message || '').toLowerCase();
+    return msg.includes('fetch') || msg.includes('network') || msg.includes('failed');
+}
+
 export default function Task({ item }: { item: ITask }) {
     useSubpageEffect(`Task: ${item.label}`);
 
@@ -48,6 +61,7 @@ export default function Task({ item }: { item: ITask }) {
         setTaskStatus('running');
         setErrorMessage('');
         setOutputField('');
+        let receivedOutput = false;
 
         try {
             const response = await fetch(
@@ -83,8 +97,12 @@ export default function Task({ item }: { item: ITask }) {
                     break;
                 }
 
-                const chunk = decoder.decode(value, { stream: true });
+                const chunk = stripSseComments(decoder.decode(value, { stream: true }));
+                if (!chunk) {
+                    continue;
+                }
 
+                receivedOutput = true;
                 setOutputField((prev) => prev + chunk);
 
                 if (autoScrollChecked && outputRef.current) {
@@ -110,14 +128,18 @@ export default function Task({ item }: { item: ITask }) {
                     errorMsg = error.message;
                 }
 
-                // Add error type and stack for network/server errors
-                if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                    errorMsg = 'Network Error: Failed to connect to server';
+                // Mid-stream disconnect is often a reverse-proxy idle timeout; the task
+                // may still be running on the server after the browser loses the stream.
+                if (isNetworkStreamError(error)) {
+                    errorMsg = receivedOutput
+                        ? 'Network Error: task stream was interrupted (often a proxy timeout)'
+                        : 'Network Error: Failed to connect to server';
                     errorDetails = '\n\nPossible causes:\n' +
+                        '- Reverse proxy idle timeout (nginx proxy_read_timeout)\n' +
                         '- Server is not running or crashed\n' +
                         '- Server ran out of memory (check server logs)\n' +
-                        '- Network connectivity issues\n' +
-                        '- CORS or firewall blocking the request';
+                        '- Network connectivity issues\n\n' +
+                        'Note: the task may still continue on the server after this UI error. Check server logs before re-running a destructive task.';
                 }
 
                 // Add stack trace if available (for development)
