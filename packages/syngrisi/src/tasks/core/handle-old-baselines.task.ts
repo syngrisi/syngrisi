@@ -26,16 +26,30 @@ type Deps = {
     removeSnapshotFn?: typeof removeSnapshot;
 };
 
-interface BaselineLean extends SelectableBaseline {
+interface BaselineLean {
     _id: Types.ObjectId;
     snapshootId?: Types.ObjectId | null;
     createdDate?: Date;
     name?: string;
-    app?: Types.ObjectId;
+    app?: Types.ObjectId | string | null;
     branch?: string;
     browserName?: string;
     viewport?: string;
     os?: string;
+}
+
+function toSelectable(b: BaselineLean): SelectableBaseline {
+    return {
+        _id: b._id,
+        snapshootId: b.snapshootId ?? null,
+        createdDate: b.createdDate ?? null,
+        name: b.name,
+        app: b.app != null ? String(b.app) : null,
+        branch: b.branch,
+        browserName: b.browserName,
+        viewport: b.viewport,
+        os: b.os,
+    };
 }
 
 async function isSnapshotStillReferenced(
@@ -50,18 +64,25 @@ async function isSnapshotStillReferenced(
         return true; // treat invalid as referenced — do not delete
     }
 
-    const baselineLeft = await BaselineModel.exists({ snapshootId: objectId });
+    // Cast filters: mongoose StrictQuery typing rejects ObjectId in some filter shapes.
+    const baselineLeft = await BaselineModel.findOne({ snapshootId: objectId } as any)
+        .select('_id')
+        .lean()
+        .exec();
     if (baselineLeft) {
         return true;
     }
 
-    const checkLeft = await CheckModel.exists({
+    const checkLeft = await CheckModel.findOne({
         $or: [
             { baselineId: objectId },
             { actualSnapshotId: objectId },
             { diffId: objectId },
         ],
-    });
+    } as any)
+        .select('_id')
+        .lean()
+        .exec();
     return Boolean(checkLeft);
 }
 
@@ -101,9 +122,12 @@ export async function handleOldBaselinesTask(
             viewport: 1,
             os: 1,
         },
-    ).lean<BaselineLean[]>().exec();
+    ).lean().exec() as unknown as BaselineLean[];
 
-    const candidates = selectOldBaselinesForRemoval(baselines, { days, keepLast });
+    const candidates = selectOldBaselinesForRemoval(
+        baselines.map(toSelectable),
+        { days, keepLast },
+    );
     output.write(`>> removable candidates (age AND outside keepLast): ${candidates.length}`);
 
     if (candidates.length > 0) {
