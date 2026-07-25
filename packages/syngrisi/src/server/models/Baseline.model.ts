@@ -121,5 +121,8 @@ BaselineSchema.index({
     snapshootId: 1,
 }, { unique: true, name: 'baseline_ident_snapshot_idx' });
 
+// Retention / orphan cleanup: lookup by snapshootId alone (compound above cannot serve this)
+BaselineSchema.index({ snapshootId: 1 }, { name: 'baseline_snapshootId_idx' });
+
 const Baseline: Model<BaselineDocument> = mongoose.model<BaselineDocument>('VRSBaseline', BaselineSchema);
 export default Baseline as PluginExtededModel<BaselineDocument>;

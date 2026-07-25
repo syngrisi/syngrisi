@@ -52,38 +52,60 @@ function toSelectable(b: BaselineLean): SelectableBaseline {
     };
 }
 
-async function isSnapshotStillReferenced(
-    snapId: string,
+function toObjectId(id: string): Types.ObjectId | null {
+    try {
+        return new Types.ObjectId(id);
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Batch-collect snapshot ids that are still referenced by a Baseline or Check.
+ * Uses $in + distinct so each batch is a few indexed queries instead of N COLLSCAN findOnes.
+ */
+export async function collectReferencedSnapshotIds(
+    snapIds: string[],
     CheckModel: typeof Check,
     BaselineModel: typeof Baseline,
-): Promise<boolean> {
-    let objectId: Types.ObjectId;
-    try {
-        objectId = new Types.ObjectId(snapId);
-    } catch {
-        return true; // treat invalid as referenced — do not delete
+    batchSize: number,
+): Promise<Set<string>> {
+    const referenced = new Set<string>();
+    const objectIds: Types.ObjectId[] = [];
+
+    for (const id of snapIds) {
+        const oid = toObjectId(id);
+        if (!oid) {
+            // Invalid id — treat as referenced so we never attempt deletion
+            referenced.add(id);
+            continue;
+        }
+        objectIds.push(oid);
     }
 
-    // Cast filters: mongoose StrictQuery typing rejects ObjectId in some filter shapes.
-    const baselineLeft = await BaselineModel.findOne({ snapshootId: objectId } as any)
-        .select('_id')
-        .lean()
-        .exec();
-    if (baselineLeft) {
-        return true;
+    const addDistinct = (values: unknown[]) => {
+        for (const value of values) {
+            if (value != null) {
+                referenced.add(String(value));
+            }
+        }
+    };
+
+    for (let i = 0; i < objectIds.length; i += batchSize) {
+        const batch = objectIds.slice(i, i + batchSize);
+        const [fromBaselines, fromBaselineId, fromActual, fromDiff] = await Promise.all([
+            BaselineModel.distinct('snapshootId', { snapshootId: { $in: batch } } as any),
+            CheckModel.distinct('baselineId', { baselineId: { $in: batch } } as any),
+            CheckModel.distinct('actualSnapshotId', { actualSnapshotId: { $in: batch } } as any),
+            CheckModel.distinct('diffId', { diffId: { $in: batch } } as any),
+        ]);
+        addDistinct(fromBaselines);
+        addDistinct(fromBaselineId);
+        addDistinct(fromActual);
+        addDistinct(fromDiff);
     }
 
-    const checkLeft = await CheckModel.findOne({
-        $or: [
-            { baselineId: objectId },
-            { actualSnapshotId: objectId },
-            { diffId: objectId },
-        ],
-    } as any)
-        .select('_id')
-        .lean()
-        .exec();
-    return Boolean(checkLeft);
+    return referenced;
 }
 
 export async function handleOldBaselinesTask(
@@ -165,12 +187,19 @@ export async function handleOldBaselinesTask(
         new Set(candidates.map((c) => c.snapshootId).filter((id): id is string => Boolean(id))),
     );
     output.write(`>> evaluating ${snapIds.length} unique snapshot ids for cleanup`);
+    const referenced = await collectReferencedSnapshotIds(
+        snapIds,
+        CheckModel,
+        BaselineModel,
+        batchSize,
+    );
+    const unreferenced = snapIds.filter((id) => !referenced.has(id));
+    output.write(
+        `>> unreferenced snapshots to remove: ${unreferenced.length} (kept referenced: ${referenced.size})`,
+    );
+
     let snapshotsRemoved = 0;
-    for (const snapId of snapIds) {
-        const stillReferenced = await isSnapshotStillReferenced(snapId, CheckModel, BaselineModel);
-        if (stillReferenced) {
-            continue;
-        }
+    for (const snapId of unreferenced) {
         await removeSnapshotFn(snapId);
         snapshotsRemoved += 1;
     }

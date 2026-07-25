@@ -39,6 +39,9 @@ const SnapshotSchema: Schema<SnapshotDocument> = new Schema({
     },
 });
 
+// Retention cleanup: decide if a PNG file is still shared by other snapshots
+SnapshotSchema.index({ filename: 1 }, { name: 'snapshot_filename_idx' });
+
 SnapshotSchema.plugin(toJSON);
 SnapshotSchema.plugin(paginate);
 

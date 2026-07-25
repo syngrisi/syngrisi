@@ -218,6 +218,16 @@ export function navigationData(): INavDataItem[] {
             ],
         },
         {
+            title: 'Task: Handle Orphan Snapshots',
+            description: 'Find and remove snapshots not referenced by Baseline or Check',
+            group: 'tasks',
+            crumbs: [
+                { title: 'Admin', href: '/admin' },
+                { title: 'Tasks', href: '/admin/tasks' },
+                { title: 'Handle Orphan Snapshots', href: '/admin/tasks/handle_orphan_snapshots' },
+            ],
+        },
+        {
             title: 'Task: Handle Orphan Baselines',
             description: 'Find and remove orphan baselines',
             group: 'tasks',

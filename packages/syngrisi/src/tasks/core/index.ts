@@ -4,4 +4,5 @@ export * from './handle-old-baselines.task';
 export * from './old-baselines-selection';
 export * from './handle-orphan-files.task';
 export * from './handle-orphan-baselines.task';
+export * from './handle-orphan-snapshots.task';
 export * from './remove-old-logs.task';
